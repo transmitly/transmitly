@@ -1,0 +1,12 @@
+﻿<ProjectConfiguration>
+  <Settings>
+    <IgnoredTests>
+      <NamedTestSelector>
+        <TestName>CiLabs.Communications.Configuration.Tests.TemplateResolverConfigurationTests.EmbeddedResourceTemplateRegistrationAndContentRetrieval</TestName>
+      </NamedTestSelector>
+      <NamedTestSelector>
+        <TestName>CiLabs.Communications.Configuration.Tests.TemplateResolverConfigurationTests.LocalFileSystemResourceTemplateRegistrationAndContentRetrieval</TestName>
+      </NamedTestSelector>
+    </IgnoredTests>
+  </Settings>
+</ProjectConfiguration>
