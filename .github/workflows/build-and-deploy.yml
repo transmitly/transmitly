@@ -1,0 +1,24 @@
+name: Build and Test
+
+on: [push]
+
+jobs:
+  windows-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 0
+      - name: dotnet
+        uses: actions/setup-dotnet@v3
+      - name: Build solution
+        run: dotnet build Transmitly.sln 
+      - name: Test
+        run: dotnet test --no-build --no-restore Transmitly.sln
+      
