@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Home
+title: Transmit.ly
 nav_order: 1
-description: "Transmit.ly"
+description: "A Code Impressions Labs Project"
 permalink: /
 ---
 
