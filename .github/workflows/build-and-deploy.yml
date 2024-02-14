@@ -34,10 +34,10 @@ jobs:
       - name: Build netframework solution
         run: |
           msbuild.exe Transmitly.sln /nologo /nr:false /p:configuration="Release" /p:AssemblyVersion=${{ env.assemblySemVer }} /p:FileVersion=${{ env.assemblySemFileVer  }} /p:InformationalVersion=${{ env.informationalVersion }}    
-      #- name: Test
-      #  run: dotnet test --no-build --no-restore Transmitly.sln
+      - name: Test
+        run: dotnet test --no-build --no-restore Transmitly.sln
       - name: Package
-        run: dotnet pack --no-build --include-source
+        run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-dev+${{ env.shortSha }}
       - name: save package
         uses: actions/upload-artifact@v4
         with:
