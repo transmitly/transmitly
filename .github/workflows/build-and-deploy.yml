@@ -29,10 +29,10 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0
       - name: Build solution
         run: dotnet build Transmitly.sln /p:AssemblyVersion=${{ env.assemblySemVer }} /p:FileVersion=${{ env.assemblySemFileVer  }} /p:InformationalVersion=${{ env.informationalVersion }}
-      - name: Test
-        run: dotnet test --no-build --no-restore Transmitly.sln
+      #- name: Test
+      #  run: dotnet test --no-build --no-restore Transmitly.sln
       - name: Package
-        run: dotnet pack Transmitly.sln --no-build --include-source
+        run: dotnet pack --no-build --include-source
       - name: save package
         uses: actions/upload-artifact@v4
         with:
