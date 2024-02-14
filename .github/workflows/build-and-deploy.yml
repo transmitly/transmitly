@@ -30,7 +30,7 @@ jobs:
       - name: Determine Version
         uses: gittools/actions/gitversion/execute@v0
       - name: Build netcore solution
-        run: dotnet build Transmitly.sln /p:AssemblyVersion=${{ env.assemblySemVer }} /p:FileVersion=${{ env.assemblySemFileVer  }} /p:InformationalVersion=${{ env.informationalVersion }}
+        run: dotnet build Transmitly.sln --configuration Release -p:AssemblyVersion=${{ env.assemblySemVer }} -p:FileVersion=${{ env.assemblySemFileVer  }} -p:InformationalVersion=${{ env.informationalVersion }}
       #- name: Build netframework solution
       #  run: |
       #    msbuild.exe Transmitly.sln /nologo /nr:false /p:configuration="Release" /p:AssemblyVersion=${{ env.assemblySemVer }} /p:FileVersion=${{ env.assemblySemFileVer  }} /p:InformationalVersion=${{ env.informationalVersion }}    
