@@ -39,5 +39,5 @@ jobs:
       - name: Package
         run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-alpha.${{ env.shortSha }}
       - name: Publish (INT)
-        run: dotnet nuget push ./**/*.nupkg -s ${{ github.server_url }}/${{ github.repository }} -k ${{ secret.NUGET_INT_API_KEY }}
+        run: dotnet nuget push ./**/*.nupkg -s ${{ github.server_url }}/${{ github.repository }} -k ${{ secrets.NUGET_INT_API_KEY }}
         
