@@ -19,6 +19,8 @@ jobs:
       - uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
       - name: dotnet
         uses: actions/setup-dotnet@v3
       - name: Install GitVersion
@@ -27,8 +29,11 @@ jobs:
           versionSpec: '5.x'
       - name: Determine Version
         uses: gittools/actions/gitversion/execute@v0
-      - name: Build solution
+      - name: Build netcore solution
         run: dotnet build Transmitly.sln /p:AssemblyVersion=${{ env.assemblySemVer }} /p:FileVersion=${{ env.assemblySemFileVer  }} /p:InformationalVersion=${{ env.informationalVersion }}
+      - name: Build netframework solution
+        run: |
+          msbuild.exe Transmitly.sln /nologo /nr:false /p:configuration="Release" /p:AssemblyVersion=${{ env.assemblySemVer }} /p:FileVersion=${{ env.assemblySemFileVer  }} /p:InformationalVersion=${{ env.informationalVersion }}    
       #- name: Test
       #  run: dotnet test --no-build --no-restore Transmitly.sln
       - name: Package
