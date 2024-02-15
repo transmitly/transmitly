@@ -50,10 +50,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="README.md" Pack="true" PackagePath="\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
@@ -65,13 +61,13 @@
 		</AssemblyAttribute>
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="..\..\assets\icon-dark.png" Link="white_1244x865.png">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\..\README.md">
-		  <Pack>True</Pack>
-		  <PackagePath>\</PackagePath>
-		</None>
+	  <None Include="..\..\assets\icon-dark.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 </Project>
