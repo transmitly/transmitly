@@ -37,7 +37,7 @@ jobs:
       - name: Test
         run: dotnet test --no-build --no-restore --configuration Release Transmitly.sln
       - name: Package
-        run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-alpha.${{ env.shortSha }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+        run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-alpha-${{BuildMetaData}}.${{ env.shortSha }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
       - name: Publish (INT)
         run: dotnet nuget push .\src\Transmitly\bin\Release\Transmitly.*.nupkg -s https://apiint.nugettest.org/v3/index.json -k ${{ secrets.NUGET_INT_API_KEY }}
         
