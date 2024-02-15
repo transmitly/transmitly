@@ -17,12 +17,12 @@
 		<Company>Code Impressions</Company>
 		<Title>Transmit.ly</Title>
 		<Description>An extensible and provider agnostic Communication (email, sms, and more) management library</Description>
-		<Copyright>Copyright © 2024 Code Impressions, LLC</Copyright>
+		<Copyright>Copyright © (c) Code Impressions, LLC</Copyright>
 		<Authors>Code Impressions</Authors>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageIcon>white_1244x865.png</PackageIcon>
-
-		<PackageTags>communications;email;sms;email sender;sms sender</PackageTags>
+		<PackageIcon>icon-dark.png</PackageIcon>
+		<RepositoryUrl>https://github.com/transmitly/transmitly.git</RepositoryUrl>
+		<PackageTags>email;sms;push-notifications;email-sender;emails;sms-messages;sms-client;pushnotifications;sms-notifications;sms-service;email-service </PackageTags>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -65,9 +65,13 @@
 		</AssemblyAttribute>
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="..\..\assets\logo\white_1244x865.png" Link="white_1244x865.png">
+		<None Include="..\..\assets\icon-dark.png" Link="white_1244x865.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
 </Project>
