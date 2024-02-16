@@ -24,4 +24,4 @@ Documentation coming soon!
 
 ---------------------------------------------------
 
-_Copyright &copy; Code Imperssions, LLC - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html)._
+_Copyright &copy; Code Impressions, LLC - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html)._
