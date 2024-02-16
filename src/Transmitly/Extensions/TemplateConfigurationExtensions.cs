@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using System.Globalization;
+using System.Reflection;
 using Transmitly.Exceptions;
 using Transmitly.Template.Configuration;
 
@@ -42,6 +43,14 @@ namespace Transmitly
 			Guard.AgainstNull(templateConfig);
 
 			templateConfig.TemplateRegistrations.Add(new StringContentTemplateRegistration(contents, cultureInfo));
+			return templateConfig;
+		}
+
+		public static IContentTemplateConfiguration AddEmbeddedResourceTemplate(this IContentTemplateConfiguration templateConfig, string resourceId, Assembly? assembly = null, string? cultureInfo = null)
+		{
+			Guard.AgainstNull(templateConfig);
+
+			templateConfig.TemplateRegistrations.Add(new EmbeddedResourceContentTemplateRegistration(resourceId, cultureInfo, assembly));
 			return templateConfig;
 		}
 	}

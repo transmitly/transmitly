@@ -16,7 +16,7 @@ using System.Globalization;
 
 namespace Transmitly.Template.Configuration
 {
-	internal class StringContentTemplateRegistration : IContentTemplateRegistration
+	internal sealed class StringContentTemplateRegistration : IContentTemplateRegistration
 	{
 		private readonly string? _content;
 

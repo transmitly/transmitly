@@ -12,12 +12,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="EmbeddedResources\has-content.txt" />
 		<None Remove="Transmitly.Tests.v3.ncrunchproject" />
-		<None Remove="Resources\template1.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Resources\template1.txt" />
+		<EmbeddedResource Include="EmbeddedResources\has-content.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -37,12 +37,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Transmitly\Transmitly.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="Resources\template2.txt">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 	</ItemGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net462' ">
 		<DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN</DefineConstants>
