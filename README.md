@@ -14,8 +14,85 @@
 | ------------- |
 | [Transmitly.TemplateEngine.Fluid](https://github.com/transmitly/transmitly-template-engine-fluid)  |
 
+## Quick Start
+Transmitly can do a lot. It's a little overwhelming. Let's start with where we all generally start in our applications, sending an email. For this example we'll send an email to someone that has just signed up for our cool new app.
 
-Documentation coming soon!
+### Get Transmitly
+```shell
+dotnet add package Transmitly
+```
+
+### Get a channel provider
+Transmitly comes with `channels` like, `Email`, `SMS` and `Push Notifications` out of the box. However, we're going to need a `Channel Provider` to do the heavy lifting of actually sending or dispatching a communication for us. As this is our first email, we'll choose SMTP. In the past we've used MailKit (Microsoft even recommends it!) to send emails. Let's add that to our project...
+
+```shell
+dotnet add package Transmitly.ChannelProvider.MailKit
+```
+
+### Configure our email
+Now the fun part. In our Startup code we can now define a `pipeline`. Pipelines will give us a lot of flexability down the road. For now we'll, use one of the MailKit convience extension methods to keep things simple.
+
+```csharp
+using Transmitly;
+
+//CommunicationsClientBuilder is a fluent way to configure our communication settings and pipline
+ICommunicationClient communicationClient = new CommunicationsClientBuilder()
+//Transmitly.ChannelProvider.MailKit adds on to the client builder with it's own extensions to make adding setup a breeze
+.AddMailKitSupport(options =>
+{
+  options.Host = "smtp.example.com";
+  options.Port = 587;
+  options.UseSsl = true;
+  options.UserName = "MySTMPUsername";
+  options.Password = "MyPassword";
+})
+//We're keeping it simple here, we're going to add a single email name "NewAccountRegisteration"
+.AddEmailMessage("NewAccountRegistration", "noreply@example.com", "Account Created!", "Welcome aboard! Take a look around the <a href=\"https://example.com\">site</a>")
+//We're done configuring, now we need to create our new communications client
+.BuildClient();
+
+//In this case, we're using Microsoft.DependencyInjection. We need to register our `ICommunicationsClient` with the service collection
+services.AddSingleton(communicationClient);
+```
+
+In our new account registration code:
+```csharp
+class AccountRegistrationService
+{
+  private readonly ICommunicationClient _communicationClient;
+  public AccountRegistrationService(ICommunicationClient communicationClient)
+  {
+    _communciationClient = communicationClient;
+  }
+
+  public async Task<Account> RegisterNewAccount(AccountVM account)
+  {
+    //Validate and create the Account
+    var newAccount = CreateAccount(account);
+
+    //Dispatch (Send) our configured email
+    var result = await _communicationClient.DispatchAsync("NewAccountRegistration", "newAccount@gmail.com", new{});
+
+    if(result.Results.Any(a=>a.DispatchStatus == DispatchStatus.Error))
+      return newAccount;
+
+    throw Exception("Error sending communication!");
+  }
+}
+```
+
+That's it. But what did we do? 
+ * Abstracted away the details of how or (Email) commmunication will get delivered.
+   * The added benefit is, in the future, we can change it to SendGrid, MailChimp, Infobip or the many other available providers.
+ * Abstracted away the details of generating the email content in our business logic. This keeps your application code short, clean, maintainable.
+   * In the future we may want to send an SMS, push notification. We can now control that in a single location.
+ * We can now use a single service/client for all of our communication needs
+   * No more cluttering up your service constructors with IEmailClient, ISmsClient, etc.
+   * This also cleans up having if/else statement littered to manage our user's communication preferences 
+
+### Next Steps
+_**(coming soon)**_ We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ more value for your entire team. Check out the wiki to learn more about Transmitly's concepts as well as check out our examples to help you get started fast.
+
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/transmitly/transmitly/assets/3877248/524f26c8-f670-4dfa-be78-badda0f48bfb">
