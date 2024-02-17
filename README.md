@@ -73,7 +73,7 @@ class AccountRegistrationService
     //Dispatch (Send) our configured email
     var result = await _communicationClient.DispatchAsync("NewAccountRegistration", "newAccount@gmail.com", new{});
 
-    if(result.Results.Any(a=>a.DispatchStatus == DispatchStatus.Error))
+    if(!result.Results.Any(a=>a.DispatchStatus == DispatchStatus.Error))
       return newAccount;
 
     throw Exception("Error sending communication!");
