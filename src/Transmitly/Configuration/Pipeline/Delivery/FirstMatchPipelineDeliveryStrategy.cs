@@ -32,7 +32,9 @@ namespace Transmitly.Delivery
 					{
 						continue;
 					}
+					
 					results.AddRange(result);
+
 					if (result.Any(r => r != null && r.DispatchStatus != DispatchStatus.Error))
 					{
 						return results;

@@ -16,14 +16,20 @@ namespace Transmitly
 {
 	public sealed class DispatchResult : IDispatchResult
 	{
-		internal DispatchResult(IDispatchResult result, string channelProviderId, string channelId)
+		internal DispatchResult(IDispatchResult result, string channelProviderId, string channelId) : this(result.DispatchStatus, channelProviderId, channelId)
 		{
 			IsDelivered = DispatchStatus != DispatchStatus.Error;
 			ResourceId = result.ResourceId;
-			ChannelProviderId = channelProviderId;
-			ChannelId = channelId;
 			DispatchStatus = result.DispatchStatus;
 		}
+
+		internal DispatchResult(DispatchStatus status, string channelProviderId, string channelId)
+		{
+			DispatchStatus = status;
+			ChannelProviderId = channelProviderId;
+			ChannelId = channelId;
+		}
+
 		public DispatchResult(bool communicationDelivered, string? id = null)
 		{
 			IsDelivered = communicationDelivered;
@@ -46,5 +52,7 @@ namespace Transmitly
 		public string? ChannelId { get; }
 
 		public DispatchStatus DispatchStatus { get; }
+
+		public Exception? Exception { get; set; }
 	}
 }

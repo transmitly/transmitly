@@ -35,13 +35,20 @@ namespace Transmitly.Delivery
 			IReadOnlyCollection<IDispatchResult?> results;
 			if (context.Settings.IsDeliveryEnabled)
 			{
-				results = await client.DispatchAsync(communication, internalContext, cancellationToken);
+				try
+				{
+					results = await client.DispatchAsync(communication, internalContext, cancellationToken);
 
-				if (results == null || results.Count == 0)
-					return [];
+					if (results == null || results.Count == 0)
+						return [];
 
-				return results.Where(r => r != null).Select(r => new DispatchResult(r!, provider.Id, channel.Id)).ToList();
-				//context.DispatchResults.Add(new DispatchResult(result, provider.Id, channel.Id));
+					return results.Where(r => r != null).Select(r => new DispatchResult(r!, provider.Id, channel.Id)).ToList();
+				}
+				catch (Exception ex)
+				{
+					//TODO: Fire dispatch error event, log
+					return [new DispatchResult(DispatchStatus.Error, provider.Id, channel.Id) { Exception = ex }];
+				}
 			}
 			else
 			{
