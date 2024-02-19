@@ -25,7 +25,7 @@ dotnet add package Transmitly
 ```
 
 ### Get a channel provider
-Transmitly comes with `channels` like, `Email`, `SMS` and `Push Notifications` out of the box. However, we're going to need a `Channel Provider` to do the heavy lifting of actually sending or dispatching a communication for us. As this is our first email, we'll choose SMTP. In the past we've used MailKit (Microsoft even recommends it!) to send emails. Let's add that to our project...
+Transmitly comes with `channels` like, `Email`, `SMS` and `Push Notifications` out of the box. However, we're going to need a `Channel Provider` to do the heavy lifting of actually sending or dispatching a communication for us. As this is our first email, we'll choose SMTP. In the past we've used MailKit ([Microsoft recommends it!](https://learn.microsoft.com/en-us/dotnet/api/system.net.mail.smtpclient?view=net-8.0#remarks)) to send emails. Let's add that to our project...
 
 ```shell
 dotnet add package Transmitly.ChannelProvider.MailKit
