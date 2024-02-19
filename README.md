@@ -64,7 +64,7 @@ class AccountRegistrationService
   private readonly ICommunicationsClient _communicationsClient;
   public AccountRegistrationService(ICommunicationsClient communicationsClient)
   {
-    _communciationsClient = communicationsClient;
+    _communicationsClient = communicationsClient;
   }
 
   public async Task<Account> RegisterNewAccount(AccountVM account)
