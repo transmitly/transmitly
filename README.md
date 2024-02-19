@@ -49,7 +49,7 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
   options.Password = "MyPassword";
 })
 //We're keeping it simple here, we're going to add a single email named "NewAccountRegisteration"
-.AddEmailMessage("NewAccountRegistration", "noreply@example.com", "Account Created!", "Welcome aboard! Take a look around the <a href=\"https://example.com\">site</a>")
+.AddEmailMessage("NewAccountRegistration", "noreply@example.com", "Account Created!", "Welcome aboard! Take a look around the <a href=\"https://transmit.ly\">site</a>")
 //We're done configuring, now we need to create our new communications client
 .BuildClient();
 
