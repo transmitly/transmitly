@@ -61,7 +61,7 @@ In our new account registration code:
 ```csharp
 class AccountRegistrationService
 {
-  private readonly ICommunicationClient _communicationClient;
+  private readonly ICommunicationsClient _communicationClient;
   public AccountRegistrationService(ICommunicationClient communicationClient)
   {
     _communciationClient = communicationClient;
