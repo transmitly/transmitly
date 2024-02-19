@@ -38,7 +38,7 @@ Now the fun part. In our Startup code we can now define a `pipeline`. Pipelines 
 using Transmitly;
 
 //CommunicationsClientBuilder is a fluent way to configure our communication settings and pipline
-ICommunicationClient communicationClient = new CommunicationsClientBuilder()
+ICommunicationsClient communicationClient = new CommunicationsClientBuilder()
 //Transmitly.ChannelProvider.MailKit adds on to the client builder with it's own extensions to make adding setup a breeze
 .AddMailKitSupport(options =>
 {
