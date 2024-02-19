@@ -38,7 +38,7 @@ Now the fun part. In our Startup code we can now define a `pipeline`. Pipelines 
 using Transmitly;
 
 //CommunicationsClientBuilder is a fluent way to configure our communication settings and pipline
-ICommunicationsClient communicationClient = new CommunicationsClientBuilder()
+ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
 //Transmitly.ChannelProvider.MailKit adds on to the client builder with it's own extensions to make adding setup a breeze
 .AddMailKitSupport(options =>
 {
@@ -54,7 +54,7 @@ ICommunicationsClient communicationClient = new CommunicationsClientBuilder()
 .BuildClient();
 
 //In this case, we're using Microsoft.DependencyInjection. We need to register our `ICommunicationsClient` with the service collection
-services.AddSingleton(communicationClient);
+builder.Services.AddSingleton(communicationsClient);
 ```
 
 In our new account registration code:
