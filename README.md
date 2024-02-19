@@ -32,7 +32,7 @@ dotnet add package Transmitly.ChannelProvider.MailKit
 ```
 
 ### Configure our email
-Now the fun part. In our Startup code we can now define a `pipeline`. Pipelines will give us a lot of flexability down the road. For now we'll, use one of the MailKit convience extension methods to keep things simple.
+Now the fun part. In our Startup code we can now define a `pipeline`. Pipelines will give us a lot of flexibility down the road. For now we'll, use one of the MailKit convenient extension methods to keep things simple.
 
 ```csharp
 using Transmitly;
