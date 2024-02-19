@@ -61,10 +61,10 @@ In our new account registration code:
 ```csharp
 class AccountRegistrationService
 {
-  private readonly ICommunicationsClient _communicationClient;
-  public AccountRegistrationService(ICommunicationClient communicationClient)
+  private readonly ICommunicationsClient _communicationsClient;
+  public AccountRegistrationService(ICommunicationsClient communicationsClient)
   {
-    _communciationClient = communicationClient;
+    _communciationsClient = communicationsClient;
   }
 
   public async Task<Account> RegisterNewAccount(AccountVM account)
@@ -73,7 +73,7 @@ class AccountRegistrationService
     var newAccount = CreateAccount(account);
 
     //Dispatch (Send) our configured email
-    var result = await _communicationClient.DispatchAsync("NewAccountRegistration", "newAccount@gmail.com", new{});
+    var result = await _communicationsClient.DispatchAsync("NewAccountRegistration", "newAccount@gmail.com", new{});
 
     if(!result.Results.Any(a=>a.DispatchStatus == DispatchStatus.Error))
       return newAccount;
