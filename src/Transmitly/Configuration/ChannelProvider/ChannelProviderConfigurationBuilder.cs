@@ -45,13 +45,21 @@ namespace Transmitly.Channel.Configuration
 		/// <returns>The communications configuration builder.</returns>
 		public CommunicationsClientBuilder Add<TCommunication>(string providerId, IChannelProviderClient<TCommunication> channelProviderInstance, params string[]? supportedChannelIds)
 		{
-			var providerClientType = Guard.AgainstNull(channelProviderInstance);
-
 			_addProvider(
 				new ChannelProvider<TCommunication>(
 					Guard.AgainstNullOrWhiteSpace(providerId),
-					channelProviderInstance,
+					Guard.AgainstNull(channelProviderInstance),
 					supportedChannelIds ?? [])
+			);
+			return _communicationsConfiguration;
+		}
+
+		public CommunicationsClientBuilder Add(string providerId, IChannelProviderClient channelProvider, params string[]? supportedChannelIds)
+		{
+			_addProvider(new Transmitly.Channel.Configuration.ChannelProvider(
+				Guard.AgainstNullOrWhiteSpace(providerId),
+				Guard.AgainstNull(channelProvider),
+				supportedChannelIds ?? [])
 			);
 			return _communicationsConfiguration;
 		}
