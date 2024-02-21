@@ -45,7 +45,7 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
   options.Host = "smtp.example.com";
   options.Port = 587;
   options.UseSsl = true;
-  options.UserName = "MySTMPUsername";
+  options.UserName = "MySMTPUsername";
   options.Password = "MyPassword";
 })
 //We're keeping it simple here, we're going to add a single email named "NewAccountRegisteration"
