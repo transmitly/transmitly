@@ -83,5 +83,10 @@ namespace Transmitly
 		/// Gets the configured communication settings
 		/// </summary>
 		ICommunicationsConfigurationSettings Settings { get; }
+
+		/// <summary>
+		/// Gets the current pipeline name
+		/// </summary>
+		string PipelineName { get; }
 	}
 }

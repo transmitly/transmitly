@@ -89,9 +89,9 @@ namespace Transmitly
 			Guard.AgainstNull(audiences);
 			var culture = GuardCulture.AgainstNull(cultureInfo);
 
-			var audienceAddresses = audiences.SelectMany(a => a.Addresses);
 			var pipeline = await _pipelineRegistrations.GetAsync(pipelineName).ConfigureAwait(false) ??
 				throw new CommunicationsException($"A communication pipeline named, '{pipelineName}', has not been registered.");
+			
 			var pipelineConfiguration = pipeline.ChannelConfiguration;
 
 			var deliveryStrategy = pipeline.ChannelConfiguration.PipelineDeliveryStrategyProvider;
@@ -104,6 +104,7 @@ namespace Transmitly
 				_deliveryReportProvider,
 				_configurationSettings,
 				culture,
+				pipelineName, 
 				pipeline.MessagePriority,
 				pipeline.TransportPriority);
 
