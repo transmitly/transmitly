@@ -28,11 +28,20 @@ namespace Transmitly.Channel.Email
 
 		public string Id => Transmitly.Id.Channel.Email();
 		public IEnumerable<string> AllowedChannelProviderIds => _channelProviderId;
-		public IAudienceAddress FromAddress { get; set; }
+		
+		private IAudienceAddress? _fromAddress;
+		private Func<IAudienceAddress>? _fromAddressResolver;
+		public IAudienceAddress FromAddress { get => GetFromAddress(); set { _fromAddressResolver = null; _fromAddress = value; } }
+
+		internal EmailChannel(Func<IAudienceAddress> fromAddressResolver, string[]? channelProviderId = null)
+		{
+			_fromAddressResolver = Guard.AgainstNull(fromAddressResolver);
+			_channelProviderId = channelProviderId ?? [];
+		}
 
 		internal EmailChannel(IAudienceAddress fromAddress, string[]? channelProviderId = null)
 		{
-			FromAddress = Guard.AgainstNull(fromAddress);
+			_fromAddress = Guard.AgainstNull(fromAddress);
 			_channelProviderId = channelProviderId ?? [];
 		}
 
@@ -52,7 +61,7 @@ namespace Transmitly.Channel.Email
 			var textBody = await TextBody.RenderAsync(communicationContext, false);
 			var attachments = ConvertAttachments(communicationContext);
 
-			return new EmailCommunication(FromAddress)
+			return new EmailCommunication(GetFromAddress())
 			{
 				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
 				Priority = communicationContext.MessagePriority,
@@ -63,7 +72,10 @@ namespace Transmitly.Channel.Email
 				Attachments = attachments
 			};
 		}
-
+		private IAudienceAddress GetFromAddress()
+		{
+			return Guard.AgainstNull(_fromAddressResolver != null ? _fromAddressResolver() : _fromAddress);
+		}
 		private static IReadOnlyCollection<IAttachment> ConvertAttachments(IDispatchCommunicationContext communicationContext)
 		{
 			if (communicationContext.ContentModel?.Resources?.Count > 0)

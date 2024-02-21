@@ -63,6 +63,22 @@ namespace Transmitly
 		}
 
 		/// <summary>
+		/// Adds the 'Email' communication channel to provider pipeline
+		/// </summary>
+		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
+		/// <param name="fromAddressResolver">Resolver that will return a <see cref="IAudienceAddress"/></param>
+		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
+		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel</param>
+		/// <returns></returns>
+		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, Func<IAudienceAddress> fromAddressResolver, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
+		{
+			var emailOptions = new EmailChannel(fromAddressResolver, allowedChannelProviders);
+			emailChannelConfiguration(emailOptions);
+			pipelineChannelConfiguration.AddChannel(emailOptions);
+			return pipelineChannelConfiguration;
+		}
+
+		/// <summary>
 		/// Adds an email message pipeline to the communications configuration builder
 		/// </summary>
 		/// <param name="communicationsConfigurationBuilder">The communications configuration builder</param>
