@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Moq;
 using Transmitly.Exceptions;
 
 namespace Transmitly.Template.Configuration.Tests
@@ -42,7 +43,8 @@ namespace Transmitly.Template.Configuration.Tests
 		public async Task ShouldReturnEmbeddedResourceContent()
 		{
 			var template = new EmbeddedResourceContentTemplateRegistration("Transmitly.Tests.EmbeddedResources.has-content.txt", null, typeof(EmbeddedResourceContentTemplateRegistrationTests).Assembly);
-			Assert.AreEqual("has content!", await template.GetContentAsync());
+			var context = new Mock<IDispatchCommunicationContext>();
+			Assert.AreEqual("has content!", await template.GetContentAsync(context.Object));
 		}
 	}
 }

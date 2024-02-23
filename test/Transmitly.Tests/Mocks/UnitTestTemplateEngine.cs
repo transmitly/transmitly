@@ -18,11 +18,13 @@ namespace Transmitly.Tests
 {
 	internal sealed class UnitTestTemplateEngine : ITemplateEngine
 	{
-		public async Task<string?> RenderAsync(IContentTemplateRegistration? registration, IContentModel? contentModel)
+		public async Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
 		{
 			if (registration == null)
 				return null;
-			var templateContent = await registration.GetContentAsync();
+			var contentModel = context.ContentModel;
+			var templateContent = await registration.GetContentAsync(context);
+
 			if (string.IsNullOrWhiteSpace(templateContent) || contentModel == null)
 				return default;
 

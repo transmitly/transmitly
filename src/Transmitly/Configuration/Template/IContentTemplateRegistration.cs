@@ -19,6 +19,6 @@ namespace Transmitly.Template.Configuration
 	public interface IContentTemplateRegistration
 	{
 		CultureInfo CultureInfo { get; }
-		Task<string?> GetContentAsync();
+		Task<string?> GetContentAsync(IDispatchCommunicationContext context);
 	}
 }

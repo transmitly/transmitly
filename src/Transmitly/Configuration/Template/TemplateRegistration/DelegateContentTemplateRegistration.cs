@@ -12,10 +12,19 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Globalization;
+
 namespace Transmitly.Template.Configuration
 {
-	public interface ITemplateEngine
+	internal sealed class DelegateContentTemplateRegistration(Func<IDispatchCommunicationContext, Task<string?>> resolver, string? cultureInfo = null) : IContentTemplateRegistration
 	{
-		Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context);
+		private readonly Func<IDispatchCommunicationContext, Task<string?>> _resolver = Guard.AgainstNull(resolver);
+
+		public CultureInfo CultureInfo { get; } = GuardCulture.AgainstNull(cultureInfo);
+
+		public async Task<string?> GetContentAsync(IDispatchCommunicationContext context)
+		{
+			return await _resolver(context);
+		}
 	}
 }

@@ -40,8 +40,7 @@ namespace Transmitly
 
 		public static void UseDefaultPipelineDeliveryStrategy(this IPipelineChannelConfiguration pipelineChannelConfiguration)
 		{
-			Guard.AgainstNull(pipelineChannelConfiguration);
-			pipelineChannelConfiguration.UsePipelineDeliveryStrategy(new AnyMatchPipelineDeliveryStrategy());
+			UseAnyMatchPipelineDeliveryStrategy(pipelineChannelConfiguration);
 		}
 	}
 }

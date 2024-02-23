@@ -58,7 +58,7 @@ namespace Transmitly.Tests
 			if (subjectTemplate == null)
 				return new UnitTestCommunication("NO TEMPLATE");
 
-			var subjectContent = await communicationContext.TemplateEngine.RenderAsync(subjectTemplate, communicationContext.ContentModel) ?? string.Empty;
+			var subjectContent = await communicationContext.TemplateEngine.RenderAsync(subjectTemplate, communicationContext) ?? string.Empty;
 
 			return new UnitTestCommunication(subjectContent);
 		}

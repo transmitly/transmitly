@@ -29,7 +29,7 @@ namespace Transmitly.Template.Configuration
 
 		public CultureInfo CultureInfo { get; }
 
-		public Task<string?> GetContentAsync()
+		public Task<string?> GetContentAsync(IDispatchCommunicationContext context)
 		{
 			return Task.FromResult(_content);
 		}

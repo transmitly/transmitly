@@ -16,11 +16,11 @@ namespace Transmitly.Template.Configuration
 {
 	internal class NonTemplatingTemplatingEngine : ITemplateEngine
 	{
-		public async Task<string?> RenderAsync(IContentTemplateRegistration? registration, IContentModel? contentModel)
+		public async Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
 		{
 			if (registration == null)
 				return null;
-			return await registration.GetContentAsync();
+			return await registration.GetContentAsync(context);
 		}
 	}
 }

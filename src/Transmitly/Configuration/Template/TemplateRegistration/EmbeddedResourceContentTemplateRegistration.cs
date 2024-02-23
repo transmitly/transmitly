@@ -35,7 +35,7 @@ namespace Transmitly.Template.Configuration
 
 		public CultureInfo CultureInfo { get; }
 
-		public Task<string?> GetContentAsync()
+		public Task<string?> GetContentAsync(IDispatchCommunicationContext context)
 		{
 			using var stream = _assembly.GetManifestResourceStream(_resourceId);
 			using var reader = new StreamReader(stream!);

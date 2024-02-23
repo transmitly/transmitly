@@ -18,7 +18,7 @@ namespace Transmitly.Tests
 {
 	internal sealed class MockTemplateEngine2 : ITemplateEngine
 	{
-		public Task<string?> RenderAsync(IContentTemplateRegistration? registration, IContentModel? contentModel)
+		public Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
 		{
 			throw new NotImplementedException();
 		}
