@@ -16,6 +16,13 @@
 | [Transmitly.TemplateEngine.Fluid](https://github.com/transmitly/transmitly-template-engine-fluid)  |
 | [Transmitly.TemplateEngine.Scriban](https://github.com/transmitly/transmitly-template-engine-scriban)  |
 
+## Supported Containers
+| Project |
+| ------------- |
+| [Transmitly.Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)  |
+
+
+
 ## Quick Start
 Transmitly can do a lot. It's a little overwhelming. Let's start with where we all generally start in our applications, sending an email. For this example we'll send an email to someone that has just signed up for our cool new app.
 
