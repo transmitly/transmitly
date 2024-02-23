@@ -20,10 +20,7 @@ namespace Transmitly.Template.Configuration.Tests
 	public class DelegateContentTemplateRegistrationTests
 	{
 		[TestMethod()]
-		[DataRow("")]
-		[DataRow(" ")]
-		[DataRow(null)]
-		public void ShouldThrowIfDelegateNull(string? value)
+		public void ShouldThrowIfDelegateNull()
 		{
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 			Assert.ThrowsException<ArgumentNullException>(() => new DelegateContentTemplateRegistration(null));

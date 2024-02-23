@@ -38,6 +38,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Transmitly\Transmitly.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="FileResource\file-content.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net462' ">
 		<DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN</DefineConstants>
 	</PropertyGroup>
