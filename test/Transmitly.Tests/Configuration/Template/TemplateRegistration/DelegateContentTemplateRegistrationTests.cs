@@ -30,7 +30,7 @@ namespace Transmitly.Template.Configuration.Tests
 #pragma warning restore CS8604 // Possible null reference argument.
 
 		[TestMethod()]
-		public async Task ShouldReturnEmbeddedResourceContent()
+		public async Task ShouldReturnesourceContent()
 		{
 			const string expected = "OK";
 			var template = new DelegateContentTemplateRegistration((context) =>

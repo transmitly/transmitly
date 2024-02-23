@@ -41,7 +41,7 @@
 
 	<ItemGroup>
 	  <None Update="FileResource\file-content.txt">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net462' ">

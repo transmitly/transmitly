@@ -48,7 +48,7 @@ namespace Transmitly.Template.Configuration.Tests
 		[TestMethod()]
 		[DeploymentItem(@"FileResource/file-content.txt")]
 		[DeploymentItem(@"FileResource\file-content.txt")]
-		public async Task ShouldReturnEmbeddedResourceContent()
+		public async Task ShouldReturnFileResourceContent()
 		{
 			var template = new LocalFileContentTemplateRegistration($"FileResource{Path.DirectorySeparatorChar}file-content.txt");
 			var context = new Mock<IDispatchCommunicationContext>();
