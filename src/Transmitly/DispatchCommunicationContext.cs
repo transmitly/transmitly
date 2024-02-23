@@ -14,7 +14,6 @@
 
 using System.Globalization;
 using Transmitly.ChannelProvider;
-using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Settings.Configuration;
 using Transmitly.Template.Configuration;
