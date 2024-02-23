@@ -19,8 +19,6 @@ namespace Transmitly.Template.Configuration.Tests
 	[TestClass()]
 	public class DelegateContentTemplateRegistrationTests
 	{
-
-
 		[TestMethod()]
 		[DataRow("")]
 		[DataRow(" ")]
