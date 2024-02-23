@@ -64,8 +64,8 @@ namespace Transmitly.Tests
 			const string ChannelProvider1 = "channel-provider-1";
 			const string ChannelId = "unit-test-channel";
 			var client = new CommunicationsClientBuilder()
-					.ChannelProvider.Add(ChannelProvider0, new MinimalConfigurationTestChannelProviderClient(), "unit-test-channel")
-					.ChannelProvider.Add(ChannelProvider1, new MinimalConfigurationTestChannelProviderClient(), "unit-test-channel")
+					.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, object>(ChannelProvider0, "unit-test-channel")
+					.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, object>(ChannelProvider1, "unit-test-channel")
 					.Pipeline.Add("test-pipeline", options =>
 					{
 						options.AddChannel(new UnitTestChannel("c0-from", ChannelId, ChannelProvider0));
@@ -75,23 +75,23 @@ namespace Transmitly.Tests
 					.BuildClient();
 			var result = await client.DispatchAsync("test-pipeline", "unit-test-address-0", new { });
 			Assert.AreEqual(2, result.Results.Count);
-			Assert.AreEqual(ChannelId, result.Results.First().ChannelId);
-			Assert.AreEqual(ChannelId, result.Results.Skip(1).First().ChannelId);
-			Assert.AreEqual(ChannelProvider0, result.Results.First().ChannelProviderId);
-			Assert.AreEqual(ChannelProvider1, result.Results.Skip(1).First().ChannelProviderId);
+			Assert.AreEqual(ChannelId, result.Results?.First()?.ChannelId);
+			Assert.AreEqual(ChannelId, result.Results?.Skip(1).First()?.ChannelId);
+			Assert.AreEqual(ChannelProvider0, result.Results?.First()?.ChannelProviderId);
+			Assert.AreEqual(ChannelProvider1, result.Results?.Skip(1).First()?.ChannelProviderId);
 		}
 
 		private static (
 			Mock<ICommunicationsConfigurationSettings> settings,
-			Mock<IPipelineRegistrationStore> pipeline,
-			Mock<IChannelProviderRegistrationStore> channelProvider,
+			Mock<IPipelineFactory> pipeline,
+			Mock<IChannelProviderFactory> channelProvider,
 			Mock<ITemplateEngineRegistrationStore> template,
 			Mock<IDeliveryReportProvider> deliveryReportHandler) GetStores()
 		{
 			return (
 				new Mock<ICommunicationsConfigurationSettings>(),
-				new Mock<IPipelineRegistrationStore>(),
-				new Mock<IChannelProviderRegistrationStore>(),
+				new Mock<IPipelineFactory>(),
+				new Mock<IChannelProviderFactory>(),
 				new Mock<ITemplateEngineRegistrationStore>(),
 				new Mock<IDeliveryReportProvider>()
 			);

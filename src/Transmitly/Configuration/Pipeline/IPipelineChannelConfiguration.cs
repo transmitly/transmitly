@@ -54,11 +54,11 @@ namespace Transmitly.Pipeline.Configuration
 		/// Gets the registered channel sending strategy provider
 		/// </summary>
 		/// <see cref="UsePipelineDeliveryStrategy(IPipelineDeliveryStrategyProviderInternal)"/>
-		PipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; }
+		BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; }
 		/// <summary>
 		/// Sets the pipeline sending strategy provider
 		/// </summary>
 		/// <param name="deliveryStrategyProvider">Sending strategy provider</param>
-		void UsePipelineDeliveryStrategy(PipelineDeliveryStrategyProvider deliveryStrategyProvider);
+		void UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider);
 	}
 }

@@ -16,6 +16,6 @@ namespace Transmitly.ChannelProvider.Configuration
 {
 	public interface IChannelProviderResolver
 	{
-		IList<IChannelProvider> Resolve();
+		IList<IChannelProviderRegistration> Resolve();
 	}
 }

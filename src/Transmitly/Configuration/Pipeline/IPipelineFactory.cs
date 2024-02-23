@@ -17,20 +17,20 @@ namespace Transmitly.Pipeline.Configuration
 	/// <summary>
 	/// Represents a store for pipeline registrations.
 	/// </summary>
-	public interface IPipelineRegistrationStore
+	public interface IPipelineFactory
 	{
 		/// <summary>
 		/// Retrieves all pipelines asynchronously.
 		/// </summary>
 		/// <returns>A read-only list of pipelines.</returns>
-		Task<IReadOnlyList<IPipeline>> GetAllAsync();
+		Task<IReadOnlyCollection<IPipeline>> GetAllAsync();
 
 		/// <summary>
 		/// Retrieves pipelines by audience type identifier asynchronously.
 		/// </summary>
 		/// <param name="audienceTypeIdentifier">The audience type identifier.</param>
 		/// <returns>A read-only list of pipelines.</returns>
-		Task<IReadOnlyList<IPipeline>> GetByAudienceTypeIdAsync(string audienceTypeIdentifier);
+		Task<IReadOnlyCollection<IPipeline>> GetByAudienceTypeIdAsync(string audienceTypeIdentifier);
 
 		/// <summary>
 		/// Retrieves pipelines by pipeline name and audience type identifier asynchronously.
@@ -38,7 +38,7 @@ namespace Transmitly.Pipeline.Configuration
 		/// <param name="pipelineName">The pipeline name.</param>
 		/// <param name="audienceTypeIdentifier">The audience type identifier.</param>
 		/// <returns>A read-only list of pipelines.</returns>
-		Task<IReadOnlyList<IPipeline>> GetAsync(string pipelineName, string audienceTypeIdentifier);
+		Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string audienceTypeIdentifier);
 
 		/// <summary>
 		/// Retrieves a pipeline by pipeline name asynchronously.

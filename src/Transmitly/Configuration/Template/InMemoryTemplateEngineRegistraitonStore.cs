@@ -14,11 +14,11 @@
 
 namespace Transmitly.Template.Configuration
 {
-	internal class InMemoryTemplateEngineRegistrationStore : ITemplateEngineRegistrationStore
+	public class InMemoryTemplateEngineRegistrationStore : ITemplateEngineRegistrationStore
 	{
 		private readonly IEnumerable<ITemplateEngineRegistration> _templateEngineRegistrations;
 
-		internal InMemoryTemplateEngineRegistrationStore(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations)
+		public InMemoryTemplateEngineRegistrationStore(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations)
 		{
 			_templateEngineRegistrations = templateEngineRegistrations ?? throw new ArgumentNullException(nameof(templateEngineRegistrations));
 

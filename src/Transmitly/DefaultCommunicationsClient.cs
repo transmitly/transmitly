@@ -11,7 +11,6 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
-
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
@@ -22,17 +21,17 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
-	internal sealed class DefaultCommunicationsClient(
+	public sealed class DefaultCommunicationsClient(
 		ICommunicationsConfigurationSettings configurationSettings,
-		IPipelineRegistrationStore pipelineRegistrations,
-		IChannelProviderRegistrationStore channelProviderRegistrations,
+		IPipelineFactory pipelineRegistrations,
+		IChannelProviderFactory channelProviderRegistrations,
 		ITemplateEngineRegistrationStore templateEngineRegistrations,
 		IDeliveryReportProvider deliveryReportHandler//,
 													 //IAudienceResolverRegistrationStore audienceResolvers
 		) : ICommunicationsClient
 	{
-		private readonly IPipelineRegistrationStore _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations);
-		private readonly IChannelProviderRegistrationStore _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
+		private readonly IPipelineFactory _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations);
+		private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
 		private readonly ITemplateEngineRegistrationStore _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
 		private readonly ICommunicationsConfigurationSettings _configurationSettings = Guard.AgainstNull(configurationSettings);
 		private readonly IDeliveryReportProvider _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
@@ -91,7 +90,7 @@ namespace Transmitly
 
 			var pipeline = await _pipelineRegistrations.GetAsync(pipelineName).ConfigureAwait(false) ??
 				throw new CommunicationsException($"A communication pipeline named, '{pipelineName}', has not been registered.");
-			
+
 			var pipelineConfiguration = pipeline.ChannelConfiguration;
 
 			var deliveryStrategy = pipeline.ChannelConfiguration.PipelineDeliveryStrategyProvider;
@@ -104,13 +103,13 @@ namespace Transmitly
 				_deliveryReportProvider,
 				_configurationSettings,
 				culture,
-				pipelineName, 
+				pipelineName,
 				pipeline.MessagePriority,
 				pipeline.TransportPriority);
 
 
 			var channelProviders = await _channelProviderRegistrations.GetAllAsync();
-			var groups = CreateChannelChannelProviderGroups(pipelineConfiguration.Channels, channelProviders, allowedChannels, audiences);
+			var groups = await CreateChannelChannelProviderGroupsAsync(_channelProviderRegistrations, pipelineConfiguration.Channels, channelProviders, allowedChannels, audiences);
 			if (groups.Count == 0)
 				return new DispatchCommunicationResult([]);
 
@@ -119,27 +118,30 @@ namespace Transmitly
 			return new DispatchCommunicationResult(results);
 		}
 
-		private static IReadOnlyCollection<ChannelChannelProviderGroup> CreateChannelChannelProviderGroups(
+		private static async Task<IReadOnlyCollection<ChannelChannelProviderGroup>> CreateChannelChannelProviderGroupsAsync(
+			IChannelProviderFactory channelProviderFactory,
 			IReadOnlyCollection<IChannel> configuredChannels,
-			IReadOnlyList<IChannelProvider> allowedChannelProviders,
+			IReadOnlyCollection<IChannelProviderRegistration> allowedChannelProviders,
 			IReadOnlyCollection<string> allowedChannels,
 			IReadOnlyCollection<IAudience> audiences)
 		{
-			return configuredChannels.Select(c =>
+			return (await Task.WhenAll(configuredChannels.Select(c =>
 			{
 				var audienceAddresses = audiences.SelectMany(m => m.Addresses);
-				return new ChannelChannelProviderGroup(
-						c,
-						allowedChannelProviders.Where(x =>
+				var channelProviders = allowedChannelProviders.Where(x =>
 							(!allowedChannels.Any() || allowedChannels.Any(a => c.Id == a)) &&
 							(!c.AllowedChannelProviderIds.Any() || c.AllowedChannelProviderIds.Contains(x.Id)) &&
 							x.SupportsChannel(c.Id) &&
 							audienceAddresses.Any(a => c.SupportsAudienceAddress(a))
-						).ToList()
-					);
+						).Select(m => new ChannelProviderEntity(m, async () => await channelProviderFactory.ResolveClientAsync(m)));
 
-			})
-			.Where(x => x.ChannelProviders.Count != 0)
+				return Task.FromResult(new ChannelChannelProviderGroup(
+						c,
+						channelProviders.ToList()
+					));
+
+			})))
+			.Where(x => x.ChannelProviderClients.Count != 0)
 			.ToList();
 		}
 	}

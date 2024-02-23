@@ -21,7 +21,7 @@ namespace Transmitly.Channel.Configuration.Tests
 	[TestClass()]
 	public class ChannelProviderConfigurationBuilderTests
 	{
-		private readonly Action<IChannelProvider> fail_addConfirm = (provider) =>
+		private readonly Action<IChannelProviderRegistration> fail_addConfirm = (provider) =>
 		{
 			Assert.Fail();
 		};
@@ -36,9 +36,7 @@ namespace Transmitly.Channel.Configuration.Tests
 		[TestMethod]
 		public void NewShouldRequireAddMethod()
 		{
-
 			Assert.ThrowsException<ArgumentNullException>(() => new ChannelProviderConfigurationBuilder(new CommunicationsClientBuilder(), null));
-
 		}
 
 		[TestMethod()]
@@ -50,25 +48,24 @@ namespace Transmitly.Channel.Configuration.Tests
 			var client = new Mock<IChannelProviderClient<object>>();
 			var builder = new CommunicationsClientBuilder();
 			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, fail_addConfirm);
-			Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add(value, client.Object, null));
+			Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add(value, client.Object.GetType(), typeof(object), null));
 		}
 
 		[TestMethod]
 		public void AddShouldGuardAgainstNullClient()
 		{
-
-
 			var builder = new CommunicationsClientBuilder();
 			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, fail_addConfirm);
-			Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add<object>("test", null, null));
+			Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add("test", null, typeof(object), null));
 		}
+
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
 		[TestMethod]
 		public void AddMethodShouldBeUsedOnAdd()
 		{
 			var expectedId = "unit-test";
-			void addConfirm(IChannelProvider provider)
+			void addConfirm(IChannelProviderRegistration provider)
 			{
 				Assert.IsNotNull(provider);
 				Assert.AreEqual(expectedId, provider.Id);
@@ -76,7 +73,7 @@ namespace Transmitly.Channel.Configuration.Tests
 			var client = new Mock<IChannelProviderClient<object>>();
 			var builder = new CommunicationsClientBuilder();
 			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, addConfirm);
-			providerBuilder.Add(expectedId, client.Object, null);
+			providerBuilder.Add(expectedId, client.Object.GetType(), typeof(object), null);
 		}
 	}
 }

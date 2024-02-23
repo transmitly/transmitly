@@ -11,14 +11,15 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
+using Transmitly.ChannelProvider;
 
-using Transmitly.Channel.Configuration;
-namespace Transmitly.ChannelProvider.Configuration
+namespace Transmitly
 {
-	public interface IChannelProviderRegistrationStore
+	public interface IChannelProvider
 	{
-		Task<IReadOnlyList<IChannelProvider>> GetAllAsync();
-		Task<IReadOnlyList<IChannelProvider>> GetAllAsync(IReadOnlyCollection<string> supportedChannelProviders, IReadOnlyCollection<IChannel> channels);
-		Task<IChannelProviderClient> ResolveClientAsync(IChannelProvider registration);
+		string Id { get; }
+		bool SupportsChannel(string channel);
+		bool SupportAudienceAddress(IAudienceAddress audienceAddress);
+		Func<Task<IChannelProviderClient>> ClientInstance { get; }
 	}
 }

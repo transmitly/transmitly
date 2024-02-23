@@ -12,19 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel.Configuration;
+using Transmitly.ChannelProvider;
+using Transmitly.ChannelProvider.Configuration;
+using Transmitly.Pipeline.Configuration;
+using Transmitly.Settings.Configuration;
+using Transmitly.Template.Configuration;
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly
 {
-	public sealed class ChannelChannelProviderGroup
+	public interface ICreateCommunicationsClientContext
 	{
-		internal ChannelChannelProviderGroup(IChannel channel, IReadOnlyCollection<IChannelProvider> channelProviderClients)
-		{
-			Channel = Guard.AgainstNull(channel);
-			ChannelProviderClients = Guard.AgainstNull(channelProviderClients);
-		}
-
-		public IChannel Channel { get; }
-		public IReadOnlyCollection<IChannelProvider> ChannelProviderClients { get; }
+		IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; }
+		IReadOnlyCollection<IPipeline> Pipelines { get; }
+		IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
+		ICommunicationsConfigurationSettings CommunicationsConfigurationSettings { get; }
+		IDeliveryReportProvider DeliveryReportProvider { get; }
 	}
 }

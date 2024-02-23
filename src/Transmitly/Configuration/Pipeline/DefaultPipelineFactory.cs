@@ -17,30 +17,22 @@ namespace Transmitly.Pipeline.Configuration
 	/// <summary>
 	/// Represents a store for pipeline registrations.
 	/// </summary>
-	internal class InMemoryPipelineRegistrationStore : IPipelineRegistrationStore
+	/// <param name="pipelineRegistrations">The registered pipelines</param>
+	/// <exception cref="ArgumentNullException">If the provided pipeline registrations are null</exception>
+	public class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegistrations) : IPipelineFactory
 	{
-		private readonly List<IPipeline> _pipelineRegistrations;
+		private readonly List<IPipeline> _pipelineRegistrations = pipelineRegistrations?.ToList() ?? throw new ArgumentNullException(nameof(pipelineRegistrations));
 
-		/// <summary>
-		/// Creates an instance of <see cref="InMemoryPipelineRegistrationStore"/>
-		/// </summary>
-		/// <param name="pipelineRegistrations">The registered pipelines</param>
-		/// <exception cref="ArgumentNullException">If the provided pipeline registrations are null</exception>
-		internal InMemoryPipelineRegistrationStore(IEnumerable<IPipeline> pipelineRegistrations)
+		///<inheritdoc/>
+		public Task<IReadOnlyCollection<IPipeline>> GetAllAsync()
 		{
-			_pipelineRegistrations = pipelineRegistrations?.ToList() ?? throw new ArgumentNullException(nameof(pipelineRegistrations));
+			return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelineRegistrations);
 		}
 
 		///<inheritdoc/>
-		public Task<IReadOnlyList<IPipeline>> GetAllAsync()
+		public Task<IReadOnlyCollection<IPipeline>> GetByAudienceTypeIdAsync(string audienceTypeIdentifier)
 		{
-			return Task.FromResult<IReadOnlyList<IPipeline>>(_pipelineRegistrations);
-		}
-
-		///<inheritdoc/>
-		public Task<IReadOnlyList<IPipeline>> GetByAudienceTypeIdAsync(string audienceTypeIdentifier)
-		{
-			return Task.FromResult<IReadOnlyList<IPipeline>>(
+			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
 				_pipelineRegistrations
 				.Where(x => x.AudienceTypeIdentifier == audienceTypeIdentifier)
 				.ToList()
@@ -56,9 +48,9 @@ namespace Transmitly.Pipeline.Configuration
 			);
 		}
 		///<inheritdoc/>
-		public Task<IReadOnlyList<IPipeline>> GetAsync(string pipelineName, string audienceTypeIdentifier)
+		public Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string audienceTypeIdentifier)
 		{
-			return Task.FromResult<IReadOnlyList<IPipeline>>(
+			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
 				_pipelineRegistrations
 				.Where(x => x.AudienceTypeIdentifier == audienceTypeIdentifier && pipelineName == x.PipelineName)
 				.ToList()

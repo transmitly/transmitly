@@ -13,18 +13,22 @@
 //  limitations under the License.
 
 using Transmitly.Channel.Configuration;
+using Transmitly.Pipeline.Configuration;
+using Transmitly.Template.Configuration;
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly
 {
-	public sealed class ChannelChannelProviderGroup
+	public abstract class BaseCommunicationClientFactory : ICommunicationClientFactory
 	{
-		internal ChannelChannelProviderGroup(IChannel channel, IReadOnlyCollection<IChannelProvider> channelProviderClients)
+		public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
 		{
-			Channel = Guard.AgainstNull(channel);
-			ChannelProviderClients = Guard.AgainstNull(channelProviderClients);
+			return new DefaultCommunicationsClient(
+				context.CommunicationsConfigurationSettings,
+				new DefaultPipelineFactory(context.Pipelines),
+				new DefaultChannelProviderFactory(context.ChannelProviders),
+				new InMemoryTemplateEngineRegistrationStore(context.TemplateEngines),
+				context.DeliveryReportProvider
+				);
 		}
-
-		public IChannel Channel { get; }
-		public IReadOnlyCollection<IChannelProvider> ChannelProviderClients { get; }
 	}
 }

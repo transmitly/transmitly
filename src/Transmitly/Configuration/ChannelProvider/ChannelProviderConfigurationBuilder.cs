@@ -14,53 +14,90 @@
 
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
+using Transmitly.Exceptions;
 
 namespace Transmitly.Channel.Configuration
 {
 	/// <summary>
-	/// Represents a builder for configuring channel providers in the communications configuration.
+	/// A builder for configuring channel providers in the communications configuration.
 	/// </summary>
 	public sealed class ChannelProviderConfigurationBuilder
 	{
 		private readonly CommunicationsClientBuilder _communicationsConfiguration;
-		private readonly Action<IChannelProvider> _addProvider;
+		private readonly Action<IChannelProviderRegistration> _addProvider;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ChannelProviderConfigurationBuilder"/> class.
 		/// </summary>
 		/// <param name="communicationsConfiguration">The communications configuration builder.</param>
 		/// <param name="addProvider">The action to add a channel provider.</param>
-		internal ChannelProviderConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IChannelProvider> addProvider)
+		internal ChannelProviderConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IChannelProviderRegistration> addProvider)
 		{
 			_communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
 			_addProvider = Guard.AgainstNull(addProvider);
 		}
 
 		/// <summary>
+		/// Adds a channel provider to the communications configuration
+		/// </summary>
+		/// <typeparam name="TClient">Channel Provider Type</typeparam>
+		/// <param name="providerId">Id of the provider.</param>
+		/// <param name="supportedChannelIds">Channels supported by this provider.</param>
+		/// <returns></returns>
+		public CommunicationsClientBuilder Add<TClient>(string providerId, params string[]? supportedChannelIds)
+			where TClient : IChannelProviderClient
+		{
+			return Add(providerId, typeof(TClient), typeof(object), supportedChannelIds);
+		}
+
+		/// <summary>
 		/// Adds a channel provider to the communications configuration.
 		/// </summary>
-		/// <param name="providerId">The ID of the provider.</param>
-		/// <param name="channelProviderInstance">The instance of the channel provider.</param>
-		/// <param name="supportedChannelIds">The IDs of the supported channels.</param>
-		/// <returns>The communications configuration builder.</returns>
-		public CommunicationsClientBuilder Add<TCommunication>(string providerId, IChannelProviderClient<TCommunication> channelProviderInstance, params string[]? supportedChannelIds)
+		/// <typeparam name="TClient">Channel Provider Client Type</typeparam>
+		/// <typeparam name="TCommunication">Communication Type. (see: <see cref="IEmail"/>, <see cref="ISms"/></typeparam>
+		/// <param name="providerId">Id of the provider.</param>
+		/// <param name="supportedChannelIds">Channels supported by this provider.</param>
+		/// <returns></returns>
+		public CommunicationsClientBuilder Add<TClient, TCommunication>(string providerId, params string[]? supportedChannelIds)
+			where TClient : IChannelProviderClient<TCommunication>
 		{
 			_addProvider(
-				new ChannelProvider<TCommunication>(
+				new ChannelProviderRegistration<TClient, TCommunication>(
 					Guard.AgainstNullOrWhiteSpace(providerId),
-					Guard.AgainstNull(channelProviderInstance),
 					supportedChannelIds ?? [])
 			);
 			return _communicationsConfiguration;
 		}
 
-		public CommunicationsClientBuilder Add(string providerId, IChannelProviderClient channelProvider, params string[]? supportedChannelIds)
+		/// <summary>
+		/// Adds a channel provider to the communications configuration.
+		/// </summary>
+		/// <param name="providerId"></param>
+		/// <param name="clientType"></param>
+		/// <param name="communicationType"></param>
+		/// <param name="supportedChannelIds"></param>
+		/// <returns></returns>
+		/// <exception cref="CommunicationsException"></exception>
+		public CommunicationsClientBuilder Add(string providerId, Type clientType, Type communicationType, params string[]? supportedChannelIds)
 		{
-			_addProvider(new Transmitly.Channel.Configuration.ChannelProvider(
-				Guard.AgainstNullOrWhiteSpace(providerId),
-				Guard.AgainstNull(channelProvider),
-				supportedChannelIds ?? [])
-			);
+			Guard.AgainstNull(clientType);
+			Guard.AgainstNull(communicationType);
+
+			if (!(typeof(IChannelProviderClient).IsAssignableFrom(clientType)))
+			{
+				throw new CommunicationsException(nameof(clientType) + " must be of type, " + nameof(IChannelProviderClient));
+			}
+			if (!typeof(IChannelProviderClient<>).MakeGenericType(communicationType).IsAssignableFrom(clientType))
+			{
+				throw new CommunicationsException($"{nameof(clientType)} must be of type, {nameof(IChannelProviderClient)}<{communicationType.Name}>");
+			}
+
+			var registration = Activator
+				.CreateInstance(typeof(ChannelProviderRegistration<,>)
+				.MakeGenericType(clientType, communicationType), Guard.AgainstNullOrWhiteSpace(providerId), supportedChannelIds ?? []) as IChannelProviderRegistration;
+
+			_addProvider(Guard.AgainstNull(registration));
+
 			return _communicationsConfiguration;
 		}
 	}

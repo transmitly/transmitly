@@ -30,8 +30,8 @@ namespace Transmitly
 	{
 		private const string DefaultTemplateEngineId = "Default";
 		private bool _clientCreated;
-
-		private readonly List<IChannelProvider> _channelProviders = [];
+		private ICommunicationClientFactory _clientFactory = new DefaultCommunicationClientFactory();
+		private readonly List<IChannelProviderRegistration> _channelProviders = [];
 		private readonly List<IPipeline> _pipelines = [];
 		//private readonly List<IAudienceResolver> _audienceResolvers = [];
 		private readonly List<ITemplateEngineRegistration> _templateEngines = [];
@@ -94,8 +94,9 @@ namespace Transmitly
 		/// <param name="channelProviderInstance">The instance of the channel provider client.</param>
 		/// <param name="supportedChannelIds">The array of supported channel IDs.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddChannelProvider<TCommunication>(string providerId, IChannelProviderClient<TCommunication> channelProviderInstance, params string[]? supportedChannelIds) =>
-			ChannelProvider.Add(providerId, channelProviderInstance, supportedChannelIds);
+		public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, params string[]? supportedChannelIds)
+			where TClient : IChannelProviderClient<TCommunication>
+			=> ChannelProvider.Add<TClient, TCommunication>(providerId, supportedChannelIds);
 
 		/// <summary>
 		/// Adds a pipeline to the configuration.
@@ -168,6 +169,12 @@ namespace Transmitly
 		//public CommunicationsConfigurationBuilder AddAudienceResolver(string audienceTypeIdentifier, AudienceResolverFunc audienceResolver) =>
 		//    AudienceResolver.Add(audienceTypeIdentifier, audienceResolver);
 
+		public CommunicationsClientBuilder RegisterClientFactory(ICommunicationClientFactory communicationClientFactory)
+		{
+			_clientFactory = communicationClientFactory;
+			return this;
+		}
+
 		/// <summary>
 		/// Creates an instance of the <see cref="ICommunicationsClient"/>.
 		/// </summary>
@@ -179,15 +186,19 @@ namespace Transmitly
 			if (!_templateEngines.Any())
 				AddTemplateEngine(new NonTemplatingTemplatingEngine(), DefaultTemplateEngineId);
 
-			var pipelineStore = new InMemoryPipelineRegistrationStore(_pipelines);
-			//var audienceStore = new InMemoryAudienceResolverRegistrationStore(_audienceResolvers);
-			var templateStore = new InMemoryTemplateEngineRegistrationStore(_templateEngines);
-			var channelProviderStore = new InMemoryChannelProviderRegistrationStore(_channelProviders);
-			var configurationSettings = ConfigurationSettings.GetSettings();
-			var deliveryReportsHandler = DeliveryReport.BuildHandler();
+			var client = _clientFactory.CreateClient(
+				new CreateCommunicationsClientContext(
+					_channelProviders,
+					_pipelines,
+					_templateEngines,
+					ConfigurationSettings.GetSettings(),
+					DeliveryReport.BuildHandler()
+				)
+			);
 
 			_clientCreated = true;
-			return new DefaultCommunicationsClient(configurationSettings, pipelineStore, channelProviderStore, templateStore, deliveryReportsHandler/*, audienceStore*/);
+
+			return client;
 		}
 
 		/// <summary>

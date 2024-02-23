@@ -16,7 +16,7 @@ using Transmitly.ChannelProvider;
 
 namespace Transmitly.Delivery
 {
-	internal class FirstMatchPipelineDeliveryStrategy : PipelineDeliveryStrategyProvider
+	internal class FirstMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
 	{
 		public override async Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken)
 		{
@@ -24,7 +24,7 @@ namespace Transmitly.Delivery
 			foreach (var pair in sendingGroups)
 			{
 				var channel = pair.Channel;
-				foreach (var provider in pair.ChannelProviders)
+				foreach (var provider in pair.ChannelProviderClients)
 				{
 					var result = await DispatchCommunicationAsync(channel, provider, context, cancellationToken);
 

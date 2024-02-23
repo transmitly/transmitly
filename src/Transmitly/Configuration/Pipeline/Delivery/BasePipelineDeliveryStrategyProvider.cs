@@ -18,13 +18,12 @@ using Transmitly.ChannelProvider.Configuration;
 
 namespace Transmitly.Delivery
 {
-	public abstract class PipelineDeliveryStrategyProvider
+	public abstract class BasePipelineDeliveryStrategyProvider
 	{
 		public abstract Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken);
 
 		protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, CancellationToken cancellationToken)
 		{
-			var client = GetChannelProviderClient(provider);
 
 			var internalContext = new DispatchCommunicationContext(context, channel, provider)
 			{
@@ -37,6 +36,8 @@ namespace Transmitly.Delivery
 			{
 				try
 				{
+					var client = Guard.AgainstNull(await provider.ClientInstance());
+
 					results = await client.DispatchAsync(communication, internalContext, cancellationToken);
 
 					if (results == null || results.Count == 0)
@@ -67,11 +68,6 @@ namespace Transmitly.Delivery
 					   )
 				   )
 			   ).ToList();
-		}
-
-		protected virtual IChannelProviderClient GetChannelProviderClient(IChannelProvider provider)
-		{
-			return provider.GetClient();
 		}
 
 		protected virtual async Task<object> GetChannelCommunicationAsync(IChannel channel, IDispatchCommunicationContext context)

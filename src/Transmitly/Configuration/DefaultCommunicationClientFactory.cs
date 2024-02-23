@@ -12,19 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel.Configuration;
-
-namespace Transmitly.ChannelProvider
+namespace Transmitly
 {
-	public sealed class ChannelChannelProviderGroup
+	class DefaultCommunicationClientFactory : BaseCommunicationClientFactory
 	{
-		internal ChannelChannelProviderGroup(IChannel channel, IReadOnlyCollection<IChannelProvider> channelProviderClients)
-		{
-			Channel = Guard.AgainstNull(channel);
-			ChannelProviderClients = Guard.AgainstNull(channelProviderClients);
-		}
 
-		public IChannel Channel { get; }
-		public IReadOnlyCollection<IChannelProvider> ChannelProviderClients { get; }
 	}
 }

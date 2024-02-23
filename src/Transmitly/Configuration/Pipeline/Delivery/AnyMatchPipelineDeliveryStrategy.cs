@@ -16,7 +16,7 @@ using Transmitly.ChannelProvider;
 
 namespace Transmitly.Delivery
 {
-	internal class AnyMatchPipelineDeliveryStrategy : PipelineDeliveryStrategyProvider
+	internal class AnyMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
 	{
 		/// <summary>
 		/// Sends the communication to all the channels using the allowed channel providers.
@@ -31,7 +31,7 @@ namespace Transmitly.Delivery
 			foreach (var pair in sendingGroups)
 			{
 				var channel = pair.Channel;
-				foreach (var provider in pair.ChannelProviders)
+				foreach (var provider in pair.ChannelProviderClients)
 				{
 					var result = await DispatchCommunicationAsync(channel, provider, context, cancellationToken);
 

@@ -37,24 +37,43 @@ namespace Transmitly.Tests
 			configuration.BuildClient();
 			Assert.ThrowsException<InvalidOperationException>(() => configuration.BuildClient());
 		}
+		class Test1 : IChannelProviderClient<object>
+		{
+			public IReadOnlyCollection<string>? RegisteredEvents => throw new NotImplementedException();
 
+			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+			{
+				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);
+			}
+		}
+		class Test2 : IChannelProviderClient<UnitTestCommunication>
+		{
+
+			public IReadOnlyCollection<string>? RegisteredEvents => throw new NotImplementedException();
+
+			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(UnitTestCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+			{
+				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([new DispatchResult(true, nameof(Test2))]);
+			}
+
+			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+			{
+				return DispatchAsync((UnitTestCommunication)communication, communicationContext, cancellationToken);
+			}
+		}
 		[TestMethod]
 		public async Task ChannelProviderShouldBeAbleToRegisterMultipleChannelProviderClientsWithSameProviderId()
 		{
-			string ExpectedSendResultMessage = Guid.NewGuid().ToString();
+
+			string ExpectedSendResultMessage = nameof(Test2);
 			const string expectedId = "test";
 			var providerObject = new Mock<IChannelProviderClient<object>>();
 			var providerUnitTest = new Mock<IChannelProviderClient<UnitTestCommunication>>();
 
-			providerUnitTest.Setup(x => x.DispatchAsync(It.IsAny<UnitTestCommunication>(), It.IsAny<IDispatchCommunicationContext>(), It.IsAny<CancellationToken>()))
-				.Returns(() => { Assert.Fail(); return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]); });
-
-			providerUnitTest.Setup(x => x.DispatchAsync(It.IsAny<UnitTestCommunication>(), It.IsAny<IDispatchCommunicationContext>(), It.IsAny<CancellationToken>()))
-				.Returns(() => Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([new DispatchResult(true, ExpectedSendResultMessage)]));
 
 			var client = new CommunicationsClientBuilder()
-				.ChannelProvider.Add(expectedId, providerObject.Object)
-				.ChannelProvider.Add(expectedId, providerUnitTest.Object)
+				.ChannelProvider.Add<Test1, object>(expectedId)
+				.ChannelProvider.Add<Test2, UnitTestCommunication>(expectedId)
 				.AddPipeline("test", options =>
 				{
 					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("object"));
@@ -65,7 +84,7 @@ namespace Transmitly.Tests
 			var result = await client.DispatchAsync(expectedId, "unit-test-address-to", new { });
 			Assert.IsNotNull(result);
 			Assert.AreEqual(1, result.Results.Count);
-			Assert.AreEqual(ExpectedSendResultMessage, result.Results.Single().ResourceId);
+			Assert.AreEqual(ExpectedSendResultMessage, result.Results?.Single()?.ResourceId);
 		}
 	}
 }

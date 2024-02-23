@@ -17,7 +17,7 @@ namespace Transmitly.ChannelProvider.Configuration
 	/// <summary>
 	/// Represents a channel provider.
 	/// </summary>
-	public interface IChannelProvider
+	public interface IChannelProviderRegistration
 	{
 		/// <summary>
 		/// Gets the ID of the channel provider.
@@ -31,9 +31,11 @@ namespace Transmitly.ChannelProvider.Configuration
 		bool SupportsChannel(string channel);
 
 		bool SupportAudienceAddress(IAudienceAddress audienceAddress);
-		/// <summary>
-		/// Gets the client of the channel provider.
-		/// </summary>
-		IChannelProviderClient GetClient();
+
+		object? Configuration { get; }
+
+		Type ClientType { get; }
+
+		Type CommunicationType { get; }
 	}
 }

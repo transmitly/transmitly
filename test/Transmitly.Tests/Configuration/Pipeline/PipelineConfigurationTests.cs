@@ -50,7 +50,7 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		public void UseChannelSendingStrategy_Should_SetChannelSendingStrategyProvider()
 		{
 			var configuration = new DefaultPipelineProviderConfiguration();
-			var sendingStrategy = new Mock<PipelineDeliveryStrategyProvider>() { CallBase = true };
+			var sendingStrategy = new Mock<BasePipelineDeliveryStrategyProvider>() { CallBase = true };
 
 			configuration.UsePipelineDeliveryStrategy(sendingStrategy.Object);
 

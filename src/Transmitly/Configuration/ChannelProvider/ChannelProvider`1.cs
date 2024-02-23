@@ -18,19 +18,27 @@ using Transmitly.ChannelProvider.Configuration;
 namespace Transmitly.Channel.Configuration
 {
 	///<inheritdoc/>
-	internal class ChannelProvider<TCommunication>(string providerId, IChannelProviderClient<TCommunication> communicationClientType, Func<IAudienceAddress, bool> supportAudienceAddress, params string[]? supportedChannels) : IChannelProvider
+	internal class ChannelProviderRegistration<TClient, TCommunication>(string providerId, Func<IAudienceAddress, bool> supportAudienceAddress, params string[]? supportedChannels) : IChannelProviderRegistration
+		where TClient : IChannelProviderClient<TCommunication>
 	{
-		public ChannelProvider(string providerId, IChannelProviderClient<TCommunication> communicationClientType, params string[]? supportedChannels)
-			: this(providerId, communicationClientType, (audienceAddress) => true, supportedChannels)
+		public ChannelProviderRegistration(string providerId, params string[]? supportedChannels)
+			: this(providerId, (audienceAddress) => true, supportedChannels)
 		{
 
 		}
+
 		private readonly Func<IAudienceAddress, bool> _supportedAudienceAddress = Guard.AgainstNull(supportAudienceAddress);
+
 		private readonly string[] _supportedChannels = supportedChannels ?? [];
-		private readonly IChannelProviderClient<TCommunication> _client = Guard.AgainstNull(communicationClientType);
 
 		///<inheritdoc/>
 		public string Id { get; } = Guard.AgainstNullOrWhiteSpace(providerId);
+
+		public object? Configuration => null;//todo
+
+		public Type ClientType => typeof(TClient);
+
+		public Type CommunicationType => typeof(TCommunication);
 
 		///<inheritdoc />
 		public bool SupportsChannel(string channel)
@@ -38,12 +46,6 @@ namespace Transmitly.Channel.Configuration
 			if (_supportedChannels.Length == 0)
 				return true;
 			return Array.Exists(_supportedChannels, a => string.Equals(a, channel, StringComparison.OrdinalIgnoreCase));
-		}
-
-		///<inheritdoc/>
-		public IChannelProviderClient GetClient()
-		{
-			return new DefaultChannelProviderAdaptor<TCommunication>(_client);
 		}
 
 		public bool SupportAudienceAddress(IAudienceAddress audienceAddress)

@@ -31,28 +31,28 @@ namespace Transmitly.Tests.Integration
 			IReadOnlyCollection<IAudienceAddress> RecipientAddresses = new AudienceAddress[] { new("unit-test-address-recipient") };
 			string[] SupportedChannels = [ChannelProviderId];
 
+
 			var client = new CommunicationsClientBuilder()
-				.AddChannelProvider(
-					ChannelProviderId,
-					new OptionalConfigurationTestChannelProviderClient(),
-					ChannelId, ChannelId + "-2"
-				 )
-				.AddPipeline(PipelineName, options =>
-				{
-					var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
-					channel.Subject.AddStringTemplate("Skip me!");
+			.AddChannelProvider<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>(
+				ChannelProviderId,
+				ChannelId, ChannelId + "-2"
+			 ).
+			 AddPipeline(PipelineName, options =>
+			{
+				var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
+				channel.Subject.AddStringTemplate("Skip me!");
 
-					options.AddChannel(channel);
+				options.AddChannel(channel);
 
-					var channel2 = new UnitTestChannel(FromAddress + "-2", ChannelId + "-2", ChannelProviderId);
-					channel2.Subject.AddStringTemplate(ExpectedMessage);
+				var channel2 = new UnitTestChannel(FromAddress + "-2", ChannelId + "-2", ChannelProviderId);
+				channel2.Subject.AddStringTemplate(ExpectedMessage);
 
-					options.AddChannel(channel2);
+				options.AddChannel(channel2);
 
 
-					options.UseFirstMatchPipelineDeliveryStrategy();
-				})
-				.BuildClient();
+				options.UseFirstMatchPipelineDeliveryStrategy();
+			})
+			.BuildClient();
 
 			var model = ContentModel.Create(new { Code = "123456" });
 			var result = await client.DispatchAsync(PipelineName, RecipientAddresses, ContentModel.Create(new { Code = "123546" }));
@@ -61,7 +61,7 @@ namespace Transmitly.Tests.Integration
 			Assert.IsNotNull(result.Results);
 			Assert.AreEqual(1, result.Results.Count);
 			var singleResult = result.Results.First();
-			Assert.AreEqual(DispatchStatus.Delivered, singleResult.DispatchStatus);
+			Assert.AreEqual(DispatchStatus.Delivered, singleResult?.DispatchStatus);
 		}
 
 
@@ -80,16 +80,14 @@ namespace Transmitly.Tests.Integration
 			string[] SupportedChannels = [ChannelId];
 			//MinimalConfigurationTestChannelProviderClient.ExpectedMessage = ExpectedMessage;
 
-
 			var client = new CommunicationsClientBuilder()
 				//Channel Provider = Provides the services for a particular channel or channels
 				//   - MailKit - Email
 				//   - SendGrid - Email, SMS
 				//   - Twilio - Voice
 				//   - FortuneCookie - Print
-				.AddChannelProvider<UnitTestCommunication>(
+				.AddChannelProvider<MinimalConfigurationTestChannelProviderClient, UnitTestCommunication>(
 					ChannelProviderId,
-					new MinimalConfigurationTestChannelProviderClient(),
 					ChannelId)
 
 				//Pipeline = Defines the available channels of a communication
@@ -116,7 +114,7 @@ namespace Transmitly.Tests.Integration
 			Assert.IsNotNull(result.Results);
 			Assert.AreEqual(1, result.Results.Count);
 			var singleResult = result.Results.First();
-			Assert.AreEqual(DispatchStatus.Delivered, singleResult.DispatchStatus);
+			Assert.AreEqual(DispatchStatus.Delivered, singleResult?.DispatchStatus);
 		}
 	}
 }
