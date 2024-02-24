@@ -94,7 +94,7 @@ That's it. But what did we do?
  * Abstracted away the details of how or (Email) commmunication will get delivered.
    * The added benefit is, in the future, we can change it to SendGrid, MailChimp, Infobip or the many other available providers.
  * Abstracted away the details of generating the email content in our business logic. This keeps your application code short, clean, maintainable.
-   * In the future we may want to send an SMS, push notification. We can now control that in a single location.
+   * In the future we may want to send an SMS and/or push notifications. We can now control that in a single location.
  * We can now use a single service/client for all of our communication needs
    * No more cluttering up your service constructors with IEmailClient, ISmsClient, etc.
    * This also cleans up having if/else statement littered to manage our user's communication preferences 
