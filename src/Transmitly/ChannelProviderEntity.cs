@@ -23,6 +23,8 @@ namespace Transmitly
 
 		public Func<Task<IChannelProviderClient>> ClientInstance => Guard.AgainstNull(clientInstance);
 
+		public Type CommunicationType => channelProviderRegistration.CommunicationType;
+
 		public bool SupportAudienceAddress(IAudienceAddress audienceAddress) =>
 			channelProviderRegistration.SupportAudienceAddress(audienceAddress);
 

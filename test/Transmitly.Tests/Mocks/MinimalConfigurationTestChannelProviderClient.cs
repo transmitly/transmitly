@@ -20,11 +20,9 @@ namespace Transmitly.Tests
 	{
 		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
 
-		//public static string? ExpectedMessage;
-
 		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 		{
-			var result = new DispatchResult(true);
+			var result = new DispatchResult(true, communication.GetType().Name);
 			//result.Messages.Add(ExpectedMessage ?? "Not Set");
 			//_options.OnCommunicationSent(true);
 			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);

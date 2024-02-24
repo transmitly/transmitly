@@ -35,9 +35,17 @@ namespace Transmitly.Delivery
 			{
 				try
 				{
-					var client = Guard.AgainstNull(await provider.ClientInstance());
+					if (!provider.CommunicationType.IsInstanceOfType(communication))
+						return [];
 
-					results = await client.DispatchAsync(communication, internalContext, cancellationToken);
+					var client = Guard.AgainstNull(await provider.ClientInstance());
+					var method = typeof(IChannelProviderClient<>).MakeGenericType(provider.CommunicationType).GetMethod(nameof(IChannelProviderClient.DispatchAsync));
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+					var comm = method.Invoke(client, [communication, internalContext, cancellationToken]);
+					Guard.AgainstNull(comm);
+
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+					results = await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);//await client.DispatchAsync(, internalContext, cancellationToken);
 
 					if (results == null || results.Count == 0)
 						return [];
@@ -56,6 +64,10 @@ namespace Transmitly.Delivery
 				//context.DispatchResults.Add(result);
 			}
 			return results;
+		}
+		public T CastInto<T>(object obj)
+		{
+			return (T)obj;
 		}
 
 		private static IReadOnlyCollection<IAudience> FilterRecipientAddresses(IChannel channel, IChannelProvider provider, IReadOnlyCollection<IAudience> audiences)

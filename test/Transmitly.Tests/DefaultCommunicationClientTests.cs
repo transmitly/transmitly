@@ -18,6 +18,7 @@ using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Settings.Configuration;
 using Transmitly.Template.Configuration;
+using Transmitly.Tests.Integration;
 
 namespace Transmitly.Tests
 {
@@ -97,5 +98,29 @@ namespace Transmitly.Tests
 			);
 		}
 
+		[TestMethod]
+		public async Task ShouldDispatchUsingCorrectChannelProviderClient()
+		{
+			var tly = new CommunicationsClientBuilder();
+
+			tly.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, ISms>("test-channel-provider");
+			tly.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, IEmail>("test-channel-provider");
+			tly.ChannelProvider.Add<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>("test-channel-provider");
+
+			tly.Pipeline.Add("test-pipeline", options =>
+			{
+				options.AddEmail("from@address.com".AsAudienceAddress(), email =>
+				{
+					email.Subject.AddStringTemplate("Test sub");
+				});
+			});
+
+			var client = tly.BuildClient();
+			Assert.IsNotNull(client);
+			var result = await client.DispatchAsync("test-pipeline", "test@test.com", new { });
+			Assert.AreEqual(1, result.Results.Count);
+			Assert.AreEqual(DispatchStatus.Delivered, result.Results.First()?.DispatchStatus);
+			Assert.AreEqual("EmailCommunication", result.Results.First()?.ResourceId);
+		}
 	}
 }
