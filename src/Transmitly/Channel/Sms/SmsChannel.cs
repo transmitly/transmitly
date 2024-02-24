@@ -39,7 +39,7 @@ namespace Transmitly.Channel.Sms
 				Attachments = ConvertAttachments(communicationContext),
 				Priority = communicationContext.MessagePriority,
 				TransportPriority = communicationContext.TransportPriority,
-				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray()//TODO: Filter to supported addresses
+				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray()
 			};
 		}
 
