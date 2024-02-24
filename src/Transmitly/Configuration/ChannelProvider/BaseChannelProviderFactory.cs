@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.ChannelProvider;
-using Transmitly.ChannelProvider.Configuration;
+using Transmitly.Channel.Configuration;
 
-namespace Transmitly.Channel.Configuration
+namespace Transmitly.ChannelProvider.Configuration
 {
 	/// <summary>
 	/// Creates a new instance of <see cref="BaseChannelProviderFactory"/>
