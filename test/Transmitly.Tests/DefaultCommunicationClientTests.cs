@@ -35,7 +35,7 @@ namespace Transmitly.Tests
 		{
 			var (settings, pipeline, channelProvider, template, reportHandler) = GetStores();
 
-			var client = new DefaultCommunicationsClient(settings.Object, pipeline.Object, channelProvider.Object, template.Object, reportHandler.Object/*, audience.Object*/);
+			var client = new DefaultCommunicationsClient(pipeline.Object, channelProvider.Object, template.Object, settings.Object, reportHandler.Object/*, audience.Object*/);
 			Assert.ThrowsExceptionAsync<ArgumentNullException>(() => client.DispatchAsync(value, "test", new { }));
 		}
 
@@ -86,14 +86,14 @@ namespace Transmitly.Tests
 			Mock<ICommunicationsConfigurationSettings> settings,
 			Mock<IPipelineFactory> pipeline,
 			Mock<IChannelProviderFactory> channelProvider,
-			Mock<ITemplateEngineRegistrationStore> template,
+			Mock<ITemplateEngineFactory> template,
 			Mock<IDeliveryReportProvider> deliveryReportHandler) GetStores()
 		{
 			return (
 				new Mock<ICommunicationsConfigurationSettings>(),
 				new Mock<IPipelineFactory>(),
 				new Mock<IChannelProviderFactory>(),
-				new Mock<ITemplateEngineRegistrationStore>(),
+				new Mock<ITemplateEngineFactory>(),
 				new Mock<IDeliveryReportProvider>()
 			);
 		}

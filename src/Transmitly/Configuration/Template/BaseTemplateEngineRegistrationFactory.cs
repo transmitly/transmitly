@@ -14,22 +14,20 @@
 
 namespace Transmitly.Template.Configuration
 {
-	public class InMemoryTemplateEngineRegistrationStore : ITemplateEngineRegistrationStore
+	public abstract class BaseTemplateEngineRegistrationFactory : ITemplateEngineFactory
 	{
-		private readonly IEnumerable<ITemplateEngineRegistration> _templateEngineRegistrations;
+		protected IReadOnlyCollection<ITemplateEngineRegistration> Registrations => _registrations.AsReadOnly();
+		private readonly List<ITemplateEngineRegistration> _registrations;
 
-		public InMemoryTemplateEngineRegistrationStore(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations)
+		protected BaseTemplateEngineRegistrationFactory(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations)
 		{
-			_templateEngineRegistrations = templateEngineRegistrations ?? throw new ArgumentNullException(nameof(templateEngineRegistrations));
-
+			_registrations = Guard.AgainstNull(templateEngineRegistrations).ToList();
 			if (templateEngineRegistrations.Count() != 1)
+			{
 				throw new NotSupportedException("Only a single template engine is supported.");
+			}
 		}
 
-		public ITemplateEngine Get()
-		{
-			//currently only a single template engine is supported
-			return _templateEngineRegistrations.First().Instance;
-		}
+		public abstract ITemplateEngine Get();
 	}
 }

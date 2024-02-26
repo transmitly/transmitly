@@ -14,8 +14,12 @@
 
 namespace Transmitly.Template.Configuration
 {
-	public interface ITemplateEngineRegistrationStore
+	sealed class DefaultTemplateEngineRegistrationFactory(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations) : BaseTemplateEngineRegistrationFactory(templateEngineRegistrations)
 	{
-		ITemplateEngine Get();
+		public override ITemplateEngine Get()
+		{
+			//currently only a single template engine is supported
+			return Registrations.First().Instance;
+		}
 	}
 }

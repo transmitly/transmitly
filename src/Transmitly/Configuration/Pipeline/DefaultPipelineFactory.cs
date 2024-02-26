@@ -15,13 +15,13 @@
 namespace Transmitly.Pipeline.Configuration
 {
 	/// <summary>
-	/// Represents a store for pipeline registrations.
+	/// Default factory for pipeline registrations.
 	/// </summary>
 	/// <param name="pipelineRegistrations">The registered pipelines</param>
 	/// <exception cref="ArgumentNullException">If the provided pipeline registrations are null</exception>
-	public class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegistrations) : IPipelineFactory
+	sealed class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegistrations) : IPipelineFactory
 	{
-		private readonly List<IPipeline> _pipelineRegistrations = pipelineRegistrations?.ToList() ?? throw new ArgumentNullException(nameof(pipelineRegistrations));
+		private readonly List<IPipeline> _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations).ToList();
 
 		///<inheritdoc/>
 		public Task<IReadOnlyCollection<IPipeline>> GetAllAsync()

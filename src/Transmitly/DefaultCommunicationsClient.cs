@@ -22,17 +22,17 @@ using Transmitly.Template.Configuration;
 namespace Transmitly
 {
 	public sealed class DefaultCommunicationsClient(
-		ICommunicationsConfigurationSettings configurationSettings,
 		IPipelineFactory pipelineRegistrations,
 		IChannelProviderFactory channelProviderRegistrations,
-		ITemplateEngineRegistrationStore templateEngineRegistrations,
+		ITemplateEngineFactory templateEngineRegistrations,
+		ICommunicationsConfigurationSettings configurationSettings,
 		IDeliveryReportProvider deliveryReportHandler//,
 													 //IAudienceResolverRegistrationStore audienceResolvers
 		) : ICommunicationsClient
 	{
 		private readonly IPipelineFactory _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations);
 		private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
-		private readonly ITemplateEngineRegistrationStore _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
+		private readonly ITemplateEngineFactory _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
 		private readonly ICommunicationsConfigurationSettings _configurationSettings = Guard.AgainstNull(configurationSettings);
 		private readonly IDeliveryReportProvider _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
 

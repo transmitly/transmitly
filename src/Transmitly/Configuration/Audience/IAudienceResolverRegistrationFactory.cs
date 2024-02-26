@@ -17,7 +17,7 @@ namespace Transmitly.Audience.Configuration
 	/// <summary>
 	/// Represents a store for registering audience resolvers.
 	/// </summary>
-	public interface IAudienceResolverRegistrationStore
+	public interface IAudienceResolverRegistrationFactory
 	{
 		/// <summary>
 		/// Gets all the registered audience resolvers.

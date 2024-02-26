@@ -23,10 +23,10 @@ namespace Transmitly
 		public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
 		{
 			return new DefaultCommunicationsClient(
-				context.CommunicationsConfigurationSettings,
 				new DefaultPipelineFactory(context.Pipelines),
 				new DefaultChannelProviderFactory(context.ChannelProviders),
-				new InMemoryTemplateEngineRegistrationStore(context.TemplateEngines),
+				new DefaultTemplateEngineRegistrationFactory(context.TemplateEngines),
+				context.CommunicationsConfigurationSettings,
 				context.DeliveryReportProvider
 				);
 		}
