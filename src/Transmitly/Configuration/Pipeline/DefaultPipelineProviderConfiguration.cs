@@ -35,7 +35,7 @@ namespace Transmitly.Pipeline.Configuration
 		public ICollection<string> CopyAudiences { get; } = new List<string>();
 
 		/// <inheritdoc />
-		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new AnyMatchPipelineDeliveryStrategy();
+		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
 
 		/// <inheritdoc />
 		public IReadOnlyCollection<IChannel> Channels => _channels;

@@ -63,7 +63,7 @@ namespace Transmitly.Pipeline.Configuration.Tests
 			var configuration = new DefaultPipelineProviderConfiguration();
 
 			Assert.IsNotNull(configuration.PipelineDeliveryStrategyProvider);
-			Assert.IsInstanceOfType(configuration.PipelineDeliveryStrategyProvider, typeof(AnyMatchPipelineDeliveryStrategy));
+			Assert.IsInstanceOfType(configuration.PipelineDeliveryStrategyProvider, typeof(FirstMatchPipelineDeliveryStrategy));
 		}
 
 		[TestMethod]
