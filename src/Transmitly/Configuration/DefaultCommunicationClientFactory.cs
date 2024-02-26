@@ -14,7 +14,7 @@
 
 namespace Transmitly
 {
-	class DefaultCommunicationClientFactory : BaseCommunicationClientFactory
+	sealed class DefaultCommunicationClientFactory : BaseCommunicationClientFactory
 	{
 
 	}

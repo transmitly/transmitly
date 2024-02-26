@@ -17,7 +17,7 @@ namespace Transmitly.Audience.Configuration
 	/// <summary>
 	/// Default audience resolvers factory.
 	/// </summary>
-	internal sealed class DefaultAudienceResolverRegistrationFactory(IEnumerable<IAudienceResolver> audienceResolverRegistrations) : BaseAudienceResolverRegistrationFactory(audienceResolverRegistrations)
+	public sealed class DefaultAudienceResolverRegistrationFactory(IEnumerable<IAudienceResolver> audienceResolverRegistrations) : BaseAudienceResolverRegistrationFactory(audienceResolverRegistrations)
 	{
 	}
 }

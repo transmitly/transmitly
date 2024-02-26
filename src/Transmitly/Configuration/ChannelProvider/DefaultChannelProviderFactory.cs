@@ -21,7 +21,7 @@ namespace Transmitly.Channel.Configuration
 	/// <summary>
 	/// Default channel provider factory
 	/// </summary>
-	sealed class DefaultChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations) : BaseChannelProviderFactory(registrations)
+	public sealed class DefaultChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations) : BaseChannelProviderFactory(registrations)
 	{
 		public override Task<IChannelProviderClient> ResolveClientAsync(IChannelProviderRegistration channelProvider)
 		{
@@ -31,12 +31,12 @@ namespace Transmitly.Channel.Configuration
 
 			if (channelProvider.Configuration == null)
 			{
-				
-				resolvedClient = Activator.CreateInstance(channelProvider.ClientType, channelProvider.ClientType.GetConstructors()[0].GetParameters().Select(x=>Activator.CreateInstance(x.ParameterType)).ToArray()) as IChannelProviderClient;
+
+				resolvedClient = Activator.CreateInstance(channelProvider.ClientType, channelProvider.ClientType.GetConstructors()[0].GetParameters().Select(x => Activator.CreateInstance(x.ParameterType)).ToArray()) as IChannelProviderClient;
 			}
 			else
 				resolvedClient = Activator.CreateInstance(channelProvider.ClientType, channelProvider.Configuration) as IChannelProviderClient;
-			
+
 			return Task.FromResult(Guard.AgainstNull(resolvedClient));
 		}
 	}

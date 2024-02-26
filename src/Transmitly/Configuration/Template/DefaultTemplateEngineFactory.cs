@@ -14,7 +14,7 @@
 
 namespace Transmitly.Template.Configuration
 {
-	sealed class DefaultTemplateEngineRegistrationFactory(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations) : BaseTemplateEngineRegistrationFactory(templateEngineRegistrations)
+	public sealed class DefaultTemplateEngineFactory(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations) : BaseTemplateEngineRegistrationFactory(templateEngineRegistrations)
 	{
 		public override ITemplateEngine Get()
 		{

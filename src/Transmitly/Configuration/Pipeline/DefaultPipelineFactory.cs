@@ -19,7 +19,7 @@ namespace Transmitly.Pipeline.Configuration
 	/// </summary>
 	/// <param name="pipelineRegistrations">The registered pipelines</param>
 	/// <exception cref="ArgumentNullException">If the provided pipeline registrations are null</exception>
-	sealed class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegistrations) : IPipelineFactory
+	public sealed class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegistrations) : IPipelineFactory
 	{
 		private readonly List<IPipeline> _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations).ToList();
 

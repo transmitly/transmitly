@@ -25,7 +25,7 @@ namespace Transmitly
 			return new DefaultCommunicationsClient(
 				new DefaultPipelineFactory(context.Pipelines),
 				new DefaultChannelProviderFactory(context.ChannelProviders),
-				new DefaultTemplateEngineRegistrationFactory(context.TemplateEngines),
+				new DefaultTemplateEngineFactory(context.TemplateEngines),
 				context.CommunicationsConfigurationSettings,
 				context.DeliveryReportProvider
 				);
