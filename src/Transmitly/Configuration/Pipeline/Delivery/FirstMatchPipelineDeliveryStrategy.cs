@@ -28,12 +28,14 @@ namespace Transmitly.Delivery
 				{
 					var result = await DispatchCommunicationAsync(channel, provider, context, cancellationToken);
 
-					if (result == null || result.Count == 0 || result.All(r => r != null && r.DispatchStatus == DispatchStatus.Error))
+					if (result == null || result.Count == 0)
 					{
 						continue;
 					}
 
 					results.AddRange(result);
+					if (result.All(r => r != null && r.DispatchStatus == DispatchStatus.Error))
+						continue;
 					break;
 				}
 			}
