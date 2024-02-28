@@ -56,17 +56,33 @@ namespace Transmitly.Channel.Configuration
 		/// <typeparam name="TClient">Channel Provider Client Type</typeparam>
 		/// <typeparam name="TCommunication">Communication Type. (see: <see cref="IEmail"/>, <see cref="ISms"/></typeparam>
 		/// <param name="providerId">Id of the provider.</param>
+		/// <param name="configuration">Client configuration object.</param>
 		/// <param name="supportedChannelIds">Channels supported by this provider.</param>
 		/// <returns></returns>
-		public CommunicationsClientBuilder Add<TClient, TCommunication>(string providerId, params string[]? supportedChannelIds)
+		public CommunicationsClientBuilder Add<TClient, TCommunication>(string providerId, object? configuration, params string[]? supportedChannelIds)
 			where TClient : IChannelProviderClient<TCommunication>
 		{
 			_addProvider(
 				new ChannelProviderRegistration<TClient, TCommunication>(
 					Guard.AgainstNullOrWhiteSpace(providerId),
+					configuration: configuration,
 					supportedChannelIds ?? [])
 			);
 			return _communicationsConfiguration;
+		}
+
+		/// <summary>
+		/// Adds a channel provider to the communications configuration.
+		/// </summary>
+		/// <typeparam name="TClient">Channel Provider Client Type</typeparam>
+		/// <typeparam name="TCommunication">Communication Type. (see: <see cref="IEmail"/>, <see cref="ISms"/></typeparam>
+		/// <param name="providerId">Id of the provider.</param>
+		/// <param name="supportedChannelIds">Channels supported by this provider.</param>
+		/// <returns></returns>
+		public CommunicationsClientBuilder Add<TClient, TCommunication>(string providerId, params string[]? supportedChannelIds)
+			where TClient : IChannelProviderClient<TCommunication>
+		{
+			return Add<TClient, TCommunication>(providerId, configuration: null, supportedChannelIds);
 		}
 
 		/// <summary>

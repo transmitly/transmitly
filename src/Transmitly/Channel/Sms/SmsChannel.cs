@@ -28,6 +28,8 @@ namespace Transmitly.Channel.Sms
 
 		public IEnumerable<string> AllowedChannelProviderIds => channelProviderId ?? [];
 
+		public Type CommunicationType => typeof(ISms);
+
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
 			var body = await Body.RenderAsync(communicationContext, true).ConfigureAwait(false);

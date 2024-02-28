@@ -96,7 +96,19 @@ namespace Transmitly
 		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, params string[]? supportedChannelIds)
 			where TClient : IChannelProviderClient<TCommunication>
-			=> ChannelProvider.Add<TClient, TCommunication>(providerId, supportedChannelIds);
+			=> ChannelProvider.Add<TClient, TCommunication>(providerId, null, supportedChannelIds);
+
+		/// <summary>
+		/// Adds a channel provider to the configuration.
+		/// </summary>
+		/// <typeparam name="TCommunication">The type of communication the client will handle.</typeparam>
+		/// <param name="providerId">The ID of the channel provider.</param>
+		/// <param name="configuration">Configuration settings for the client.</param>
+		/// <param name="supportedChannelIds">The array of supported channel IDs.</param>
+		/// <returns>The configuration builder.</returns>
+		public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, object? configuration, params string[]? supportedChannelIds)
+			where TClient : IChannelProviderClient<TCommunication>
+			=> ChannelProvider.Add<TClient, TCommunication>(providerId, configuration, supportedChannelIds);
 
 		/// <summary>
 		/// Adds a pipeline to the configuration.

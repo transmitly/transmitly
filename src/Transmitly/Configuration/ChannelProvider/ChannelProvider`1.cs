@@ -18,11 +18,17 @@ using Transmitly.ChannelProvider.Configuration;
 namespace Transmitly.Channel.Configuration
 {
 	///<inheritdoc/>
-	internal class ChannelProviderRegistration<TClient, TCommunication>(string providerId, Func<IAudienceAddress, bool> supportAudienceAddress, params string[]? supportedChannels) : IChannelProviderRegistration
+	internal class ChannelProviderRegistration<TClient, TCommunication>(string providerId, Func<IAudienceAddress, bool> supportAudienceAddress, object? configuration, params string[]? supportedChannels) : IChannelProviderRegistration
 		where TClient : IChannelProviderClient<TCommunication>
 	{
 		public ChannelProviderRegistration(string providerId, params string[]? supportedChannels)
-			: this(providerId, (audienceAddress) => true, supportedChannels)
+			: this(providerId, (audienceAddress) => true, null, supportedChannels)
+		{
+
+		}
+
+		public ChannelProviderRegistration(string providerId, object? configuration, params string[]? supportedChannels)
+		: this(providerId, (audienceAddress) => true, configuration, supportedChannels)
 		{
 
 		}
@@ -34,7 +40,7 @@ namespace Transmitly.Channel.Configuration
 		///<inheritdoc/>
 		public string Id { get; } = Guard.AgainstNullOrWhiteSpace(providerId);
 
-		public object? Configuration => null;//todo
+		public object? Configuration => configuration;
 
 		public Type ClientType => typeof(TClient);
 

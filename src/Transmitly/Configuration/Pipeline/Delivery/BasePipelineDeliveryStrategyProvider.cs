@@ -23,7 +23,6 @@ namespace Transmitly.Delivery
 
 		protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, CancellationToken cancellationToken)
 		{
-
 			var internalContext = new DispatchCommunicationContext(context, channel, provider)
 			{
 				RecipientAudiences = FilterRecipientAddresses(channel, provider, context.RecipientAudiences)
@@ -39,13 +38,7 @@ namespace Transmitly.Delivery
 						return [];
 
 					var client = Guard.AgainstNull(await provider.ClientInstance());
-					var method = typeof(IChannelProviderClient<>).MakeGenericType(provider.CommunicationType).GetMethod(nameof(IChannelProviderClient.DispatchAsync));
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-					var comm = method.Invoke(client, [communication, internalContext, cancellationToken]);
-					Guard.AgainstNull(comm);
-
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-					results = await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);//await client.DispatchAsync(, internalContext, cancellationToken);
+					results = await InvokeDispatchAsyncOnChannelProviderClient(provider, internalContext, communication, client, cancellationToken).ConfigureAwait(false);
 
 					if (results == null || results.Count == 0)
 						return [];
@@ -61,13 +54,19 @@ namespace Transmitly.Delivery
 			else
 			{
 				results = [new DispatchNotEnabledResult()];
-				//context.DispatchResults.Add(result);
 			}
 			return results;
 		}
-		public T CastInto<T>(object obj)
+
+		private static async Task<IReadOnlyCollection<IDispatchResult?>> InvokeDispatchAsyncOnChannelProviderClient(IChannelProvider provider, IDispatchCommunicationContext internalContext, object communication, IChannelProviderClient client, CancellationToken cancellationToken)
 		{
-			return (T)obj;
+			var method = typeof(IChannelProviderClient<>).MakeGenericType(provider.CommunicationType).GetMethod(nameof(IChannelProviderClient.DispatchAsync));
+			Guard.AgainstNull(method);
+
+			var comm = method.Invoke(client, [communication, internalContext, cancellationToken]);
+			Guard.AgainstNull(comm);
+
+			return await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);
 		}
 
 		private static IReadOnlyCollection<IAudience> FilterRecipientAddresses(IChannel channel, IChannelProvider provider, IReadOnlyCollection<IAudience> audiences)

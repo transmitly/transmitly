@@ -23,6 +23,5 @@ namespace Transmitly.ChannelProvider
 	public interface IChannelProviderClient<in TCommunication> : IChannelProviderClient
 	{
 		Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(TCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken);
-
 	}
 }

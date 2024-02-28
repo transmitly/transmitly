@@ -28,10 +28,12 @@ namespace Transmitly.Channel.Email
 
 		public string Id => Transmitly.Id.Channel.Email();
 		public IEnumerable<string> AllowedChannelProviderIds => _channelProviderId;
-		
+
 		private IAudienceAddress? _fromAddress;
 		private Func<IAudienceAddress>? _fromAddressResolver;
 		public IAudienceAddress FromAddress { get => GetFromAddress(); set { _fromAddressResolver = null; _fromAddress = value; } }
+
+		public Type CommunicationType => typeof(IEmail);
 
 		internal EmailChannel(Func<IAudienceAddress> fromAddressResolver, string[]? channelProviderId = null)
 		{

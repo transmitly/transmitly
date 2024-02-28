@@ -30,6 +30,8 @@ namespace Transmitly.Channel.Push
 
 		public IContentTemplateConfiguration ImageUrl { get; } = new ContentTemplateConfiguration();
 
+		public Type CommunicationType => typeof(IPushNotification);
+
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
 			var title = await Title.RenderAsync(communicationContext);

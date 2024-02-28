@@ -14,16 +14,15 @@
 
 using Transmitly.Channel.Configuration;
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly.Channel.Email
 {
-	public sealed class ChannelChannelProviderGroup
+	public abstract class BaseChannel(params string[]? allowedChannelProviders) : IChannel
 	{
-		internal ChannelChannelProviderGroup(IChannel channel, IReadOnlyCollection<IChannelProvider> channelProviderClients)
-		{
-			Channel = Guard.AgainstNull(channel);
-			ChannelProviderClients = Guard.AgainstNull(channelProviderClients);
-		}
-		public IChannel Channel { get; }
-		public IReadOnlyCollection<IChannelProvider> ChannelProviderClients { get; }
+		public abstract Type CommunicationType { get; }
+		public abstract string Id { get; }
+		public virtual IEnumerable<string> AllowedChannelProviderIds { get; } = allowedChannelProviders ?? [];
+
+		public abstract Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
+		public abstract bool SupportsAudienceAddress(IAudienceAddress audienceAddress);
 	}
 }

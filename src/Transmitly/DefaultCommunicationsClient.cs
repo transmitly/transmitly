@@ -132,12 +132,14 @@ namespace Transmitly
 							(!allowedChannels.Any() || allowedChannels.Any(a => c.Id == a)) &&
 							(!c.AllowedChannelProviderIds.Any() || c.AllowedChannelProviderIds.Contains(x.Id)) &&
 							x.SupportsChannel(c.Id) &&
+							(x.CommunicationType == typeof(object) || c.CommunicationType == x.CommunicationType) &&
 							audienceAddresses.Any(a => c.SupportsAudienceAddress(a))
-						).Select(m => new ChannelProviderEntity(m, async () => await channelProviderFactory.ResolveClientAsync(m)));
+						).Select(m => new ChannelProviderEntity(m, async () => await channelProviderFactory.ResolveClientAsync(m)))
+						.ToList();
 
 				return Task.FromResult(new ChannelChannelProviderGroup(
 						c,
-						channelProviders.ToList()
+						channelProviders
 					));
 
 			})))
