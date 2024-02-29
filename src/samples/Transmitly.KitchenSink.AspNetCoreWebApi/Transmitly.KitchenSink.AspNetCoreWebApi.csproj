@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.1" />
+		<PackageReference Include="Transmitly" Version="0.1.0-alpha-84.8064ad6" />
+		<PackageReference Include="Transmitly.ChannelProvider.MailKit" Version="0.1.0-alpha-38.656258d" />
+		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.1.0-alpha-5.fccde4d" />
+		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.0-alpha-5.1befc26" />
+		<PackageReference Include="Transmitly.TemplateEngine.Fluid" Version="0.1.0-alpha-5.0f3388e" />
+		
+	</ItemGroup>
+</Project>
