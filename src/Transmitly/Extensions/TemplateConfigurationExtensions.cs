@@ -45,15 +45,21 @@ namespace Transmitly
 		/// </summary>
 		/// <param name="contentTemplateConfiguration">Template configuration.</param>
 		/// <param name="culture">Culture of the template configuration.</param>
-		/// <param name="configurationRequired">Whether the template configuration is required to exist.</param>
+		/// <param name="configurationRequired">Whether the template configuration is required to exist. If not, the first culture invariant template will be used. Otherwise, null</param>
 		/// <returns>Template configuration; Otherwise null.</returns>
 		/// <exception cref="CommunicationsException">If the template configuration is not found and <paramref name="configurationRequired"/>=true.</exception>
 		public static IContentTemplateRegistration? GetTemplateRegistration(this IContentTemplateConfiguration contentTemplateConfiguration, CultureInfo culture, bool configurationRequired = true)
 		{
 			var result = contentTemplateConfiguration?.TemplateRegistrations.FirstOrDefault(f => f.CultureInfo == culture);
 
-			if (result == null && configurationRequired)
-				throw new CommunicationsException($"Required template registration not found for culture '{culture.Name}'");
+			if (result == null)
+			{
+				if (configurationRequired)
+					throw new CommunicationsException($"Required template registration not found for culture '{culture.Name}'");
+				else
+					return contentTemplateConfiguration?.TemplateRegistrations.FirstOrDefault(f => f.CultureInfo == CultureInfo.InvariantCulture);
+			}
+
 			return result;
 		}
 

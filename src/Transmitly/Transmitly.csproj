@@ -17,7 +17,7 @@
 		<Company>Code Impressions</Company>
 		<Title>Transmit.ly</Title>
 		<Description>An extensible and provider agnostic Communication (email, sms, and more) management library</Description>
-		<Copyright>Copyright © (c) Code Impressions, LLC</Copyright>
+		<Copyright>Copyright (c) Code Impressions, LLC</Copyright>
 		<Authors>Code Impressions</Authors>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageIcon>icon-dark.png</PackageIcon>

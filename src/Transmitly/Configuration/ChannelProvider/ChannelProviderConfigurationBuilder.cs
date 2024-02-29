@@ -101,7 +101,7 @@ namespace Transmitly.Channel.Configuration
 
 			if (!(typeof(IChannelProviderClient).IsAssignableFrom(clientType)))
 			{
-				throw new CommunicationsException(nameof(clientType) + " must be of type, " + nameof(IChannelProviderClient));
+				throw new CommunicationsException($"{nameof(clientType)} must be of type, {nameof(IChannelProviderClient)}");
 			}
 			if (!typeof(IChannelProviderClient<>).MakeGenericType(communicationType).IsAssignableFrom(clientType))
 			{
