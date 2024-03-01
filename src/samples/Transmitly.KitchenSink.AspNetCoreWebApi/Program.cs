@@ -12,12 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 using Swashbuckle.AspNetCore.Filters;
-using Transmitly;
-using Transmitly.Channel.Push;
-using Transmitly.ChannelProvider.Twilio;
-using static Transmitly.KitchenSink.AspNetCoreWebApi.Controllers.CommunicationsController;
 using System.Text.Json;
-using Newtonsoft.Json;
+using Transmitly.Channel.Push;
+using static Transmitly.KitchenSink.AspNetCoreWebApi.Controllers.CommunicationsController;
+
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
 	public class DispatchVMExample : IExamplesProvider<DispatchVM>
@@ -58,7 +56,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
-
+			ILogger? logger = null;
 			// Add services to the container.
 
 			builder.Services.AddControllers().AddJsonOptions(opt => opt.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull);
@@ -85,27 +83,40 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					mailkit.Host = "smtp.domain.com";
 					mailkit.UseSsl = true;
 					mailkit.Port = 587;
-					mailkit.UserName = "uname";
-					mailkit.Password = "pw";
+					mailkit.UserName = "<username>";
+					mailkit.Password = "<password>";
 				})
-				//.AddTwilioSupport(twilio =>
-				//{
-				//	twilio.AuthToken = "<authToken>";
-				//	twilio.AccountSid = "<Sid>";
-				//})
-				//.AddInfobipSupport(infobip =>
-				//{
-				//	infobip.BasePath = "https://base.infobip.com";
-				//	infobip.ApiKey = "key";
-				//	infobip.ApiKeyPrefix = "App";
-				//})
+				.AddTwilioSupport(twilio =>
+				{
+					twilio.AuthToken = "<authToken>";
+					twilio.AccountSid = "<Sid>";
+				})
+				.AddInfobipSupport(infobip =>
+				{
+					infobip.BasePath = "https://base.infobip.com";
+					infobip.ApiKey = "key";
+					infobip.ApiKeyPrefix = "App";
+				})
+				//AddFluidTemplateEngine comes from the Transmitly.TemplateEngine.Fluid
+				//This will give us the ability to replace and generate content in our templates.
+				//In this case, we can use Fluid style templating.
+				.AddFluidTemplateEngine(options => { })
 				//Pipelines are the heart of Transmitly. Pipelines allow you to define your communications
 				//as a domain action. This allows your domain code to stay agnostic to the details of how you
 				//may send out a transactional communication.
 				//For example, our first pipeline defines an Email and Sms. 
 				//Transmitly will take care of the details of which channel to dispatch and which channel provider to use.
 				//All you need to provide is the audience data and Transmitly takes care of the rest!
-				.AddFluidTemplateEngine(options => { options.AllowFunctions = true; })
+				.DeliveryReport.AddDeliveryReportHandler((report) =>
+				{
+					logger?.LogInformation($"[{report.ChannelId} - {report.ChannelProviderId}] Content={JsonSerializer.Serialize(report.ChannelCommunication)}");
+					return Task.CompletedTask;
+				}, [DeliveryReportEvent.Name.Dispatched()])
+				.DeliveryReport.AddDeliveryReportHandler((report) =>
+				{
+					logger?.LogError($"[{report.ChannelId} - {report.ChannelProviderId}] {JsonSerializer.Serialize(report.ChannelCommunication)}");
+					return Task.CompletedTask;
+				}, [DeliveryReportEvent.Name.Error()])
 				.AddPipeline("first-pipeline", pipeline =>
 				{
 					//AddEmail is a channel that is core to the Transmitly library.
@@ -116,8 +127,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						//Transmitly is a bit different. All of our content is supported by templates out of the box.
 						//There are multiple types of templates to get you started. You can even create templates 
 						//specific to certain cultures!
-						email.Subject.AddStringTemplate("Hey {{firstName}}, Check out Transmit.ly!");
-						email.HtmlBody.AddStringTemplate("Hey {{firstName}}, check out this cool new library for managing app communications. <a href=\"https://transmit.ly\">");
+						email.Subject.AddStringTemplate("Hey {{firstName}}, Check out Transmit.ly! " + Emoji.Robot);
+						email.HtmlBody.AddStringTemplate("Hey <strong>{{firstName}}</strong>, check out this cool new library for managing app communications. https://transmit.ly");
 						email.TextBody.AddStringTemplate("Hey, check out this cool new library. https://transmitly.ly");
 					});
 
@@ -130,7 +141,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			});
 
 			var app = builder.Build();
-
+			logger = app.Services.GetService<ILogger<Program>>();
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{

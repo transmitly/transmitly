@@ -13,7 +13,6 @@
 //  limitations under the License.
 
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
