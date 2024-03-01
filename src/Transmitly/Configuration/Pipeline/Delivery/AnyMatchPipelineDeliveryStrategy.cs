@@ -48,7 +48,7 @@ namespace Transmitly.Delivery
 					}
 				}
 			}
-			return results;
+			return results.AsReadOnly();
 		}
 	}
 }

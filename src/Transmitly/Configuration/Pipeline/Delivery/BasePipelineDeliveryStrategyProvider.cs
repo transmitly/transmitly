@@ -47,7 +47,7 @@ namespace Transmitly.Delivery
 				}
 				catch (Exception ex)
 				{
-					//TODO: Fire dispatch error event, log
+					context.DeliveryReportHandler.DeliveryReport(new DeliveryReport(DeliveryReportEvent.Name.Error(), internalContext.ChannelId, internalContext.ChannelProviderId, context, communication));
 					return [new DispatchResult(DispatchStatus.Error, provider.Id, channel.Id) { Exception = ex }];
 				}
 			}

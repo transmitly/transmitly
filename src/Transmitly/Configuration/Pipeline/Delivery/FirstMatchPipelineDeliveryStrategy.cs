@@ -39,7 +39,7 @@ namespace Transmitly.Delivery
 					break;
 				}
 			}
-			return results;
+			return results.AsReadOnly();
 		}
 	}
 }
