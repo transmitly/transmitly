@@ -187,11 +187,27 @@ namespace Transmitly
 			return this;
 		}
 
+		/// <summary>
+		/// Adds a delivery report handler to the configuration.
+		/// </summary>
+		/// <param name="reportHandler">The event handler to register.</param>
+		/// <param name="filterEventNames">List of events to listen to. See <see cref="DeliveryReportEvent.Name"/></param>
+		/// <param name="channelIds">List of channel ids to listen to. See <see cref="Id.Channel"/></param>
+		/// <param name="channelProviderIds">List of channel provider ids to listen to. See <see cref="Id.ChannelProvider"/></param>
+		/// <returns>The configuration builder</returns>
 		public CommunicationsClientBuilder AddDeliveryReportHandler(IObserver<DeliveryReport> reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? channelIds = null, IReadOnlyCollection<string>? channelProviderIds = null)
 		{
 			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, channelIds, channelProviderIds);
 		}
 
+		/// <summary>
+		/// Adds a delivery report handler to the configuration.
+		/// </summary>
+		/// <param name="reportHandler">The event handler to register.</param>
+		/// <param name="filterEventNames">List of events to listen to. See <see cref="DeliveryReportEvent.Name"/></param>
+		/// <param name="channelIds">List of channel ids to listen to. See <see cref="Id.Channel"/></param>
+		/// <param name="channelProviderIds">List of channel provider ids to listen to. See <see cref="Id.ChannelProvider"/></param>
+		/// <returns>The configuration builder</returns>
 		public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null)
 		{
 			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds);
