@@ -65,9 +65,9 @@ namespace Transmitly.Tests
 			const string ChannelProvider1 = "channel-provider-1";
 			const string ChannelId = "unit-test-channel";
 			var client = new CommunicationsClientBuilder()
-					.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, object>(ChannelProvider0, "unit-test-channel")
-					.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, object>(ChannelProvider1, "unit-test-channel")
-					.Pipeline.Add("test-pipeline", options =>
+					.AddChannelProvider<MinimalConfigurationTestChannelProviderClient, object>(ChannelProvider0, "unit-test-channel")
+					.AddChannelProvider<MinimalConfigurationTestChannelProviderClient, object>(ChannelProvider1, "unit-test-channel")
+					.AddPipeline("test-pipeline", options =>
 					{
 						options.AddChannel(new UnitTestChannel("c0-from", ChannelId, ChannelProvider0));
 						options.AddChannel(new UnitTestChannel("c1-from", ChannelId, ChannelProvider1));
@@ -103,11 +103,11 @@ namespace Transmitly.Tests
 		{
 			var tly = new CommunicationsClientBuilder();
 
-			tly.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, ISms>("test-channel-provider");
-			tly.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, IEmail>("test-channel-provider");
-			tly.ChannelProvider.Add<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>("test-channel-provider");
+			tly.AddChannelProvider<MinimalConfigurationTestChannelProviderClient, ISms>("test-channel-provider");
+			tly.AddChannelProvider<MinimalConfigurationTestChannelProviderClient, IEmail>("test-channel-provider");
+			tly.AddChannelProvider<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>("test-channel-provider");
 
-			tly.Pipeline.Add("test-pipeline", options =>
+			tly.AddPipeline("test-pipeline", options =>
 			{
 				options.AddEmail("from@address.com".AsAudienceAddress(), email =>
 				{

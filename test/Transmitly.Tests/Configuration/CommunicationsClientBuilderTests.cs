@@ -21,16 +21,6 @@ namespace Transmitly.Tests
 	public class CommunicationsClientBuilderTests
 	{
 		[TestMethod]
-		public void NewConfigurationBuilderShouldInitializeRegistrationObjects()
-		{
-			var builder = new CommunicationsClientBuilder();
-			Assert.IsNotNull(builder.Pipeline);
-			//Assert.IsNotNull(builder.AudienceResolver);
-			Assert.IsNotNull(builder.TemplateEngine);
-			Assert.IsNotNull(builder.ChannelProvider);
-		}
-
-		[TestMethod]
 		public void CreateClientThrowsIfCalledMoreThanOnce()
 		{
 			var configuration = new CommunicationsClientBuilder();
@@ -72,8 +62,8 @@ namespace Transmitly.Tests
 
 
 			var client = new CommunicationsClientBuilder()
-				.ChannelProvider.Add<Test1, object>(expectedId)
-				.ChannelProvider.Add<Test2, UnitTestCommunication>(expectedId)
+				.AddChannelProvider<Test1, object>(expectedId)
+				.AddChannelProvider<Test2, UnitTestCommunication>(expectedId)
 				.AddPipeline("test", options =>
 				{
 					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("object"));

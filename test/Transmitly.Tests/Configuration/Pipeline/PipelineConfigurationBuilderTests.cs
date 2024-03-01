@@ -61,7 +61,7 @@ namespace Transmitly.Pipeline.Configuration.Tests
 			}).Verifiable();
 
 			var builder = new CommunicationsClientBuilder().AddChannelProvider<MinimalConfigurationTestChannelProviderClient,object>("test-channel-provider");
-			var result = builder.Pipeline.AddModule(module.Object);
+			var result = builder.AddPipelineModule(module.Object);
 			Assert.IsNotNull(result);
 			Assert.AreSame(builder, result);
 			var client = result.BuildClient();
