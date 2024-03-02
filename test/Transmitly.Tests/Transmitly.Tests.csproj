@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net472;net48</TargetFrameworks>
-		<TargetFrameworks>$(TargetFrameworks);net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>$(TargetFrameworks);net6.0;net8.0</TargetFrameworks>
 		<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -53,7 +53,7 @@
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
 		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
 	</PropertyGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
 		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
 	</PropertyGroup>
 </Project>
