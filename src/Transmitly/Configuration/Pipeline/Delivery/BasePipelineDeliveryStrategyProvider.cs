@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Collections.ObjectModel;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 
@@ -69,7 +70,7 @@ namespace Transmitly.Delivery
 			return await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);
 		}
 
-		private static IReadOnlyCollection<IAudience> FilterRecipientAddresses(IChannel channel, IChannelProvider provider, IReadOnlyCollection<IAudience> audiences)
+		private static ReadOnlyCollection<AudienceRecord> FilterRecipientAddresses(IChannel channel, IChannelProvider provider, IReadOnlyCollection<IAudience> audiences)
 		{
 			return audiences.Select(x =>
 			   new AudienceRecord(
@@ -77,7 +78,7 @@ namespace Transmitly.Delivery
 						   channel.SupportsAudienceAddress(a) && provider.SupportAudienceAddress(a)
 					   )
 				   )
-			   ).ToList();
+			   ).ToList().AsReadOnly();
 		}
 
 		protected virtual async Task<object> GetChannelCommunicationAsync(IChannel channel, IDispatchCommunicationContext context)

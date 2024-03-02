@@ -12,14 +12,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using Transmitly.Template.Configuration;
 
 namespace Transmitly.Channel.Sms
 {
-	internal sealed class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
+	public sealed class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
 	{
 		private static readonly string[] _supportedAddressTypes = [AudienceAddress.Types.Cell(), AudienceAddress.Types.HomePhone(), AudienceAddress.Types.Phone(), AudienceAddress.Types.Mobile()];
+		private static readonly Regex _smsMatchRegex = CreateRegex();
+
 		public IAudienceAddress? FromAddress { get; }
 
 		public IContentTemplateConfiguration Body { get; } = new ContentTemplateConfiguration();
@@ -47,15 +50,40 @@ namespace Transmitly.Channel.Sms
 
 		public bool SupportsAudienceAddress(IAudienceAddress audienceAddress)
 		{
-			string phoneNumberPattern = @"^[\+\d\s()-]{1,20}$";
-			if (!string.IsNullOrWhiteSpace(audienceAddress.Type) && !_supportedAddressTypes.Contains(audienceAddress.Type))
-			{
-				return false;
-			}
-			return Regex.IsMatch(audienceAddress.Value, phoneNumberPattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(250));
+			return audienceAddress != null && 
+				(
+					string.IsNullOrWhiteSpace(audienceAddress.Type) ||
+					(
+						!string.IsNullOrWhiteSpace(audienceAddress.Type) &&
+						!_supportedAddressTypes.Contains(audienceAddress.Type)
+					)
+				) &&
+				_smsMatchRegex.IsMatch(audienceAddress.Value);
 		}
 
-		private static IReadOnlyCollection<IAttachment> ConvertAttachments(IDispatchCommunicationContext communicationContext)
+		private static Regex CreateRegex()
+		{
+			// https://en.wikipedia.org/wiki/E.164
+			const string pattern = @"^\+[1-9]\d{1,14}$";
+			const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
+			TimeSpan matchTimeout = TimeSpan.FromSeconds(1);
+
+			try
+			{
+				if (AppDomain.CurrentDomain.GetData("REGEX_DEFAULT_MATCH_TIMEOUT") == null)
+				{
+					return new Regex(pattern, options, matchTimeout);
+				}
+			}
+			catch
+			{
+				// Fallback on error
+			}
+
+			// Legacy fallback (without explicit match timeout)
+			return new Regex(pattern, options);
+		}
+		private static ReadOnlyCollection<IAttachment> ConvertAttachments(IDispatchCommunicationContext communicationContext)
 		{
 			if (communicationContext.ContentModel?.Resources?.Count > 0)
 			{
@@ -64,9 +92,9 @@ namespace Transmitly.Channel.Sms
 				{
 					attachments.Add(new SmsAttachment(resource));
 				}
-				return attachments;
+				return attachments.AsReadOnly();
 			}
-			return [];
+			return new ReadOnlyCollection<IAttachment>([]);
 		}
 	}
 }

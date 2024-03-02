@@ -38,7 +38,7 @@ namespace Transmitly.ChannelProvider.Configuration
 			return Task.FromResult<IReadOnlyCollection<IChannelProviderRegistration>>(
 				_registrations
 				.Where(r =>
-					(!supportedChannelProviders.Any() || supportedChannelProviders.Any(a => r.Id == a)) &&
+					(supportedChannelProviders.Count == 0 || supportedChannelProviders.Any(a => r.Id == a)) &&
 					channels.Any(c => r.SupportsChannel(c.Id))
 				).ToList()
 			);

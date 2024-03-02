@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using Transmitly.Template.Configuration;
 
@@ -31,7 +32,7 @@ namespace Transmitly.Channel.Email
 
 		private IAudienceAddress? _fromAddress;
 		private Func<IAudienceAddress>? _fromAddressResolver;
-		public IAudienceAddress FromAddress { get => GetFromAddress(); set { _fromAddressResolver = null; _fromAddress = value; } }
+		public IAudienceAddress FromAddress { get => GetSenderFromAddress(); set { _fromAddressResolver = null; _fromAddress = value; } }
 
 		public Type CommunicationType => typeof(IEmail);
 
@@ -63,7 +64,7 @@ namespace Transmitly.Channel.Email
 			var textBody = await TextBody.RenderAsync(communicationContext, false);
 			var attachments = ConvertAttachments(communicationContext);
 
-			return new EmailCommunication(GetFromAddress())
+			return new EmailCommunication(GetSenderFromAddress())
 			{
 				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
 				Priority = communicationContext.MessagePriority,
@@ -74,11 +75,13 @@ namespace Transmitly.Channel.Email
 				Attachments = attachments
 			};
 		}
-		private IAudienceAddress GetFromAddress()
+
+		private IAudienceAddress GetSenderFromAddress()
 		{
 			return Guard.AgainstNull(_fromAddressResolver != null ? _fromAddressResolver() : _fromAddress);
 		}
-		private static IReadOnlyCollection<IAttachment> ConvertAttachments(IDispatchCommunicationContext communicationContext)
+
+		private static ReadOnlyCollection<IAttachment> ConvertAttachments(IDispatchCommunicationContext communicationContext)
 		{
 			if (communicationContext.ContentModel?.Resources?.Count > 0)
 			{
@@ -87,9 +90,9 @@ namespace Transmitly.Channel.Email
 				{
 					attachments.Add(new EmailAttachment(resource));
 				}
-				return attachments;
+				return attachments.AsReadOnly();
 			}
-			return [];
+			return new ReadOnlyCollection<IAttachment>([]);
 		}
 
 		//Source=https://github.com/Microsoft/referencesource/blob/master/System.ComponentModel.DataAnnotations/DataAnnotations/EmailAddressAttribute.cs

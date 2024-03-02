@@ -129,7 +129,7 @@ namespace Transmitly
 			{
 				var audienceAddresses = audiences.SelectMany(m => m.Addresses);
 				var channelProviders = allowedChannelProviders.Where(x =>
-							(!allowedChannels.Any() || allowedChannels.Any(a => c.Id == a)) &&
+							(allowedChannels.Count == 0 || allowedChannels.Any(a => c.Id == a)) &&
 							(!c.AllowedChannelProviderIds.Any() || c.AllowedChannelProviderIds.Contains(x.Id)) &&
 							x.SupportsChannel(c.Id) &&
 							(x.CommunicationType == typeof(object) || c.CommunicationType == x.CommunicationType) &&

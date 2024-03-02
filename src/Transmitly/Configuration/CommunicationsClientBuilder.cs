@@ -221,7 +221,7 @@ namespace Transmitly
 		{
 			if (_clientCreated) throw new InvalidOperationException($"{nameof(BuildClient)}() can only be called once.");
 
-			if (!_templateEngines.Any())
+			if (_templateEngines.Count == 0)
 				AddTemplateEngine(new NonTemplatingTemplatingEngine(), DefaultTemplateEngineId);
 
 			var client = _clientFactory.CreateClient(

@@ -33,6 +33,10 @@ namespace Transmitly.Exceptions
 		{
 
 		}
+#if NET8_0_OR_GREATER
+		//https://aka.ms/dotnet-warnings/SYSLIB0051
+		[Obsolete("https://aka.ms/dotnet-warnings/SYSLIB0051", DiagnosticId = "SYSLIB0051")]
+#endif
 		protected CommunicationsException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
