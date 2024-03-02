@@ -13,44 +13,9 @@
 //  limitations under the License.
 using Swashbuckle.AspNetCore.Filters;
 using System.Text.Json;
-using Transmitly.Channel.Push;
-using static Transmitly.KitchenSink.AspNetCoreWebApi.Controllers.CommunicationsController;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
-	public class DispatchVMExample : IExamplesProvider<DispatchVM>
-	{
-		public DispatchVM GetExamples()
-		{
-			return new DispatchVM
-			{
-				PipelineName = "first-pipeline",
-				AllowedChannelIds = null,
-				ContentModel = new DispatchContentModel
-				{
-					Model = new
-					{
-						firstName = "Mit",
-						lastName = "Ly",
-						date = DateTime.UtcNow,
-						amount = 100.11,
-						currency = "$"
-					}
-				},
-				Culture = null,
-				Recipients = new List<DispatchAudience>{
-					 new DispatchAudience(){
-						 Addresses = new List<DispatchAudienceAddress>{
-							new DispatchAudienceAddress{ Value = "example@domain.com", Display="Example Display" },
-							new DispatchAudienceAddress{ Value = "+18885551234" },
-							new DispatchAudienceAddress{ Value = "fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", Type=AudienceAddress.Types.DeviceToken() }
-						 }
-					 }
-				}
-
-			};
-		}
-	}
 	public class Program
 	{
 		public static void Main(string[] args)
@@ -69,10 +34,9 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			});
 			builder.Services.AddSwaggerExamplesFromAssemblyOf(typeof(Program));
 			// We're using the Transmitly.Microsoft.Extensions.DependencyInjection
-			// package to wire everything up using Microsoft Dependency injection
+			// package to wire everything up using Microsoft's Dependency injection.
 			// Alternatively, you can use the CommunicationsClientBuilder directly
 			// to configure Transmitly.
-			// We can use it in our app by adding a ICommunicationsClient in our constructors
 			builder.Services.AddTransmitly(tly =>
 			{
 				// Adding the Transmitly.ChannelProvider.MailKit package
@@ -86,11 +50,17 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					mailkit.UserName = "<username>";
 					mailkit.Password = "<password>";
 				})
+				// Adding the Transmitly.ChannelProvider.Twilio package
+				// allows us to add support to our app for SMS through
+				// an account with Twilio.
 				.AddTwilioSupport(twilio =>
 				{
 					twilio.AuthToken = "<authToken>";
 					twilio.AccountSid = "<Sid>";
 				})
+				// Adding the Transmitly.ChannelProvider.Infobip package
+				// allows us to add support to our app for Email & SMS through
+				// an account with Infobip.
 				.AddInfobipSupport(infobip =>
 				{
 					infobip.BasePath = "https://base.infobip.com";
@@ -101,22 +71,33 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				//This will give us the ability to replace and generate content in our templates.
 				//In this case, we can use Fluid style templating.
 				.AddFluidTemplateEngine(options => { })
+				// We can use delivery report handlers for doing things like loggging and storing
+				// the generated communications even firing off webhooks to notify other systems.
+				.AddDeliveryReportHandler((report) =>
+				{
+					logger?.LogInformation($"[{report.ChannelId} - {report.ChannelProviderId}] Content={JsonSerializer.Serialize(report.ChannelCommunication)}");
+					return Task.CompletedTask;
+					
+					// There's quite a few potential delivery events that can happen with Transmitly.
+					// (see: DeliveryReportEvent.Name -- it's an extension method that any packages can extend!)
+					// Here, we're filtering out all events except for 'Dispatched' events.
+					// If we didn't add any filters, we'd see every report in this handler.
+				}, [DeliveryReportEvent.Name.Dispatched()])
+				// You can also filter out on other conditions like, channels and channel provider ids
+				// for example you can have a handler specifically for email communications and another
+				// that will handle SMS and push
+				.AddDeliveryReportHandler((report) =>
+				{
+					logger?.LogError($"[{report.ChannelId} - {report.ChannelProviderId}] {JsonSerializer.Serialize(report.ChannelCommunication)}");
+					return Task.CompletedTask;
+					//we're filtering out all events except for 'Error' events
+				}, [DeliveryReportEvent.Name.Error()])
 				//Pipelines are the heart of Transmitly. Pipelines allow you to define your communications
 				//as a domain action. This allows your domain code to stay agnostic to the details of how you
 				//may send out a transactional communication.
 				//For example, our first pipeline defines an Email and Sms. 
 				//Transmitly will take care of the details of which channel to dispatch and which channel provider to use.
 				//All you need to provide is the audience data and Transmitly takes care of the rest!
-				.DeliveryReport.AddDeliveryReportHandler((report) =>
-				{
-					logger?.LogInformation($"[{report.ChannelId} - {report.ChannelProviderId}] Content={JsonSerializer.Serialize(report.ChannelCommunication)}");
-					return Task.CompletedTask;
-				}, [DeliveryReportEvent.Name.Dispatched()])
-				.DeliveryReport.AddDeliveryReportHandler((report) =>
-				{
-					logger?.LogError($"[{report.ChannelId} - {report.ChannelProviderId}] {JsonSerializer.Serialize(report.ChannelCommunication)}");
-					return Task.CompletedTask;
-				}, [DeliveryReportEvent.Name.Error()])
 				.AddPipeline("first-pipeline", pipeline =>
 				{
 					//AddEmail is a channel that is core to the Transmitly library.
@@ -140,7 +121,12 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				});
 			});
 
+			// Since we're using DI, we can now add a ICommunicationsClient to the 
+			// constructor of our objects. 
+			// Check out the Controllers/CommunicationsController.cs for an example of
+			// how you can take advantage of everything we've configured here.
 			var app = builder.Build();
+
 			logger = app.Services.GetService<ILogger<Program>>();
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
@@ -152,7 +138,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			app.UseHttpsRedirection();
 
 			app.UseAuthorization();
-
 
 			app.MapControllers();
 
