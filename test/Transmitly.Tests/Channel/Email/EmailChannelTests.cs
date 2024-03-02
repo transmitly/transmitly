@@ -19,7 +19,7 @@ namespace Transmitly.Channel.Email.Tests
 	{
 		[TestMethod()]
 		//https://gist.github.com/cjaoude/fd9910626629b53c4d25
-
+		[DataRow("email@transmit.ly", true)]
 		[DataRow("email@subdomain.example.com", true)]
 		[DataRow("\"email\"@example.com", true)]
 		[DataRow("1234567890@example.com", true)]
@@ -43,7 +43,7 @@ namespace Transmitly.Channel.Email.Tests
 		[DataRow("much.”more\\ unusual”@example.com", false)]
 		[DataRow("very.unusual.”@”.unusual.com @example.com", false)]
 		[DataRow("very.”(),:;<>[]”.VERY.”very@\\ \"very”.unusual@strange.example.com", false)]
-		
+
 		//invalid 
 		[DataRow("plainaddress", false)]
 		[DataRow("#@%^%#$@#$@#.com", false)]
