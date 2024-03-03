@@ -22,7 +22,14 @@ namespace Transmitly
 	[DebuggerStepThrough]
 	public sealed class ChannelProviders
 	{
+		private const string DefaultProviderId = "Default";
+
 		internal ChannelProviders() { }
 
+		public string GetId(string providerId, string? clientId = DefaultProviderId)
+		{
+			Guard.AgainstNullOrWhiteSpace(providerId);
+			return $"{providerId}.{(!string.IsNullOrWhiteSpace(clientId) ? clientId : DefaultProviderId)}";
+		}
 	}
 }

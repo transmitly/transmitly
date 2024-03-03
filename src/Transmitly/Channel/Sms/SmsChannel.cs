@@ -83,6 +83,7 @@ namespace Transmitly.Channel.Sms
 			// Legacy fallback (without explicit match timeout)
 			return new Regex(pattern, options);
 		}
+
 		private static ReadOnlyCollection<IAttachment> ConvertAttachments(IDispatchCommunicationContext communicationContext)
 		{
 			if (communicationContext.ContentModel?.Resources?.Count > 0)
