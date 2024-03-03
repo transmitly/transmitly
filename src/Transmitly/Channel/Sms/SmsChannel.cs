@@ -18,7 +18,7 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly.Channel.Sms
 {
-	public sealed class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
+	internal sealed class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
 	{
 		private static readonly string[] _supportedAddressTypes = [AudienceAddress.Types.Cell(), AudienceAddress.Types.HomePhone(), AudienceAddress.Types.Phone(), AudienceAddress.Types.Mobile()];
 		private static readonly Regex _smsMatchRegex = CreateRegex();
