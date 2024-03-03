@@ -22,6 +22,14 @@ namespace Transmitly
 	[DebuggerStepThrough]
 	public sealed class TemplateEngines
 	{
+		private const string DefaultProviderId = "Default";
+
 		internal TemplateEngines() { }
+
+		public string GetId(string providerId, string? clientId = DefaultProviderId)
+		{
+			Guard.AgainstNullOrWhiteSpace(providerId);
+			return $"{providerId}.{(!string.IsNullOrWhiteSpace(clientId) ? clientId : DefaultProviderId)}";
+		}
 	}
 }
