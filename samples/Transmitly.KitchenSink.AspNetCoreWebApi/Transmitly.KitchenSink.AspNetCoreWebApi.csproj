@@ -5,6 +5,7 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>f11940bf-d327-4966-b73b-6fa36cff2089</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -15,12 +16,8 @@
 		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.1.0-*" />
 		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.0-*" />
 		<PackageReference Include="Transmitly.TemplateEngine.Fluid" Version="0.1.0-*" />
-		<PackageReference Include="Transmitly.ChannelProvider.Firebase"	Version="0.1.0-*"/>
-		<PackageReference Include="Transmitly.ChannelProvider.Infobip"	Version="0.1.0-*"/>
-		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.1.0-*"/>
-	</ItemGroup>
-
-
-	<ItemGroup>
+		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.1.0-*" />
+		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="0.1.0-*" />
+		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.1.0-*" />
 	</ItemGroup>
 </Project>

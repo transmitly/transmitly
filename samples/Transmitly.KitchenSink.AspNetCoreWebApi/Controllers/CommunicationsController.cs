@@ -29,7 +29,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 
 		[HttpPost(Name = "Dispatch")]
 		[ProducesResponseType(200, Type = typeof(IReadOnlyCollection<IDispatchResult?>))]
-		
 		public async Task<IActionResult> Dispatch(DispatchVM dispatchVM, CancellationToken cancellationToken)
 		{
 			var result = await _communicationsClient.DispatchAsync(
