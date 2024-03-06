@@ -29,10 +29,10 @@ namespace Transmitly.Pipeline.Configuration
 		public MessagePriority MessagePriority { get; set; } = MessagePriority.Normal;
 
 		/// <inheritdoc />
-		public ICollection<string> BlindCopyAudiences { get; } = new List<string>();
+		public ICollection<string> BlindCopyAudiences { get; } = [];
 
 		/// <inheritdoc />
-		public ICollection<string> CopyAudiences { get; } = new List<string>();
+		public ICollection<string> CopyAudiences { get; } = [];
 
 		/// <inheritdoc />
 		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
