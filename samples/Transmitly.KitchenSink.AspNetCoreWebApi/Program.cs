@@ -90,6 +90,13 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				//See: Dispatch route in Controllers.CommunicationsController.cs
 				.AddPipeline(PipelineName.FirstPipeline, pipeline =>
 				{
+					// By default pipelines use a "First Match" dispatching strategy.
+					// For example: your recipient has an email and sms address. This pipeline would
+					// Send only the email channel, falling back to the sms if the email channel were to fail.
+					// Out of the box there are multiple dispatch strategies. pipeline. "Any Match" would dispatch
+					// using any channel that matched requirements (See: pipeline.UseAnyMatchPipelineDeliveryStrategy()).
+
+
 					//AddEmail is a channel that is core to the Transmitly library.
 					//AsAudienceAddress() is also a convenience method that helps us create an audience address
 					//Audience addresses can be anything, email, phone, or even a device/app Id for push notifications!
@@ -121,7 +128,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						email.Subject.AddStringTemplate("Your one time password code");
 						email.HtmlBody.AddStringTemplate("Your code: <strong>{{code}}");
 						email.TextBody.AddStringTemplate("Your code: {{code}}");
-						
+
 						// While not required, we can specify channel providers that are allowed to 
 						// handle this communication. In this case, we might want to use our secure
 						// smtp server to send out our OTP codes. Another use-case would be using a schremsII
@@ -134,6 +141,20 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						push.Body.AddStringTemplate("Your OTP code: {{code}}");
 
 					});
+				})
+				//Already have emails defined with SendGrid? Great, we can handle those too!
+				.AddPipeline(PipelineName.SendGridTemplate, pipeline =>
+				{
+					// by default, this channel will only be used if there is a SendGrid channel provider defined.
+					//Don't forget to replace the templateId!
+					pipeline.AddSendGridTemplateEmail(defaultFromAddress.AsAudienceAddress(), "<templateId>", sendGrid => { });
+					// a nice byproduct of the above line, is that we can seamlessly use another channel provider if we decide to move away from SendGrid (or SendGrid is down)
+					// we're restricting this to only use the default mailkit or infobip channel providers
+					pipeline.AddEmail(defaultFromAddress.AsAudienceAddress(), email =>
+					{
+						email.Subject.AddStringTemplate("A subject that matches the SendGrid Template");
+						email.HtmlBody.AddStringTemplate("A body that matches the SendGrid Template");
+					}, Id.ChannelProvider.MailKit(), Id.ChannelProvider.Infobip());
 				});
 			});
 

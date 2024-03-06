@@ -12,12 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.KitchenSink.AspNetCoreWebApi
+namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
-	public static class PipelineName
+	public class SendGridTemplateVM
 	{
-		public const string OtpCode = "otp-code";
-		public const string FirstPipeline = "first-pipeline";
-		public const string SendGridTemplate = "send-grid-template";
+		public DispatchContentModel Model { get; set; } = new DispatchContentModel();
+		public DispatchAudience? Recipient { get; set; }
 	}
 }

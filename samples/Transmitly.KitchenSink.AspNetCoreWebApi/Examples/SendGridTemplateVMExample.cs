@@ -11,13 +11,27 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
+using Swashbuckle.AspNetCore.Filters;
+using Transmitly.Channel.Push;
+using Transmitly.KitchenSink.AspNetCoreWebApi.Controllers;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
-	public static class PipelineName
+	public class SendGridTemplateVMExample : IExamplesProvider<SendGridTemplateVM>
 	{
-		public const string OtpCode = "otp-code";
-		public const string FirstPipeline = "first-pipeline";
-		public const string SendGridTemplate = "send-grid-template";
+		public SendGridTemplateVM GetExamples()
+		{
+			return new SendGridTemplateVM
+			{
+				Recipient = new DispatchAudience()
+				{
+					Addresses =
+					[
+						new() { Value = "example@domain.com" },
+					]
+				},
+				Model = new DispatchContentModel()
+			};
+		}
 	}
 }

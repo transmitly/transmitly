@@ -29,7 +29,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 
 		[HttpPost("dispatch/otp", Name = "OTPCode")]
 		[ProducesResponseType(200, Type = typeof(IReadOnlyCollection<IDispatchResult?>))]
-		public async Task<IActionResult> SendOtpCode(OtpCodeVM otpCodeVM)
+		public async Task<IActionResult> DispatchOtp(OtpCodeVM otpCodeVM)
 		{
 			//If our recipient does not have any preference, we'll send it to any matching recipient address
 			var allowedChannels = otpCodeVM.CommunicationPreferences ?? [];
@@ -38,6 +38,19 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 				[otpCodeVM.Recipient],
 				ContentModel.Create(new { code = otpCodeVM.Code }),
 				allowedChannels: allowedChannels);
+
+			return Ok(result);
+
+		}
+
+		[HttpPost("dispatch/sendgrid-template", Name = "SendGridTemplate")]
+		[ProducesResponseType(200, Type = typeof(IReadOnlyCollection<IDispatchResult?>))]
+		public async Task<IActionResult> DispatchSendGridTemplateMessage(SendGridTemplateVM templateVM)
+		{
+			var result = await _communicationsClient.DispatchAsync(
+				PipelineName.OtpCode,
+				[templateVM.Recipient],
+				templateVM.Model);
 
 			return Ok(result);
 
