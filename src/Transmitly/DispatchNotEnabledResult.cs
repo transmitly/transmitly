@@ -23,5 +23,7 @@ namespace Transmitly
 		public string? ChannelProviderId { get; }
 
 		public string? ChannelId { get; }
+
+		public Exception? Exception => null;
 	}
 }

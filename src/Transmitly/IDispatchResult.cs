@@ -20,5 +20,6 @@ namespace Transmitly
 		DispatchStatus DispatchStatus { get; }
 		string? ChannelProviderId { get; }
 		string? ChannelId { get; }
+		Exception? Exception { get; }
 	}
 }
