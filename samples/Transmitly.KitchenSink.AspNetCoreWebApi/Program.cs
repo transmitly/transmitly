@@ -27,7 +27,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
 			/// !!! See appSettings.json for examples of how to configure with your own settings !!!
 			var tlyConfig = builder.Configuration.GetRequiredSection("Transmitly").Get<TransmitlyConfiguration>();
-			const string defaultFromAddress = "jeremy@transmit.ly";
+			const string defaultFromAddress = "demo@example.com";
 			// Add services to the container.
 			builder.Services.AddControllers().AddJsonOptions(opt =>
 			{
