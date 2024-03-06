@@ -24,7 +24,11 @@
 
 
 ## Quick Start
-Transmitly can do a lot. It's a little overwhelming. Let's start with where we all generally start in our applications, sending an email. For this example we'll send an email to someone that has just signed up for our cool new app.
+Transmitly can do a lot. It's a little overwhelming.
+Start by viewing the ["Kitchen Sink" Sample Project](/samples/Transmitly.KitchenSink.AspNetCoreWebApi) or stick around and go through the intoductory tutorial.
+
+### Tutorial
+Let's start with where we all generally start in our applications, sending an email. For this example we'll send an email to someone that has just signed up for our cool new app.
 
 ### Get Transmitly
 ```shell
