@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Transmitly.ChannelProvider;
-// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -14,11 +12,6 @@ using Transmitly.ChannelProvider;
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Moq;
 
 namespace Transmitly.ChannelProvider.Tests
