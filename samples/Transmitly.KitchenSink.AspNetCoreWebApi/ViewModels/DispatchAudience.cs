@@ -16,15 +16,12 @@ using System.Text.Json.Serialization;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
-	public partial class CommunicationsController
+	public class DispatchAudience : IAudience
 	{
-		public class DispatchAudience : IAudience
-		{
-			public string? Id { get; set; }
-			public string? Type { get; set; }
-			public List<DispatchAudienceAddress> Addresses { get; set; } = [];
-			IReadOnlyCollection<IAudienceAddress> IAudience.Addresses { get => Addresses.AsReadOnly(); set => throw new NotSupportedException(); }
-			public IDictionary<string, string>? Attributes { get; set; } = null;
-		}
+		public string? Id { get; set; }
+		public string? Type { get; set; }
+		public List<DispatchAudienceAddress> Addresses { get; set; } = [];
+		IReadOnlyCollection<IAudienceAddress> IAudience.Addresses { get => Addresses.AsReadOnly(); set => throw new NotSupportedException(); }
+		public IDictionary<string, string>? Attributes { get; set; } = null;
 	}
 }

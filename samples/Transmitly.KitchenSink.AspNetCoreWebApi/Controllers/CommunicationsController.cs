@@ -27,7 +27,23 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 			_communicationsClient = Guard.AgainstNull(communicationsClient);
 		}
 
-		[HttpPost(Name = "Dispatch")]
+		[HttpPost("dispatch/otp", Name = "OTPCode")]
+		[ProducesResponseType(200, Type = typeof(IReadOnlyCollection<IDispatchResult?>))]
+		public async Task<IActionResult> SendOtpCode(OtpCodeVM otpCodeVM)
+		{
+			//If our recipient does not have any preference, we'll send it to any matching recipient address
+			var allowedChannels = otpCodeVM.CommunicationPreferences ?? [];
+			var result = await _communicationsClient.DispatchAsync(
+				PipelineName.OtpCode,
+				[otpCodeVM.Recipient],
+				ContentModel.Create(new { code = otpCodeVM.Code }),
+				allowedChannels: allowedChannels);
+
+			return Ok(result);
+
+		}
+
+		[HttpPost("dispatch", Name = "Dispatch")]
 		[ProducesResponseType(200, Type = typeof(IReadOnlyCollection<IDispatchResult?>))]
 		public async Task<IActionResult> Dispatch(DispatchVM dispatchVM, CancellationToken cancellationToken)
 		{

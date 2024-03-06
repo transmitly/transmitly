@@ -12,31 +12,27 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System.Buffers;
 using System.Text.Json;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
-	public partial class CommunicationsController
+	public class DispatchContentModel : IContentModel
 	{
-		public class DispatchContentModel : IContentModel
+		private object _model;
+
+		public object Model
 		{
-			private object _model;
-
-			public object Model
+			get => _model; set
 			{
-				get => _model; set
-				{
-					if (value is JsonElement)
-						_model = JsonSerializer.Deserialize<System.Dynamic.ExpandoObject>(JsonSerializer.Serialize(value)) ?? new System.Dynamic.ExpandoObject();
-					else
-						_model = value;
+				if (value is JsonElement)
+					_model = JsonSerializer.Deserialize<System.Dynamic.ExpandoObject>(JsonSerializer.Serialize(value)) ?? new System.Dynamic.ExpandoObject();
+				else
+					_model = value;
 
-				}
 			}
-			public IReadOnlyList<Resource>? Resources { get; set; } = null;
-
-			public IReadOnlyList<LinkedResource>? LinkedResources { get; set; } = null;
 		}
+		public IReadOnlyList<Resource>? Resources { get; set; } = null;
+
+		public IReadOnlyList<LinkedResource>? LinkedResources { get; set; } = null;
 	}
 }

@@ -13,7 +13,7 @@
 //  limitations under the License.
 using Swashbuckle.AspNetCore.Filters;
 using Transmitly.Channel.Push;
-using static Transmitly.KitchenSink.AspNetCoreWebApi.Controllers.CommunicationsController;
+using Transmitly.KitchenSink.AspNetCoreWebApi.Controllers;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {

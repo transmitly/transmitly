@@ -12,13 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-
-namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
+namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
-	public class DispatchAudienceAddress : IAudienceAddress
+	public static class PipelineName
 	{
-		public string Value { get; set; }
-		public string? Display { get; set; }
-		public string? Type { get; set; } = null;
+		public const string OtpCode = "otp-code";
+		public const string FirstPipeline = "first-pipeline";
 	}
 }

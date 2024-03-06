@@ -27,7 +27,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
 			/// !!! See appSettings.json for examples of how to configure with your own settings !!!
 			var tlyConfig = builder.Configuration.GetRequiredSection("Transmitly").Get<TransmitlyConfiguration>();
-
+			const string defaultFromAddress = "jeremy@transmit.ly";
 			// Add services to the container.
 			builder.Services.AddControllers().AddJsonOptions(opt =>
 			{
@@ -87,18 +87,19 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				//For example, our first pipeline defines an Email and Sms. 
 				//Transmitly will take care of the details of which channel to dispatch and which channel provider to use.
 				//All you need to provide is the audience data and Transmitly takes care of the rest!
-				.AddPipeline("first-pipeline", pipeline =>
+				//See: Dispatch route in Controllers.CommunicationsController.cs
+				.AddPipeline(PipelineName.FirstPipeline, pipeline =>
 				{
 					//AddEmail is a channel that is core to the Transmitly library.
 					//AsAudienceAddress() is also a convenience method that helps us create an audience address
 					//Audience addresses can be anything, email, phone, or even a device/app Id for push notifications!
-					pipeline.AddEmail("jeremy@transmit.ly".AsAudienceAddress("The Transmit.ly guy"), email =>
+					pipeline.AddEmail(defaultFromAddress.AsAudienceAddress("The Transmit.ly group"), email =>
 					{
 						//Transmitly is a bit different. All of our content is supported by templates out of the box.
 						//There are multiple types of templates to get you started. You can even create templates 
 						//specific to certain cultures!
 						email.Subject.AddStringTemplate("Hey {{firstName}}, Check out Transmit.ly! " + Emoji.Robot);
-						email.HtmlBody.AddStringTemplate("Hey <strong>{{firstName}}</strong>, check out this cool new library for managing app communications. https://transmit.ly");
+						email.HtmlBody.AddStringTemplate("Hey <strong>{{firstName}}</strong>, check out <a href=\"https://transmit.ly\" title=\"Transmit.ly\">this cool new library</a> for managing transactional communications in your app.");
 						email.TextBody.AddStringTemplate("Hey, check out this cool new library. https://transmitly.ly");
 					});
 
@@ -106,6 +107,32 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					pipeline.AddSms(sms =>
 					{
 						sms.Body.AddStringTemplate("Check out Transmit.ly!");
+					});
+				})
+				//See: OTPCode route in Controllers.CommunicationsController.cs
+				.AddPipeline(PipelineName.OtpCode, pipeline =>
+				{
+					//we want to notify any of our channel providers that support it, to prioritize this message
+					//this is different than MessagePriority. Where MessagePriority indicates the importance to the recipient
+					pipeline.TransportPriority = TransportPriority.High;
+
+					pipeline.AddEmail(defaultFromAddress.AsAudienceAddress(), email =>
+					{
+						email.Subject.AddStringTemplate("Your one time password code");
+						email.HtmlBody.AddStringTemplate("Your code: <strong>{{code}}");
+						email.TextBody.AddStringTemplate("Your code: {{code}}");
+						
+						// While not required, we can specify channel providers that are allowed to 
+						// handle this communication. In this case, we might want to use our secure
+						// smtp server to send out our OTP codes. Another use-case would be using a schremsII
+						// smtp server to comply with GDRP rules.
+					});//}, Id.ChannelProvider.MailKit("secure-server"));
+
+					pipeline.AddPushNotification(push =>
+					{
+						push.Title.AddStringTemplate("One time password code");
+						push.Body.AddStringTemplate("Your OTP code: {{code}}");
+
 					});
 				});
 			});

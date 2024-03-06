@@ -12,13 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
-	public class DispatchAudienceAddress : IAudienceAddress
+	public class OtpCodeVM
 	{
-		public string Value { get; set; }
-		public string? Display { get; set; }
-		public string? Type { get; set; } = null;
+		public string Code { get; set; } = "12345";
+		public DispatchAudience? Recipient { get; set; }
+		public List<string> CommunicationPreferences { get; set; } = [];
 	}
 }

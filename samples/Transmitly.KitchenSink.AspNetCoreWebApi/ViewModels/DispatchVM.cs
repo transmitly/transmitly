@@ -13,28 +13,18 @@
 //  limitations under the License.
 
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.Text.Json.Serialization;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
-	public partial class CommunicationsController
+	public class DispatchVM
 	{
-		/// <example>
-		/// {
-		///  recipients : []
-		/// }
-		/// </example>
-		public class DispatchVM
-		{
-			[Required]
-			public string PipelineName { get; set; }
-			[Required]
-			public List<DispatchAudience> Recipients { get; set; } = [];
-			public DispatchContentModel ContentModel { get; set; } = new DispatchContentModel();
-			
-			public string Culture { get; set; } = "";
-			public List<string> AllowedChannelIds { get; set; } = [];
-		}
+		[Required]
+		public string PipelineName { get; set; }
+		[Required]
+		public List<DispatchAudience> Recipients { get; set; } = [];
+		public DispatchContentModel ContentModel { get; set; } = new DispatchContentModel();
+
+		public string Culture { get; set; } = "";
+		public List<string> AllowedChannelIds { get; set; } = [];
 	}
 }
