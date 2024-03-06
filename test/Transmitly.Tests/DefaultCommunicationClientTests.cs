@@ -75,11 +75,9 @@ namespace Transmitly.Tests
 					})
 					.BuildClient();
 			var result = await client.DispatchAsync("test-pipeline", "unit-test-address-0", new { });
-			Assert.AreEqual(2, result.Results.Count);
+			Assert.AreEqual(1, result.Results.Count);
 			Assert.AreEqual(ChannelId, result.Results?.First()?.ChannelId);
-			Assert.AreEqual(ChannelId, result.Results?.Skip(1).First()?.ChannelId);
 			Assert.AreEqual(ChannelProvider0, result.Results?.First()?.ChannelProviderId);
-			Assert.AreEqual(ChannelProvider1, result.Results?.Skip(1).First()?.ChannelProviderId);
 		}
 
 		private static (

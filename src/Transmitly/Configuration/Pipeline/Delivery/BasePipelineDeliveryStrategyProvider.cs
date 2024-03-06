@@ -29,7 +29,7 @@ namespace Transmitly.Delivery
 				RecipientAudiences = FilterRecipientAddresses(channel, provider, context.RecipientAudiences)
 			};
 
-			var communication = await GetChannelCommunicationAsync(channel, internalContext);
+			var communication = await GetChannelCommunicationAsync(channel, internalContext).ConfigureAwait(false);
 			IReadOnlyCollection<IDispatchResult?> results;
 			if (context.Settings.IsDeliveryEnabled)
 			{
