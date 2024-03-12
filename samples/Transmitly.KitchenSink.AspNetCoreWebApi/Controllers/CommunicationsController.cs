@@ -18,17 +18,20 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
-	public partial class CommunicationsController : ControllerBase
+	public partial class CommunicationsController(ICommunicationsClient communicationsClient) : ControllerBase
 	{
-		private readonly ICommunicationsClient _communicationsClient;
+		private readonly ICommunicationsClient _communicationsClient = Guard.AgainstNull(communicationsClient);
 
-		public CommunicationsController(ICommunicationsClient communicationsClient)
+		private IActionResult GetActionResult(IDispatchCommunicationResult result)
 		{
-			_communicationsClient = Guard.AgainstNull(communicationsClient);
+			if (result.IsSuccessful)
+				return Ok(result);
+			return BadRequest(result);
 		}
 
 		[HttpPost("dispatch/otp", Name = "OTPCode")]
-		[ProducesResponseType(200, Type = typeof(IReadOnlyCollection<IDispatchResult?>))]
+		[ProducesResponseType(200, Type = typeof(IDispatchCommunicationResult))]
+		[ProducesResponseType(500, Type = typeof(IDispatchCommunicationResult))]
 		public async Task<IActionResult> DispatchOtp(OtpCodeVM otpCodeVM)
 		{
 			//If our recipient does not have any preference, we'll send it to any matching recipient address
@@ -39,12 +42,13 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 				ContentModel.Create(new { code = otpCodeVM.Code }),
 				allowedChannels: allowedChannels);
 
-			return Ok(result);
+			return GetActionResult(result);
 
 		}
 
 		[HttpPost("dispatch/sendgrid-template", Name = "SendGridTemplate")]
-		[ProducesResponseType(200, Type = typeof(IReadOnlyCollection<IDispatchResult?>))]
+		[ProducesResponseType(200, Type = typeof(IDispatchCommunicationResult))]
+		[ProducesResponseType(500, Type = typeof(IDispatchCommunicationResult))]
 		public async Task<IActionResult> DispatchSendGridTemplateMessage(SendGridTemplateVM templateVM)
 		{
 			var result = await _communicationsClient.DispatchAsync(
@@ -52,12 +56,13 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 				[templateVM.Recipient],
 				templateVM.Model);
 
-			return Ok(result);
+			return GetActionResult(result);
 
 		}
 
 		[HttpPost("dispatch", Name = "Dispatch")]
-		[ProducesResponseType(200, Type = typeof(IReadOnlyCollection<IDispatchResult?>))]
+		[ProducesResponseType(200, Type = typeof(IDispatchCommunicationResult))]
+		[ProducesResponseType(500, Type = typeof(IDispatchCommunicationResult))]
 		public async Task<IActionResult> Dispatch(DispatchVM dispatchVM, CancellationToken cancellationToken)
 		{
 			var result = await _communicationsClient.DispatchAsync(
@@ -68,7 +73,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 					dispatchVM.Culture,
 					cancellationToken
 			);
-			return Ok(result);
+
+			return GetActionResult(result);
 		}
 	}
 }
