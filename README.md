@@ -95,9 +95,9 @@ class AccountRegistrationService
 ```
 
 That's it. But what did we do? 
- * Abstracted away the details of how or (Email) commmunication will get delivered.
+ * Externalized delivery configuration - The details of our (Email) communications are not cluttering up our code base.
    * The added benefit is, in the future, we can change it to SendGrid, MailChimp, Infobip or the many other available providers.
- * Abstracted away the details of generating the email content in our business logic. This keeps your application code short, clean, maintainable.
+ * Externalized message composition - The details of how an email or sms is generated are not scattered throughout your codebase.
    * In the future we may want to send an SMS and/or push notifications. We can now control that in a single location.
  * We can now use a single service/client for all of our communication needs
    * No more cluttering up your service constructors with IEmailClient, ISmsClient, etc.
