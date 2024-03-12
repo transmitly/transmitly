@@ -16,13 +16,13 @@ using Transmitly.ChannelProvider;
 
 namespace Transmitly.Tests.Mocks
 {
-	internal sealed class SuccessChannelProviderClient : IChannelProviderClient
+	internal sealed class SuccessChannelProviderClient : IChannelProviderClient<object>
 	{
 		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
 
 		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 		{
-			var result = new DispatchResult(true);
+			var result = new DispatchResult(DispatchStatus.Dispatched);
 			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
 		}
 	}

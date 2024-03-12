@@ -60,19 +60,18 @@ namespace Transmitly.Pipeline.Configuration.Tests
 				config.TransportPriority = TransportPriority.Lowest;
 			}).Verifiable();
 
-			var builder = new CommunicationsClientBuilder().AddChannelProvider<MinimalConfigurationTestChannelProviderClient,object>("test-channel-provider");
+			var builder = new CommunicationsClientBuilder().AddChannelProvider<MinimalConfigurationTestChannelProviderClient, object>("test-channel-provider");
 			var result = builder.AddPipelineModule(module.Object);
 			Assert.IsNotNull(result);
 			Assert.AreSame(builder, result);
 			var client = result.BuildClient();
 			var sentResult = await client.DispatchAsync("test-name", "unit-test-address", new { });
 			Assert.AreEqual(1, sentResult.Results.Count);
-			Assert.IsTrue(sentResult.Results.All(x => x?.DispatchStatus == DispatchStatus.Delivered));
+			Assert.IsTrue(sentResult.IsSuccessful);
+			Assert.IsTrue(sentResult.Results.All(x => x?.DispatchStatus == DispatchStatus.Dispatched));
 			var deliveryResult = sentResult.Results.First();
 			Assert.AreEqual("unit-test-channel", sentResult.Results?.First()?.ChannelId);
 			Assert.AreEqual("test-channel-provider", deliveryResult?.ChannelProviderId);
 		}
-
-
 	}
 }

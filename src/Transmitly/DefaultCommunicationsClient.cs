@@ -108,14 +108,14 @@ namespace Transmitly
 				pipeline.TransportPriority);
 
 
-			var channelProviders = await _channelProviderRegistrations.GetAllAsync();
+			var channelProviders = await _channelProviderRegistrations.GetAllAsync().ConfigureAwait(false);
 			var groups = await CreateChannelChannelProviderGroupsAsync(_channelProviderRegistrations, pipelineConfiguration.Channels, channelProviders, allowedChannels, audiences);
 			if (groups.Count == 0)
-				return new DispatchCommunicationResult([]);
+				return new DispatchCommunicationResult([], true);
 
-			var results = await deliveryStrategy.DispatchAsync(groups, context, cancellationToken).ConfigureAwait(false);
+			var result = await deliveryStrategy.DispatchAsync(groups, context, cancellationToken).ConfigureAwait(false);
 
-			return new DispatchCommunicationResult(results);
+			return result;
 		}
 
 		private static async Task<IReadOnlyCollection<ChannelChannelProviderGroup>> CreateChannelChannelProviderGroupsAsync(

@@ -20,7 +20,9 @@ namespace Transmitly.Delivery
 {
 	public abstract class BasePipelineDeliveryStrategyProvider
 	{
-		public abstract Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken);
+		protected virtual IReadOnlyCollection<DispatchStatus> SuccessfulStatuses { get; } = [DispatchStatus.Delivered, DispatchStatus.Dispatched, DispatchStatus.Disabled];
+
+		public abstract Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken);
 
 		protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, CancellationToken cancellationToken)
 		{
@@ -57,6 +59,15 @@ namespace Transmitly.Delivery
 				results = [new DispatchNotEnabledResult()];
 			}
 			return results;
+		}
+
+		protected virtual bool IsPipelineSuccessful(IReadOnlyCollection<IDispatchResult?> allResults)
+		{
+			return allResults
+				.GroupBy(g => g?.ChannelId)
+				.All(a =>
+					a.Any(x => x != null && SuccessfulStatuses.Contains(x.DispatchStatus))
+				);
 		}
 
 		private static async Task<IReadOnlyCollection<IDispatchResult?>> InvokeDispatchAsyncOnChannelProviderClient(IChannelProvider provider, IDispatchCommunicationContext internalContext, object communication, IChannelProviderClient client, CancellationToken cancellationToken)

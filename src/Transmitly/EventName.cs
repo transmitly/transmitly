@@ -26,7 +26,6 @@ namespace Transmitly
 #pragma warning disable CA1822 // Mark members as static
 		public string Delivered() => nameof(DispatchStatus.Delivered);
 		public string Error() => nameof(DispatchStatus.Error);
-		public string Queued() => nameof(DispatchStatus.Queued);
 		public string Dispatched() => nameof(DispatchStatus.Dispatched);
 #pragma warning restore CA1822 // Mark members as static
 	}

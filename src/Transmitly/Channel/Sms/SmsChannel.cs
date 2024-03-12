@@ -18,11 +18,16 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly.Channel.Sms
 {
-	internal sealed class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
+	internal sealed partial class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
 	{
 		private static readonly string[] _supportedAddressTypes = [AudienceAddress.Types.Cell(), AudienceAddress.Types.HomePhone(), AudienceAddress.Types.Phone(), AudienceAddress.Types.Mobile()];
 		private static readonly Regex _smsMatchRegex = CreateRegex();
-
+		const string pattern = @"^\+[1-9]\d{1,14}$";
+		const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
+#if FEATURE_SOURCE_GEN
+		[GeneratedRegex(pattern, options)]
+		private static partial Regex DefaultRegex();
+#endif
 		public IAudienceAddress? FromAddress { get; }
 
 		public IContentTemplateConfiguration Body { get; } = new ContentTemplateConfiguration();
@@ -50,7 +55,7 @@ namespace Transmitly.Channel.Sms
 
 		public bool SupportsAudienceAddress(IAudienceAddress audienceAddress)
 		{
-			return audienceAddress != null && 
+			return audienceAddress != null &&
 				(
 					string.IsNullOrWhiteSpace(audienceAddress.Type) ||
 					(
@@ -64,8 +69,7 @@ namespace Transmitly.Channel.Sms
 		private static Regex CreateRegex()
 		{
 			// https://en.wikipedia.org/wiki/E.164
-			const string pattern = @"^\+[1-9]\d{1,14}$";
-			const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
+
 			TimeSpan matchTimeout = TimeSpan.FromSeconds(1);
 
 			try
@@ -81,7 +85,11 @@ namespace Transmitly.Channel.Sms
 			}
 
 			// Legacy fallback (without explicit match timeout)
+#if FEATURE_SOURCE_GEN
+			return DefaultRegex();
+#else
 			return new Regex(pattern, options);
+#endif
 		}
 
 		private static ReadOnlyCollection<IAttachment> ConvertAttachments(IDispatchCommunicationContext communicationContext)

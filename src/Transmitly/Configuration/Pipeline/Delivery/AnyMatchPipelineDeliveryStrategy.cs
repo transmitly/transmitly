@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 
 namespace Transmitly.Delivery
@@ -25,7 +26,7 @@ namespace Transmitly.Delivery
 		/// <param name="allowedChannelProviders">The list of allowed channel providers.</param>
 		/// <param name="context">The communication context.</param>
 		/// <returns>A task representing the asynchronous operation.</returns>
-		public override async Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken)
+		public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken)
 		{
 			var results = new List<IDispatchResult?>(sendingGroups.Count);
 			foreach (var pair in sendingGroups)
@@ -44,11 +45,12 @@ namespace Transmitly.Delivery
 
 					if (result.Any(r => r != null && r.DispatchStatus == DispatchStatus.Error))
 					{
-						return results;
+						return new DispatchCommunicationResult(results, false);
 					}
 				}
 			}
-			return results.AsReadOnly();
+			
+			return new DispatchCommunicationResult(results.AsReadOnly(), IsPipelineSuccessful(results));
 		}
 	}
 }

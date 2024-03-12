@@ -18,7 +18,6 @@ namespace Transmitly
 	{
 		Unknown,
 		Dispatched,
-		Queued,
 		Delivered,
 		Error,
 		Disabled

@@ -12,13 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 
 namespace Transmitly.Delivery
 {
 	internal class FirstMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
 	{
-		public override async Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken)
+		public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken)
 		{
 			var results = new List<IDispatchResult?>(sendingGroups.Count);
 			foreach (var pair in sendingGroups)
@@ -38,10 +39,10 @@ namespace Transmitly.Delivery
 					{
 						continue;
 					}
-					return results.AsReadOnly();
+					return new DispatchCommunicationResult(results.AsReadOnly(), true);
 				}
 			}
-			return results.AsReadOnly();
+			return new DispatchCommunicationResult(results.AsReadOnly(), IsPipelineSuccessful(results));
 		}
 	}
 }

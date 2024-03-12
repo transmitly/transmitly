@@ -16,6 +16,7 @@ namespace Transmitly
 {
 	public interface IDispatchCommunicationResult
 	{
+		bool IsSuccessful { get; }
 		IReadOnlyCollection<IDispatchResult?> Results { get; }
 	}
 }

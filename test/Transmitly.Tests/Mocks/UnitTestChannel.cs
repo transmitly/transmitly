@@ -23,7 +23,7 @@ namespace Transmitly.Tests
 
 		public UnitTestChannel(string fromAddress, string channelId = "unit-test-channel", params string[] allowedChannelProviders)
 		{
-			if (allowedChannelProviders is null || !allowedChannelProviders.Any())
+			if (allowedChannelProviders is null)
 			{
 				AllowedChannelProviderIds = [];
 			}

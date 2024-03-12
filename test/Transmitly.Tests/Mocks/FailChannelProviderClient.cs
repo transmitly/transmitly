@@ -12,12 +12,18 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Configuration
-{
-	public sealed class DispatchCommunicationResult(IReadOnlyCollection<IDispatchResult?> results, bool isSuccessful) : IDispatchCommunicationResult
-	{
-		public IReadOnlyCollection<IDispatchResult?> Results { get; } = Guard.AgainstNull(results);
+using Transmitly.ChannelProvider;
 
-		public bool IsSuccessful { get; } = isSuccessful;
+namespace Transmitly.Tests.Mocks
+{
+	internal sealed class FailChannelProviderClient : IChannelProviderClient<object>
+	{
+		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
+
+		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+		{
+			var result = new DispatchResult(DispatchStatus.Error);
+			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
+		}
 	}
 }

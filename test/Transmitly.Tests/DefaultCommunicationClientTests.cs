@@ -75,9 +75,11 @@ namespace Transmitly.Tests
 					})
 					.BuildClient();
 			var result = await client.DispatchAsync("test-pipeline", "unit-test-address-0", new { });
+			Assert.IsTrue(result.IsSuccessful);
 			Assert.AreEqual(1, result.Results.Count);
 			Assert.AreEqual(ChannelId, result.Results?.First()?.ChannelId);
 			Assert.AreEqual(ChannelProvider0, result.Results?.First()?.ChannelProviderId);
+			
 		}
 
 		private static (
@@ -116,8 +118,9 @@ namespace Transmitly.Tests
 			var client = tly.BuildClient();
 			Assert.IsNotNull(client);
 			var result = await client.DispatchAsync("test-pipeline", "test@test.com", new { });
+			Assert.IsTrue(result.IsSuccessful);
 			Assert.AreEqual(1, result.Results.Count);
-			Assert.AreEqual(DispatchStatus.Delivered, result.Results.First()?.DispatchStatus);
+			Assert.AreEqual(DispatchStatus.Dispatched, result.Results.First()?.DispatchStatus);
 			Assert.AreEqual("EmailCommunication", result.Results.First()?.ResourceId);
 		}
 	}

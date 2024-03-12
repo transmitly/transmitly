@@ -14,6 +14,7 @@
 
 using Moq;
 using Transmitly.ChannelProvider;
+using Transmitly.Tests.Mocks;
 
 namespace Transmitly.Tests
 {
@@ -43,7 +44,7 @@ namespace Transmitly.Tests
 
 			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(UnitTestCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 			{
-				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([new DispatchResult(true, nameof(Test2))]);
+				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([new DispatchResult(DispatchStatus.Dispatched, nameof(Test2))]);
 			}
 
 			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
@@ -73,8 +74,79 @@ namespace Transmitly.Tests
 
 			var result = await client.DispatchAsync(expectedId, "unit-test-address-to", new { });
 			Assert.IsNotNull(result);
+			Assert.IsTrue(result.IsSuccessful);
 			Assert.AreEqual(1, result.Results.Count);
 			Assert.AreEqual(ExpectedSendResultMessage, result.Results?.Single()?.ResourceId);
+		}
+
+
+		[TestMethod]
+		public async Task PipelineShouldBeSuccessfulIfNoChannelProviderSupportedAndNoDispatchErrors()
+		{
+			const string expectedId = "test";
+			var providerObject = new Mock<IChannelProviderClient<object>>();
+			var providerUnitTest = new Mock<IChannelProviderClient<UnitTestCommunication>>();
+
+
+			var client = new CommunicationsClientBuilder()
+				.AddChannelProvider<Test1, object>(expectedId)
+				.AddChannelProvider<Test2, UnitTestCommunication>(expectedId)
+				.AddPipeline("test", options =>
+				{
+					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("nothing"));
+					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("nothing"));
+				})
+				.BuildClient();
+
+			var result = await client.DispatchAsync(expectedId, "unit-test-address-to", new { });
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(0, result.Results.Count);
+		}
+
+
+		[TestMethod]
+		public async Task PipelineShouldFailIfNoChannelProviderSupportedAndNoDispatchErrors()
+		{
+			const string expectedId = "test";
+			var providerObject = new Mock<IChannelProviderClient<object>>();
+			var providerUnitTest = new Mock<IChannelProviderClient<UnitTestCommunication>>();
+
+			var client = new CommunicationsClientBuilder()
+				.AddChannelProvider<FailChannelProviderClient, object>(expectedId)
+				.AddPipeline("test", options =>
+				{
+					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("unit-test"));
+				})
+				.BuildClient();
+
+			var result = await client.DispatchAsync(expectedId, "unit-test-address-to", new { });
+			Assert.IsNotNull(result);
+			Assert.IsFalse(result.IsSuccessful);
+			Assert.AreEqual(1, result.Results.Count);
+		}
+
+		[TestMethod]
+		public async Task PipelineShouldFallbackToNextChannelProviderSupportedByDefault()
+		{
+			const string expectedId = "test";
+			var providerObject = new Mock<IChannelProviderClient<object>>();
+			var providerUnitTest = new Mock<IChannelProviderClient<UnitTestCommunication>>();
+
+			var client = new CommunicationsClientBuilder()
+				.AddChannelProvider<FailChannelProviderClient, object>(expectedId)
+				.AddChannelProvider<SuccessChannelProviderClient, object>("test-2")
+				.AddPipeline("test", options =>
+				{
+					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("unit-test"));
+				})
+				.BuildClient();
+
+			var result = await client.DispatchAsync(expectedId, "unit-test2-address-to", new { });
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(2, result.Results.Count);
+			Assert.IsTrue(result.Results.Any(a => a?.ChannelProviderId == "test-2" && a.DispatchStatus == DispatchStatus.Dispatched));
 		}
 	}
 }

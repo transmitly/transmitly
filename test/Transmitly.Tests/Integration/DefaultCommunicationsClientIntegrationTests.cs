@@ -58,10 +58,11 @@ namespace Transmitly.Tests.Integration
 			var result = await client.DispatchAsync(PipelineName, RecipientAddresses, ContentModel.Create(new { Code = "123546" }));
 
 			Assert.IsNotNull(result);
+			Assert.IsTrue(result.IsSuccessful);
 			Assert.IsNotNull(result.Results);
 			Assert.AreEqual(1, result.Results.Count);
 			var singleResult = result.Results.First();
-			Assert.AreEqual(DispatchStatus.Delivered, singleResult?.DispatchStatus);
+			Assert.AreEqual(DispatchStatus.Dispatched, singleResult?.DispatchStatus);
 		}
 
 
@@ -112,9 +113,10 @@ namespace Transmitly.Tests.Integration
 
 			Assert.IsNotNull(result);
 			Assert.IsNotNull(result.Results);
+			Assert.IsTrue(result.IsSuccessful);
 			Assert.AreEqual(1, result.Results.Count);
 			var singleResult = result.Results.First();
-			Assert.AreEqual(DispatchStatus.Delivered, singleResult?.DispatchStatus);
+			Assert.AreEqual(DispatchStatus.Dispatched, singleResult?.DispatchStatus);
 		}
 	}
 }
