@@ -36,7 +36,7 @@ jobs:
       - name: Package
         run: dotnet pack Transmitly.sln --configuration Debug --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-${{env.buildMetaData}}.${{ env.shortSha }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
       - name: Publish Nuget
-        run: dotnet nuget push .\src\Transmitly\bin\Debug\Transmitly.*.nupkg -k ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push .\src\Transmitly\bin\Debug\Transmitly.*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
       - name: Add github source
         run: dotnet nuget add source --username ${{ secrets.PUBLISH_GITHUB_USERNAME }} --password ${{ secrets.PUBLISH_GITHUB_PACKAGE_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/transmitly/index.json"
       - name: Publish (Github)
