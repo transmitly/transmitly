@@ -1,0 +1,46 @@
+name: Build, Test And Deploy General Extension
+
+on: 
+  workflow_call:
+    inputs:
+      projectName:
+        required: true
+        type: string
+      buildConfiguration:
+        required: false
+        default: Debug
+        type: string
+      runTests: 
+        required: false
+        default: false
+        type: boolean
+      
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 0
+      - name: dotnet
+        uses: actions/setup-dotnet@v3
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0
+        with:
+          versionSpec: '5.x'
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v0
+      - name: Build netcore solution
+        run: dotnet build ${{inputs.projectName}}.sln --configuration ${{inputs.buildConfiguration}} -p:AssemblyVersion=${{ env.assemblySemVer }} -p:FileVersion=${{ env.assemblySemFileVer  }} -p:InformationalVersion=${{ env.informationalVersion }}
+      - name: Test
+        if: ${{ inputs.runTests }}
+        run: dotnet test --no-build --no-restore --configuration Debug ${{inputs.projectName}}.sln
+      - name: Package
+        run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-${{env.buildMetaData}}.${{ env.shortSha }} --configuration ${{inputs.buildConfiguration}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+      - name: Publish Nuget
+        run: dotnet nuget push src\${{inputs.projectName}}\bin\${{inputs.buildConfiguration}}\${{inputs.projectName}}*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
+      - name: Add github source
+        run: dotnet nuget add source --username ${{ secrets.PUBLISH_GITHUB_USERNAME }} --password ${{ secrets.PUBLISH_GITHUB_PACKAGE_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/transmitly/index.json"
+      - name: Publish (Github)
+        run: dotnet nuget push src\${{inputs.projectName}}\bin\${{inputs.buildConfiguration}}\${{inputs.projectName}}*.nupkg --api-key ${{secrets.PUBLISH_GITHUB_PACKAGE_API_KEY}} --source "github"
+        
