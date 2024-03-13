@@ -40,4 +40,4 @@ jobs:
       - name: Add github source
         run: dotnet nuget add source --username ${{ secrets.PUBLISH_GITHUB_USERNAME }} --password ${{ secrets.PUBLISH_GITHUB_PACKAGE_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/transmitly/index.json"
       - name: Publish (Github)
-        run: dotnet nuget push \src\Transmitly\bin\Debug\Transmitly.*.nupkg --api-key ${{secrets.PUBLISH_GITHUB_PACKAGE_API_KEY}} --source "github"
+        run: dotnet nuget push .\src\Transmitly\bin\Debug\Transmitly.*.nupkg --api-key ${{secrets.PUBLISH_GITHUB_PACKAGE_API_KEY}} --source "github"
