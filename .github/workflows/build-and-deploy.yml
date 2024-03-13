@@ -31,13 +31,13 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0
       - name: Build netcore solution
         run: dotnet build Transmitly.sln --configuration Debug -p:AssemblyVersion=${{ env.assemblySemVer }} -p:FileVersion=${{ env.assemblySemFileVer  }} -p:InformationalVersion=${{ env.informationalVersion }}
-      #- name: Build netframework solution
-      #  run: |
-      #    msbuild.exe Transmitly.sln /nologo /nr:false /p:configuration="Debug" /p:AssemblyVersion=${{ env.assemblySemVer }} /p:FileVersion=${{ env.assemblySemFileVer  }} /p:InformationalVersion=${{ env.informationalVersion }}    
       - name: Test
         run: dotnet test --no-build --no-restore --configuration Debug Transmitly.sln
       - name: Package
-        run: dotnet pack Transmitly.sln --configuration Debug --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-alpha-${{env.buildMetaData}}.${{ env.shortSha }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
-      - name: Publish (INT)
-        run: dotnet nuget push .\src\Transmitly\bin\Debug\Transmitly.*.nupkg -s https://apiint.nugettest.org/v3/index.json -k ${{ secrets.NUGET_INT_API_KEY }}
-        
+        run: dotnet pack Transmitly.sln --configuration Debug --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-${{env.buildMetaData}}.${{ env.shortSha }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+      - name: Publish Nuget
+        run: dotnet nuget push .\src\Transmitly\bin\Debug\Transmitly.*.nupkg -s https://apiint.nugettest.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
+      - name: Add github source
+        run: dotnet nuget add source --username ${{ secrets.PUBLISH_GITHUB_USERNAME }} --password ${{ secrets.PUBLISH_GITHUB_PACKAGE_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/transmitly/index.json"
+      - name: Publish (Github)
+        run: dotnet nuget push \src\Transmitly\bin\Debug\Transmitly.*.nupkg --api-key ${{secrets.PUBLISH_GITHUB_PACKAGE_API_KEY}} --source "github"
