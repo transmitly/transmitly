@@ -1,0 +1,61 @@
+name: Build, Test And Deploy Channel Provider
+
+on: 
+  workflow_call:
+    inputs:
+      channelProviderName:
+        required: true
+        type: string
+      buildConfiguration:
+        required: false
+        default: Debug
+        type: string
+      packageVersion:
+        required: true
+        type: string
+      assemblyVersion:
+        required: true
+        type: string
+      fileVersion: 
+        required: true
+        type: string
+      infoVersion: 
+        required: true
+        type: string
+      nugetKey: 
+        required: true
+        type: string
+      runTests: 
+        required: false
+        default: false
+        type: boolean
+      
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 0
+      - name: dotnet
+        uses: actions/setup-dotnet@v3
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0
+        with:
+          versionSpec: '5.x'
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v0
+      - name: Build netcore solution
+        run: dotnet build ${{inputs.channelProviderName}}.sln --configuration ${{inputs.buildConfiguration}} -p:AssemblyVersion=${{ inputs.assemblyVersion }} -p:FileVersion=${{ inputs.fileVersion  }} -p:InformationalVersion=${{ inputs.infoVersion }}
+      - name: Test
+        if: ${{runTests }}
+        run: dotnet test --no-build --no-restore --configuration Debug ${{inputs.channelProviderName}}.sln
+      - name: Package
+        run: dotnet pack --no-build --include-source /p:Version=${{ inputs.packageVersion }} --configuration ${{inputs.buildConfiguration}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+      - name: Publish Nuget
+        run: dotnet nuget push src\${{inputs.channelProviderName}}\bin\${{inputs.buildConfiguration}}\${{inputs.channelProviderName}}*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
+      - name: Add github source
+        run: dotnet nuget add source --username ${{ secrets.PUBLISH_GITHUB_USERNAME }} --password ${{ secrets.PUBLISH_GITHUB_PACKAGE_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/transmitly/index.json"
+      - name: Publish (Github)
+        run: dotnet nuget push src\${{inputs.channelProviderName}}\bin\${{inputs.buildConfiguration}}\${{inputs.channelProviderName}}*.nupkg --api-key ${{secrets.PUBLISH_GITHUB_PACKAGE_API_KEY}} --source "github"
+        
