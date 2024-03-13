@@ -27,12 +27,14 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
 			/// !!! See appSettings.json for examples of how to configure with your own settings !!!
 			var tlyConfig = builder.Configuration.GetRequiredSection("Transmitly").Get<TransmitlyConfiguration>();
-			const string defaultFromAddress = "demo@example.com";
+			
 			// Add services to the container.
 			builder.Services.AddControllers().AddJsonOptions(opt =>
 			{
 				opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 				opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+				opt.JsonSerializerOptions.Converters.Add(new JsonExceptionConverter());
+
 			});
 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -60,11 +62,11 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				//This will give us the ability to replace and generate content in our templates.
 				//In this case, we can use Fluid style templating.
 				tly.AddFluidTemplateEngine(options => { })
-				// We can use delivery report handlers for doing things like loggging and storing
+				// We can use delivery report handlers for doing things like logging and storing
 				// the generated communications even firing off webhooks to notify other systems.
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogInformation($"[{report.ChannelId}:{report.ChannelProviderId}:Dispatched] {JsonSerializer.Serialize(report.ChannelCommunication)}");
+					logger?.LogInformation("[{channelId}:{channelProviderId}:Dispatched] {communication}", report.ChannelId, report.ChannelProviderId, JsonSerializer.Serialize(report.ChannelCommunication));
 					return Task.CompletedTask;
 
 					// There's quite a few potential delivery events that can happen with Transmitly.
@@ -77,7 +79,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				// that will handle SMS and push
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogError($"[{report.ChannelId}:{report.ChannelProviderId}:Error] {JsonSerializer.Serialize(report.ChannelCommunication)}");
+					logger?.LogError("[{channelId}:{channelProvider}:Error] {communication}", report.ChannelId, report.ChannelProviderId, JsonSerializer.Serialize(report.ChannelCommunication));
 					return Task.CompletedTask;
 					//we're filtering out all events except for 'Error' events
 				}, [DeliveryReportEvent.Name.Error()])
@@ -100,7 +102,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					//AddEmail is a channel that is core to the Transmitly library.
 					//AsAudienceAddress() is also a convenience method that helps us create an audience address
 					//Audience addresses can be anything, email, phone, or even a device/app Id for push notifications!
-					pipeline.AddEmail(defaultFromAddress.AsAudienceAddress("The Transmit.ly group"), email =>
+					pipeline.AddEmail(tlyConfig.DefaultFromAddress.AsAudienceAddress("The Transmit.ly group"), email =>
 					{
 						//Transmitly is a bit different. All of our content is supported by templates out of the box.
 						//There are multiple types of templates to get you started. You can even create templates 
@@ -123,10 +125,10 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					//this is different than MessagePriority. Where MessagePriority indicates the importance to the recipient
 					pipeline.TransportPriority = TransportPriority.High;
 
-					pipeline.AddEmail(defaultFromAddress.AsAudienceAddress(), email =>
+					pipeline.AddEmail(tlyConfig.DefaultFromAddress.AsAudienceAddress(), email =>
 					{
 						email.Subject.AddStringTemplate("Your one time password code");
-						email.HtmlBody.AddStringTemplate("Your code: <strong>{{code}}");
+						email.HtmlBody.AddStringTemplate("Your code: <strong>{{code}}</strong>");
 						email.TextBody.AddStringTemplate("Your code: {{code}}");
 
 						// While not required, we can specify channel providers that are allowed to 
@@ -147,10 +149,10 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				{
 					// by default, this channel will only be used if there is a SendGrid channel provider defined.
 					//Don't forget to replace the templateId!
-					pipeline.AddSendGridTemplateEmail(defaultFromAddress.AsAudienceAddress(), "<templateId>", sendGrid => { });
+					pipeline.AddSendGridTemplateEmail(tlyConfig.DefaultFromAddress.AsAudienceAddress(), "<templateId>", sendGrid => { });
 					// a nice byproduct of the above line, is that we can seamlessly use another channel provider if we decide to move away from SendGrid (or SendGrid is down)
 					// we're restricting this to only use the default mailkit or infobip channel providers
-					pipeline.AddEmail(defaultFromAddress.AsAudienceAddress(), email =>
+					pipeline.AddEmail(tlyConfig.DefaultFromAddress.AsAudienceAddress(), email =>
 					{
 						email.Subject.AddStringTemplate("A subject that matches the SendGrid Template");
 						email.HtmlBody.AddStringTemplate("A body that matches the SendGrid Template");

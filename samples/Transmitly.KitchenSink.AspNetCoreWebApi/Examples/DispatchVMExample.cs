@@ -37,15 +37,15 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					}
 				},
 				Culture = null,
-				Recipients = new List<DispatchAudience>{
-					 new DispatchAudience(){
-						 Addresses = new List<DispatchAudienceAddress>{
-							new DispatchAudienceAddress{ Value = "example@domain.com", Display="Example Display" },
-							new DispatchAudienceAddress{ Value = "+18885551234" },
-							new DispatchAudienceAddress{ Value = "fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", Type=AudienceAddress.Types.DeviceToken() }
-						 }
+				Recipients = [
+					 new(){
+						 Addresses = [
+							new() { Value = "example@domain.com", Display="Example Display" },
+							new() { Value = "+18885551234" },
+							new() { Value = "fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", Type=AudienceAddress.Types.DeviceToken() }
+						 ]
 					 }
-				}
+				]
 
 			};
 		}

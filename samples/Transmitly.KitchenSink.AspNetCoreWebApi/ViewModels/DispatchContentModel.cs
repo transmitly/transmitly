@@ -18,7 +18,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
 	public class DispatchContentModel : IContentModel
 	{
-		private object _model;
+		private object _model = new { };
 
 		public object Model
 		{
