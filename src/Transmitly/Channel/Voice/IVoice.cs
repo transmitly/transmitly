@@ -12,16 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Push
+namespace Transmitly
 {
-	internal sealed class PushNotificationCommunication(IReadOnlyCollection<IAudienceAddress> audienceAddresses, string? title, string? body, string? imageUrl) : IPushNotification
+	public interface IVoice
 	{
-		public string? Title { get; set; } = title;
-
-		public string? Body { get; set; } = body;
-
-		public string? ImageUrl { get; set; } = imageUrl;
-
-		public IReadOnlyCollection<IAudienceAddress> To { get; } = Guard.AgainstNull(audienceAddresses);
+		IAudienceAddress? From { get; }
+		IAudienceAddress[]? To { get; }
+		string? SpeakingVoiceId { get; }
+		string Message { get; }
+		TransportPriority TransportPriority { get; }
 	}
 }

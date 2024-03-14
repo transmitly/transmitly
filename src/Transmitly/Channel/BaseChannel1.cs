@@ -14,21 +14,15 @@
 
 using Transmitly.Channel.Configuration;
 
-namespace Transmitly.Channel.Email
+namespace Transmitly.Channel
 {
-	public abstract class BaseChannel<TCommunication>(params string[]? allowedChannelProviders) : IChannel<TCommunication>
+	public abstract class BaseChannel(params string[]? allowedChannelProviders) : IChannel
 	{
-		public Type CommunicationType => typeof(TCommunication);
+		public abstract Type CommunicationType { get; }
 		public abstract string Id { get; }
 		public virtual IEnumerable<string> AllowedChannelProviderIds { get; } = allowedChannelProviders ?? [];
 
-		public abstract Task<TCommunication> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
+		public abstract Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
 		public abstract bool SupportsAudienceAddress(IAudienceAddress audienceAddress);
-
-		async Task<object> IChannel.GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
-		{
-			var result = await GenerateCommunicationAsync(communicationContext).ConfigureAwait(false);
-			return result!;
-		}
 	}
 }

@@ -12,17 +12,18 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel.Configuration;
-
-namespace Transmitly.Channel.Email
+namespace Transmitly.Channel.Voice
 {
-	public abstract class BaseChannel(params string[]? allowedChannelProviders) : IChannel
+	internal sealed class VoiceCommunication(string message) : IVoice
 	{
-		public abstract Type CommunicationType { get; }
-		public abstract string Id { get; }
-		public virtual IEnumerable<string> AllowedChannelProviderIds { get; } = allowedChannelProviders ?? [];
+		public IAudienceAddress? From { get; set; }
 
-		public abstract Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
-		public abstract bool SupportsAudienceAddress(IAudienceAddress audienceAddress);
+		public IAudienceAddress[]? To { get; set; }
+
+		public string? SpeakingVoiceId { get; set; }
+
+		public string Message { get; set; } = Guard.AgainstNullOrWhiteSpace(message);
+
+		public TransportPriority TransportPriority { get; set; }
 	}
 }

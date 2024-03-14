@@ -18,7 +18,11 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly.Channel.Email
 {
+#if FEATURE_SOURCE_GEN
 	internal sealed partial class EmailChannel : IEmailChannel
+#else
+	internal sealed class EmailChannel : IEmailChannel
+#endif
 	{
 		private readonly string[] _channelProviderId;
 		private static readonly Regex _emailMatchRegex = CreateRegEx();

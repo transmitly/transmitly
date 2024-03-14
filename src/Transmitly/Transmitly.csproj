@@ -23,7 +23,7 @@
 		<PackageIcon>icon-dark.png</PackageIcon>
 		<PackageIconUrl>https://github.com/transmitly/transmitly/blob/main/assets/icon-dark.png</PackageIconUrl>
 		<RepositoryUrl>https://github.com/transmitly/transmitly.git</RepositoryUrl>
-		<PackageTags>email sms email-client push-notifications email-sender emails sms-messages sms-client pushnotifications sms-notifications sms-service email-service transmitly transmit.ly</PackageTags>
+		<PackageTags>email sms push voice email-client push-notifications email-sender emails sms-messages sms-client pushnotifications sms-notifications sms-service email-service transmitly transmit.ly</PackageTags>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PackageReadmeFile>README.md</PackageReadmeFile>

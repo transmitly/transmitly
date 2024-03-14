@@ -39,25 +39,6 @@ namespace Transmitly.Tests
 			Assert.ThrowsExceptionAsync<ArgumentNullException>(() => client.DispatchAsync(value, "test", new { }));
 		}
 
-		//[TestMethod]
-		//public async Task ShouldThrowIfNoSupportAudienceAddressAreProvided()
-		//{
-		//	const string expectedPass = "PASS";
-		//	var store = GetStores();
-		//	var pipeline = new Mock<IPipeline>();
-		//	var pipelineConfig = new Mock<IPipelineChannelConfiguration>();
-		//	var channel = new Mock<IChannel>();
-
-		//	channel.Setup(x => x.SupportsAudienceAddress(It.IsAny<IAudienceAddress>())).Returns<IAudienceAddress>((aud) => aud.Value != expectedPass);
-		//	pipelineConfig.Setup(x => x.Channels).Returns(() => [channel.Object]);
-		//	pipeline.Setup(x => x.ChannelConfiguration).Returns(pipelineConfig.Object);
-		//	store.pipeline.Setup(x => x.GetAsync(It.IsAny<string>())).ReturnsAsync(pipeline.Object);
-
-		//	var client = new DefaultCommunicationsClient(store.settings.Object, store.pipeline.Object, store.channelProvider.Object, store.template.Object, store.deliveryReportHandler.Object);
-
-		//	await Assert.ThrowsExceptionAsync<CommunicationsException>(() => client.DispatchAsync("test", expectedPass, new { }));
-		//}
-
 		[TestMethod]
 		public async Task ShouldSendBasedOnAllowedChannelProviderRestrictions()
 		{
@@ -79,7 +60,7 @@ namespace Transmitly.Tests
 			Assert.AreEqual(1, result.Results.Count);
 			Assert.AreEqual(ChannelId, result.Results?.First()?.ChannelId);
 			Assert.AreEqual(ChannelProvider0, result.Results?.First()?.ChannelProviderId);
-			
+
 		}
 
 		private static (
