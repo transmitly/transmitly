@@ -35,9 +35,9 @@ namespace Transmitly.Channel.Voice
 
 		private static readonly Regex _voiceMatchRegex = CreateRegex();
 
-		public IAudienceAddress? From { get; }
+		public IAudienceAddress? From { get; set; }
 
-		public string? SpeakingVoiceId { get; }
+		public IVoiceType? VoiceType { get; }
 
 		public IContentTemplateConfiguration Message { get; } = new ContentTemplateConfiguration();
 
@@ -52,7 +52,7 @@ namespace Transmitly.Channel.Voice
 			var message = Guard.AgainstNullOrWhiteSpace(await Message.RenderAsync(communicationContext, true));
 			return new VoiceCommunication(message)
 			{
-				SpeakingVoiceId = SpeakingVoiceId,
+				VoiceType = VoiceType,
 				From = From,
 				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
 				TransportPriority = communicationContext.TransportPriority

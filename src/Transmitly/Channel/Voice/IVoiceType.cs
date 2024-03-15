@@ -12,16 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel.Configuration;
-using Transmitly.Template.Configuration;
-
 namespace Transmitly
 {
-
-	public interface IVoiceChannel : IChannel
+	public interface IVoiceType
 	{
-		IAudienceAddress? From { get; }
-		IVoiceType? VoiceType { get; }
-		IContentTemplateConfiguration Message { get; }
+		string? Language { get; set; }
+		string? Gender { get; set; }
+		string? Name { get; set; }
 	}
 }

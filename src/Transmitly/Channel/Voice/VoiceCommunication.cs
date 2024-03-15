@@ -20,7 +20,7 @@ namespace Transmitly.Channel.Voice
 
 		public IAudienceAddress[]? To { get; set; }
 
-		public string? SpeakingVoiceId { get; set; }
+		public IVoiceType? VoiceType { get; set; }
 
 		public string Message { get; set; } = Guard.AgainstNullOrWhiteSpace(message);
 

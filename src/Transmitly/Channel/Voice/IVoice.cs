@@ -18,7 +18,7 @@ namespace Transmitly
 	{
 		IAudienceAddress? From { get; }
 		IAudienceAddress[]? To { get; }
-		string? SpeakingVoiceId { get; }
+		IVoiceType? VoiceType { get; }
 		string Message { get; }
 		TransportPriority TransportPriority { get; }
 	}

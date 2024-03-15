@@ -27,7 +27,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
 			/// !!! See appSettings.json for examples of how to configure with your own settings !!!
 			var tlyConfig = builder.Configuration.GetRequiredSection("Transmitly").Get<TransmitlyConfiguration>();
-			
+
 			// Add services to the container.
 			builder.Services.AddControllers().AddJsonOptions(opt =>
 			{
@@ -43,6 +43,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			{
 				c.ExampleFilters();
 				c.SupportNonNullableReferenceTypes();
+				c.SchemaFilter<SkipExceptionSchemaFilter>();
 			});
 			builder.Services.AddSwaggerExamplesFromAssemblyOf(typeof(Program));
 
@@ -157,6 +158,19 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						email.Subject.AddStringTemplate("A subject that matches the SendGrid Template");
 						email.HtmlBody.AddStringTemplate("A body that matches the SendGrid Template");
 					}, Id.ChannelProvider.MailKit(), Id.ChannelProvider.Infobip());
+				})
+				.AddPipeline(PipelineName.AppointmentReminder, pipeline =>
+				{
+					pipeline.AddVoice(voice =>
+					{
+						voice.Message.AddStringTemplate(
+							"""
+								Hello {{firstName}} <break strength="weak" /> this is a reminder about an upcoming doctors 
+								appointment scheduled for Today <break strength="strong"/> at <say-as interpret-as="time" format="hms12">2:30pm</say-as>.
+								Don't be late!
+							"""
+							);
+					});
 				});
 			});
 

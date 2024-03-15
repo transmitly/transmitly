@@ -12,13 +12,31 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.OpenApi.Models;
+
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
-	public static class PipelineName
+	public class SkipExceptionSchemaFilter : ISchemaFilter
 	{
-		public const string OtpCode = "otp-code";
-		public const string FirstPipeline = "first-pipeline";
-		public const string SendGridTemplate = "send-grid-template";
-		public const string AppointmentReminder = "appointment-reminder";
+		public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+		{
+			if (schema?.Properties == null)
+			{
+				return;
+			}
+
+			var skipProperties = context.Type.GetProperties().Where(t => t.PropertyType.IsAssignableTo(typeof(Exception)));
+
+			foreach (var skipProperty in skipProperties)
+			{
+				var propertyToSkip = schema.Properties.Keys.SingleOrDefault(x => string.Equals(x, skipProperty.Name, StringComparison.OrdinalIgnoreCase));
+
+				if (propertyToSkip != null)
+				{
+					schema.Properties.Remove(propertyToSkip);
+				}
+			}
+		}
 	}
 }
