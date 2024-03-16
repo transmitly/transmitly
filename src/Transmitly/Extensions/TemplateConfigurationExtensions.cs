@@ -101,7 +101,7 @@ namespace Transmitly
 		/// <param name="templateResolver">Delegate that will resolve template content.</param>
 		/// <param name="cultureInfo">Specified culture of the template; otherwise <see cref="CultureInfo.InvariantCulture"></param>
 		/// <returns>Template configuration.</returns>
-		public static IContentTemplateConfiguration AddDynamicTemplate(this IContentTemplateConfiguration templateConfiguration, Func<IDispatchCommunicationContext, Task<string?>> templateResolver, string? cultureInfo = null)
+		public static IContentTemplateConfiguration AddTemplateResolver(this IContentTemplateConfiguration templateConfiguration, Func<IDispatchCommunicationContext, Task<string?>> templateResolver, string? cultureInfo = null)
 		{
 			Guard.AgainstNull(templateConfiguration);
 			templateConfiguration.TemplateRegistrations.Add(new DelegateContentTemplateRegistration(templateResolver, cultureInfo));
