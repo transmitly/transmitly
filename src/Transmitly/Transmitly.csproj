@@ -10,15 +10,14 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-
 		<PackageId>Transmitly</PackageId>
 		<Product>Transmitly</Product>
 		<ProductName>Transmit.ly</ProductName>
-		<Company>Code Impressions</Company>
+		<Company>Code Impressions, LLC</Company>
 		<Title>Transmit.ly</Title>
 		<Description>An extensible and provider agnostic Communication (email, sms, and more) management library</Description>
 		<Copyright>Copyright (c) Code Impressions, LLC</Copyright>
-		<Authors>Code Impressions</Authors>
+		<Authors>Code Impressions, LLC</Authors>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageIcon>icon-dark.png</PackageIcon>
 		<PackageIconUrl>https://github.com/transmitly/transmitly/blob/main/assets/icon-dark.png</PackageIconUrl>
@@ -40,26 +39,23 @@
 		<DefineConstants>$(DefineConstants);FEATURE_ITUPLE</DefineConstants>
 		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
 	</PropertyGroup>
-	
+
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
 
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
 		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD</DefineConstants>
 	</PropertyGroup>
-	
+
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
 		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD;FEATURE_SOURCE_GEN</DefineConstants>
 	</PropertyGroup>
-	
+
 	<ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
 		<Reference Include="System" />
 		<Reference Include="System.Core" />
 		<Reference Include="Microsoft.CSharp" />
+		<Reference Include="System.Net.Http" />
 	</ItemGroup>
-	<!--<ItemGroup>
-		<None Remove="README.md" />
-	</ItemGroup>-->
-
 	<ItemGroup>
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 		<PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="All" />
@@ -73,13 +69,13 @@
 		</AssemblyAttribute>
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="..\..\assets\icon-dark.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Include="..\..\assets\icon-dark.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 </Project>
