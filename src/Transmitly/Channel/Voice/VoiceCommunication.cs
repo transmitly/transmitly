@@ -14,7 +14,7 @@
 
 namespace Transmitly.Channel.Voice
 {
-	internal sealed class VoiceCommunication(string message) : IVoice
+	internal sealed class VoiceCommunication(string message, IExtendedProperties extendedProperties) : IVoice
 	{
 		public IAudienceAddress? From { get; set; }
 
@@ -25,5 +25,7 @@ namespace Transmitly.Channel.Voice
 		public string Message { get; set; } = Guard.AgainstNullOrWhiteSpace(message);
 
 		public TransportPriority TransportPriority { get; set; }
+
+		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 	}
 }

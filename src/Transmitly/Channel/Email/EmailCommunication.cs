@@ -14,13 +14,8 @@
 
 namespace Transmitly.Channel.Email
 {
-	internal sealed class EmailCommunication(IAudienceAddress from) : IEmail
+	internal sealed class EmailCommunication(IAudienceAddress from, IExtendedProperties extendedProperties) : IEmail
 	{
-		public EmailCommunication(string fromValue, string? fromDisplay = null) : this(new AudienceAddress(fromValue, fromDisplay))
-		{
-
-		}
-
 		public string? Subject { get; internal set; }
 		public string? HtmlBody { get; internal set; }
 		public string? TextBody { get; internal set; }
@@ -41,6 +36,6 @@ namespace Transmitly.Channel.Email
 
 		public IReadOnlyCollection<IAttachment> Attachments { get; internal set; } = [];
 
-
+		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 	}
 }

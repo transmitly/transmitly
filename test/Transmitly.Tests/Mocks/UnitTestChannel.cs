@@ -37,6 +37,7 @@ namespace Transmitly.Tests
 		}
 
 		public IAudienceAddress FromAddress { get; set; }
+
 		public IContentTemplateConfiguration Subject { get; } = new ContentTemplateConfiguration();
 
 		public string Id { get; }
@@ -44,6 +45,8 @@ namespace Transmitly.Tests
 		public IEnumerable<string> AllowedChannelProviderIds { get; }
 
 		public Type CommunicationType => typeof(UnitTestCommunication);
+
+		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
 		public bool SupportsAudienceAddress(IAudienceAddress audienceAddress)
 		{

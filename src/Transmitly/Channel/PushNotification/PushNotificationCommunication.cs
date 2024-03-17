@@ -14,7 +14,7 @@
 
 namespace Transmitly.Channel.Push
 {
-	internal sealed class PushNotificationCommunication(IReadOnlyCollection<IAudienceAddress> audienceAddresses, string? title, string? body, string? imageUrl) : IPushNotification
+	internal sealed class PushNotificationCommunication(IReadOnlyCollection<IAudienceAddress> audienceAddresses, IExtendedProperties extendedProperties, string? title, string? body, string? imageUrl) : IPushNotification
 	{
 		public string? Title { get; set; } = title;
 
@@ -23,5 +23,7 @@ namespace Transmitly.Channel.Push
 		public string? ImageUrl { get; set; } = imageUrl;
 
 		public IReadOnlyCollection<IAudienceAddress> To { get; } = Guard.AgainstNull(audienceAddresses);
+
+		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 	}
 }

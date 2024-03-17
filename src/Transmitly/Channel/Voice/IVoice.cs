@@ -21,5 +21,6 @@ namespace Transmitly
 		IVoiceType? VoiceType { get; }
 		string Message { get; }
 		TransportPriority TransportPriority { get; }
+		IExtendedProperties ExtendedProperties { get; }
 	}
 }

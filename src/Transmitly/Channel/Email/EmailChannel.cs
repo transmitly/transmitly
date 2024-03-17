@@ -40,6 +40,8 @@ namespace Transmitly.Channel.Email
 
 		public Type CommunicationType => typeof(IEmail);
 
+		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+
 		internal EmailChannel(Func<IAudienceAddress> fromAddressResolver, string[]? channelProviderId = null)
 		{
 			_fromAddressResolver = Guard.AgainstNull(fromAddressResolver);
@@ -68,7 +70,7 @@ namespace Transmitly.Channel.Email
 			var textBody = await TextBody.RenderAsync(communicationContext, false);
 			var attachments = ConvertAttachments(communicationContext);
 
-			return new EmailCommunication(GetSenderFromAddress())
+			return new EmailCommunication(GetSenderFromAddress(), ExtendedProperties)
 			{
 				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
 				Priority = communicationContext.MessagePriority,
@@ -76,7 +78,7 @@ namespace Transmitly.Channel.Email
 				Subject = subject,
 				HtmlBody = htmlBody,
 				TextBody = textBody,
-				Attachments = attachments
+				Attachments = attachments,
 			};
 		}
 

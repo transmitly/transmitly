@@ -42,11 +42,13 @@ namespace Transmitly.Channel.Sms
 
 		public Type CommunicationType => typeof(ISms);
 
+		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
 			var body = await Body.RenderAsync(communicationContext, true).ConfigureAwait(false);
 
-			return new SmsCommunication()
+			return new SmsCommunication(ExtendedProperties)
 			{
 				From = FromAddress,
 				Body = body,

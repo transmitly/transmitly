@@ -22,5 +22,6 @@ namespace Transmitly
 		MessagePriority Priority { get; }
 		TransportPriority TransportPriority { get; }
 		IReadOnlyCollection<IAttachment> Attachments { get; }
+		IExtendedProperties ExtendedProperties { get; }
 	}
 }

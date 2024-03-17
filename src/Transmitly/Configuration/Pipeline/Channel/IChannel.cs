@@ -14,7 +14,7 @@
 
 namespace Transmitly.Channel.Configuration
 {
-	public interface IChannel<T> : IChannel
+    public interface IChannel<T> : IChannel
 	{
 		new Task<T> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
 	}
@@ -49,5 +49,10 @@ namespace Transmitly.Channel.Configuration
 		/// <param name="communicationContext">The communication context.</param>
 		/// <returns>The generated communication.</returns>
 		Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
+
+		/// <summary>
+		/// Gets the extended properties for the channel.
+		/// </summary>
+		ExtendedProperties ExtendedProperties { get; }
 	}
 }

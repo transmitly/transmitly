@@ -20,5 +20,6 @@ namespace Transmitly
 		string? Body { get; }
 		string? ImageUrl { get; }
 		IReadOnlyCollection<IAudienceAddress> To { get; }
+		IExtendedProperties ExtendedProperties { get; }
 	}
 }

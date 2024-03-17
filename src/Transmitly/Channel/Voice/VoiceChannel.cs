@@ -47,10 +47,12 @@ namespace Transmitly.Channel.Voice
 
 		public IEnumerable<string> AllowedChannelProviderIds => channelProviderIds ?? [];
 
+		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
 			var message = Guard.AgainstNullOrWhiteSpace(await Message.RenderAsync(communicationContext, true));
-			return new VoiceCommunication(message)
+			return new VoiceCommunication(message, ExtendedProperties)
 			{
 				VoiceType = VoiceType,
 				From = From,

@@ -22,6 +22,8 @@ namespace Transmitly.Channel
 		public abstract string Id { get; }
 		public virtual IEnumerable<string> AllowedChannelProviderIds { get; } = allowedChannelProviders ?? [];
 
+		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+
 		public abstract Task<TCommunication> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
 		public abstract bool SupportsAudienceAddress(IAudienceAddress audienceAddress);
 

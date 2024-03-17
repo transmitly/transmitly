@@ -14,7 +14,7 @@
 
 namespace Transmitly
 {
-	public interface IEmail
+    public interface IEmail
 	{
 		string? Subject { get; }
 		string? HtmlBody { get; }
@@ -27,5 +27,6 @@ namespace Transmitly
 		IAudienceAddress[]? Cc { get; }
 		IAudienceAddress[]? Bcc { get; }
 		IReadOnlyCollection<IAttachment> Attachments { get; }
+		IExtendedProperties ExtendedProperties { get; }
 	}
 }
