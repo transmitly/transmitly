@@ -23,5 +23,6 @@ namespace Transmitly
 		IAudienceAddress? From { get; }
 		IVoiceType? VoiceType { get; }
 		IContentTemplateConfiguration Message { get; }
+		MachineDetection MachineDetection { get; }
 	}
 }

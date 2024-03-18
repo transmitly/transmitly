@@ -16,7 +16,7 @@ using Transmitly.ChannelProvider;
 using System.Net.Http;
 using Transmitly.Exceptions;
 
-namespace Transmitly.Infobip
+namespace Transmitly.ChannelProvider
 {
 	public abstract class ChannelProviderRestClient<TCommunication>(HttpClient? httpClient) : ChannelProviderClient<TCommunication>
 		where TCommunication : class

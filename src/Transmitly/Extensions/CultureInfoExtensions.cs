@@ -12,22 +12,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Voice
+using System.Globalization;
+
+namespace Transmitly
 {
-	internal sealed class VoiceCommunication(string message, IExtendedProperties extendedProperties) : IVoice
+	public static class CultureInfoExtensions
 	{
-		public IAudienceAddress? From { get; set; }
-
-		public IAudienceAddress[]? To { get; set; }
-
-		public IVoiceType? VoiceType { get; set; }
-
-		public string Message { get; set; } = Guard.AgainstNullOrWhiteSpace(message);
-
-		public TransportPriority TransportPriority { get; set; }
-
-		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
-
-		public MachineDetection MachineDetection { get; set; }
+		public static string DefaultTwoLetterIsoLanguageName { get; set; } = "en";
+		public static string TwoLetterISOLanguageNameDefault(this CultureInfo culture)
+		{
+			var info = GuardCulture.AgainstNull(culture);
+			return info == CultureInfo.InvariantCulture ? DefaultTwoLetterIsoLanguageName : culture.TwoLetterISOLanguageName;
+		}
 	}
 }

@@ -16,17 +16,18 @@ using System.Diagnostics;
 
 namespace Transmitly
 {
-	[DebuggerStepThrough]
 	///<summary>
 	/// See <see cref="DeliveryReportEvent"/>
 	///</summary>
+	[DebuggerStepThrough]
 	public sealed class EventName
 	{
+		private const string DispatchEventName = "Dispatch";
+
 		internal EventName() { }
-#pragma warning disable CA1822 // Mark members as static
 		public string Delivered() => nameof(DispatchStatus.Delivered);
 		public string Error() => nameof(DispatchStatus.Error);
 		public string Dispatched() => nameof(DispatchStatus.Dispatched);
-#pragma warning restore CA1822 // Mark members as static
+		public string Dispatch() => DispatchEventName;
 	}
 }

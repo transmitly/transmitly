@@ -63,9 +63,9 @@ namespace Transmitly
 			return collection;
 		}
 
-		public static IReadOnlyCollection<T> AgainstNullOrEmpty<T>(
-			[NotNull] IReadOnlyCollection<T>? collection,
-			[CallerArgumentExpression(nameof(collection))] string? paramName = null)
+		public static List<T> AgainstNullOrEmpty<T>(
+		[NotNull] List<T>? collection,
+		[CallerArgumentExpression(nameof(collection))] string? paramName = null)
 		{
 			if (collection == null || collection.Count == 0)
 			{
@@ -74,6 +74,18 @@ namespace Transmitly
 
 			return collection;
 		}
+
+		//public static IReadOnlyCollection<T> AgainstNullOrEmpty<T>(
+		//	[NotNull] IReadOnlyCollection<T>? collection,
+		//	[CallerArgumentExpression(nameof(collection))] string? paramName = null)
+		//{
+		//	if (collection == null || collection.Count == 0)
+		//	{
+		//		throw new ArgumentNullException(paramName);
+		//	}
+
+		//	return collection;
+		//}
 
 		/// <summary>
 		/// Throws an <see cref="ArgumentNullException"/> if the specified argument is null.

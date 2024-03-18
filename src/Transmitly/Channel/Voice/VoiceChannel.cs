@@ -49,6 +49,8 @@ namespace Transmitly.Channel.Voice
 
 		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
+		public MachineDetection MachineDetection {get;set; }
+
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
 			var message = Guard.AgainstNullOrWhiteSpace(await Message.RenderAsync(communicationContext, true));

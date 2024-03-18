@@ -20,6 +20,7 @@ namespace Transmitly
 		IAudienceAddress[]? To { get; }
 		IVoiceType? VoiceType { get; }
 		string Message { get; }
+		MachineDetection MachineDetection { get; }
 		TransportPriority TransportPriority { get; }
 		IExtendedProperties ExtendedProperties { get; }
 	}
