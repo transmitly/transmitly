@@ -20,9 +20,9 @@ namespace Transmitly
 
 	public interface IVoiceChannel : IChannel
 	{
-		IAudienceAddress? From { get; }
-		IVoiceType? VoiceType { get; }
+		IAudienceAddress? From { get; set; }
+		IVoiceType? VoiceType { get; set; }
 		IContentTemplateConfiguration Message { get; }
-		MachineDetection MachineDetection { get; }
+		MachineDetection MachineDetection { get; set; }
 	}
 }

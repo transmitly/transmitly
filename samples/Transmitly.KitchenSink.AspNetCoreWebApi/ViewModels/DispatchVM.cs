@@ -25,6 +25,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 		public DispatchContentModel ContentModel { get; set; } = new DispatchContentModel();
 
 		public string? Culture { get; set; }
-		public List<string>? AllowedChannelIds { get; set; } = [];
+		public List<string> AllowedChannelIds { get; set; } = [];
 	}
 }

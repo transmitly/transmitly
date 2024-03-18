@@ -17,7 +17,7 @@ using System.Text.Json.Serialization;
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
 	//Source = https://stackoverflow.com/a/76797018
-	public class JsonExceptionConverter : JsonConverter<Exception>
+	public sealed class JsonExceptionConverter : JsonConverter<Exception>
 	{
 		public override Exception Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
@@ -26,33 +26,33 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
 		public override void Write(Utf8JsonWriter writer, Exception value, JsonSerializerOptions options)
 		{
-			writer.WriteStartObject();
-			writer.WriteString(nameof(Exception.Message), value.Message);
+			writer.WriteRawValue(JsonSerializer.Serialize(new LimitedExceptionDetail(value)));
+		}
+	}
 
+	//Source = https://stackoverflow.com/a/72968664
+	sealed class LimitedExceptionDetail
+	{
+		public LimitedExceptionDetail() { }
+
+		internal LimitedExceptionDetail(Exception exception)
+		{
+			Type = exception.GetType().FullName;
+			Message = exception.Message;
+			Source = exception.Source;
 #if DEBUG
-			if (value.InnerException is not null)
+			StackTrace = exception.StackTrace;
+			if (exception.InnerException is not null)
 			{
-				writer.WriteStartObject(nameof(Exception.InnerException));
-				Write(writer, value.InnerException, options);
-				writer.WriteEndObject();
-			}
-
-			if (value.TargetSite is not null)
-			{
-				writer.WriteStartObject(nameof(Exception.TargetSite));
-				writer.WriteString(nameof(Exception.TargetSite.Name), value.TargetSite?.Name);
-				writer.WriteString(nameof(Exception.TargetSite.DeclaringType), value.TargetSite?.DeclaringType?.FullName);
-				writer.WriteEndObject();
-			}
-
-			if (value.StackTrace is not null)
-			{
-				writer.WriteString(nameof(Exception.StackTrace), value.StackTrace);
+				InnerException = new LimitedExceptionDetail(exception.InnerException);
 			}
 #endif
-
-			writer.WriteString(nameof(Type), value.GetType().ToString());
-			writer.WriteEndObject();
 		}
+
+		public string? Type { get; set; }
+		public string? Message { get; set; }
+		public string? Source { get; set; }
+		public string? StackTrace { get; set; }
+		public LimitedExceptionDetail? InnerException { get; set; }
 	}
 }

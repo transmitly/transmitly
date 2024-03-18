@@ -16,7 +16,10 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
 {
 	public class TransmitlyConfiguration
 	{
-		public string DefaultFromAddress { get; set; } = "example@domain.com";
+		public string DefaultEmailFromAddress { get; set; } = "example@domain.com";
+		public string DefaultSmsFromAddress { get; set; } = "8881234567";
+		public string DefaultVoiceFromAddress { get; set; } = "8881234567";
+
 		public ChannelProviderConfiguration ChannelProviders { get; set; } = new();
 	}
 }

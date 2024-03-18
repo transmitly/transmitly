@@ -66,7 +66,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 		public async Task<IActionResult> Dispatch(DispatchVM dispatchVM, CancellationToken cancellationToken)
 		{
 			var result = await _communicationsClient.DispatchAsync(
-					dispatchVM.PipelineName,
+					Guard.AgainstNullOrWhiteSpace(dispatchVM.PipelineName),
 					dispatchVM.Recipients,
 					dispatchVM.ContentModel,
 					dispatchVM.AllowedChannelIds,

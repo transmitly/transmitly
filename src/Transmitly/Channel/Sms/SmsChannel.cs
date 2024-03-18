@@ -32,9 +32,9 @@ namespace Transmitly.Channel.Sms
 		[GeneratedRegex(pattern, options)]
 		private static partial Regex DefaultRegex();
 #endif
-		public IAudienceAddress? FromAddress { get; }
+		public IAudienceAddress? FromAddress { get; set; }
 
-		public IContentTemplateConfiguration Body { get; } = new ContentTemplateConfiguration();
+		public IContentTemplateConfiguration Text { get; } = new ContentTemplateConfiguration();
 
 		public string Id => Transmitly.Id.Channel.Sms();
 
@@ -46,7 +46,7 @@ namespace Transmitly.Channel.Sms
 
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
-			var body = await Body.RenderAsync(communicationContext, true).ConfigureAwait(false);
+			var body = await Text.RenderAsync(communicationContext, true).ConfigureAwait(false);
 
 			return new SmsCommunication(ExtendedProperties)
 			{

@@ -37,7 +37,7 @@ namespace Transmitly.Channel.Voice
 
 		public IAudienceAddress? From { get; set; }
 
-		public IVoiceType? VoiceType { get; }
+		public IVoiceType? VoiceType { get; set; }
 
 		public IContentTemplateConfiguration Message { get; } = new ContentTemplateConfiguration();
 
@@ -49,7 +49,7 @@ namespace Transmitly.Channel.Voice
 
 		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
-		public MachineDetection MachineDetection {get;set; }
+		public MachineDetection MachineDetection { get; set; }
 
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{

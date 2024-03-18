@@ -103,7 +103,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					//AddEmail is a channel that is core to the Transmitly library.
 					//AsAudienceAddress() is also a convenience method that helps us create an audience address
 					//Audience addresses can be anything, email, phone, or even a device/app Id for push notifications!
-					pipeline.AddEmail(tlyConfig.DefaultFromAddress.AsAudienceAddress("The Transmit.ly group"), email =>
+					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsAudienceAddress("The Transmit.ly group"), email =>
 					{
 						//Transmitly is a bit different. All of our content is supported by templates out of the box.
 						//There are multiple types of templates to get you started. You can even create templates 
@@ -116,7 +116,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					//AddSms is a channel that is core to the Transmitly library.
 					pipeline.AddSms(sms =>
 					{
-						sms.Body.AddStringTemplate("Check out Transmit.ly!");
+						sms.FromAddress = tlyConfig.DefaultSmsFromAddress.AsAudienceAddress();
+						sms.Text.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
 					});
 				})
 				//See: OTPCode route in Controllers.CommunicationsController.cs
@@ -126,7 +127,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					//this is different than MessagePriority. Where MessagePriority indicates the importance to the recipient
 					pipeline.TransportPriority = TransportPriority.High;
 
-					pipeline.AddEmail(tlyConfig.DefaultFromAddress.AsAudienceAddress(), email =>
+					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsAudienceAddress(), email =>
 					{
 						email.Subject.AddStringTemplate("Your one time password code");
 						email.HtmlBody.AddStringTemplate("Your code: <strong>{{code}}</strong>");
@@ -148,21 +149,24 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				//Already have emails defined with SendGrid? Great, we can handle those too!
 				.AddPipeline(PipelineName.SendGridTemplate, pipeline =>
 				{
-					// by default, this channel will only be used if there is a SendGrid channel provider defined.
-					//Don't forget to replace the templateId!
-					pipeline.AddSendGridTemplateEmail(tlyConfig.DefaultFromAddress.AsAudienceAddress(), "<templateId>", sendGrid => { });
 					// a nice byproduct of the above line, is that we can seamlessly use another channel provider if we decide to move away from SendGrid (or SendGrid is down)
 					// we're restricting this to only use the default mailkit or infobip channel providers
-					pipeline.AddEmail(tlyConfig.DefaultFromAddress.AsAudienceAddress(), email =>
+					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsAudienceAddress(), email =>
 					{
 						email.Subject.AddStringTemplate("A subject that matches the SendGrid Template");
 						email.HtmlBody.AddStringTemplate("A body that matches the SendGrid Template");
-					}, Id.ChannelProvider.MailKit(), Id.ChannelProvider.Infobip());
+						// We're using the extended properties provided by the SendGrid channel provider.
+						// This way we ensure that if the SendGrid channel provider is used for this channel, we'll use the template id.
+						// if we happen to fallback or even remove SendGrid, we can gracefully fallback to our content defined above. Neat!
+						email.SendGrid().TemplateId = "d-89ae21e8ebed491380ed580f30e0b052";
+
+					});
 				})
 				.AddPipeline(PipelineName.AppointmentReminder, pipeline =>
 				{
 					pipeline.AddVoice(voice =>
 					{
+						voice.From = tlyConfig.DefaultVoiceFromAddress.AsAudienceAddress();
 						voice.Message.AddStringTemplate(
 							"""
 								Hello {{firstName}} <break strength="weak" /> this is a reminder about an upcoming doctors 

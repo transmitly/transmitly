@@ -17,7 +17,7 @@ using Transmitly.ChannelProvider;
 
 namespace Transmitly.Delivery
 {
-	internal class FirstMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
+	internal sealed class FirstMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
 	{
 		public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken)
 		{
