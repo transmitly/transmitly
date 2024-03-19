@@ -26,7 +26,7 @@ namespace Transmitly.Channel.Sms
 	{
 		private static readonly string[] _supportedAddressTypes = [AudienceAddress.Types.Cell(), AudienceAddress.Types.HomePhone(), AudienceAddress.Types.Phone(), AudienceAddress.Types.Mobile()];
 		private static readonly Regex _smsMatchRegex = CreateRegex();
-		const string pattern = @"^\+[1-9]\d{1,14}$";
+		const string pattern = @"^\+?[1-9]\d{1,14}$";
 		const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
 #if FEATURE_SOURCE_GEN
 		[GeneratedRegex(pattern, options)]

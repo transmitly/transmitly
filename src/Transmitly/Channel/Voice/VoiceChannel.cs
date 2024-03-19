@@ -27,7 +27,7 @@ namespace Transmitly.Channel.Voice
 		[GeneratedRegex(pattern, options)]
 		private static partial Regex DefaultRegex();
 #endif
-		private const string pattern = @"^\+[1-9]\d{1,14}$";
+		private const string pattern = @"^\+?[1-9]\d{1,14}$";
 
 		private const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
 

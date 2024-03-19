@@ -21,8 +21,8 @@ namespace Transmitly.Channel.Sms.Tests
 		[DataRow("+14155552671", true)]
 		[DataRow("+442071838750", true)]
 		[DataRow("+551155256325", true)]
-		[DataRow("551155256325", false)]
-		[DataRow("51155256325", false)]
+		[DataRow("551155256325", true)]
+		[DataRow("51155256325", true)]
 		[DataRow("(511)55256325", false)]
 		[DataRow("511-552-56325", false)]
 		[DataRow("+1 511-552-56325", false)]
@@ -31,6 +31,7 @@ namespace Transmitly.Channel.Sms.Tests
 		[DataRow("+64010", true)]//NZ service number
 		[DataRow("+1231234567890", true)]
 		[DataRow("+2902124", true)]
+		[DataRow("15551231234", true)]
 		public void SupportsAudienceAddressTest(string value, bool expected)
 		{
 			var sms = new SmsChannel();
