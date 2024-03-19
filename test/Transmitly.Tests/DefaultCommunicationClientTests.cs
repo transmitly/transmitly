@@ -104,5 +104,97 @@ namespace Transmitly.Tests
 			Assert.AreEqual(DispatchStatus.Dispatched, result.Results.First()?.DispatchStatus);
 			Assert.AreEqual("EmailCommunication", result.Results.First()?.ResourceId);
 		}
+
+		[TestMethod]
+		public async Task ShouldRespectAllowedChannelProviderPreference()
+		{
+			const string PipelineName = "test-pipeline";
+			IReadOnlyCollection<IAudienceAddress> testRecipients = ["8885556666".AsAudienceAddress()];
+			var model = ContentModel.Create(new { });
+			
+			var tly = new CommunicationsClientBuilder()
+				.AddChannelProvider<MinimalConfigurationTestChannelProviderClient, ISms>("sms-provider")
+				.AddChannelProvider<MinimalConfigurationTestChannelProviderClient, IVoice>("voice-provider")
+				.AddPipeline(PipelineName, options =>
+				{
+					options.AddSms(sms =>
+					{
+						sms.Text.AddStringTemplate("SmsText");
+					});
+
+					options.AddVoice(voice =>
+					{
+						voice.Message.AddStringTemplate("Voice");
+					});
+				})
+				.BuildClient();
+			
+			var result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Voice()]);
+			
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(1, result.Results.Count);
+			Assert.AreEqual(Id.Channel.Voice(), result.Results?.First()?.ChannelId);
+
+			result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Sms()]);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(1, result.Results.Count);
+			Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
+
+			result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Email()]);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(0, result.Results.Count);
+
+			result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(1, result.Results.Count);
+			Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
+		}
+
+		[TestMethod]
+		public async Task ShouldRespectAllowedChannelProviderPreferenceAnyDeliveryStrategy()
+		{
+			const string PipelineName = "test-pipeline";
+			IReadOnlyCollection<IAudienceAddress> testRecipients = ["8885556666".AsAudienceAddress()];
+			var model = ContentModel.Create(new { });
+
+			var tly = new CommunicationsClientBuilder()
+				.AddChannelProvider<MinimalConfigurationTestChannelProviderClient, ISms>("sms-provider")
+				.AddChannelProvider<MinimalConfigurationTestChannelProviderClient, IVoice>("voice-provider")
+				.AddPipeline(PipelineName, options =>
+				{
+					options.AddSms(sms =>
+					{
+						sms.Text.AddStringTemplate("SmsText");
+					});
+
+					options.AddVoice(voice =>
+					{
+						voice.Message.AddStringTemplate("Voice");
+					});
+					options.UseAnyMatchPipelineDeliveryStrategy();
+				})
+				.BuildClient();
+
+			var result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Voice()]);
+
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(1, result.Results.Count);
+			Assert.AreEqual(Id.Channel.Voice(), result.Results?.First()?.ChannelId);
+
+			result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Sms()]);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(1, result.Results.Count);
+			Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
+
+			result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Email()]);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(0, result.Results.Count);
+
+			result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(2, result.Results.Count);
+			Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
+			Assert.AreEqual(Id.Channel.Voice(), result.Results?.Skip(1)?.First()?.ChannelId);
+		}
 	}
 }

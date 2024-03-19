@@ -78,7 +78,7 @@ namespace Transmitly
 
 		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudienceAddress> audienceAddresses, IContentModel contentModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
-			return await DispatchAsync(pipelineName, [audienceAddresses.AsAudience()], contentModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+			return await DispatchAsync(pipelineName, [audienceAddresses.AsAudience()], contentModel, allowedChannels, cultureInfo, cancellationToken).ConfigureAwait(false);
 		}
 
 		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudience> audiences, IContentModel contentModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
