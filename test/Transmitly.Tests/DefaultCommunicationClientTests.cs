@@ -194,7 +194,9 @@ namespace Transmitly.Tests
 			Assert.IsTrue(result.IsSuccessful);
 			Assert.AreEqual(2, result.Results.Count);
 			Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
+#pragma warning disable S2589 // Boolean expressions should not be gratuitous
 			Assert.AreEqual(Id.Channel.Voice(), result.Results?.Skip(1)?.First()?.ChannelId);
+#pragma warning restore S2589 // Boolean expressions should not be gratuitous
 		}
 	}
 }

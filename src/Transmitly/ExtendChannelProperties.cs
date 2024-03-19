@@ -40,14 +40,19 @@ namespace Transmitly
 		void IExtendedProperties.AddOrUpdate(string providerKey, string propertyKey, object? value)
 		{
 			var key = GetCompositeKey(providerKey, propertyKey);
+#if FEATURE_DICTIONARYTRYADD
+			_bag.TryAdd(key, value);
+#else
 			if (_bag.ContainsKey(key))
 				_bag[key] = value;
 			else
 				_bag.Add(key, value);
+#endif
+
 		}
 
 		/// <inheritdoc />
-		object? IExtendedProperties.this[string providerKey, string key] => 
+		object? IExtendedProperties.this[string providerKey, string key] =>
 			((IExtendedProperties)this).GetValue(providerKey, key);
 
 		/// <inheritdoc />
@@ -55,8 +60,14 @@ namespace Transmitly
 			where T : default
 		{
 			var key = GetCompositeKey(providerKey, propertyKey);
+
+#if FEATURE_DICTIONARYTRYADD
+			if (!_bag.TryGetValue(key, out var result))
+				return (T?)result;
+#else
 			if (_bag.ContainsKey(key))
 				return (T?)_bag[key];
+#endif
 			return default;
 		}
 
@@ -64,8 +75,13 @@ namespace Transmitly
 		object? IExtendedProperties.GetValue(string providerKey, string propertyKey)
 		{
 			var key = GetCompositeKey(providerKey, propertyKey);
+#if FEATURE_DICTIONARYTRYADD
+			if (_bag.TryGetValue(key, out var result))
+				return result;
+#else
 			if (_bag.ContainsKey(key))
 				return _bag[key];
+#endif
 			return null;
 		}
 
@@ -87,8 +103,14 @@ namespace Transmitly
 				throw new ArgumentNullException(nameof(defaultValue));
 
 			var key = GetCompositeKey(providerKey, propertyKey);
+#if FEATURE_DICTIONARYTRYADD
+			if (_bag.TryGetValue(key, out var result))
+				return (T?)result ?? defaultValue;
+#else
 			if (_bag.ContainsKey(key))
 				return (T?)_bag[key] ?? defaultValue;
+			
+#endif
 			return defaultValue;
 		}
 

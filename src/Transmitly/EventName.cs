@@ -25,9 +25,11 @@ namespace Transmitly
 		private const string DispatchEventName = "Dispatch";
 
 		internal EventName() { }
+#pragma warning disable CA1822 // Mark members as static
 		public string Delivered() => nameof(DispatchStatus.Delivered);
 		public string Error() => nameof(DispatchStatus.Error);
 		public string Dispatched() => nameof(DispatchStatus.Dispatched);
 		public string Dispatch() => DispatchEventName;
+#pragma warning restore CA1822 // Mark members as static
 	}
 }
