@@ -22,6 +22,6 @@ namespace Transmitly
 		IContentTemplateConfiguration Subject { get; }
 		IContentTemplateConfiguration HtmlBody { get; }
 		IContentTemplateConfiguration TextBody { get; }
-		IAudienceAddress FromAddress { get; }
+		IAudienceAddress? FromAddress { get; }
 	}
 }

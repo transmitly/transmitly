@@ -31,11 +31,13 @@ namespace Transmitly.Channel.Voice
 
 		private const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
 
+		private readonly Func<IDispatchCommunicationContext, IAudienceAddress>? _fromAddressResolver;
+
 		private static readonly string[] _supportedAddressTypes = [AudienceAddress.Types.Cell(), AudienceAddress.Types.HomePhone(), AudienceAddress.Types.Phone(), AudienceAddress.Types.Mobile()];
 
 		private static readonly Regex _voiceMatchRegex = CreateRegex();
 
-		public IAudienceAddress? From { get; set; }
+		public IAudienceAddress? FromAddress { get; }
 
 		public IVoiceType? VoiceType { get; set; }
 
@@ -51,13 +53,23 @@ namespace Transmitly.Channel.Voice
 
 		public MachineDetection MachineDetection { get; set; }
 
+		internal VoiceChannel(IAudienceAddress? fromAddress, string[]? channelProviderIds = null) : this(channelProviderIds)
+		{
+			FromAddress = fromAddress;
+		}
+
+		internal VoiceChannel(Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, string[]? channelProviderIds = null) : this(channelProviderIds)
+		{
+			_fromAddressResolver = Guard.AgainstNull(fromAddressResolver);
+		}
+
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
 			var message = Guard.AgainstNullOrWhiteSpace(await Message.RenderAsync(communicationContext, true));
 			return new VoiceCommunication(message, ExtendedProperties)
 			{
 				VoiceType = VoiceType,
-				From = From,
+				From = GetSenderFromAddress(communicationContext),
 				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
 				TransportPriority = communicationContext.TransportPriority
 			};
@@ -74,6 +86,11 @@ namespace Transmitly.Channel.Voice
 					)
 				) &&
 				_voiceMatchRegex.IsMatch(audienceAddress.Value);
+		}
+
+		private IAudienceAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
+		{
+			return _fromAddressResolver != null ? _fromAddressResolver(communicationContext) : FromAddress;
 		}
 
 		private static Regex CreateRegex()

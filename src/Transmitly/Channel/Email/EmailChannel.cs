@@ -34,15 +34,14 @@ namespace Transmitly.Channel.Email
 		public string Id => Transmitly.Id.Channel.Email();
 		public IEnumerable<string> AllowedChannelProviderIds => _channelProviderId;
 
-		private IAudienceAddress? _fromAddress;
-		private Func<IAudienceAddress>? _fromAddressResolver;
-		public IAudienceAddress FromAddress { get => GetSenderFromAddress(); set { _fromAddressResolver = null; _fromAddress = value; } }
+		private readonly Func<IDispatchCommunicationContext, IAudienceAddress>? _fromAddressResolver;
+		public IAudienceAddress? FromAddress { get; }
 
 		public Type CommunicationType => typeof(IEmail);
 
 		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
-		internal EmailChannel(Func<IAudienceAddress> fromAddressResolver, string[]? channelProviderId = null)
+		internal EmailChannel(Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, string[]? channelProviderId = null)
 		{
 			_fromAddressResolver = Guard.AgainstNull(fromAddressResolver);
 			_channelProviderId = channelProviderId ?? [];
@@ -50,7 +49,7 @@ namespace Transmitly.Channel.Email
 
 		internal EmailChannel(IAudienceAddress fromAddress, string[]? channelProviderId = null)
 		{
-			_fromAddress = Guard.AgainstNull(fromAddress);
+			FromAddress = Guard.AgainstNull(fromAddress);
 			_channelProviderId = channelProviderId ?? [];
 		}
 
@@ -70,7 +69,7 @@ namespace Transmitly.Channel.Email
 			var textBody = await TextBody.RenderAsync(communicationContext, false);
 			var attachments = ConvertAttachments(communicationContext);
 
-			return new EmailCommunication(GetSenderFromAddress(), ExtendedProperties)
+			return new EmailCommunication(GetSenderFromAddress(communicationContext), ExtendedProperties)
 			{
 				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
 				Priority = communicationContext.MessagePriority,
@@ -82,9 +81,9 @@ namespace Transmitly.Channel.Email
 			};
 		}
 
-		private IAudienceAddress GetSenderFromAddress()
+		private IAudienceAddress GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
 		{
-			return Guard.AgainstNull(_fromAddressResolver != null ? _fromAddressResolver() : _fromAddress);
+			return Guard.AgainstNull(_fromAddressResolver != null ? _fromAddressResolver(communicationContext) : FromAddress);
 		}
 
 		private static ReadOnlyCollection<IAttachment> ConvertAttachments(IDispatchCommunicationContext communicationContext)

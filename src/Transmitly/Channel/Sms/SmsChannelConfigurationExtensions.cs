@@ -18,13 +18,13 @@ using Transmitly.Pipeline.Configuration;
 namespace Transmitly
 {
 	/// <summary>
-	/// Extension methods related to the sms channel
+	/// Extension methods related to the sms channel.
 	/// </summary>
 	public static class SmsChannelConfigurationExtensions
 	{
 		private const string SmsId = "Sms";
 		/// <summary>
-		/// Gets the 'Sms' channel Id
+		/// Gets the 'Sms' channel Id.
 		/// </summary>
 		/// <param name="channelId"></param>
 		/// <returns></returns>
@@ -35,14 +35,44 @@ namespace Transmitly
 			return $"{SmsId}.{channelId}";
 		}
 
+		/// <summary>
+		/// Adds the 'Sms' communication channel to provider pipeline.
+		/// </summary>
+		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
+		/// <param name="fromAddressResolver">Service to resolve the from address for this channel.</param>
+		/// <param name="smsChannelConfiguration">Sms Channel configuration options.</param>
+		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel.</param>
+		/// <returns></returns>
+		public static IPipelineChannelConfiguration AddSms(this IPipelineChannelConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, Action<ISmsChannel> smsChannelConfiguration, params string[]? allowedChannelProviders)
+		{
+			var emailOptions = new SmsChannel(fromAddressResolver, allowedChannelProviders);
+			smsChannelConfiguration(emailOptions);
+			pipelineChannelConfiguration.AddChannel(emailOptions);
+			return pipelineChannelConfiguration;
+		}
 
 		/// <summary>
-		/// Adds the 'Sms' communication channel to provider pipeline
+		/// Adds the 'Sms' communication channel to provider pipeline.
 		/// </summary>
-		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
-		/// <param name="fromAddress">Address used as the 'from' address</param>
-		/// <param name="smsChannelConfiguration">Sms Channel configuration options</param>
-		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel</param>
+		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
+		/// <param name="fromAddress">Address used as the 'from' address.</param>
+		/// <param name="smsChannelConfiguration">Sms Channel configuration options.</param>
+		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel.</param>
+		/// <returns></returns>
+		public static IPipelineChannelConfiguration AddSms(this IPipelineChannelConfiguration pipelineChannelConfiguration, IAudienceAddress fromAddress, Action<ISmsChannel> smsChannelConfiguration, params string[]? allowedChannelProviders)
+		{
+			var emailOptions = new SmsChannel(fromAddress, allowedChannelProviders);
+			smsChannelConfiguration(emailOptions);
+			pipelineChannelConfiguration.AddChannel(emailOptions);
+			return pipelineChannelConfiguration;
+		}
+
+		/// <summary>
+		/// Adds the 'Sms' communication channel to provider pipeline.
+		/// </summary>
+		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
+		/// <param name="smsChannelConfiguration">Sms Channel configuration options.</param>
+		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel.</param>
 		/// <returns></returns>
 		public static IPipelineChannelConfiguration AddSms(this IPipelineChannelConfiguration pipelineChannelConfiguration, Action<ISmsChannel> smsChannelConfiguration, params string[]? allowedChannelProviders)
 		{

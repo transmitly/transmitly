@@ -70,7 +70,7 @@ namespace Transmitly
 		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
 		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel</param>
 		/// <returns></returns>
-		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, Func<IAudienceAddress> fromAddressResolver, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
+		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
 		{
 			var emailOptions = new EmailChannel(fromAddressResolver, allowedChannelProviders);
 			emailChannelConfiguration(emailOptions);

@@ -26,13 +26,14 @@ namespace Transmitly.Channel.Sms
 	{
 		private static readonly string[] _supportedAddressTypes = [AudienceAddress.Types.Cell(), AudienceAddress.Types.HomePhone(), AudienceAddress.Types.Phone(), AudienceAddress.Types.Mobile()];
 		private static readonly Regex _smsMatchRegex = CreateRegex();
+		private readonly Func<IDispatchCommunicationContext, IAudienceAddress>? _fromAddressResolver;
 		const string pattern = @"^\+?[1-9]\d{1,14}$";
 		const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
 #if FEATURE_SOURCE_GEN
 		[GeneratedRegex(pattern, options)]
 		private static partial Regex DefaultRegex();
 #endif
-		public IAudienceAddress? FromAddress { get; set; }
+		public IAudienceAddress? FromAddress { get; }
 
 		public IContentTemplateConfiguration Text { get; } = new ContentTemplateConfiguration();
 
@@ -44,13 +45,23 @@ namespace Transmitly.Channel.Sms
 
 		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
+		internal SmsChannel(IAudienceAddress? fromAddress, string[]? channelProviderId = null) : this(channelProviderId)
+		{
+			FromAddress = fromAddress;
+		}
+
+		internal SmsChannel(Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, string[]? channelProviderId = null) : this(channelProviderId)
+		{
+			_fromAddressResolver = Guard.AgainstNull(fromAddressResolver);
+		}
+
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
 			var body = await Text.RenderAsync(communicationContext, true).ConfigureAwait(false);
 
 			return new SmsCommunication(ExtendedProperties)
 			{
-				From = FromAddress,
+				From = GetSenderFromAddress(communicationContext),
 				Body = body,
 				Attachments = ConvertAttachments(communicationContext),
 				Priority = communicationContext.MessagePriority,
@@ -70,6 +81,11 @@ namespace Transmitly.Channel.Sms
 					)
 				) &&
 				_smsMatchRegex.IsMatch(audienceAddress.Value);
+		}
+
+		private IAudienceAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
+		{
+			return _fromAddressResolver != null ? _fromAddressResolver(communicationContext) : FromAddress;
 		}
 
 		private static Regex CreateRegex()

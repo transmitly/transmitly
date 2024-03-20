@@ -19,7 +19,7 @@ namespace Transmitly
 {
 	public interface ISmsChannel : IChannel
 	{
-		IAudienceAddress? FromAddress { get; set; }
+		IAudienceAddress? FromAddress { get; }
 		IContentTemplateConfiguration Text { get; }
 	}
 }
