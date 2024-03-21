@@ -114,9 +114,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					});
 
 					//AddSms is a channel that is core to the Transmitly library.
-					pipeline.AddSms(sms =>
+					pipeline.AddSms(tlyConfig.DefaultSmsFromAddress.AsAudienceAddress(), sms =>
 					{
-						sms.FromAddress = tlyConfig.DefaultSmsFromAddress.AsAudienceAddress();
 						sms.Text.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
 					});
 				})
@@ -166,7 +165,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				{
 					pipeline.AddVoice(voice =>
 					{
-						voice.From = tlyConfig.DefaultVoiceFromAddress.AsAudienceAddress();
 						voice.Message.AddStringTemplate(
 							"""
 								Hello {{firstName}} <break strength="weak" /> this is a reminder about an upcoming doctors 

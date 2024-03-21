@@ -12,7 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 using Swashbuckle.AspNetCore.Filters;
-using Transmitly.Channel.Push;
 using Transmitly.KitchenSink.AspNetCoreWebApi.Controllers;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
