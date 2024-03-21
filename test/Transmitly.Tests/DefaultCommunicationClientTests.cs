@@ -119,7 +119,7 @@ namespace Transmitly.Tests
 				{
 					options.AddSms(sms =>
 					{
-						sms.Text.AddStringTemplate("SmsText");
+						sms.Message.AddStringTemplate("SmsText");
 					});
 
 					options.AddVoice(voice =>
@@ -164,7 +164,7 @@ namespace Transmitly.Tests
 				{
 					options.AddSms(sms =>
 					{
-						sms.Text.AddStringTemplate("SmsText");
+						sms.Message.AddStringTemplate("SmsText");
 					});
 
 					options.AddVoice(voice =>
