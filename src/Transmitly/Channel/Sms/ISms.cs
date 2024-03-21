@@ -18,7 +18,7 @@ namespace Transmitly
 	{
 		IAudienceAddress? From { get; }
 		IAudienceAddress[]? To { get; }
-		string? Body { get; }
+		string? Message { get; }
 		MessagePriority Priority { get; }
 		TransportPriority TransportPriority { get; }
 		IReadOnlyCollection<IAttachment> Attachments { get; }

@@ -37,7 +37,7 @@ namespace Transmitly.Channel.Voice
 
 		private static readonly Regex _voiceMatchRegex = CreateRegex();
 
-		public IAudienceAddress? FromAddress { get; }
+		public IAudienceAddress? From { get; }
 
 		public IVoiceType? VoiceType { get; set; }
 
@@ -55,7 +55,7 @@ namespace Transmitly.Channel.Voice
 
 		internal VoiceChannel(IAudienceAddress? fromAddress, string[]? channelProviderIds = null) : this(channelProviderIds)
 		{
-			FromAddress = fromAddress;
+			From = fromAddress;
 		}
 
 		internal VoiceChannel(Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, string[]? channelProviderIds = null) : this(channelProviderIds)
@@ -90,7 +90,7 @@ namespace Transmitly.Channel.Voice
 
 		private IAudienceAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
 		{
-			return _fromAddressResolver != null ? _fromAddressResolver(communicationContext) : FromAddress;
+			return _fromAddressResolver != null ? _fromAddressResolver(communicationContext) : From;
 		}
 
 		private static Regex CreateRegex()

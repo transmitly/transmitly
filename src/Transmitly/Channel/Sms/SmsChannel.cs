@@ -33,9 +33,9 @@ namespace Transmitly.Channel.Sms
 		[GeneratedRegex(pattern, options)]
 		private static partial Regex DefaultRegex();
 #endif
-		public IAudienceAddress? FromAddress { get; }
+		public IAudienceAddress? From { get; }
 
-		public IContentTemplateConfiguration Text { get; } = new ContentTemplateConfiguration();
+		public IContentTemplateConfiguration Message { get; } = new ContentTemplateConfiguration();
 
 		public string Id => Transmitly.Id.Channel.Sms();
 
@@ -47,7 +47,7 @@ namespace Transmitly.Channel.Sms
 
 		internal SmsChannel(IAudienceAddress? fromAddress, string[]? channelProviderId = null) : this(channelProviderId)
 		{
-			FromAddress = fromAddress;
+			From = fromAddress;
 		}
 
 		internal SmsChannel(Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, string[]? channelProviderId = null) : this(channelProviderId)
@@ -57,12 +57,12 @@ namespace Transmitly.Channel.Sms
 
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
-			var body = await Text.RenderAsync(communicationContext, true).ConfigureAwait(false);
+			var body = await Message.RenderAsync(communicationContext, true).ConfigureAwait(false);
 
 			return new SmsCommunication(ExtendedProperties)
 			{
 				From = GetSenderFromAddress(communicationContext),
-				Body = body,
+				Message = body,
 				Attachments = ConvertAttachments(communicationContext),
 				Priority = communicationContext.MessagePriority,
 				TransportPriority = communicationContext.TransportPriority,
@@ -85,7 +85,7 @@ namespace Transmitly.Channel.Sms
 
 		private IAudienceAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
 		{
-			return _fromAddressResolver != null ? _fromAddressResolver(communicationContext) : FromAddress;
+			return _fromAddressResolver != null ? _fromAddressResolver(communicationContext) : From;
 		}
 
 		private static Regex CreateRegex()

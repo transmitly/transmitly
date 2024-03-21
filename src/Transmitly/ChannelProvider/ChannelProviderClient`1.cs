@@ -40,6 +40,9 @@ namespace Transmitly.ChannelProvider
 				throw new CommunicationsException($"Delivery Report Event, '{eventName}', is not a registered event. Make sure to register your events. See: {nameof(RegisteredEvents)}");
 		}
 
+		public virtual void Dispatch(IDispatchCommunicationContext context, TCommunication communication) =>
+			DeliveryReport(DeliveryReportEvent.Name.Dispatch(), context, communication, []);
+
 		public virtual void Delivered(IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults) =>
 			DeliveryReport(DeliveryReportEvent.Name.Delivered(), context, communication, dispatchResults);
 

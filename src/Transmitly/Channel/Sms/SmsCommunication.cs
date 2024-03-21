@@ -18,7 +18,7 @@ namespace Transmitly.Channel.Sms
 	{
 		public IAudienceAddress[]? To { get; set; }
 
-		public string? Body { get; set; }
+		public string? Message { get; set; }
 
 		public MessagePriority Priority { get; set; }
 
