@@ -16,6 +16,7 @@ using System.ComponentModel;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
+using Transmitly.Configuration;
 using Transmitly.Delivery.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Settings.Configuration;
@@ -211,6 +212,19 @@ namespace Transmitly
 		public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null)
 		{
 			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds);
+		}
+
+		public CommunicationsClientBuilder AddConfigurationModule<TModule>()
+			where TModule : CommunicationsClientModule, new()
+		{
+			new TModule().Load(this);
+			return this;
+		}
+
+		public CommunicationsClientBuilder AddConfigurationModule(CommunicationsClientModule module)
+		{
+			Guard.AgainstNull(module).Load(this);
+			return this;
 		}
 
 		/// <summary>
