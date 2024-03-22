@@ -79,13 +79,23 @@ namespace Transmitly
 		public DeliveryReportConfigurationBuilder DeliveryReport { get; }
 
 		/// <summary>
-		/// Adds a template engine to the configuration
+		/// Adds a template engine to the configuration.
 		/// </summary>
-		/// <param name="engine">The instance of the template engine</param>
-		/// <param name="id">The optional Id of the template engine</param>
+		/// <param name="engine">The instance of the template engine.</param>
+		/// <param name="id">The optional Id of the template engine.</param>
 		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddTemplateEngine(ITemplateEngine engine, string? id = null) =>
 			TemplateEngine.Add(engine, id);
+
+		/// <summary>
+		/// Adds a template engine to the configuration.
+		/// </summary>
+		/// <typeparam name="TEngine">The type of the template engine.</typeparam>
+		/// <param name="id">The optional Id of the template engine.</param>
+		/// <returns>The configuration builder</returns>
+		public CommunicationsClientBuilder AddTemplateEngine<TEngine>(string? id = null)
+			where TEngine : ITemplateEngine, new() =>
+			TemplateEngine.Add(new TEngine(), id);
 
 		/// <summary>
 		/// Adds a channel provider to the configuration.
@@ -213,14 +223,14 @@ namespace Transmitly
 		{
 			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds);
 		}
-
+		//todo:Experimental
 		public CommunicationsClientBuilder AddConfigurationModule<TModule>()
 			where TModule : CommunicationsClientModule, new()
 		{
 			new TModule().Load(this);
 			return this;
 		}
-
+		//todo:Experimental
 		public CommunicationsClientBuilder AddConfigurationModule(CommunicationsClientModule module)
 		{
 			Guard.AgainstNull(module).Load(this);
