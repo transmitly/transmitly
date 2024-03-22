@@ -18,6 +18,6 @@ namespace Transmitly.Pipeline.Configuration
 	{
 		public string Name { get; } = Guard.AgainstNullOrWhiteSpace(name);
 		public string? Category { get; } = category;
-		internal abstract void Load(IPipelineChannelConfiguration configuration);
+		public abstract void Load(IPipelineChannelConfiguration configuration);
 	}
 }
