@@ -26,15 +26,15 @@ namespace Transmitly.Delivery.Configuration
 			_communicationsClientBuilder = Guard.AgainstNull(communicationsClientBuilder);
 		}
 
-		public CommunicationsClientBuilder AddDeliveryReportHandler(IObserver<DeliveryReport> reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? channelIds = null, IReadOnlyCollection<string>? channelProviderIds = null)
+		public CommunicationsClientBuilder AddDeliveryReportHandler(IObserver<DeliveryReport> reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? channelIds = null, IReadOnlyCollection<string>? channelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
 		{
-			_registerDeliveryReport.Add(new DeliveryReportMonitor(reportHandler, filterEventNames, channelIds, channelProviderIds));
+			_registerDeliveryReport.Add(new DeliveryReportMonitor(reportHandler, filterEventNames, channelIds, channelProviderIds, filterPipelineNames));
 			return _communicationsClientBuilder;
 		}
 
-		public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null)
+		public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)	
 		{
-			_registerDeliveryReport.Add(new DeliveryReportMonitor(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds));
+			_registerDeliveryReport.Add(new DeliveryReportMonitor(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames));
 			return _communicationsClientBuilder;
 		}
 
