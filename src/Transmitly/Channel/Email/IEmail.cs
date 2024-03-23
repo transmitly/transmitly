@@ -12,9 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Channel;
+
 namespace Transmitly
 {
-    public interface IEmail
+	public interface IEmail : IStatusCallbackSupport
 	{
 		string? Subject { get; }
 		string? HtmlBody { get; }

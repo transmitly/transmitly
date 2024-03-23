@@ -12,9 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Channel;
+
 namespace Transmitly
 {
-	public interface IVoice
+	public interface IVoice: IStatusCallbackSupport
 	{
 		IAudienceAddress? From { get; }
 		IAudienceAddress[]? To { get; }
