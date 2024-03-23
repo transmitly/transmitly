@@ -12,22 +12,37 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+
 namespace Transmitly.Channel.Voice
 {
-	internal sealed class VoiceCommunication(string message, IExtendedProperties extendedProperties) : IVoice
+	///<inheritdoc/>
+	internal sealed class VoiceCommunication(string message, IExtendedProperties extendedProperties) : IVoice, IStatusCallbackSupport
 	{
+		///<inheritdoc/>
 		public IAudienceAddress? From { get; set; }
 
+		///<inheritdoc/>
 		public IAudienceAddress[]? To { get; set; }
-
+		
+		///<inheritdoc/>
 		public IVoiceType? VoiceType { get; set; }
-
+		
+		///<inheritdoc/>
 		public string Message { get; set; } = Guard.AgainstNullOrWhiteSpace(message);
-
+		
+		///<inheritdoc/>
 		public TransportPriority TransportPriority { get; set; }
-
+		
+		///<inheritdoc/>
 		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
-
+		
+		///<inheritdoc/>
 		public MachineDetection MachineDetection { get; set; }
+		
+		///<inheritdoc/>
+		public string? StatusCallbackUrl { get; set; }
+
+		///<inheritdoc/>
+		public Func<IDispatchCommunicationContext, Task<string?>>? StatusCallbackUrlResolver { get; set; }
 	}
 }

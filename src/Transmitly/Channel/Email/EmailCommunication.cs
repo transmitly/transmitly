@@ -12,30 +12,52 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+
 namespace Transmitly.Channel.Email
 {
-	internal sealed class EmailCommunication(IAudienceAddress from, IExtendedProperties extendedProperties) : IEmail
+	/// <inheritdoc />
+	internal sealed class EmailCommunication(IAudienceAddress from, IExtendedProperties extendedProperties) : IEmail, IStatusCallbackSupport
 	{
+		/// <inheritdoc />
 		public string? Subject { get; internal set; }
+
+		/// <inheritdoc />
 		public string? HtmlBody { get; internal set; }
+
+		/// <inheritdoc />
 		public string? TextBody { get; internal set; }
 
+		/// <inheritdoc />
 		public MessagePriority Priority { get; internal set; } = MessagePriority.Normal;
 
+		/// <inheritdoc />
 		public TransportPriority TransportPriority { get; internal set; } = TransportPriority.Normal;
 
+		/// <inheritdoc />
 		public IAudienceAddress From { get; } = Guard.AgainstNull(from);
 
+		/// <inheritdoc />
 		public IAudienceAddress[]? ReplyTo { get; internal set; } = [from];
 
+		/// <inheritdoc />
 		public IAudienceAddress[]? To { get; internal set; }
 
+		/// <inheritdoc />
 		public IAudienceAddress[]? Cc { get; internal set; }
 
+		/// <inheritdoc />
 		public IAudienceAddress[]? Bcc { get; internal set; }
 
+		/// <inheritdoc />
 		public IReadOnlyCollection<IAttachment> Attachments { get; internal set; } = [];
 
+		/// <inheritdoc />
 		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
+
+		/// <inheritdoc />
+		public string? StatusCallbackUrl { get; set; }
+
+		/// <inheritdoc />
+		public Func<IDispatchCommunicationContext, Task<string?>>? StatusCallbackUrlResolver { get; set; }
 	}
 }

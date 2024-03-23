@@ -45,6 +45,10 @@ namespace Transmitly.Channel.Sms
 
 		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
+		public string? StatusCallbackUrl { get; set; }
+
+		public Func<IDispatchCommunicationContext, Task<string?>>? StatusCallbackUrlResolver { get; set; }
+
 		internal SmsChannel(IAudienceAddress? fromAddress, string[]? channelProviderId = null) : this(channelProviderId)
 		{
 			From = fromAddress;
@@ -66,7 +70,9 @@ namespace Transmitly.Channel.Sms
 				Attachments = ConvertAttachments(communicationContext),
 				Priority = communicationContext.MessagePriority,
 				TransportPriority = communicationContext.TransportPriority,
-				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray()
+				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
+				StatusCallbackUrl = StatusCallbackUrl,
+				StatusCallbackUrlResolver = StatusCallbackUrlResolver
 			};
 		}
 

@@ -12,22 +12,37 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+
 namespace Transmitly.Channel.Sms
 {
+	/// <inheritdoc>/>
 	internal class SmsCommunication(IExtendedProperties extendedProperties) : ISms
 	{
+		/// <inheritdoc>/>
 		public IAudienceAddress[]? To { get; set; }
 
+		/// <inheritdoc>/>
 		public string? Message { get; set; }
 
+		/// <inheritdoc>/>
 		public MessagePriority Priority { get; set; }
 
+		/// <inheritdoc>/>
 		public TransportPriority TransportPriority { get; set; }
 
+		/// <inheritdoc>/>
 		public IReadOnlyCollection<IAttachment> Attachments { get; set; } = [];
 
+		/// <inheritdoc>/>
 		public IAudienceAddress? From { get; set; }
 
+		/// <inheritdoc>/>
 		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
+
+		/// <inheritdoc>/>
+		public string? StatusCallbackUrl { get; set; }
+
+		/// <inheritdoc>/>
+		public Func<IDispatchCommunicationContext, Task<string?>>? StatusCallbackUrlResolver { get; set; }
 	}
 }

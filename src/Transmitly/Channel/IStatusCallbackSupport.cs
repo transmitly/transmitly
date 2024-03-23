@@ -12,17 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel;
-using Transmitly.Channel.Configuration;
-using Transmitly.Template.Configuration;
-
-namespace Transmitly
+namespace Transmitly.Channel
 {
-	public interface IEmailChannel : IChannel, IStatusCallbackSupport
+	/// <summary>
+	/// Implementing channel supports methods for receiving status updates of dispatched communications.
+	/// </summary>
+	public interface IStatusCallbackSupport
 	{
-		IContentTemplateConfiguration Subject { get; }
-		IContentTemplateConfiguration HtmlBody { get; }
-		IContentTemplateConfiguration TextBody { get; }
-		IAudienceAddress? FromAddress { get; }
+		/// <summary>
+		/// The URL to call for status updates for the dispatched communication.
+		/// </summary>
+		string? StatusCallbackUrl { get; set; }
+
+		/// <summary>
+		/// A resolver that will return The URL to call for status updates for the dispatched communication.
+		/// </summary>
+		Func<IDispatchCommunicationContext, Task<string?>>? StatusCallbackUrlResolver { get; set; }
 	}
 }

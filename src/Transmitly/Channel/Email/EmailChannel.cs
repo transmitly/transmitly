@@ -41,6 +41,10 @@ namespace Transmitly.Channel.Email
 
 		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
+		public string? StatusCallbackUrl { get; set; }
+
+		public Func<IDispatchCommunicationContext, Task<string?>>? StatusCallbackUrlResolver { get; set; }
+
 		internal EmailChannel(Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, string[]? channelProviderId = null)
 		{
 			_fromAddressResolver = Guard.AgainstNull(fromAddressResolver);
@@ -78,6 +82,8 @@ namespace Transmitly.Channel.Email
 				HtmlBody = htmlBody,
 				TextBody = textBody,
 				Attachments = attachments,
+				StatusCallbackUrl = StatusCallbackUrl,
+				StatusCallbackUrlResolver = StatusCallbackUrlResolver
 			};
 		}
 

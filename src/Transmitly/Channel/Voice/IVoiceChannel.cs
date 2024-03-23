@@ -12,17 +12,33 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Channel;
 using Transmitly.Channel.Configuration;
 using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
-
-	public interface IVoiceChannel : IChannel
+	/// <summary>
+	/// Voice Communications Channel
+	/// </summary>
+	public interface IVoiceChannel : IChannel, IStatusCallbackSupport
 	{
+		/// <summary>
+		/// From Address
+		/// </summary>
 		IAudienceAddress? From { get; }
+		/// <summary>
+		/// Details of the voice to use.
+		/// </summary>
 		IVoiceType? VoiceType { get; set; }
+		/// <summary>
+		/// SSML voice message 
+		/// </summary>
 		IContentTemplateConfiguration Message { get; }
+		/// <summary>
+		/// Level of machine detection.
+		/// </summary>
 		MachineDetection MachineDetection { get; set; }
+		
 	}
 }
