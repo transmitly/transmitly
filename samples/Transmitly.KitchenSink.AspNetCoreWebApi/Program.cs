@@ -116,7 +116,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					//AddSms is a channel that is core to the Transmitly library.
 					pipeline.AddSms(tlyConfig.DefaultSmsFromAddress.AsAudienceAddress(), sms =>
 					{
-						sms.Text.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
+						sms.Message.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
 					});
 				})
 				//See: OTPCode route in Controllers.CommunicationsController.cs
