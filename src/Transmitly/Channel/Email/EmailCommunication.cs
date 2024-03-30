@@ -16,7 +16,7 @@
 namespace Transmitly.Channel.Email
 {
 	/// <inheritdoc />
-	internal sealed class EmailCommunication(IAudienceAddress from, IExtendedProperties extendedProperties) : IEmail, IStatusCallbackSupport
+	internal sealed class EmailCommunication(IAudienceAddress from, IExtendedProperties extendedProperties) : IEmail
 	{
 		/// <inheritdoc />
 		public string? Subject { get; internal set; }

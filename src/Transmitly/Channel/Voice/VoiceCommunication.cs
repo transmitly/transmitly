@@ -16,7 +16,7 @@
 namespace Transmitly.Channel.Voice
 {
 	///<inheritdoc/>
-	internal sealed class VoiceCommunication(string message, IExtendedProperties extendedProperties) : IVoice, IStatusCallbackSupport
+	internal sealed class VoiceCommunication(string message, IExtendedProperties extendedProperties) : IVoice
 	{
 		///<inheritdoc/>
 		public IAudienceAddress? From { get; set; }
