@@ -13,6 +13,8 @@
 //  limitations under the License.
 
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using Transmitly.ChannelProvider.ProviderResponse;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
@@ -75,6 +77,13 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 			);
 
 			return GetActionResult(result);
+		}
+
+		[HttpPost("callback/status", Name = "CallbackStatus")]
+		public IActionResult ReceiveStatus(IReadOnlyCollection<ChannelProviderReport> providerReport)
+		{
+			Console.WriteLine("[Incoming] {0}", JsonSerializer.Serialize(providerReport, new JsonSerializerOptions { WriteIndented = true }));
+			return Ok();
 		}
 	}
 }

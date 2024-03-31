@@ -29,7 +29,11 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			var tlyConfig = builder.Configuration.GetRequiredSection("Transmitly").Get<TransmitlyConfiguration>();
 
 			// Add services to the container.
-			builder.Services.AddControllers().AddJsonOptions(opt =>
+			builder.Services.AddControllers(options =>
+			{
+				options.ModelBinderProviders.Insert(0, new ChannelProviderModelBinderProvider());
+
+			}).AddJsonOptions(opt =>
 			{
 				opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 				opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -117,6 +121,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					pipeline.AddSms(tlyConfig.DefaultSmsFromAddress.AsAudienceAddress(), sms =>
 					{
 						sms.Message.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
+						//sms.StatusCallbackUrl = "https://scenes-babes-belgium-earned.trycloudflare.com/communications/callback/status";
 					});
 				})
 				//See: OTPCode route in Controllers.CommunicationsController.cs
@@ -163,8 +168,9 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				})
 				.AddPipeline(PipelineName.AppointmentReminder, pipeline =>
 				{
-					pipeline.AddVoice(voice =>
+					pipeline.AddVoice(tlyConfig.DefaultVoiceFromAddress.AsAudienceAddress(), voice =>
 					{
+
 						voice.Message.AddStringTemplate(
 							"""
 								Hello {{firstName}} <break strength="weak" /> this is a reminder about an upcoming doctors 
@@ -172,6 +178,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 								Don't be late!
 							"""
 							);
+						//voice.StatusCallbackUrl = "https://scenes-babes-belgium-earned.trycloudflare.com/communications/callback/status";
 					});
 				});
 			});
