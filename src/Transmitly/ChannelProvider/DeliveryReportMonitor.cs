@@ -21,7 +21,6 @@ namespace Transmitly.ChannelProvider
 		private readonly IReadOnlyCollection<string> _restrictedToChannelProviderIds;
 		private readonly IReadOnlyCollection<string> _restrictedToPipelineNames;
 
-		private readonly DeliveryReportAsyncHandler? _handler;
 		private readonly IObserver<DeliveryReport>? _observer;
 		private IDisposable? _cancellation;
 		public DeliveryReportMonitor(
@@ -44,7 +43,7 @@ namespace Transmitly.ChannelProvider
 				: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineNames)
 		{
 
-			_handler = Guard.AgainstNull(reportHandler);
+			_observer = new DeliveryReportAsyncHandlerObserver(Guard.AgainstNull(reportHandler));
 		}
 
 		private DeliveryReportMonitor(
@@ -81,9 +80,6 @@ namespace Transmitly.ChannelProvider
 		{
 			if (!ShouldFireEvent(value))
 				return;
-
-			if (_handler != null)
-				_ = Task.Run(() => _handler(value));
 
 			if (_observer != null)
 				_ = Task.Run(() => _observer.OnNext(value));
