@@ -22,7 +22,7 @@ namespace Transmitly.ChannelProvider.ProviderResponse
 		}
 
 		public abstract string? Id { get; }
-		public abstract DispatchStatus Status { get; }
+		public abstract DispatchStatus DispatchStatus { get; }
 		public IExtendedProperties ExtendedProperties { get; }=new ExtendedProperties();
 	}
 }
