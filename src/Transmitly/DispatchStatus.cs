@@ -19,7 +19,11 @@ namespace Transmitly
 		Unknown,
 		Dispatched,
 		Delivered,
-		Error,
+		Pending,
+		Undeliverable,
+		Expired,
+		Rejected,
+		Exception,
 		Disabled
 	}
 }

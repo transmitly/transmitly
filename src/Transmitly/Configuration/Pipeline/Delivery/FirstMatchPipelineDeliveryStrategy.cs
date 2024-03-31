@@ -35,7 +35,7 @@ namespace Transmitly.Delivery
 					}
 
 					results.AddRange(result);
-					if (result.All(r => r != null && r.DispatchStatus == DispatchStatus.Error))
+					if (result.All(r => r != null && r.DispatchStatus == DispatchStatus.Exception))
 					{
 						continue;
 					}

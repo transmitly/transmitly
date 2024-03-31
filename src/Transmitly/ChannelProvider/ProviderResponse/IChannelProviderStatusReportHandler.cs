@@ -12,15 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.ChannelProvider.ProviderResponse
 {
-	internal class NonTemplatingTemplatingEngine : ITemplateEngine
+	public interface IChannelProviderStatusReportHandler
 	{
-		public async Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
-		{
-			if (registration == null)
-				return null;
-			return await registration.GetContentAsync(context);
-		}
+		bool Handles(string requestBody);
+		IReadOnlyCollection<ChannelProviderReport> Handle(string requestBody);
 	}
 }

@@ -12,18 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.ChannelProvider;
-
-namespace Transmitly.Tests.Mocks
+namespace Transmitly.Template.Configuration
 {
-	internal sealed class FailChannelProviderClient : IChannelProviderClient<object>
+	internal class NoopTemplatingEngine : ITemplateEngine
 	{
-		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
-
-		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+		public async Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
 		{
-			var result = new DispatchResult(DispatchStatus.Exception);
-			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
+			if (registration == null)
+				return null;
+			return await registration.GetContentAsync(context);
 		}
 	}
 }

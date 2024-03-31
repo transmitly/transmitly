@@ -12,18 +12,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.ChannelProvider;
-
-namespace Transmitly.Tests.Mocks
+namespace Transmitly.ChannelProvider.ProviderResponse
 {
-	internal sealed class FailChannelProviderClient : IChannelProviderClient<object>
+	public abstract class ChannelProviderReport
 	{
-		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
-
-		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+		protected ChannelProviderReport()
 		{
-			var result = new DispatchResult(DispatchStatus.Exception);
-			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
+			
 		}
+
+		public abstract string? Id { get; }
+		public abstract DispatchStatus Status { get; }
+		public IExtendedProperties ExtendedProperties { get; }=new ExtendedProperties();
 	}
 }

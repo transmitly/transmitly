@@ -51,7 +51,7 @@ namespace Transmitly.Delivery
 				catch (Exception ex)
 				{
 					context.DeliveryReportHandler.DeliveryReport(new DeliveryReport(DeliveryReportEvent.Name.Error(), internalContext.ChannelId, internalContext.ChannelProviderId, context, communication));
-					return [new DispatchResult(DispatchStatus.Error, provider.Id, channel.Id) { Exception = ex }];
+					return [new DispatchResult(DispatchStatus.Exception, provider.Id, channel.Id) { Exception = ex }];
 				}
 			}
 			else

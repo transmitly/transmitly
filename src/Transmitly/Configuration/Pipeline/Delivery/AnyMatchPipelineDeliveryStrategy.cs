@@ -43,7 +43,7 @@ namespace Transmitly.Delivery
 
 					results.AddRange(result);
 
-					if (result.Any(r => r != null && r.DispatchStatus == DispatchStatus.Error))
+					if (result.Any(r => r != null && r.DispatchStatus == DispatchStatus.Exception))
 					{
 						return new DispatchCommunicationResult(results, false);
 					}
