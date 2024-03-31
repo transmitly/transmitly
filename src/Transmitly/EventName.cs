@@ -23,6 +23,7 @@ namespace Transmitly
 	public sealed class EventName
 	{
 		private const string DispatchEventName = "Dispatch";
+		private const string StatusUpdatedEventName = "StatusUpdated";
 
 		internal EventName() { }
 #pragma warning disable CA1822 // Mark members as static
@@ -30,6 +31,7 @@ namespace Transmitly
 		public string Error() => nameof(DispatchStatus.Exception);
 		public string Dispatched() => nameof(DispatchStatus.Dispatched);
 		public string Dispatch() => DispatchEventName;
+		public string StatusUpdated() => StatusUpdatedEventName;
 #pragma warning restore CA1822 // Mark members as static
 	}
 }

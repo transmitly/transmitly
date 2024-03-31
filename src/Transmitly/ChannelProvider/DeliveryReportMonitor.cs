@@ -80,7 +80,7 @@ namespace Transmitly.ChannelProvider
 		{
 			if (!ShouldFireEvent(value))
 				return;
-
+			
 			if (_observer != null)
 				_ = Task.Run(() => _observer.OnNext(value));
 		}
