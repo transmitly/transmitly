@@ -16,6 +16,7 @@ using System.ComponentModel;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
+using Transmitly.ChannelProvider.ProviderResponse;
 using Transmitly.Configuration;
 using Transmitly.Delivery.Configuration;
 using Transmitly.Pipeline.Configuration;
@@ -249,16 +250,19 @@ namespace Transmitly
 			if (_templateEngines.Count == 0)
 				AddTemplateEngine(new NoopTemplatingEngine(), DefaultTemplateEngineId);
 
+			IDeliveryReportProvider deliveryReportProvider = DeliveryReport.BuildHandler();
 			var client = _clientFactory.CreateClient(
 				new CreateCommunicationsClientContext(
 					_channelProviders,
 					_pipelines,
 					_templateEngines,
 					ConfigurationSettings.GetSettings(),
-					DeliveryReport.BuildHandler()
+					deliveryReportProvider
 				)
 			);
 
+			DefaultChannelProviderResponseHandlerFactory.Instance.SetDeliveryReportProvider(deliveryReportProvider);
+			
 			_clientCreated = true;
 
 			return client;

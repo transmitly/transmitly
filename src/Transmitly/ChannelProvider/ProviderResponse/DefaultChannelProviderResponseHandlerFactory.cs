@@ -19,6 +19,8 @@ namespace Transmitly.ChannelProvider.ProviderResponse
 		private readonly List<IChannelProviderStatusReportHandler> _responseHandlers = [];
 
 		private static readonly Lazy<DefaultChannelProviderResponseHandlerFactory> lazy = new(() => new DefaultChannelProviderResponseHandlerFactory());
+		// :(
+		public IDeliveryReportProvider? DeliveryReportProvider { get; private set; }
 
 		public IReadOnlyCollection<IChannelProviderStatusReportHandler> Handlers => _responseHandlers.AsReadOnly();
 
@@ -26,6 +28,11 @@ namespace Transmitly.ChannelProvider.ProviderResponse
 
 		private DefaultChannelProviderResponseHandlerFactory()
 		{
+		}
+
+		internal void SetDeliveryReportProvider(IDeliveryReportProvider deliveryReportProvider)
+		{
+			DeliveryReportProvider = deliveryReportProvider;
 		}
 
 		public void AddHandler<THandler>(int index = 0)
