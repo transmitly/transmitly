@@ -12,12 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.ChannelProvider;
-using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Exceptions;
 
-namespace Transmitly.Channel.Configuration
+namespace Transmitly.ChannelProvider.Configuration
 {
+	public interface IChannelProviderDeliveryReportRequestAdaptorRegistration
+	{
+		Type Type { get; }
+	}
+
 	/// <summary>
 	/// A builder for configuring channel providers in the communications configuration.
 	/// </summary>
@@ -25,16 +28,19 @@ namespace Transmitly.Channel.Configuration
 	{
 		private readonly CommunicationsClientBuilder _communicationsConfiguration;
 		private readonly Action<IChannelProviderRegistration> _addProvider;
+		private readonly Action<IChannelProviderDeliveryReportRequestAdaptorRegistration> _addHandlers;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ChannelProviderConfigurationBuilder"/> class.
 		/// </summary>
 		/// <param name="communicationsConfiguration">The communications configuration builder.</param>
 		/// <param name="addProvider">The action to add a channel provider.</param>
-		internal ChannelProviderConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IChannelProviderRegistration> addProvider)
+		/// <param name="addHandlers">The action to add a channel provider request adaptor.</param>
+		internal ChannelProviderConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IChannelProviderRegistration> addProvider, Action<IChannelProviderDeliveryReportRequestAdaptorRegistration> addHandlers)
 		{
 			_communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
 			_addProvider = Guard.AgainstNull(addProvider);
+			_addHandlers = Guard.AgainstNull(addHandlers);
 		}
 
 		/// <summary>
@@ -115,6 +121,21 @@ namespace Transmitly.Channel.Configuration
 			_addProvider(Guard.AgainstNull(registration));
 
 			return _communicationsConfiguration;
+		}
+
+		public ChannelProviderConfigurationBuilder AddDeliveryReportRequestAdaptor<TAdaptor>(string? id = null)
+			where TAdaptor : IChannelProviderDeliveryReportRequestAdaptor
+		{
+			AddDeliveryReportRequestAdaptor(typeof(TAdaptor), id);
+			return this;
+		}
+
+		public ChannelProviderConfigurationBuilder AddDeliveryReportRequestAdaptor(Type type, string? id = null)
+		{
+			if (!type.IsAssignableFrom(typeof(IChannelProviderDeliveryReportRequestAdaptor)))
+				throw new CommunicationsException("Provided adaptor must implement " + nameof(IChannelProviderDeliveryReportRequestAdaptor));
+			_addHandlers(new ChannelProviderDeliveryReportRequestAdaptorRegistration(type));
+			return this;
 		}
 	}
 }

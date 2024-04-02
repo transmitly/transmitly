@@ -35,5 +35,8 @@ namespace Transmitly.ChannelProvider.Configuration
 		/// <param name="channelProvider">The channel provider registration.</param>
 		/// <returns>The channel provider client.</returns>
 		Task<IChannelProviderClient> ResolveClientAsync(IChannelProviderRegistration channelProvider);
+
+		Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IChannelProviderDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor);
+		Task<IReadOnlyCollection<IChannelProviderDeliveryReportRequestAdaptorRegistration>> GetAllDeliveryReportRequestAdaptorsAsync();
 	}
 }

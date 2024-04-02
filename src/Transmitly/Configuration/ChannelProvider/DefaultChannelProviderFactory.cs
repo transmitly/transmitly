@@ -21,7 +21,7 @@ namespace Transmitly.Channel.Configuration
 	/// <summary>
 	/// Default channel provider factory
 	/// </summary>
-	public sealed class DefaultChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations) : BaseChannelProviderFactory(registrations)
+	public sealed class DefaultChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations, IEnumerable<IChannelProviderDeliveryReportRequestAdaptorRegistration> adaptorRegistrations) : BaseChannelProviderFactory(registrations, adaptorRegistrations)
 	{
 		public override Task<IChannelProviderClient> ResolveClientAsync(IChannelProviderRegistration channelProvider)
 		{
@@ -31,13 +31,19 @@ namespace Transmitly.Channel.Configuration
 
 			if (channelProvider.Configuration == null)
 			{
-
 				resolvedClient = Activator.CreateInstance(channelProvider.ClientType, channelProvider.ClientType.GetConstructors()[0].GetParameters().Select(x => Activator.CreateInstance(x.ParameterType)).ToArray()) as IChannelProviderClient;
 			}
 			else
 				resolvedClient = Activator.CreateInstance(channelProvider.ClientType, channelProvider.Configuration) as IChannelProviderClient;
 
 			return Task.FromResult(Guard.AgainstNull(resolvedClient));
+		}
+
+		public override Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IChannelProviderDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor)
+		{
+			Guard.AgainstNull(channelProviderDeliveryReportRequestAdaptor);
+			var adaptor = Activator.CreateInstance(channelProviderDeliveryReportRequestAdaptor.Type) as IChannelProviderDeliveryReportRequestAdaptor;
+			return Task.FromResult(Guard.AgainstNull(adaptor));
 		}
 	}
 }

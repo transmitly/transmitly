@@ -27,5 +27,6 @@ namespace Transmitly
 		IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
 		ICommunicationsConfigurationSettings CommunicationsConfigurationSettings { get; }
 		IDeliveryReportReporter DeliveryReportProvider { get; }
+		IReadOnlyCollection<IChannelProviderDeliveryReportRequestAdaptorRegistration> ChannelProviderDeliveryReportRequestAdaptors { get; }
 	}
 }

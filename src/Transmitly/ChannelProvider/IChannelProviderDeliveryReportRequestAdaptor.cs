@@ -14,8 +14,8 @@
 
 namespace Transmitly.ChannelProvider
 {
-	public sealed class ChannelProviderDeliveryReportRequest(IReadOnlyCollection<DeliveryReport> deliveryReports)
+	public interface IChannelProviderDeliveryReportRequestAdaptor
 	{
-		public IReadOnlyCollection<DeliveryReport> DeliveryReports { get; } = Guard.AgainstNull(deliveryReports);
+		Task<IReadOnlyCollection<DeliveryReport>?> AdaptAsync(Stream requestStream);
 	}
 }

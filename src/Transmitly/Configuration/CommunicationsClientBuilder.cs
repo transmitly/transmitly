@@ -36,13 +36,14 @@ namespace Transmitly
 		private readonly List<IPipeline> _pipelines = [];
 		//private readonly List<IAudienceResolver> _audienceResolvers = [];
 		private readonly List<ITemplateEngineRegistration> _templateEngines = [];
+		private readonly List<IChannelProviderDeliveryReportRequestAdaptorRegistration> _channelProviderDeliveryReportRequestAdaptorRegistrations = [];
 
 		/// <summary>
 		/// Creates an instance of the class
 		/// </summary>
 		public CommunicationsClientBuilder()
 		{
-			ChannelProvider = new(this, cp => _channelProviders.Add(cp));
+			ChannelProvider = new(this, cp => _channelProviders.Add(cp), a => _channelProviderDeliveryReportRequestAdaptorRegistrations.Add(a));
 			Pipeline = new(this, p => _pipelines.Add(p));
 			//AudienceResolver = new(this, ar => _audienceResolvers.Add(ar));
 			TemplateEngine = new(this, te => _templateEngines.Add(te));
@@ -259,6 +260,7 @@ namespace Transmitly
 			var client = _clientFactory.CreateClient(
 				new CreateCommunicationsClientContext(
 					_channelProviders,
+					_channelProviderDeliveryReportRequestAdaptorRegistrations,
 					_pipelines,
 					_templateEngines,
 					ConfigurationSettings.GetSettings(),

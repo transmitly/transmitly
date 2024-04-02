@@ -12,10 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly.ChannelProvider.Configuration
 {
-	public sealed class ChannelProviderDeliveryReportRequest(IReadOnlyCollection<DeliveryReport> deliveryReports)
+	internal sealed class ChannelProviderDeliveryReportRequestAdaptorRegistration(Type adaptorType) : IChannelProviderDeliveryReportRequestAdaptorRegistration
 	{
-		public IReadOnlyCollection<DeliveryReport> DeliveryReports { get; } = Guard.AgainstNull(deliveryReports);
+		public Type Type { get; } = Guard.AgainstNull(adaptorType);
 	}
 }

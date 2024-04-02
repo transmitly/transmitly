@@ -22,7 +22,7 @@ namespace Transmitly
 	[DebuggerStepThrough]
 	public sealed class ChannelProviders
 	{
-		private const string DefaultProviderId = "Default";
+		private const string DefaultProviderId = "";
 
 		internal ChannelProviders() { }
 

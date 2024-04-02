@@ -12,10 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.ChannelProvider;
-using Transmitly.ChannelProvider.Configuration;
-
-namespace Transmitly.Channel.Configuration
+namespace Transmitly.ChannelProvider.Configuration
 {
 	///<inheritdoc/>
 	internal class ChannelProviderRegistration<TClient, TCommunication>(string providerId, Func<IAudienceAddress, bool> supportAudienceAddress, object? configuration, params string[]? supportedChannels) : IChannelProviderRegistration

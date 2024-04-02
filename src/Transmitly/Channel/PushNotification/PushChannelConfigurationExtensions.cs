@@ -22,18 +22,16 @@ namespace Transmitly
 	/// </summary>
 	public static class PushChannelConfigurationExtensions
 	{
-		private const string PushNotificationId = "Push.Notification";
+		private const string PushNotificationId = "Push";
 		/// <summary>
 		/// Gets the 'PushNotification' channel Id
 		/// </summary>
 		/// <param name="channelId">The extension Id of the channel</param>
 		/// <param name="channel">Channel object.</param>
 		/// <returns></returns>
-		public static string PushNotification(this Channels channel, string channelId = "Default")
+		public static string PushNotification(this Channels channel, string channelId = "")
 		{
-			Guard.AgainstNull(channel);
-			Guard.AgainstNullOrWhiteSpace(channelId);
-			return $"{PushNotificationId}.{channelId}";
+			return Guard.AgainstNull(channel).GetId(PushNotificationId, channelId);
 		}
 
 		/// <summary>

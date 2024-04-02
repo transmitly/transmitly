@@ -30,11 +30,9 @@ namespace Transmitly
 		/// <param name="channelId">The extension Id of the channel</param>
 		/// <param name="channel">Channel object.</param>
 		/// <returns></returns>
-		public static string Voice(this Channels channel, string channelId = "Default")
+		public static string Voice(this Channels channel, string channelId = "")
 		{
-			Guard.AgainstNull(channel);
-			Guard.AgainstNullOrWhiteSpace(channelId);
-			return $"{VoiceId}.{channelId}";
+			return Guard.AgainstNull(channel).GetId(VoiceId,channelId);
 		}
 
 		/// <summary>

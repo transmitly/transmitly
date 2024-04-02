@@ -16,7 +16,7 @@ using Transmitly.ChannelProvider;
 
 namespace Transmitly.Channel.Configuration
 {
-	internal sealed class DefaultChannelProviderAdaptor<TCommunication>(IChannelProviderClient<TCommunication> client) : IChannelProviderClient
+	internal sealed class DefaultChannelProviderClientAdaptor<TCommunication>(IChannelProviderClient<TCommunication> client) : IChannelProviderClient
 	{
 		private readonly IChannelProviderClient<TCommunication> _client = Guard.AgainstNull(client);
 
