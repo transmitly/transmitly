@@ -26,12 +26,13 @@ namespace Transmitly.ChannelProvider.Configuration
 		/// Retrieves channel providers that support the specified channel providers.
 		/// </summary>
 		/// <param name="supportedChannelProviders">The array of supported channel providers.</param>
+		/// <param name="channels">The list of supported channels.</param>
 		/// <returns>A read-only list of channel providers.</returns>
 		Task<IReadOnlyCollection<IChannelProviderRegistration>> GetAllAsync(IReadOnlyCollection<string> supportedChannelProviders, IReadOnlyCollection<IChannel> channels);
 		/// <summary>
 		/// Resolves the client for the specified channel provider.
 		/// </summary>
-		/// <param name="registration">The channel provider registration.</param>
+		/// <param name="channelProvider">The channel provider registration.</param>
 		/// <returns>The channel provider client.</returns>
 		Task<IChannelProviderClient> ResolveClientAsync(IChannelProviderRegistration channelProvider);
 	}

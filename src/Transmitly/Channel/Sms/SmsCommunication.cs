@@ -15,34 +15,34 @@
 
 namespace Transmitly.Channel.Sms
 {
-	/// <inheritdoc>/>
+	/// <inheritdoc/>
 	internal class SmsCommunication(IExtendedProperties extendedProperties) : ISms
 	{
-		/// <inheritdoc>/>
+		/// <inheritdoc/>
 		public IAudienceAddress[]? To { get; set; }
 
-		/// <inheritdoc>/>
+		/// <inheritdoc/>
 		public string? Message { get; set; }
 
-		/// <inheritdoc>/>
+		/// <inheritdoc/>
 		public MessagePriority Priority { get; set; }
 
-		/// <inheritdoc>/>
+		/// <inheritdoc/>
 		public TransportPriority TransportPriority { get; set; }
 
-		/// <inheritdoc>/>
+		/// <inheritdoc/>
 		public IReadOnlyCollection<IAttachment> Attachments { get; set; } = [];
 
-		/// <inheritdoc>/>
+		/// <inheritdoc/>
 		public IAudienceAddress? From { get; set; }
 
-		/// <inheritdoc>/>
+		/// <inheritdoc/>
 		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 
-		/// <inheritdoc>/>
-		public string? StatusCallbackUrl { get; set; }
+		/// <inheritdoc/>
+		public string? DeliveryReportCallbackUrl { get; set; }
 
-		/// <inheritdoc>/>
-		public Func<IDispatchCommunicationContext, Task<string?>>? StatusCallbackUrlResolver { get; set; }
+		/// <inheritdoc/>
+		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 	}
 }

@@ -14,7 +14,6 @@
 
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
-using Transmitly.ChannelProvider.ProviderResponse;
 using Transmitly.Exceptions;
 
 namespace Transmitly.Channel.Configuration
@@ -116,19 +115,6 @@ namespace Transmitly.Channel.Configuration
 			_addProvider(Guard.AgainstNull(registration));
 
 			return _communicationsConfiguration;
-		}
-
-		public ChannelProviderConfigurationBuilder AddResponseHandler<T>()
-			where T : IChannelProviderStatusReportHandler
-		{
-			DefaultChannelProviderResponseHandlerFactory.Instance.AddHandler<T>();
-			return this;
-		}
-
-		public ChannelProviderConfigurationBuilder AddResponseHandler(IChannelProviderStatusReportHandler handler)
-		{
-			DefaultChannelProviderResponseHandlerFactory.Instance.AddHandler(handler);
-			return this;
 		}
 	}
 }

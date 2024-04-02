@@ -85,6 +85,9 @@ dotnet_diagnostic.S4144.severity = silent
 # IDE0073: The file header is missing or not located at the top of the file
 dotnet_diagnostic.IDE0073.severity = error
 
+# CS1591: Missing XML comment for publicly visible type or member
+dotnet_diagnostic.CS1591.severity = none
+
 [*.{cs,vb}]
 #### Naming styles ####
 

@@ -32,7 +32,7 @@ namespace Transmitly.Delivery
 			};
 
 			var communication = await GetChannelCommunicationAsync(channel, internalContext).ConfigureAwait(false);
-			IReadOnlyCollection<IDispatchResult?> results;
+			IReadOnlyCollection<IDispatchResult?>? results = null;
 			if (context.Settings.IsDeliveryEnabled)
 			{
 				try
@@ -41,7 +41,7 @@ namespace Transmitly.Delivery
 						return [];
 
 					var client = Guard.AgainstNull(await provider.ClientInstance());
-					results = await InvokeDispatchAsyncOnChannelProviderClient(provider, internalContext, communication, client, cancellationToken).ConfigureAwait(false);
+					results = await InvokeCommunicationTypedDispatchAsyncOnClient(provider, internalContext, communication, client, cancellationToken).ConfigureAwait(false);
 
 					if (results == null || results.Count == 0)
 						return [];
@@ -50,7 +50,13 @@ namespace Transmitly.Delivery
 				}
 				catch (Exception ex)
 				{
-					context.DeliveryReportHandler.DeliveryReport(new DeliveryReport(DeliveryReportEvent.Name.Error(), internalContext.ChannelId, internalContext.ChannelProviderId, context, communication));
+					if (results != null)
+					{
+						var reports = results.Select(r =>
+							new DeliveryReport(DeliveryReport.Event.Error(), internalContext.ChannelId, internalContext.ChannelProviderId, context.PipelineName, r!.ResourceId, r.DispatchStatus, communication)
+						).ToList();
+						context.DeliveryReportManager.DispatchReports(reports);
+					}
 					return [new DispatchResult(DispatchStatus.Exception, provider.Id, channel.Id) { Exception = ex }];
 				}
 			}
@@ -70,7 +76,7 @@ namespace Transmitly.Delivery
 				);
 		}
 
-		private static async Task<IReadOnlyCollection<IDispatchResult?>> InvokeDispatchAsyncOnChannelProviderClient(IChannelProvider provider, IDispatchCommunicationContext internalContext, object communication, IChannelProviderClient client, CancellationToken cancellationToken)
+		private static async Task<IReadOnlyCollection<IDispatchResult?>> InvokeCommunicationTypedDispatchAsyncOnClient(IChannelProvider provider, IDispatchCommunicationContext internalContext, object communication, IChannelProviderClient client, CancellationToken cancellationToken)
 		{
 			var method = typeof(IChannelProviderClient<>).MakeGenericType(provider.CommunicationType).GetMethod(nameof(IChannelProviderClient.DispatchAsync));
 			Guard.AgainstNull(method);

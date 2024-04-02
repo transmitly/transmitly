@@ -16,7 +16,7 @@ using Transmitly.Channel;
 
 namespace Transmitly
 {
-	public interface IEmail : IStatusCallbackSupport
+	public interface IEmail
 	{
 		string? Subject { get; }
 		string? HtmlBody { get; }
@@ -30,5 +30,13 @@ namespace Transmitly
 		IAudienceAddress[]? Bcc { get; }
 		IReadOnlyCollection<IAttachment> Attachments { get; }
 		IExtendedProperties ExtendedProperties { get; }
+		/// <summary>
+		/// The URL to call for status updates for the dispatched communication.
+		/// </summary>
+		string? DeliveryReportCallbackUrl { get; set; }
+		/// <summary>
+		/// A resolver that will return The URL to call for status updates for the dispatched communication.
+		/// </summary>
+		Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 	}
 }

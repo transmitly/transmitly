@@ -37,7 +37,6 @@ namespace Transmitly.Pipeline.Configuration
 		/// Adds a pipeline to the communication configuration with the specified name, audience type, category, transport priority, message priority, and options.
 		/// </summary>
 		/// <param name="name">The name of the pipeline</param>
-		///// <param name="audienceType">The audience type of the pipeline</param>
 		/// <param name="category">The category of the pipeline (optional)</param>
 		/// <param name="transportPriority">The transport priority of the pipeline</param>
 		/// <param name="messagePriority">The message priority of the pipeline</param>
@@ -55,7 +54,6 @@ namespace Transmitly.Pipeline.Configuration
 		/// Adds a pipeline to the communication configuration with the specified name, audience type, and category.
 		/// </summary>
 		/// <param name="name">The name of the pipeline</param>
-		///// <param name="audienceType">The audience type of the pipeline</param>
 		/// <param name="category">The category of the pipeline (optional)</param>
 		/// <param name="options">The configuration options for the pipeline</param>
 		/// <returns>The updated communication configuration builder</returns>
@@ -68,7 +66,6 @@ namespace Transmitly.Pipeline.Configuration
 		/// Adds a pipeline to the communication configuration with the specified name, audience type, and default category.
 		/// </summary>
 		/// <param name="name">The name of the pipeline</param>
-		///// <param name="audienceType">The audience type of the pipeline</param>
 		/// <param name="options">The configuration options for the pipeline</param>
 		/// <returns>The updated communication configuration builder</returns>
 		public CommunicationsClientBuilder Add(string name, /*string audienceType,*/ Action<IPipelineChannelConfiguration> options)
@@ -80,7 +77,6 @@ namespace Transmitly.Pipeline.Configuration
 		/// Adds a pipeline to the communication configuration with the specified name, audience type, transport priority, message priority, and category.
 		/// </summary>
 		/// <param name="name">The name of the pipeline</param>
-		///// <param name="audienceType">The audience type of the pipeline</param>
 		/// <param name="transportPriority">The transport priority of the pipeline</param>
 		/// <param name="messagePriority">The message priority of the pipeline</param>
 		/// <param name="options">The configuration options for the pipeline</param>

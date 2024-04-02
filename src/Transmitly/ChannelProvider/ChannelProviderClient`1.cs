@@ -18,38 +18,27 @@ namespace Transmitly.ChannelProvider
 {
 	public abstract class ChannelProviderClient<TCommunication> : IChannelProviderClient<TCommunication>
 	{
-		public virtual IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
-
 		public virtual Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken) =>
 			DispatchAsync((TCommunication)communication, communicationContext, cancellationToken);
 
 		public abstract Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(TCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken);
 
-		public virtual void DeliveryReport(string eventName, IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults)
+		public virtual void DispatchReport(string eventName, IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults)
 		{
-			Guard.AgainstNull(RegisteredEvents);
-
-			if (RegisteredEvents.Contains(eventName, StringComparer.OrdinalIgnoreCase))
-			{
-				foreach (var result in dispatchResults.Where(x => x != null))
-					context.DispatchResults.Add(result!);
-
-				context.DeliveryReportHandler.DeliveryReport(new DeliveryReport(eventName, context.ChannelId, context.ChannelProviderId, context, communication));
-			}
-			else
-				throw new CommunicationsException($"Delivery Report Event, '{eventName}', is not a registered event. Make sure to register your events. See: {nameof(RegisteredEvents)}");
+			foreach (var result in dispatchResults.Where(r => r != null))
+				context.DeliveryReportManager.DispatchReport(new DeliveryReport(eventName, context.ChannelId, context.ChannelProviderId, context.PipelineName, result!.ResourceId, result.DispatchStatus, communication));
 		}
 
 		public virtual void Dispatch(IDispatchCommunicationContext context, TCommunication communication) =>
-			DeliveryReport(DeliveryReportEvent.Name.Dispatch(), context, communication, []);
+			DispatchReport(DeliveryReport.Event.Dispatch(), context, communication, []);
 
 		public virtual void Delivered(IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults) =>
-			DeliveryReport(DeliveryReportEvent.Name.Delivered(), context, communication, dispatchResults);
+			DispatchReport(DeliveryReport.Event.Delivered(), context, communication, dispatchResults);
 
 		public virtual void Error(IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults) =>
-			DeliveryReport(DeliveryReportEvent.Name.Error(), context, communication, dispatchResults);
+			DispatchReport(DeliveryReport.Event.Error(), context, communication, dispatchResults);
 
 		public virtual void Dispatched(IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults) =>
-			DeliveryReport(DeliveryReportEvent.Name.Dispatched(), context, communication, dispatchResults);
+			DispatchReport(DeliveryReport.Event.Dispatched(), context, communication, dispatchResults);
 	}
 }

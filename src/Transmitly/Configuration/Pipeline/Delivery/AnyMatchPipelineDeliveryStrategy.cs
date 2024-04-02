@@ -22,8 +22,8 @@ namespace Transmitly.Delivery
 		/// <summary>
 		/// Sends the communication to all the channels using the allowed channel providers.
 		/// </summary>
-		/// <param name="channels">The collection of channels to send the communication to.</param>
-		/// <param name="allowedChannelProviders">The list of allowed channel providers.</param>
+		/// <param name="sendingGroups">The collection of channels to send the communication to.</param>
+		/// <param name="cancellationToken">Cancellation token.</param>
 		/// <param name="context">The communication context.</param>
 		/// <returns>A task representing the asynchronous operation.</returns>
 		public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken)

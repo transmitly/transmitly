@@ -26,7 +26,7 @@ namespace Transmitly
 		IChannelProviderFactory channelProviderRegistrations,
 		ITemplateEngineFactory templateEngineRegistrations,
 		ICommunicationsConfigurationSettings configurationSettings,
-		IDeliveryReportProvider deliveryReportHandler//,
+		IDeliveryReportReporter deliveryReportHandler//,
 													 //IAudienceResolverRegistrationStore audienceResolvers
 		) : ICommunicationsClient
 	{
@@ -34,7 +34,7 @@ namespace Transmitly
 		private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
 		private readonly ITemplateEngineFactory _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
 		private readonly ICommunicationsConfigurationSettings _configurationSettings = Guard.AgainstNull(configurationSettings);
-		private readonly IDeliveryReportProvider _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
+		private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
 
 		//private readonly IAudienceResolverRegistrationStore _audienceResolvers = Guard.AgainstNull(audienceResolvers);
 
@@ -145,6 +145,19 @@ namespace Transmitly
 			})))
 			.Where(x => x.ChannelProviderClients.Count != 0)
 			.ToList();
+		}
+
+		public void DeliverReport(DeliveryReport report)
+		{
+			Guard.AgainstNull(report);
+			_deliveryReportProvider.DispatchReport(report);
+		}
+
+		public void DeliverReports(IReadOnlyCollection<DeliveryReport> reports)
+		{
+			Guard.AgainstNull(reports);
+			foreach (var report in reports)
+				_deliveryReportProvider.DispatchReport(report);
 		}
 	}
 }

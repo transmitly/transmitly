@@ -27,7 +27,8 @@ namespace Transmitly
 		/// <summary>
 		/// Gets the 'Voice' channel Id
 		/// </summary>
-		/// <param name="channelId"></param>
+		/// <param name="channelId">The extension Id of the channel</param>
+		/// <param name="channel">Channel object.</param>
 		/// <returns></returns>
 		public static string Voice(this Channels channel, string channelId = "Default")
 		{
@@ -61,7 +62,7 @@ namespace Transmitly
 		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
 		/// <param name="voiceChannelConfiguration">Voice Channel configuration options.</param>
 		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel.</param>
-		/// <param name="fromAddress">Address the communication will appear to be sent from.</param>
+		/// <param name="fromAddressResolver">Resolves the Address the communication will appear to be sent from.</param>
 		/// <returns></returns>
 		public static IPipelineChannelConfiguration AddVoice(this IPipelineChannelConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, Action<IVoiceChannel> voiceChannelConfiguration, params string[]? allowedChannelProviders)
 		{

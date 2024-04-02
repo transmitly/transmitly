@@ -12,21 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System.Diagnostics;
-
-namespace Transmitly
+namespace Transmitly.ChannelProvider
 {
-	/// <summary>
-	/// Provides an extensible way to access event names for referenced projects
-	/// </summary>
-	[DebuggerStepThrough]
-	public sealed class DeliveryReportEvent
+	public sealed class ChannelProviderDeliveryReportRequest
 	{
-		private DeliveryReportEvent()
+		internal ChannelProviderDeliveryReportRequest(IReadOnlyCollection<DeliveryReport> deliveryReports)
 		{
-
+			DeliveryReports = Guard.AgainstNull(deliveryReports);
 		}
-
-		public static EventName Name { get; } = new EventName();
+		public IReadOnlyCollection<DeliveryReport> DeliveryReports { get; }
 	}
 }

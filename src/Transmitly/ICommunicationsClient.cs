@@ -12,6 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.ChannelProvider;
+
 namespace Transmitly
 {
 	/// <summary>
@@ -36,5 +38,8 @@ namespace Transmitly
 		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<string> audienceAddresses, object contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
 		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudienceAddress> audienceAddresses, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
 		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudience> audiences, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
+
+		void DeliverReport(DeliveryReport report);
+		void DeliverReports(IReadOnlyCollection<DeliveryReport> reports);
 	}
 }

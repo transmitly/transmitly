@@ -45,7 +45,6 @@ namespace Transmitly.Channel.Configuration
 		/// <summary>
 		/// Generates a communication using the specified template engine and communication context.
 		/// </summary>
-		/// <param name="engine">The template engine to use.</param>
 		/// <param name="communicationContext">The communication context.</param>
 		/// <returns>The generated communication.</returns>
 		Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);

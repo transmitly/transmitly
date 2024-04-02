@@ -21,7 +21,7 @@ namespace Transmitly
 	/// <summary>
 	/// Voice Communications Channel
 	/// </summary>
-	public interface IVoiceChannel : IChannel, IStatusCallbackSupport
+	public interface IVoiceChannel : IChannel
 	{
 		/// <summary>
 		/// From Address
@@ -39,6 +39,13 @@ namespace Transmitly
 		/// Level of machine detection.
 		/// </summary>
 		MachineDetection MachineDetection { get; set; }
-		
+		/// <summary>
+		/// The URL to call for status updates for the dispatched communication.
+		/// </summary>
+		string? DeliveryReportCallbackUrl { get; set; }
+		/// <summary>
+		/// A resolver that will return The URL to call for status updates for the dispatched communication.
+		/// </summary>
+		Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 	}
 }

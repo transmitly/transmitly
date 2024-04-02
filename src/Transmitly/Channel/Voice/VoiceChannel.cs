@@ -53,9 +53,9 @@ namespace Transmitly.Channel.Voice
 
 		public MachineDetection MachineDetection { get; set; }
 
-		public string? StatusCallbackUrl { get; set; }
+		public string? DeliveryReportCallbackUrl { get; set; }
 
-		public Func<IDispatchCommunicationContext, Task<string?>>? StatusCallbackUrlResolver { get; set; }
+		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 
 		internal VoiceChannel(IAudienceAddress? fromAddress, string[]? channelProviderIds = null) : this(channelProviderIds)
 		{
@@ -76,8 +76,8 @@ namespace Transmitly.Channel.Voice
 				From = GetSenderFromAddress(communicationContext),
 				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
 				TransportPriority = communicationContext.TransportPriority,
-				StatusCallbackUrl = StatusCallbackUrl,
-				StatusCallbackUrlResolver = StatusCallbackUrlResolver
+				DeliveryReportCallbackUrl = DeliveryReportCallbackUrl,
+				DeliveryReportCallbackUrlResolver = DeliveryReportCallbackUrlResolver
 			};
 		}
 

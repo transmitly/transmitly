@@ -18,11 +18,19 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
-	public interface IEmailChannel : IChannel, IStatusCallbackSupport
+	public interface IEmailChannel : IChannel
 	{
 		IContentTemplateConfiguration Subject { get; }
 		IContentTemplateConfiguration HtmlBody { get; }
 		IContentTemplateConfiguration TextBody { get; }
 		IAudienceAddress? FromAddress { get; }
+		/// <summary>
+		/// The URL to call for status updates for the dispatched communication.
+		/// </summary>
+		string? DeliveryReportCallbackUrl { get; set; }
+		/// <summary>
+		/// A resolver that will return The URL to call for status updates for the dispatched communication.
+		/// </summary>
+		Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 	}
 }

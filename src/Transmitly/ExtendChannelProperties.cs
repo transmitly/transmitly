@@ -41,10 +41,15 @@ namespace Transmitly
 		{
 			var key = GetCompositeKey(providerKey, propertyKey);
 
-			if (_bag.ContainsKey(key))
+#if FEATURE_DICTIONARYTRYADD
+			if (!_bag.TryAdd(key, value))
 				_bag[key] = value;
-			else
+#else
+			if (!_bag.ContainsKey(key))
 				_bag.Add(key, value);
+			else
+				_bag[key] = value;
+#endif
 		}
 
 		/// <inheritdoc />
@@ -120,7 +125,6 @@ namespace Transmitly
 		//https://aka.ms/dotnet-warnings/SYSLIB0051
 		[Obsolete("https://aka.ms/dotnet-warnings/SYSLIB0051", DiagnosticId = "SYSLIB0051")]
 #endif
-		/// <inheritdoc />
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			_bag.GetObjectData(info, context);

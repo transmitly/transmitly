@@ -26,7 +26,8 @@ namespace Transmitly
 		/// <summary>
 		/// Gets the 'PushNotification' channel Id
 		/// </summary>
-		/// <param name="channelId"></param>
+		/// <param name="channelId">The extension Id of the channel</param>
+		/// <param name="channel">Channel object.</param>
 		/// <returns></returns>
 		public static string PushNotification(this Channels channel, string channelId = "Default")
 		{

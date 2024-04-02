@@ -96,7 +96,7 @@ namespace Transmitly.ChannelProvider
 			if (_restrictedToChannelProviderIds.Count != 0 && value.ChannelProviderId != null && !_restrictedToChannelProviderIds.Any(c => c.Equals(value.ChannelProviderId, StringComparison.OrdinalIgnoreCase)))
 				return false;
 
-			if (_restrictedToPipelineNames.Count != 0 && value.CommunicationContext != null && !_restrictedToPipelineNames.Any(e => e.Equals(value.CommunicationContext.PipelineName, StringComparison.OrdinalIgnoreCase)))
+			if (_restrictedToPipelineNames.Count != 0 && !string.IsNullOrWhiteSpace(value.PipelineName) && !_restrictedToPipelineNames.Any(e => e.Equals(value.PipelineName, StringComparison.OrdinalIgnoreCase)))
 				return false;
 
 			return true;

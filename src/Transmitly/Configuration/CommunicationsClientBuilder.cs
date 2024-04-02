@@ -16,7 +16,6 @@ using System.ComponentModel;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
-using Transmitly.ChannelProvider.ProviderResponse;
 using Transmitly.Configuration;
 using Transmitly.Delivery.Configuration;
 using Transmitly.Pipeline.Configuration;
@@ -64,9 +63,9 @@ namespace Transmitly
 		/// </summary>
 		public PipelineConfigurationBuilder Pipeline { get; }
 
-		/// <summary>
-		/// Gets the audience resolver configuration builder.
-		/// </summary>
+		// <summary>
+		// Gets the audience resolver configuration builder.
+		// </summary>
 		//public AudienceResolverConfigurationBuilder AudienceResolver { get; }
 
 		/// <summary>
@@ -103,8 +102,8 @@ namespace Transmitly
 		/// </summary>
 		/// <typeparam name="TCommunication">The type of communication the client will handle.</typeparam>
 		/// <param name="providerId">The ID of the channel provider.</param>
-		/// <param name="channelProviderInstance">The instance of the channel provider client.</param>
 		/// <param name="supportedChannelIds">The array of supported channel IDs.</param>
+		/// <typeparam name="TClient">Concrete type of the channel provider client.</typeparam>
 		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, params string[]? supportedChannelIds)
 			where TClient : IChannelProviderClient<TCommunication>
@@ -117,6 +116,7 @@ namespace Transmitly
 		/// <param name="providerId">The ID of the channel provider.</param>
 		/// <param name="configuration">Configuration settings for the client.</param>
 		/// <param name="supportedChannelIds">The array of supported channel IDs.</param>
+		/// <typeparam name="TClient">Concrete type of the channel provider client.</typeparam>
 		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, object? configuration, params string[]? supportedChannelIds)
 			where TClient : IChannelProviderClient<TCommunication>
@@ -126,7 +126,6 @@ namespace Transmitly
 		/// Adds a pipeline to the configuration.
 		/// </summary>
 		/// <param name="name">The name of the pipeline.</param>
-		///// <param name="audienceType">The type of audience.</param>
 		/// <param name="category">The optional category of the pipeline.</param>
 		/// <param name="transportPriority">The transport priority of the pipeline.</param>
 		/// <param name="messagePriority">The message priority of the pipeline.</param>
@@ -139,7 +138,6 @@ namespace Transmitly
 		/// Adds a pipeline to the configuration.
 		/// </summary>
 		/// <param name="name">The name of the pipeline.</param>
-		///// <param name="audienceType">The type of audience.</param>
 		/// <param name="category">The optional category of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
@@ -150,7 +148,6 @@ namespace Transmitly
 		/// Adds a pipeline to the configuration.
 		/// </summary>
 		/// <param name="name">The name of the pipeline.</param>
-		///// <param name="audienceType">The type of audience.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddPipeline(string name, /*string audienceType, */Action<IPipelineChannelConfiguration> options) =>
@@ -160,7 +157,6 @@ namespace Transmitly
 		/// Adds a pipeline to the configuration.
 		/// </summary>
 		/// <param name="name">The name of the pipeline.</param>
-		///// <param name="audienceType">The type of audience.</param>
 		/// <param name="transportPriority">The transport priority of the pipeline.</param>
 		/// <param name="messagePriority">The message priority of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
@@ -176,20 +172,18 @@ namespace Transmitly
 		public CommunicationsClientBuilder AddPipelineModule(PipelineModule module) =>
 			Pipeline.AddModule(module);
 
-		/// <summary>
-		/// Adds a generic audience resolver to the configuration.
-		/// </summary>
-		/// <param name="audienceResolver">The audience resolver function.</param>
-		/// <returns>The configuration builder.</returns>
+		// <summary>
+		// Adds a generic audience resolver to the configuration.
+		// </summary>
+		// <param name="audienceResolver">The audience resolver function.</param>
+		// <returns>The configuration builder.</returns>
 		//public CommunicationsConfigurationBuilder AddGenericAudienceResolver(AudienceResolverFunc audienceResolver) =>
 		//    AudienceResolver.AddGeneric(audienceResolver);
 
-		/// <summary>
-		/// Adds an audience resolver to the configuration.
-		/// </summary>
-		/// <param name="audienceTypeIdentifier">The identifier for the audience type.</param>
-		/// <param name="audienceResolver">The audience resolver function.</param>
-		/// <returns>The configuration builder.</returns>
+		// <summary>
+		// Adds an audience resolver to the configuration.
+		// </summary>
+		// <returns>The configuration builder.</returns>
 		//public CommunicationsConfigurationBuilder AddAudienceResolver(string audienceTypeIdentifier, AudienceResolverFunc audienceResolver) =>
 		//    AudienceResolver.Add(audienceTypeIdentifier, audienceResolver);
 
@@ -203,9 +197,10 @@ namespace Transmitly
 		/// Adds a delivery report handler to the configuration.
 		/// </summary>
 		/// <param name="reportHandler">The event handler to register.</param>
-		/// <param name="filterEventNames">List of events to listen to. See <see cref="DeliveryReportEvent.Name"/></param>
+		/// <param name="filterEventNames">List of events to listen to. See <see cref="DeliveryReport.Event"/></param>
 		/// <param name="filterChannelIds">List of channel ids to listen to. See <see cref="Id.Channel"/></param>
 		/// <param name="filterChannelProviderIds">List of channel provider ids to listen to. See <see cref="Id.ChannelProvider"/></param>
+		/// <param name="filterPipelineNames">List of pipeline names to listen to.</param>
 		/// <returns>The configuration builder</returns>
 		public CommunicationsClientBuilder AddDeliveryReportHandler(IObserver<DeliveryReport> reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
 		{
@@ -216,23 +211,33 @@ namespace Transmitly
 		/// Adds a delivery report handler to the configuration.
 		/// </summary>
 		/// <param name="reportHandler">The event handler to register.</param>
-		/// <param name="filterEventNames">List of events to listen to. See <see cref="DeliveryReportEvent.Name"/></param>
-		/// <param name="channelIds">List of channel ids to listen to. See <see cref="Id.Channel"/></param>
-		/// <param name="channelProviderIds">List of channel provider ids to listen to. See <see cref="Id.ChannelProvider"/></param>
+		/// <param name="filterEventNames">List of events to listen to. See <see cref="DeliveryReport.Event"/></param>
+		/// <param name="filterChannelIds">List of channel ids to listen to. See <see cref="Id.Channel"/></param>
+		/// <param name="filterChannelProviderIds">List of channel provider ids to listen to. See <see cref="Id.ChannelProvider"/></param>
+		/// <param name="filterPipelineNames">List of pipeline names to listen to.</param>
 		/// <returns>The configuration builder</returns>
 		public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
 		{
 			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
 		}
 
-		//todo:Experimental
+		/// <summary>
+		/// Adds a configuration module to this configuration.
+		/// </summary>
+		/// <typeparam name="TModule">Module to load the configuration from.</typeparam>
+		/// <returns>This configuration builder.</returns>
 		public CommunicationsClientBuilder AddConfigurationModule<TModule>()
 			where TModule : CommunicationsClientModule, new()
 		{
 			new TModule().Load(this);
 			return this;
 		}
-		//todo:Experimental
+
+		/// <summary>
+		/// Adds a configuration module to this configuration.
+		/// </summary>
+		/// <param name="module">Module to load the configuration from.</param>
+		/// <returns>This configuration builder.</returns>
 		public CommunicationsClientBuilder AddConfigurationModule(CommunicationsClientModule module)
 		{
 			Guard.AgainstNull(module).Load(this);
@@ -250,7 +255,7 @@ namespace Transmitly
 			if (_templateEngines.Count == 0)
 				AddTemplateEngine(new NoopTemplatingEngine(), DefaultTemplateEngineId);
 
-			IDeliveryReportProvider deliveryReportProvider = DeliveryReport.BuildHandler();
+			IDeliveryReportReporter deliveryReportProvider = DeliveryReport.BuildHandler();
 			var client = _clientFactory.CreateClient(
 				new CreateCommunicationsClientContext(
 					_channelProviders,
@@ -261,17 +266,15 @@ namespace Transmitly
 				)
 			);
 
-			DefaultChannelProviderResponseHandlerFactory.Instance.SetDeliveryReportProvider(deliveryReportProvider);
-			
 			_clientCreated = true;
 
 			return client;
 		}
 
-		/// <summary>
-		/// Sets whether to assert that the configuration is valid at runtime
-		/// </summary>
-		/// <returns>The configuration builder</returns>
+		// <summary>
+		// Sets whether to assert that the configuration is valid at runtime
+		// </summary>
+		// <returns>The configuration builder</returns>
 		//public CommunicationsClientBuilder AssertConfiguration()
 		//{
 		//	_assertConfiguration = true;

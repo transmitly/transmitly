@@ -55,9 +55,9 @@ namespace Transmitly.Channel.Email
 		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 
 		/// <inheritdoc />
-		public string? StatusCallbackUrl { get; set; }
+		public string? DeliveryReportCallbackUrl { get; set; }
 
 		/// <inheritdoc />
-		public Func<IDispatchCommunicationContext, Task<string?>>? StatusCallbackUrlResolver { get; set; }
+		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 	}
 }

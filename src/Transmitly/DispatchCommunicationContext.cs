@@ -26,7 +26,7 @@ namespace Transmitly.Channel.Configuration
 		IPipelineChannelConfiguration channelConfiguration,
 		IReadOnlyCollection<IAudience> recipients,
 		ITemplateEngine templateEngine,
-		IDeliveryReportProvider deliveryReportHandler,
+		IDeliveryReportReporter deliveryReportManager,
 		ICommunicationsConfigurationSettings configurationSettings,
 		CultureInfo cultureInfo,
 		string pipelineName,
@@ -35,7 +35,7 @@ namespace Transmitly.Channel.Configuration
 		string? ChannelId = null, string? ChannelProviderId = null) : IDispatchCommunicationContext
 	{
 		public DispatchCommunicationContext(IDispatchCommunicationContext context, IChannel channel, IChannelProvider channelProvider)
-			: this(context.ContentModel, context.ChannelConfiguration, context.RecipientAudiences, context.TemplateEngine, context.DeliveryReportHandler,
+			: this(context.ContentModel, context.ChannelConfiguration, context.RecipientAudiences, context.TemplateEngine, context.DeliveryReportManager,
 				  context.Settings, context.CultureInfo, context.PipelineName, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
 		{
 
@@ -75,7 +75,7 @@ namespace Transmitly.Channel.Configuration
 		public ICollection<IDispatchResult> DispatchResults { get; } = [];
 
 		/// <inheritdoc/>
-		public IDeliveryReportProvider DeliveryReportHandler { get; } = Guard.AgainstNull(deliveryReportHandler);
+		public IDeliveryReportReporter DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
 
 		/// <inheritdoc/>
 		public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);

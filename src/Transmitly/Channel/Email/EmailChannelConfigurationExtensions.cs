@@ -25,7 +25,8 @@ namespace Transmitly
 		/// <summary>
 		/// Gets the 'Email' channel Id
 		/// </summary>
-		/// <param name="channelId"></param>
+		/// <param name="channelId">The extension Id of the channel</param>
+		/// <param name="channel">Channel object.</param>
 		/// <returns></returns>
 		public static string Email(this Channels channel, string channelId = "Default")
 		{

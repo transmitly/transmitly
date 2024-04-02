@@ -62,9 +62,9 @@ namespace Transmitly
 		/// <summary>
 		/// Gets the value associated with the specified keys.
 		/// </summary>
-		/// <typeparam name="T">Expected return type.</typeparam>
 		/// <param name="providerKey">The provider key of the value to get or set.</param>
 		/// <param name="propertyKey">The key of the value to get or set.</param>
+		/// <returns>
 		/// The value associated with the specified keys. If the specified key is not found,
 		/// a default value is returned
 		/// </returns>

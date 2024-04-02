@@ -20,8 +20,6 @@ namespace Transmitly.Channel.Configuration
 	{
 		private readonly IChannelProviderClient<TCommunication> _client = Guard.AgainstNull(client);
 
-		public IReadOnlyCollection<string>? RegisteredEvents { get; } = client.RegisteredEvents;
-
 		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 		{
 			return _client.DispatchAsync((TCommunication)communication, communicationContext, cancellationToken);

@@ -20,9 +20,13 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
-	sealed class CreateCommunicationsClientContext(IReadOnlyCollection<IChannelProviderRegistration> channelProviders, IReadOnlyCollection<IPipeline> pipelines,
-			IReadOnlyCollection<ITemplateEngineRegistration> templateEngines, ICommunicationsConfigurationSettings communicationsConfigurationSettings,
-			IDeliveryReportProvider deliveryReportProvider) : ICreateCommunicationsClientContext
+	internal sealed class CreateCommunicationsClientContext(
+		IReadOnlyCollection<IChannelProviderRegistration> channelProviders,
+		IReadOnlyCollection<IPipeline> pipelines,
+		IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
+		ICommunicationsConfigurationSettings communicationsConfigurationSettings,
+		IDeliveryReportReporter deliveryReportProvider
+	) : ICreateCommunicationsClientContext
 	{
 		public IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; } = channelProviders;
 
@@ -32,6 +36,6 @@ namespace Transmitly
 
 		public ICommunicationsConfigurationSettings CommunicationsConfigurationSettings { get; } = communicationsConfigurationSettings;
 
-		public IDeliveryReportProvider DeliveryReportProvider { get; } = deliveryReportProvider;
+		public IDeliveryReportReporter DeliveryReportProvider { get; } = deliveryReportProvider;
 	}
 }

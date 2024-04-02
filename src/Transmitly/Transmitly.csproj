@@ -28,6 +28,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net471' ">
@@ -50,6 +51,9 @@
 		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD;FEATURE_SOURCE_GEN</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup>
+	  <NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
 		<Reference Include="System" />
 		<Reference Include="System.Core" />

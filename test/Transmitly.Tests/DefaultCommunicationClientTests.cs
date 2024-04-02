@@ -68,14 +68,14 @@ namespace Transmitly.Tests
 			Mock<IPipelineFactory> pipeline,
 			Mock<IChannelProviderFactory> channelProvider,
 			Mock<ITemplateEngineFactory> template,
-			Mock<IDeliveryReportProvider> deliveryReportHandler) GetStores()
+			Mock<IDeliveryReportReporter> deliveryReportHandler) GetStores()
 		{
 			return (
 				new Mock<ICommunicationsConfigurationSettings>(),
 				new Mock<IPipelineFactory>(),
 				new Mock<IChannelProviderFactory>(),
 				new Mock<ITemplateEngineFactory>(),
-				new Mock<IDeliveryReportProvider>()
+				new Mock<IDeliveryReportReporter>()
 			);
 		}
 

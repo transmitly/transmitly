@@ -68,7 +68,7 @@ namespace Transmitly
 		/// </summary>
 		/// <param name="templateConfig">Template configuration.</param>
 		/// <param name="contents">Content of the template.</param>
-		/// <param name="cultureInfo">Specified culture of the template; otherwise <see cref="CultureInfo.InvariantCulture"></param>
+		/// <param name="cultureInfo">Specified culture of the template; otherwise <see cref="CultureInfo.InvariantCulture"/></param>
 		/// <returns>Template configuration.</returns>
 		public static IContentTemplateConfiguration AddStringTemplate(this IContentTemplateConfiguration templateConfig, string contents, string? cultureInfo = null)
 		{
@@ -84,7 +84,7 @@ namespace Transmitly
 		/// <param name="templateConfig">Template configuration.</param>
 		/// <param name="resourceId">Assembly resource id.</param>
 		/// <param name="assembly">Optional assembly the resource id is located in.</param>
-		/// <param name="cultureInfo">Specified culture of the template; otherwise <see cref="CultureInfo.InvariantCulture"></param>
+		/// <param name="cultureInfo">Specified culture of the template; otherwise <see cref="CultureInfo.InvariantCulture"/></param>
 		/// <returns>Template configuration.</returns>
 		public static IContentTemplateConfiguration AddEmbeddedResourceTemplate(this IContentTemplateConfiguration templateConfig, string resourceId, Assembly? assembly = null, string? cultureInfo = null)
 		{
@@ -99,7 +99,7 @@ namespace Transmitly
 		/// </summary>
 		/// <param name="templateConfiguration">Template configuration.</param>
 		/// <param name="templateResolver">Delegate that will resolve template content.</param>
-		/// <param name="cultureInfo">Specified culture of the template; otherwise <see cref="CultureInfo.InvariantCulture"></param>
+		/// <param name="cultureInfo">Specified culture of the template; otherwise <see cref="CultureInfo.InvariantCulture"/></param>
 		/// <returns>Template configuration.</returns>
 		public static IContentTemplateConfiguration AddTemplateResolver(this IContentTemplateConfiguration templateConfiguration, Func<IDispatchCommunicationContext, Task<string?>> templateResolver, string? cultureInfo = null)
 		{

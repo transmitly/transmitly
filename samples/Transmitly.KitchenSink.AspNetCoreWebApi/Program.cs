@@ -137,6 +137,12 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						email.HtmlBody.AddStringTemplate("Your code: <strong>{{code}}</strong>");
 						email.TextBody.AddStringTemplate("Your code: {{code}}");
 
+						//Already have emails defined with SendGrid? Great, we can handle those too!
+						// We can use the extended properties provided by the SendGrid channel provider.
+						// This way we ensure that if the SendGrid channel provider is used for this channel, we'll use the template id.
+						// if we happen to fallback or even remove SendGrid, we can gracefully fallback to our content defined above. Neat!
+						email.SendGrid().TemplateId = "d-89ae21e8ebed491380ed580f30e0b052";
+
 						// While not required, we can specify channel providers that are allowed to 
 						// handle this communication. In this case, we might want to use our secure
 						// smtp server to send out our OTP codes. Another use-case would be using a schremsII
@@ -150,27 +156,10 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
 					});
 				})
-				//Already have emails defined with SendGrid? Great, we can handle those too!
-				.AddPipeline(PipelineName.SendGridTemplate, pipeline =>
-				{
-					// a nice byproduct of the above line, is that we can seamlessly use another channel provider if we decide to move away from SendGrid (or SendGrid is down)
-					// we're restricting this to only use the default mailkit or infobip channel providers
-					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsAudienceAddress(), email =>
-					{
-						email.Subject.AddStringTemplate("A subject that matches the SendGrid Template");
-						email.HtmlBody.AddStringTemplate("A body that matches the SendGrid Template");
-						// We're using the extended properties provided by the SendGrid channel provider.
-						// This way we ensure that if the SendGrid channel provider is used for this channel, we'll use the template id.
-						// if we happen to fallback or even remove SendGrid, we can gracefully fallback to our content defined above. Neat!
-						email.SendGrid().TemplateId = "d-89ae21e8ebed491380ed580f30e0b052";
-
-					});
-				})
 				.AddPipeline(PipelineName.AppointmentReminder, pipeline =>
 				{
 					pipeline.AddVoice(tlyConfig.DefaultVoiceFromAddress.AsAudienceAddress(), voice =>
 					{
-
 						voice.Message.AddStringTemplate(
 							"""
 								Hello {{firstName}} <break strength="weak" /> this is a reminder about an upcoming doctors 

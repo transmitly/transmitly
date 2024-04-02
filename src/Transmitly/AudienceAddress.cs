@@ -24,6 +24,7 @@ namespace Transmitly
 	/// </remarks>
 	/// <param name="value">The value of the audience address.</param>
 	/// <param name="display">The display value of the audience address.</param>
+	/// <param name="type">Optional type for this address. See: <see cref="Transmitly.Channel.Push.AudienceAddressPushNotificationExtensions"/> for example of extending types.</param>
 	[DebuggerStepThrough]
 	public sealed class AudienceAddress(string value, string? display = null, string? type = null) : IAudienceAddress, IEquatable<AudienceAddress>
 	{
@@ -42,6 +43,9 @@ namespace Transmitly
 		/// </summary>
 		public string? Display { get; set; } = display;
 
+		/// <summary>
+		/// Gets or sets the type of audience address. See: <see cref="Transmitly.Channel.Push.AudienceAddressPushNotificationExtensions"/> for example of extending types.
+		/// </summary>
 		public string? Type { get; set; } = type;
 
 		/// <summary>
@@ -61,8 +65,8 @@ namespace Transmitly
 		/// <summary>
 		/// Determines whether the two specified operands are equal.
 		/// </summary>
-		/// <param name="left">The left hand operand in the equation.</param>
-		/// <param name="right">The right hand operand in the equation.</param>
+		/// <param name="address">The left hand operand in the equation.</param>
+		/// <param name="other">The right hand operand in the equation.</param>
 		/// <returns>True if equal, false if not.</returns>
 		public static bool operator ==(AudienceAddress address, AudienceAddress other)
 		{

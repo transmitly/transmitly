@@ -12,11 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider.ProviderResponse
+namespace Transmitly.ChannelProvider
 {
-	public interface IChannelProviderStatusReportHandler
+	public interface IChannelProviderClient<in TCommunication> : IChannelProviderClient
 	{
-		bool Handles(string requestBody);
-		IReadOnlyCollection<ChannelProviderReport> Handle(string requestBody);
+		Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(TCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken);
 	}
 }

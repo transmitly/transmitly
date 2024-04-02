@@ -48,20 +48,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 
 		}
 
-		[HttpPost("dispatch/sendgrid-template", Name = "SendGridTemplate")]
-		[ProducesResponseType(200, Type = typeof(IDispatchCommunicationResult))]
-		[ProducesResponseType(500, Type = typeof(IDispatchCommunicationResult))]
-		public async Task<IActionResult> DispatchSendGridTemplateMessage(SendGridTemplateVM templateVM)
-		{
-			var result = await _communicationsClient.DispatchAsync(
-				PipelineName.OtpCode,
-				[templateVM.Recipient],
-				templateVM.Model);
-
-			return GetActionResult(result);
-
-		}
-
 		[HttpPost("dispatch", Name = "Dispatch")]
 		[ProducesResponseType(200, Type = typeof(IDispatchCommunicationResult))]
 		[ProducesResponseType(500, Type = typeof(IDispatchCommunicationResult))]

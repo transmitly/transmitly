@@ -18,7 +18,13 @@ namespace Transmitly.ChannelProvider
 		string EventName,
 		string? ChannelId,
 		string? ChannelProviderId,
-		IDispatchCommunicationContext? CommunicationContext,
+		string? PipelineName,
+		string? CommunicationId,
+		DispatchStatus DispatchStatus,
 		object? ChannelCommunication
-	);
+	)
+	{
+		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+		public static readonly DeliveryReportEventName Event = new();
+	}
 }

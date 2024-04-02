@@ -14,7 +14,7 @@
 
 namespace Transmitly.ChannelProvider
 {
-	internal sealed class DeliveryReportsProvider : IDeliveryReportProvider
+	internal sealed class DefaultDeliveryReportsReporter : IDeliveryReportReporter
 	{
 		private readonly HashSet<IObserver<DeliveryReport>> _observers = [];
 
@@ -35,11 +35,21 @@ namespace Transmitly.ChannelProvider
 			return cancels;
 		}
 
-		public void DeliveryReport(DeliveryReport deliveryReport)
+		public void DispatchReport(DeliveryReport deliveryReport)
 		{
+			Guard.AgainstNull(deliveryReport);
 			foreach (IObserver<DeliveryReport> observer in _observers)
 			{
 				observer.OnNext(deliveryReport);
+			}
+		}
+
+		public void DispatchReports(IReadOnlyCollection<DeliveryReport> deliveryReports)
+		{
+			Guard.AgainstNull(deliveryReports);
+			foreach (var report in deliveryReports)
+			{
+				DispatchReport(report);
 			}
 		}
 	}

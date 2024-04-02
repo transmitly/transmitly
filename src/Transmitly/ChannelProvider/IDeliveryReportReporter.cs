@@ -14,8 +14,9 @@
 
 namespace Transmitly.ChannelProvider
 {
-	public interface IDeliveryReportProvider : IObservable<DeliveryReport>
+	public interface IDeliveryReportReporter : IObservable<DeliveryReport>
 	{
-		void DeliveryReport(DeliveryReport deliveryReport);
+		void DispatchReport(DeliveryReport deliveryReport);
+		void DispatchReports(IReadOnlyCollection<DeliveryReport> deliveryReports);
 	}
 }
