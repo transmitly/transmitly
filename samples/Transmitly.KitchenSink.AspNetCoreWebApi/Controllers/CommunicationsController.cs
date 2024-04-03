@@ -14,15 +14,16 @@
 
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using Transmitly.ChannelProvider.ProviderResponse;
+using Transmitly.ChannelProvider;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
-	public partial class CommunicationsController(ICommunicationsClient communicationsClient) : ControllerBase
+	public partial class CommunicationsController(ICommunicationsClient communicationsClient, ILogger<CommunicationsController> logger) : ControllerBase
 	{
 		private readonly ICommunicationsClient _communicationsClient = Guard.AgainstNull(communicationsClient);
+		private readonly ILogger<CommunicationsController> _logger = Guard.AgainstNull(logger);
 
 		private IActionResult GetActionResult(IDispatchCommunicationResult result)
 		{
@@ -65,10 +66,10 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 			return GetActionResult(result);
 		}
 
-		[HttpPost("callback/status", Name = "CallbackStatus")]
-		public IActionResult ReceiveStatus(IReadOnlyCollection<ChannelProviderReport> providerReport)
+		[HttpPost("channel/provider/update", Name = "DeliveryReport")]
+		public IActionResult ChannelProviderDeliveryReport(ChannelProviderDeliveryReportRequest providerReport)
 		{
-			Console.WriteLine("[Incoming] {0}", JsonSerializer.Serialize(providerReport, new JsonSerializerOptions { WriteIndented = true }));
+			_communicationsClient.DeliverReports(providerReport.DeliveryReports);
 			return Ok();
 		}
 	}

@@ -123,16 +123,16 @@ namespace Transmitly.ChannelProvider.Configuration
 			return _communicationsConfiguration;
 		}
 
-		public ChannelProviderConfigurationBuilder AddDeliveryReportRequestAdaptor<TAdaptor>(string? id = null)
+		public ChannelProviderConfigurationBuilder AddDeliveryReportRequestAdaptor<TAdaptor>()
 			where TAdaptor : IChannelProviderDeliveryReportRequestAdaptor
 		{
-			AddDeliveryReportRequestAdaptor(typeof(TAdaptor), id);
+			AddDeliveryReportRequestAdaptor(typeof(TAdaptor));
 			return this;
 		}
 
-		public ChannelProviderConfigurationBuilder AddDeliveryReportRequestAdaptor(Type type, string? id = null)
+		public ChannelProviderConfigurationBuilder AddDeliveryReportRequestAdaptor(Type type)
 		{
-			if (!type.IsAssignableFrom(typeof(IChannelProviderDeliveryReportRequestAdaptor)))
+			if (!typeof(IChannelProviderDeliveryReportRequestAdaptor).IsAssignableFrom(type))
 				throw new CommunicationsException("Provided adaptor must implement " + nameof(IChannelProviderDeliveryReportRequestAdaptor));
 			_addHandlers(new ChannelProviderDeliveryReportRequestAdaptorRegistration(type));
 			return this;

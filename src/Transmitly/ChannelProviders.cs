@@ -19,7 +19,7 @@ namespace Transmitly
 	/// <summary>
 	/// See <see cref="Id"/>
 	/// </summary>
-	[DebuggerStepThrough]
+	//[DebuggerStepThrough]
 	public sealed class ChannelProviders
 	{
 		private const string DefaultProviderId = "";
@@ -31,7 +31,7 @@ namespace Transmitly
 #pragma warning restore CA1822 // Mark members as static
 		{
 			Guard.AgainstNullOrWhiteSpace(providerId);
-			return $"{providerId}.{(!string.IsNullOrWhiteSpace(clientId) ? clientId : DefaultProviderId)}";
+			return string.Join(".", providerId, !string.IsNullOrWhiteSpace(clientId) ? clientId : DefaultProviderId).Trim('.');
 		}
 	}
 }

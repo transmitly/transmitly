@@ -11,9 +11,12 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Transmitly.ChannelProvider;
 using Transmitly.KitchenSink.AspNetCoreWebApi.Configuration;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
@@ -29,17 +32,15 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			var tlyConfig = builder.Configuration.GetRequiredSection("Transmitly").Get<TransmitlyConfiguration>();
 
 			// Add services to the container.
-			builder.Services.AddControllers(options =>
-			{
-				options.ModelBinderProviders.Insert(0, new ChannelProviderModelBinderProvider());
+			builder.Services
+				.AddControllers()
+				.AddJsonOptions(opt =>
+				{
+					opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+					opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+					opt.JsonSerializerOptions.Converters.Add(new JsonExceptionConverter());
 
-			}).AddJsonOptions(opt =>
-			{
-				opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-				opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-				opt.JsonSerializerOptions.Converters.Add(new JsonExceptionConverter());
-
-			});
+				});
 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
@@ -50,6 +51,9 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				c.SchemaFilter<SkipExceptionSchemaFilter>();
 			});
 			builder.Services.AddSwaggerExamplesFromAssemblyOf(typeof(Program));
+
+			//todo: move to AspNetCore.Mvc package
+			builder.Services.AddSingleton<IConfigureOptions<MvcOptions>, ChannelProviderAdaptorModelBinder>();
 
 			// The Transmitly.Microsoft.Extensions.DependencyInjection
 			// package is used to wire everything up using Microsoft's Dependency injection.
@@ -71,23 +75,28 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				// the generated communications even firing off webhooks to notify other systems.
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogInformation("[{channelId}:{channelProviderId}:Dispatched] {communication}", report.ChannelId, report.ChannelProviderId, JsonSerializer.Serialize(report.ChannelCommunication));
+					logger?.LogInformation("[{channelId}:{channelProviderId}:Dispatched] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.CommunicationId, JsonSerializer.Serialize(report.ChannelCommunication));
 					return Task.CompletedTask;
 
 					// There's quite a few potential delivery events that can happen with Transmitly.
 					// (see: DeliveryReportEvent.Name -- it's an extension method that any packages can extend!)
 					// Here, we're filtering out all events except for 'Dispatched' events.
 					// If we didn't add any filters, we'd see every report in this handler.
-				}, [DeliveryReportEvent.Name.Dispatched()])
+				}, [DeliveryReport.Event.Dispatched()])
+				.AddDeliveryReportHandler((report) =>
+				{
+					logger?.LogInformation("[{channelId}:{channelProviderId}:StatusChanged] Id={id}; Status={status}", report.ChannelId, report.ChannelProviderId, report.CommunicationId, report.DispatchStatus);
+					return Task.CompletedTask;
+				}, [DeliveryReport.Event.StatusChanged()])
 				// You can also filter out on other conditions like, channels and channel provider ids
 				// for example you can have a handler specifically for email communications and another
 				// that will handle SMS and push
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogError("[{channelId}:{channelProvider}:Error] {communication}", report.ChannelId, report.ChannelProviderId, JsonSerializer.Serialize(report.ChannelCommunication));
+					logger?.LogError("[{channelId}:{channelProvider}:Error] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.CommunicationId, JsonSerializer.Serialize(report.ChannelCommunication));
 					return Task.CompletedTask;
 					//we're filtering out all events except for 'Error' events
-				}, [DeliveryReportEvent.Name.Error()])
+				}, [DeliveryReport.Event.Error()])
 				//Pipelines are the heart of Transmitly. Pipelines allow you to define your communications
 				//as a domain action. This allows your domain code to stay agnostic to the details of how you
 				//may send out a transactional communication.
@@ -121,7 +130,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					pipeline.AddSms(tlyConfig.DefaultSmsFromAddress.AsAudienceAddress(), sms =>
 					{
 						sms.Message.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
-						//sms.StatusCallbackUrl = "https://scenes-babes-belgium-earned.trycloudflare.com/communications/callback/status";
+						sms.DeliveryReportCallbackUrl = "https://scenes-babes-belgium-earned.trycloudflare.com/communications/channel/provider/update";
+
 					});
 				})
 				//See: OTPCode route in Controllers.CommunicationsController.cs
@@ -167,7 +177,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 								Don't be late!
 							"""
 							);
-						//voice.StatusCallbackUrl = "https://scenes-babes-belgium-earned.trycloudflare.com/communications/callback/status";
+						//voice.DeliveryReportCallbackUrl = "https://scenes-babes-belgium-earned.trycloudflare.com/communications/callback/status";
 					});
 				});
 			});
@@ -211,7 +221,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			foreach (var infobipSetting in tlyConfig.ChannelProviders.Infobip.Where(s => s.IsEnabled))
 			{
 				// Adding the Transmitly.ChannelProvider.Infobip package
-				// allows us to add support to our app for Email & SMS through
+				// allows us to add support to our app for Email, SMS & Voice through
 				// an account with Infobip.
 				tly.AddInfobipSupport(infobip =>
 				{
