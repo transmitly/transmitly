@@ -14,17 +14,18 @@
 
 namespace Transmitly.ChannelProvider
 {
-	public record DeliveryReport(
+	public sealed record DeliveryReport(
 		string EventName,
 		string? ChannelId,
 		string? ChannelProviderId,
 		string? PipelineName,
 		string? CommunicationId,
 		DispatchStatus DispatchStatus,
-		object? ChannelCommunication
+		object? ChannelCommunication,
+		IContentModel? ContentModel
 	)
 	{
 		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-		public static readonly DeliveryReportEventName Event = new();
+		public static DeliveryReportEventName Event {get; }= new();
 	}
 }
