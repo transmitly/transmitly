@@ -12,7 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly.Delivery
 {
 	public delegate Task DeliveryReportAsyncHandler(DeliveryReport deliveryReport);
 }

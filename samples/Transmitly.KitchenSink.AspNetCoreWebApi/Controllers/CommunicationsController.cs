@@ -13,8 +13,7 @@
 //  limitations under the License.
 
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using Transmitly.ChannelProvider;
+using Transmitly.Delivery;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {

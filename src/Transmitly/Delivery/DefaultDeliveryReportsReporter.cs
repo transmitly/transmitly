@@ -12,7 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider
+using Transmitly.ChannelProvider;
+
+namespace Transmitly.Delivery
 {
 	internal sealed class DefaultDeliveryReportsReporter : IDeliveryReportReporter
 	{

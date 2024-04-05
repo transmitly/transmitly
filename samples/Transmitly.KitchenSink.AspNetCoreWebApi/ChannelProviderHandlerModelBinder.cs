@@ -21,6 +21,7 @@ using System.Globalization;
 using System.Text;
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
+using Transmitly.Delivery;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
@@ -56,6 +57,21 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			}).Unwrap().GetAwaiter().GetResult();
 		}
 	}
+	class DefaultRequestAdaptorContext(IValueProvider valueProvider, string requestBody) : IRequestAdaptorContext
+	{
+		private readonly IValueProvider _valueProvider = valueProvider;
+
+		public string? GetValue(string key)
+		{
+			return _valueProvider.GetValue(key).FirstValue;
+		}
+
+		public string? Content { get; } = requestBody;
+
+		public string? PipelineName => GetValue("pipelineName");
+
+		public string? ResourceId => GetValue("resourceId");
+	}
 
 	class ChannelProviderDeliveryReportRequestModelBinder : IModelBinder
 	{
@@ -69,12 +85,13 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
 		public async Task BindModelAsync(ModelBindingContext bindingContext)
 		{
+
 			var str = await new StreamReader(bindingContext.ActionContext.HttpContext.Request.Body).ReadToEndAsync();
 			foreach (var adaptor in _adaptorInstances)
 			{
 				try
 				{
-					var handled = await adaptor.Value.AdaptAsync(str);
+					var handled = await adaptor.Value.AdaptAsync(new DefaultRequestAdaptorContext(bindingContext.ValueProvider, str));
 					if (handled != null)
 					{
 						bindingContext.Result = ModelBindingResult.Success(new ChannelProviderDeliveryReportRequest(handled));

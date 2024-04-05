@@ -12,20 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly.Delivery
 {
 	public sealed record DeliveryReport(
 		string EventName,
 		string? ChannelId,
 		string? ChannelProviderId,
 		string? PipelineName,
-		string? CommunicationId,
+		string? ResourceId,
 		DispatchStatus DispatchStatus,
 		object? ChannelCommunication,
 		IContentModel? ContentModel
 	)
 	{
 		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-		public static DeliveryReportEventName Event {get; }= new();
+		public static DeliveryReportEventName Event { get; } = new();
 	}
 }

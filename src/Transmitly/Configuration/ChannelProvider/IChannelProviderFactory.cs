@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using Transmitly.Channel.Configuration;
+using Transmitly.Delivery;
 namespace Transmitly.ChannelProvider.Configuration
 {
 	public interface IChannelProviderFactory

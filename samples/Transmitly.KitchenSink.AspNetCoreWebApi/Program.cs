@@ -16,8 +16,8 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Transmitly.ChannelProvider;
 using Transmitly.KitchenSink.AspNetCoreWebApi.Configuration;
+using Transmitly.Delivery;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
@@ -62,10 +62,10 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			builder.Services.AddTransmitly(tly =>
 			{
 				// Configure channel providers loaded from appsettings.json
-				AddMailKitSupport(tly, tlyConfig);
-				AddTwilioSupport(tly, tlyConfig);
-				AddInfobipSupport(tly, tlyConfig);
-				AddFirebaseSupport(tly, tlyConfig);
+				AddMailKitSupport(tly, tlyConfig);//Email
+				AddTwilioSupport(tly, tlyConfig);//Email/SMS
+				AddInfobipSupport(tly, tlyConfig);//Email/Sms/Voice
+				AddFirebaseSupport(tly, tlyConfig);//Push
 
 				//AddFluidTemplateEngine comes from the Transmitly.TemplateEngine.Fluid
 				//This will give us the ability to replace and generate content in our templates.
@@ -75,7 +75,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				// the generated communications even firing off webhooks to notify other systems.
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogInformation("[{channelId}:{channelProviderId}:Dispatched] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.CommunicationId, JsonSerializer.Serialize(report.ChannelCommunication));
+					logger?.LogInformation("[{channelId}:{channelProviderId}:Dispatched] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.ResourceId, JsonSerializer.Serialize(report.ChannelCommunication));
 					return Task.CompletedTask;
 
 					// There's quite a few potential delivery events that can happen with Transmitly.
@@ -85,7 +85,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				}, [DeliveryReport.Event.Dispatched()])
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogInformation("[{channelId}:{channelProviderId}:StatusChanged] Id={id}; Status={status}", report.ChannelId, report.ChannelProviderId, report.CommunicationId, report.DispatchStatus);
+					logger?.LogInformation("[{channelId}:{channelProviderId}:StatusChanged] Id={id}; Status={status}", report.ChannelId, report.ChannelProviderId, report.ResourceId, report.DispatchStatus);
 					return Task.CompletedTask;
 				}, [DeliveryReport.Event.StatusChanged()])
 				// You can also filter out on other conditions like, channels and channel provider ids
@@ -93,7 +93,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				// that will handle SMS and push
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogError("[{channelId}:{channelProvider}:Error] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.CommunicationId, JsonSerializer.Serialize(report.ChannelCommunication));
+					logger?.LogError("[{channelId}:{channelProvider}:Error] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.ResourceId, JsonSerializer.Serialize(report.ChannelCommunication));
 					return Task.CompletedTask;
 					//we're filtering out all events except for 'Error' events
 				}, [DeliveryReport.Event.Error()])
@@ -130,7 +130,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					pipeline.AddSms(tlyConfig.DefaultSmsFromAddress.AsAudienceAddress(), sms =>
 					{
 						sms.Message.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
-						sms.DeliveryReportCallbackUrl = "https://scenes-babes-belgium-earned.trycloudflare.com/communications/channel/provider/update";
+						//sms.DeliveryReportCallbackUrl = "https://commentary-accordance-imperial-immigrants.trycloudflare.com/communications/channel/provider/update";
 
 					});
 				})

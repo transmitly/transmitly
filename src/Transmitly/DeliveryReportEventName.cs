@@ -17,7 +17,7 @@ using System.Diagnostics;
 namespace Transmitly
 {
 	///<summary>
-	/// See <see cref="Transmitly.ChannelProvider.DeliveryReport.Event"/>
+	/// See <see cref="Delivery.DeliveryReport.Event"/>
 	///</summary>
 	[DebuggerStepThrough]
 	public sealed class DeliveryReportEventName

@@ -15,6 +15,7 @@
 using System.ComponentModel;
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
+using Transmitly.Delivery;
 using Transmitly.Delivery.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Settings.Configuration;

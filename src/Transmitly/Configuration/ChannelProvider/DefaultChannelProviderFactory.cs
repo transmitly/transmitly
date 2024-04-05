@@ -15,6 +15,7 @@
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Exceptions;
+using Transmitly.Delivery;
 
 namespace Transmitly.Channel.Configuration
 {

@@ -12,10 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly.Delivery
 {
-	public sealed class ChannelProviderDeliveryReportRequest(IReadOnlyCollection<DeliveryReport> deliveryReports)
+	public interface IDeliveryReportReporter : IObservable<DeliveryReport>
 	{
-		public IReadOnlyCollection<DeliveryReport> DeliveryReports { get; } = Guard.AgainstNull(deliveryReports);
+		void DispatchReport(DeliveryReport deliveryReport);
+		void DispatchReports(IReadOnlyCollection<DeliveryReport> deliveryReports);
 	}
 }

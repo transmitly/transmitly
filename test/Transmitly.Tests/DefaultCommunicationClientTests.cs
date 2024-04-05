@@ -13,12 +13,12 @@
 //  limitations under the License.
 
 using Moq;
-using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Settings.Configuration;
 using Transmitly.Template.Configuration;
 using Transmitly.Tests.Integration;
+using Transmitly.Delivery;
 
 namespace Transmitly.Tests
 {

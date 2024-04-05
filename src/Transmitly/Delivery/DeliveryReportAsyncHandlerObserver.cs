@@ -12,10 +12,25 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly.Delivery
 {
-	public interface IChannelProviderDeliveryReportRequestAdaptor
+	internal sealed class DeliveryReportAsyncHandlerObserver(DeliveryReportAsyncHandler deliveryReportAsyncHandler) : IObserver<DeliveryReport>
 	{
-		Task<IReadOnlyCollection<DeliveryReport>?> AdaptAsync(string requestBody);
+		private readonly DeliveryReportAsyncHandler _deliveryReportAsyncHandler = deliveryReportAsyncHandler;
+
+		public void OnCompleted()
+		{
+
+		}
+
+		public void OnError(Exception error)
+		{
+
+		}
+
+		public void OnNext(DeliveryReport value)
+		{
+			_deliveryReportAsyncHandler(value);
+		}
 	}
 }

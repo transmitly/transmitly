@@ -13,7 +13,7 @@
 //  limitations under the License.
 
 using System.Globalization;
-using Transmitly.ChannelProvider;
+using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Settings.Configuration;
 using Transmitly.Template.Configuration;

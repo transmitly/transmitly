@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using Transmitly.Exceptions;
+using Transmitly.Delivery;
 
 namespace Transmitly.ChannelProvider.Configuration
 {
