@@ -57,20 +57,22 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			}).Unwrap().GetAwaiter().GetResult();
 		}
 	}
-	class DefaultRequestAdaptorContext(IValueProvider valueProvider, string requestBody) : IRequestAdaptorContext
+	class DefaultRequestAdaptorContext(IQueryCollection valueProvider, string requestBody) : IRequestAdaptorContext
 	{
-		private readonly IValueProvider _valueProvider = valueProvider;
+		private readonly IQueryCollection _valueProvider = valueProvider;
 
 		public string? GetValue(string key)
 		{
-			return _valueProvider.GetValue(key).FirstValue;
+			if (_valueProvider.TryGetValue(key, out var result))
+				return result.ToString();
+			return null;
 		}
 
 		public string? Content { get; } = requestBody;
 
-		public string? PipelineName => GetValue("pipelineName");
+		public string? PipelineName => GetValue(DeliveryUtil.PipelineNameKey);
 
-		public string? ResourceId => GetValue("resourceId");
+		public string? ResourceId => GetValue(DeliveryUtil.ResourceIdKey);
 	}
 
 	class ChannelProviderDeliveryReportRequestModelBinder : IModelBinder
@@ -91,7 +93,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			{
 				try
 				{
-					var handled = await adaptor.Value.AdaptAsync(new DefaultRequestAdaptorContext(bindingContext.ValueProvider, str));
+					var handled = await adaptor.Value.AdaptAsync(new DefaultRequestAdaptorContext(bindingContext.HttpContext.Request.Query, str));
 					if (handled != null)
 					{
 						bindingContext.Result = ModelBindingResult.Success(new ChannelProviderDeliveryReportRequest(handled));
