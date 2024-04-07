@@ -14,18 +14,19 @@
 
 namespace Transmitly.Delivery
 {
-	public record DeliveryReport(
-		string EventName,
-		string? ChannelId,
-		string? ChannelProviderId,
-		string? PipelineName,
-		string? ResourceId,
-		DispatchStatus DispatchStatus,
-		object? ChannelCommunication,
-		IContentModel? ContentModel
-	)
+	public interface ISmsDeliveryReport
 	{
-		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-		public static DeliveryReportEventName Event { get; } = new();
+		/// <summary>
+		/// Destination address of the sms communication.
+		/// </summary>
+		string? To { get; }
+		/// <summary>
+		/// Address of the sender of the sms communication.
+		/// </summary>
+		string? From { get; }
+		/// <summary>
+		/// The number of parts the sms communication content was split into.
+		/// </summary>
+		int? Count { get; }
 	}
 }

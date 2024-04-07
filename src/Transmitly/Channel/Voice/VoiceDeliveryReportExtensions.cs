@@ -14,18 +14,13 @@
 
 namespace Transmitly.Delivery
 {
-	public record DeliveryReport(
-		string EventName,
-		string? ChannelId,
-		string? ChannelProviderId,
-		string? PipelineName,
-		string? ResourceId,
-		DispatchStatus DispatchStatus,
-		object? ChannelCommunication,
-		IContentModel? ContentModel
-	)
+	public static class VoiceDeliveryReportExtensions
 	{
-		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-		public static DeliveryReportEventName Event { get; } = new();
+		public static IVoiceDeliveryReport? Voice(this DeliveryReport deliveryReport)
+		{
+			if (deliveryReport is IVoiceDeliveryReport voiceReport)
+				return voiceReport;
+			return null;
+		}
 	}
 }
