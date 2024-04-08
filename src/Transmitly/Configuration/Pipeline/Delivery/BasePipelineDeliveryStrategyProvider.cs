@@ -20,7 +20,7 @@ namespace Transmitly.Delivery
 {
 	public abstract class BasePipelineDeliveryStrategyProvider
 	{
-		protected virtual IReadOnlyCollection<DispatchStatus> SuccessfulStatuses { get; } = [DispatchStatus.Delivered, DispatchStatus.Dispatched, DispatchStatus.Disabled];
+		protected virtual IReadOnlyCollection<DispatchStatus> SuccessfulStatuses { get; } = [DispatchStatus.Delivered, DispatchStatus.Dispatched, DispatchStatus.Pending];
 
 		public abstract Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken);
 
@@ -33,38 +33,30 @@ namespace Transmitly.Delivery
 
 			var communication = await GetChannelCommunicationAsync(channel, internalContext).ConfigureAwait(false);
 			IReadOnlyCollection<IDispatchResult?>? results = null;
-			if (context.Settings.IsDeliveryEnabled)
+			try
 			{
-				try
-				{
-					if (!provider.CommunicationType.IsInstanceOfType(communication))
-						return [];
+				if (!provider.CommunicationType.IsInstanceOfType(communication))
+					return [];
 
-					var client = Guard.AgainstNull(await provider.ClientInstance());
-					results = await InvokeCommunicationTypedDispatchAsyncOnClient(provider, internalContext, communication, client, cancellationToken).ConfigureAwait(false);
+				var client = Guard.AgainstNull(await provider.ClientInstance());
+				results = await InvokeCommunicationTypedDispatchAsyncOnClient(provider, internalContext, communication, client, cancellationToken).ConfigureAwait(false);
 
-					if (results == null || results.Count == 0)
-						return [];
+				if (results == null || results.Count == 0)
+					return [];
 
-					return results.Where(r => r != null).Select(r => new DispatchResult(r!, provider.Id, channel.Id)).ToList();
-				}
-				catch (Exception ex)
-				{
-					if (results != null)
-					{
-						var reports = results.Select(r =>
-							new DeliveryReport(DeliveryReport.Event.Error(), internalContext.ChannelId, internalContext.ChannelProviderId, context.PipelineName, r!.ResourceId, r.DispatchStatus, communication, context.ContentModel)
-						).ToList();
-						context.DeliveryReportManager.DispatchReports(reports);
-					}
-					return [new DispatchResult(DispatchStatus.Exception, provider.Id, channel.Id) { Exception = ex }];
-				}
+				return results.Where(r => r != null).Select(r => new DispatchResult(r!, provider.Id, channel.Id)).ToList();
 			}
-			else
+			catch (Exception ex)
 			{
-				results = [new DispatchNotEnabledResult()];
+				if (results != null)
+				{
+					var reports = results.Select(r =>
+						new DeliveryReport(DeliveryReport.Event.Error(), internalContext.ChannelId, internalContext.ChannelProviderId, context.PipelineName, r!.ResourceId, r.DispatchStatus, communication, context.ContentModel)
+					).ToList();
+					context.DeliveryReportManager.DispatchReports(reports);
+				}
+				return [new DispatchResult(DispatchStatus.Exception, provider.Id, channel.Id) { Exception = ex }];
 			}
-			return results;
 		}
 
 		protected virtual bool IsPipelineSuccessful(IReadOnlyCollection<IDispatchResult?> allResults)

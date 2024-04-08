@@ -30,8 +30,6 @@ namespace Transmitly.Tests
 		}
 		class Test1 : IChannelProviderClient<object>
 		{
-			public IReadOnlyCollection<string>? RegisteredEvents => throw new NotImplementedException();
-
 			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 			{
 				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);
@@ -39,9 +37,6 @@ namespace Transmitly.Tests
 		}
 		class Test2 : IChannelProviderClient<UnitTestCommunication>
 		{
-
-			public IReadOnlyCollection<string>? RegisteredEvents => throw new NotImplementedException();
-
 			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(UnitTestCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 			{
 				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([new DispatchResult(DispatchStatus.Dispatched, nameof(Test2))]);

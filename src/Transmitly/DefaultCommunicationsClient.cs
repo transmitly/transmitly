@@ -17,7 +17,6 @@ using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
 using Transmitly.Exceptions;
 using Transmitly.Pipeline.Configuration;
-using Transmitly.Settings.Configuration;
 using Transmitly.Template.Configuration;
 
 namespace Transmitly
@@ -26,7 +25,6 @@ namespace Transmitly
 		IPipelineFactory pipelineRegistrations,
 		IChannelProviderFactory channelProviderRegistrations,
 		ITemplateEngineFactory templateEngineRegistrations,
-		ICommunicationsConfigurationSettings configurationSettings,
 		IDeliveryReportReporter deliveryReportHandler//,
 													 //IAudienceResolverRegistrationStore audienceResolvers
 		) : ICommunicationsClient
@@ -34,7 +32,6 @@ namespace Transmitly
 		private readonly IPipelineFactory _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations);
 		private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
 		private readonly ITemplateEngineFactory _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
-		private readonly ICommunicationsConfigurationSettings _configurationSettings = Guard.AgainstNull(configurationSettings);
 		private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
 
 		//private readonly IAudienceResolverRegistrationStore _audienceResolvers = Guard.AgainstNull(audienceResolvers);
@@ -102,7 +99,6 @@ namespace Transmitly
 				audiences,
 				_templateEngineRegistrations.Get(),
 				_deliveryReportProvider,
-				_configurationSettings,
 				culture,
 				pipelineName,
 				pipeline.MessagePriority,

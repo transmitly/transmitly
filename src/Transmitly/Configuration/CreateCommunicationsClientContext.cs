@@ -15,7 +15,6 @@
 
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Pipeline.Configuration;
-using Transmitly.Settings.Configuration;
 using Transmitly.Template.Configuration;
 using Transmitly.Delivery;
 
@@ -26,7 +25,6 @@ namespace Transmitly
 		IReadOnlyCollection<IChannelProviderDeliveryReportRequestAdaptorRegistration> channelProviderDeliveryReportRequestAdaptor,
 		IReadOnlyCollection<IPipeline> pipelines,
 		IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
-		ICommunicationsConfigurationSettings communicationsConfigurationSettings,
 		IDeliveryReportReporter deliveryReportProvider
 	) : ICreateCommunicationsClientContext
 	{
@@ -37,8 +35,6 @@ namespace Transmitly
 		public IReadOnlyCollection<IPipeline> Pipelines { get; } = pipelines;
 
 		public IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; } = templateEngines;
-
-		public ICommunicationsConfigurationSettings CommunicationsConfigurationSettings { get; } = communicationsConfigurationSettings;
 
 		public IDeliveryReportReporter DeliveryReportProvider { get; } = deliveryReportProvider;
 	}

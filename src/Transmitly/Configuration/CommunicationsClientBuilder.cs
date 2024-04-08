@@ -18,7 +18,6 @@ using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
 using Transmitly.Delivery.Configuration;
 using Transmitly.Pipeline.Configuration;
-using Transmitly.Settings.Configuration;
 using Transmitly.Template.Configuration;
 
 namespace Transmitly
@@ -46,12 +45,8 @@ namespace Transmitly
 			Pipeline = new(this, p => _pipelines.Add(p));
 			//AudienceResolver = new(this, ar => _audienceResolvers.Add(ar));
 			TemplateEngine = new(this, te => _templateEngines.Add(te));
-			ConfigurationSettings = new(this);
 			DeliveryReport = new(this);
 		}
-
-
-		public CommunicationsConfigurationSettingsBuilder ConfigurationSettings { get; }
 
 		/// <summary>
 		/// Gets the channel provider configuration builder.
@@ -239,7 +234,6 @@ namespace Transmitly
 					_channelProviderDeliveryReportRequestAdaptorRegistrations,
 					_pipelines,
 					_templateEngines,
-					ConfigurationSettings.GetSettings(),
 					deliveryReportProvider
 				)
 			);

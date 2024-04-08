@@ -23,7 +23,6 @@ namespace Transmitly
 		Undeliverable,
 		Expired,
 		Rejected,
-		Exception,
-		Disabled
+		Exception
 	}
 }

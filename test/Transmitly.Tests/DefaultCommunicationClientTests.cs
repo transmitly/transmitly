@@ -15,7 +15,6 @@
 using Moq;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Pipeline.Configuration;
-using Transmitly.Settings.Configuration;
 using Transmitly.Template.Configuration;
 using Transmitly.Tests.Integration;
 using Transmitly.Delivery;
@@ -33,9 +32,9 @@ namespace Transmitly.Tests
 		[DataRow(null)]
 		public void ShouldGuardEmptyPipelineName(string value)
 		{
-			var (settings, pipeline, channelProvider, template, reportHandler) = GetStores();
+			var (pipeline, channelProvider, template, reportHandler) = GetStores();
 
-			var client = new DefaultCommunicationsClient(pipeline.Object, channelProvider.Object, template.Object, settings.Object, reportHandler.Object/*, audience.Object*/);
+			var client = new DefaultCommunicationsClient(pipeline.Object, channelProvider.Object, template.Object, reportHandler.Object/*, audience.Object*/);
 			Assert.ThrowsExceptionAsync<ArgumentNullException>(() => client.DispatchAsync(value, "test", new { }));
 		}
 
@@ -64,14 +63,12 @@ namespace Transmitly.Tests
 		}
 
 		private static (
-			Mock<ICommunicationsConfigurationSettings> settings,
 			Mock<IPipelineFactory> pipeline,
 			Mock<IChannelProviderFactory> channelProvider,
 			Mock<ITemplateEngineFactory> template,
 			Mock<IDeliveryReportReporter> deliveryReportHandler) GetStores()
 		{
 			return (
-				new Mock<ICommunicationsConfigurationSettings>(),
 				new Mock<IPipelineFactory>(),
 				new Mock<IChannelProviderFactory>(),
 				new Mock<ITemplateEngineFactory>(),

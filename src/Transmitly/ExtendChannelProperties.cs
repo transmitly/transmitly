@@ -177,11 +177,5 @@ namespace Transmitly
 		{
 			((IExtendedProperties)this).Add(string.Empty, propertyKey, value);
 		}
-
-		static class ValueTypeHelper
-		{
-			public static bool IsNullable<T>(T t) { return false; }
-			public static bool IsNullable<T>(T? t) where T : struct { return true; }
-		}
 	}
 }

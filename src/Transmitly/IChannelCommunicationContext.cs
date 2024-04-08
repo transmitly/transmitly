@@ -14,7 +14,6 @@
 
 using System.Globalization;
 using Transmitly.Pipeline.Configuration;
-using Transmitly.Settings.Configuration;
 using Transmitly.Template.Configuration;
 using Transmitly.Delivery;
 
@@ -78,11 +77,6 @@ namespace Transmitly
 		/// Gets the template engine
 		/// </summary>
 		ITemplateEngine TemplateEngine { get; }
-
-		/// <summary>
-		/// Gets the configured communication settings
-		/// </summary>
-		ICommunicationsConfigurationSettings Settings { get; }
 
 		/// <summary>
 		/// Gets the current pipeline name

@@ -15,7 +15,6 @@
 using System.Globalization;
 using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
-using Transmitly.Settings.Configuration;
 using Transmitly.Template.Configuration;
 
 namespace Transmitly.Channel.Configuration
@@ -27,7 +26,6 @@ namespace Transmitly.Channel.Configuration
 		IReadOnlyCollection<IAudience> recipients,
 		ITemplateEngine templateEngine,
 		IDeliveryReportReporter deliveryReportManager,
-		ICommunicationsConfigurationSettings configurationSettings,
 		CultureInfo cultureInfo,
 		string pipelineName,
 		MessagePriority messagePriority = MessagePriority.Normal,
@@ -36,13 +34,10 @@ namespace Transmitly.Channel.Configuration
 	{
 		public DispatchCommunicationContext(IDispatchCommunicationContext context, IChannel channel, IChannelProvider channelProvider)
 			: this(context.ContentModel, context.ChannelConfiguration, context.RecipientAudiences, context.TemplateEngine, context.DeliveryReportManager,
-				  context.Settings, context.CultureInfo, context.PipelineName, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
+				  context.CultureInfo, context.PipelineName, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
 		{
 
 		}
-
-		/// <inheritdoc />
-		public ICommunicationsConfigurationSettings Settings { get; } = Guard.AgainstNull(configurationSettings);
 
 		/// <inheritdoc/>
 		public ITemplateEngine TemplateEngine { get; } = Guard.AgainstNull(templateEngine);
