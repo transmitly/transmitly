@@ -59,8 +59,5 @@ namespace Transmitly.Channel.Email
 
 		/// <inheritdoc />
 		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
-
-		/// <inheritdoc />
-		public string? CommunicationId { get; set; }
 	}
 }

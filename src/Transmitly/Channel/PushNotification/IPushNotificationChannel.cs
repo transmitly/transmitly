@@ -19,7 +19,6 @@ namespace Transmitly
 {
 	public interface IPushNotificationChannel : IChannel
 	{
-		string? CommunicationId { get; set; }
 		IContentTemplateConfiguration Title { get; }
 		IContentTemplateConfiguration Body { get; }
 		IContentTemplateConfiguration ImageUrl { get; }

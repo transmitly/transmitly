@@ -24,10 +24,6 @@ namespace Transmitly
 	public interface IVoiceChannel : IChannel
 	{
 		/// <summary>
-		/// Optional ID of the communication.
-		/// </summary>
-		string? CommunicationId { get; set; }
-		/// <summary>
 		/// From Address
 		/// </summary>
 		IAudienceAddress? From { get; }

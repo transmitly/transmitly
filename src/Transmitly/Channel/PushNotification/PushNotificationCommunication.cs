@@ -25,7 +25,5 @@ namespace Transmitly.Channel.Push
 		public IReadOnlyCollection<IAudienceAddress> To { get; } = Guard.AgainstNull(audienceAddresses);
 
 		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
-
-		public string? CommunicationId { get; set; }
 	}
 }

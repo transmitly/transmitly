@@ -18,7 +18,6 @@ namespace Transmitly
 {
 	public interface IEmail
 	{
-		string? CommunicationId { get; }
 		string? Subject { get; }
 		string? HtmlBody { get; }
 		string? TextBody { get; }

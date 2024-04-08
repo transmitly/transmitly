@@ -18,7 +18,6 @@ namespace Transmitly
 {
 	public interface ISms
 	{
-		string? CommunicationId { get; }
 		IAudienceAddress? From { get; }
 		IAudienceAddress[]? To { get; }
 		string? Message { get; }
