@@ -27,7 +27,7 @@ namespace Transmitly
 
 		readonly Dictionary<string, object?> _bag = [];
 
-		int IReadOnlyCollection<KeyValuePair<string, object?>>.Count => throw new NotImplementedException();
+		int IReadOnlyCollection<KeyValuePair<string, object?>>.Count => _bag.Count;
 
 		/// <inheritdoc />
 		void IExtendedProperties.Add(string providerKey, string propertyKey, object? value)
@@ -52,6 +52,9 @@ namespace Transmitly
 #endif
 		}
 
+		object? IExtendedProperties.this[string propertyKey] =>
+			((IExtendedProperties)this).GetValue(propertyKey);
+
 		/// <inheritdoc />
 		object? IExtendedProperties.this[string providerKey, string key] =>
 			((IExtendedProperties)this).GetValue(providerKey, key);
@@ -61,7 +64,7 @@ namespace Transmitly
 			where T : default
 		{
 			var key = GetCompositeKey(providerKey, propertyKey);
-
+			
 #if FEATURE_DICTIONARYTRYADD
 			if (_bag.TryGetValue(key, out var result))
 				return (T?)result;
@@ -105,6 +108,7 @@ namespace Transmitly
 		T IExtendedProperties.GetValue<T>(string providerKey, string propertyKey, T defaultValue)
 		{
 			var key = GetCompositeKey(providerKey, propertyKey);
+			
 #if FEATURE_DICTIONARYTRYADD
 			if (_bag.TryGetValue(key, out var result))
 				return (T?)result ?? defaultValue;
@@ -118,7 +122,9 @@ namespace Transmitly
 
 		private static string GetCompositeKey(string providerKey, string propertyKey)
 		{
-			return string.Join(".", providerKey, propertyKey);
+			if (string.IsNullOrWhiteSpace(providerKey))
+				return propertyKey;
+			return providerKey + "." + propertyKey;
 		}
 
 #if NET8_0_OR_GREATER
@@ -140,6 +146,42 @@ namespace Transmitly
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return ((IEnumerable)_bag).GetEnumerator();
+		}
+
+		T? IExtendedProperties.GetValue<T>(string propertyKey) where T : default
+		{
+			return ((IExtendedProperties)this).GetValue<T>(string.Empty, propertyKey);
+		}
+
+		T IExtendedProperties.GetValue<T>(string propertyKey, T defaultValue)
+		{
+			return ((IExtendedProperties)this).GetValue<T>(string.Empty, propertyKey, defaultValue);
+		}
+
+		object? IExtendedProperties.GetValue(string propertyKey)
+		{
+			return ((IExtendedProperties)this).GetValue(string.Empty, propertyKey);
+		}
+
+		bool IExtendedProperties.TryGetValue<T>(string propertyKey, out T? value) where T : default
+		{
+			return ((IExtendedProperties)this).TryGetValue<T>(string.Empty, propertyKey, out value);
+		}
+
+		void IExtendedProperties.AddOrUpdate(string propertyKey, object? value)
+		{
+			((IExtendedProperties)this).AddOrUpdate(string.Empty, propertyKey, value);
+		}
+
+		void IExtendedProperties.Add(string propertyKey, object? value)
+		{
+			((IExtendedProperties)this).Add(string.Empty, propertyKey, value);
+		}
+
+		static class ValueTypeHelper
+		{
+			public static bool IsNullable<T>(T t) { return false; }
+			public static bool IsNullable<T>(T? t) where T : struct { return true; }
 		}
 	}
 }
