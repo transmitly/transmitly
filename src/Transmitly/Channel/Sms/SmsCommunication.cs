@@ -44,5 +44,7 @@ namespace Transmitly.Channel.Sms
 
 		/// <inheritdoc/>
 		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+
+		public string? CommunicationId { get; set; }
 	}
 }

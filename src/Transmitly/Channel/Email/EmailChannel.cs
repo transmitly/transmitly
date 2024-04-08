@@ -44,6 +44,7 @@ namespace Transmitly.Channel.Email
 		public string? DeliveryReportCallbackUrl { get; set; }
 
 		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+		public string? CommunicationId { get; set; }
 
 		internal EmailChannel(Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, string[]? channelProviderId = null)
 		{
@@ -75,6 +76,7 @@ namespace Transmitly.Channel.Email
 
 			return new EmailCommunication(GetSenderFromAddress(communicationContext), ExtendedProperties)
 			{
+				CommunicationId = CommunicationId,
 				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
 				Priority = communicationContext.MessagePriority,
 				TransportPriority = communicationContext.TransportPriority,

@@ -21,6 +21,8 @@ namespace Transmitly
 	{
 		IAudienceAddress? From { get; }
 		IContentTemplateConfiguration Message { get; }
+		string? CommunicationId { get; set; }
+		
 		/// <summary>
 		/// The URL to call for status updates for the dispatched communication.
 		/// </summary>

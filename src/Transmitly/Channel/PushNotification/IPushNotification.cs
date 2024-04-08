@@ -16,6 +16,7 @@ namespace Transmitly
 {
 	public interface IPushNotification
 	{
+		string? CommunicationId { get; }
 		string? Title { get; }
 		string? Body { get; }
 		string? ImageUrl { get; }

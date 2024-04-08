@@ -49,6 +49,8 @@ namespace Transmitly.Channel.Sms
 
 		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 
+		public string? CommunicationId { get; set; }
+
 		internal SmsChannel(IAudienceAddress? fromAddress, string[]? channelProviderId = null) : this(channelProviderId)
 		{
 			From = fromAddress;
@@ -65,6 +67,7 @@ namespace Transmitly.Channel.Sms
 
 			return new SmsCommunication(ExtendedProperties)
 			{
+				CommunicationId = CommunicationId,
 				From = GetSenderFromAddress(communicationContext),
 				Message = body,
 				Attachments = ConvertAttachments(communicationContext),

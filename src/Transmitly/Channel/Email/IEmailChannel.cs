@@ -20,6 +20,7 @@ namespace Transmitly
 {
 	public interface IEmailChannel : IChannel
 	{
+		string? CommunicationId { get; set; }
 		IContentTemplateConfiguration Subject { get; }
 		IContentTemplateConfiguration HtmlBody { get; }
 		IContentTemplateConfiguration TextBody { get; }

@@ -34,6 +34,8 @@ namespace Transmitly.Channel.Push
 
 		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
+		public string? CommunicationId { get; set; }
+
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
 			var title = await Title.RenderAsync(communicationContext);
@@ -42,7 +44,7 @@ namespace Transmitly.Channel.Push
 
 			var recipients = communicationContext.RecipientAudiences.SelectMany(a => a.Addresses).ToList();
 
-			return new PushNotificationCommunication(recipients, ExtendedProperties, title, body, imageUrl);
+			return new PushNotificationCommunication(recipients, ExtendedProperties, title, body, imageUrl) { CommunicationId = CommunicationId };
 		}
 
 		public bool SupportsAudienceAddress(IAudienceAddress audienceAddress)

@@ -57,6 +57,8 @@ namespace Transmitly.Channel.Voice
 
 		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 
+		public string? CommunicationId { get; set; }
+
 		internal VoiceChannel(IAudienceAddress? fromAddress, string[]? channelProviderIds = null) : this(channelProviderIds)
 		{
 			From = fromAddress;
@@ -72,6 +74,7 @@ namespace Transmitly.Channel.Voice
 			var message = Guard.AgainstNullOrWhiteSpace(await Message.RenderAsync(communicationContext, true));
 			return new VoiceCommunication(message, ExtendedProperties)
 			{
+				CommunicationId = CommunicationId,
 				VoiceType = VoiceType,
 				From = GetSenderFromAddress(communicationContext),
 				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
