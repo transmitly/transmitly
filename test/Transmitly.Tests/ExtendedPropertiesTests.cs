@@ -76,5 +76,37 @@ namespace Transmitly.Tests
 
 			Assert.AreEqual(2, props.GetValue("unit", "test"));
 		}
+
+		[TestMethod()]
+		public void GetValueShouldConvertToExpectedType()
+		{
+			var expected = Guid.NewGuid();
+			IExtendedProperties props = new ExtendedProperties();
+			props.AddOrUpdate("unit", "test", expected.ToString("N"));
+
+			Assert.AreEqual(expected, props.GetValue<Guid>("unit", "test"));
+			Assert.AreEqual(expected, props.GetValue<Guid?>("unit", "test"));
+
+			props.AddOrUpdate("unit", "test", expected);
+
+			Assert.AreEqual(expected, props.GetValue<Guid>("unit", "test"));
+			Assert.AreEqual(expected, props.GetValue<Guid?>("unit", "test"));
+
+			var expected2 = 1234;
+			props.AddOrUpdate("unit", "test", expected2);
+
+			Assert.AreEqual(expected2, props.GetValue<int>("unit", "test"));
+			Assert.AreEqual(expected2, props.GetValue<int?>("unit", "test"));
+
+			props.AddOrUpdate("unit", "test", expected2);
+
+			Assert.AreEqual(expected2, props.GetValue<int>("unit", "test"));
+			Assert.AreEqual(expected2, props.GetValue<int?>("unit", "test"));
+
+			props.AddOrUpdate("unit", "test", null);
+
+			Assert.AreEqual(0, props.GetValue<int>("unit", "test"));
+			Assert.AreEqual(null, props.GetValue<int?>("unit", "test"));
+		}
 	}
 }

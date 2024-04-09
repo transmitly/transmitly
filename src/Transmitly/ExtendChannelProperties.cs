@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using System.Collections;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 
 namespace Transmitly
@@ -64,13 +65,13 @@ namespace Transmitly
 			where T : default
 		{
 			var key = GetCompositeKey(providerKey, propertyKey);
-			
+
 #if FEATURE_DICTIONARYTRYADD
 			if (_bag.TryGetValue(key, out var result))
-				return (T?)result;
+				return ConvertType<T>(result);
 #else
 			if (_bag.ContainsKey(key))
-				return (T?)_bag[key];
+				return ConvertType<T>(_bag[key]);
 #endif
 			return default;
 		}
@@ -97,7 +98,7 @@ namespace Transmitly
 
 			var result = _bag.TryGetValue(key, out var objValue);
 			if (result)
-				value = (T?)objValue;
+				value = ConvertType<T>(objValue);
 			else
 				value = default;
 
@@ -108,13 +109,13 @@ namespace Transmitly
 		T IExtendedProperties.GetValue<T>(string providerKey, string propertyKey, T defaultValue)
 		{
 			var key = GetCompositeKey(providerKey, propertyKey);
-			
+
 #if FEATURE_DICTIONARYTRYADD
 			if (_bag.TryGetValue(key, out var result))
-				return (T?)result ?? defaultValue;
+				return ConvertType<T>(result) ?? defaultValue;
 #else
 			if (_bag.ContainsKey(key))
-				return (T?)_bag[key] ?? defaultValue;
+				return ConvertType<T>(_bag[key]) ?? defaultValue;
 
 #endif
 			return defaultValue;
@@ -176,6 +177,18 @@ namespace Transmitly
 		void IExtendedProperties.Add(string propertyKey, object? value)
 		{
 			((IExtendedProperties)this).Add(string.Empty, propertyKey, value);
+		}
+
+		private static T? ConvertType<T>(object? value)
+		{
+			if (value == null)
+				return default;
+
+			if ((value is T returnValue))
+				return returnValue;
+
+			var typeConverter = TypeDescriptor.GetConverter(typeof(T?));
+			return (T?)typeConverter.ConvertFrom(value);
 		}
 	}
 }
