@@ -51,7 +51,17 @@ namespace Transmitly.Delivery
 				if (results != null)
 				{
 					var reports = results.Select(r =>
-						new DeliveryReport(DeliveryReport.Event.Error(), internalContext.ChannelId, internalContext.ChannelProviderId, context.PipelineName, r!.ResourceId, r.DispatchStatus, communication, context.ContentModel)
+						new DeliveryReport(
+							DeliveryReport.Event.Error(),
+							internalContext.ChannelId,
+							internalContext.ChannelProviderId,
+							context.PipelineName,
+							r!.ResourceId,
+							r.DispatchStatus,
+							communication,
+							context.ContentModel,
+							r.Exception
+						)
 					).ToList();
 					context.DeliveryReportManager.DispatchReports(reports);
 				}

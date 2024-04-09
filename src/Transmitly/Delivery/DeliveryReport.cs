@@ -22,7 +22,8 @@ namespace Transmitly.Delivery
 		string? ResourceId,
 		DispatchStatus DispatchStatus,
 		object? ChannelCommunication,
-		IContentModel? ContentModel
+		IContentModel? ContentModel,
+		Exception? Exception 
 	)
 	{
 		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
