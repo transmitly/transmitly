@@ -18,10 +18,11 @@ namespace Transmitly.Delivery
 {
 	public static class DeliveryUtil
 	{
-		public const string ResourceIdKey = "_tlyrid";
-		public const string PipelineNameKey = "_tlypn";
-		public const string ChannelIdKey = "_tlycid";
-		public const string ChannelProviderIdKey = "_tlycpid";
+		public const string ResourceIdKey = "tlyr";
+		public const string PipelineNameKey = "tlyp";
+		public const string ChannelIdKey = "tlyc";
+		public const string ChannelProviderIdKey = "tlycp";
+		public const string EventIdKey = "tlye";
 
 		public static Uri AddPipelineContext(this Uri url, string resourceId, string pipelineName, string channel, string channelProvider)
 		{
@@ -29,7 +30,8 @@ namespace Transmitly.Delivery
 				.AddParameter(ResourceIdKey, resourceId)
 				.AddParameter(PipelineNameKey, pipelineName)
 				.AddParameter(ChannelIdKey, channel)
-				.AddParameter(ChannelProviderIdKey, channelProvider);
+				.AddParameter(ChannelProviderIdKey, channelProvider)
+				.AddParameter(EventIdKey, Guid.NewGuid().ToString("N"));
 		}
 
 		//Source=https://stackoverflow.com/a/19679135
