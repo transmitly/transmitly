@@ -27,6 +27,6 @@ namespace Transmitly.Delivery
 		/// <summary>
 		/// Duration of the voice communication, in seconds.
 		/// </summary>
-		TimeSpan Duration { get; }
+		TimeSpan? Duration { get; }
 	}
 }
