@@ -130,7 +130,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					pipeline.AddSms(tlyConfig.DefaultSmsFromAddress.AsAudienceAddress(), sms =>
 					{
 						sms.Message.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
-						//sms.DeliveryReportCallbackUrl = "https://commentary-accordance-imperial-immigrants.trycloudflare.com/communications/channel/provider/update";
+						//sms.DeliveryReportCallbackUrl = "https://domain.com/communications/channel/provider/update";
 
 					});
 				})
@@ -146,12 +146,12 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						email.Subject.AddStringTemplate("Your one time password code");
 						email.HtmlBody.AddStringTemplate("Your code: <strong>{{code}}</strong>");
 						email.TextBody.AddStringTemplate("Your code: {{code}}");
-
+						//email.DeliveryReportCallbackUrl = "https://domain.com/communications/channel/provider/update";
 						//Already have emails defined with SendGrid? Great, we can handle those too!
 						// We can use the extended properties provided by the SendGrid channel provider.
 						// This way we ensure that if the SendGrid channel provider is used for this channel, we'll use the template id.
 						// if we happen to fallback or even remove SendGrid, we can gracefully fallback to our content defined above. Neat!
-						email.SendGrid().TemplateId = "d-89ae21e8ebed491380ed580f30e0b052";
+						//email.SendGrid().TemplateId = "d-89ae21e8ebed491380ed580f30e0b052";
 
 						// While not required, we can specify channel providers that are allowed to 
 						// handle this communication. In this case, we might want to use our secure
@@ -172,12 +172,18 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					{
 						voice.Message.AddStringTemplate(
 							"""
-								Hello {{firstName}} <break strength="weak" /> this is a reminder about an upcoming doctors 
-								appointment scheduled for Today <break strength="strong"/> at <say-as interpret-as="time" format="hms12">2:30pm</say-as>.
+								Hello {{firstName}} this is a reminder about an upcoming doctors 
+								appointment scheduled for Today at 2:30pm.
 								Don't be late!
 							"""
 							);
-						//voice.DeliveryReportCallbackUrl = "https://scenes-babes-belgium-earned.trycloudflare.com/communications/callback/status";
+						voice.DeliveryReportCallbackUrl = "https://domain.com/communications/channel/provider/update";
+						//voice.Twilio().Url = "https://domain.com/twilio/messageNeeded";
+						//voice.Twilio().OnStoreMessageForRetrievalAsync = (messageNeededId, voice, context) =>
+						//{
+						//	TwilioMessageStore.StoreMessage(messageNeededId, voice.Message);
+						//	return Task.CompletedTask;
+						//};
 					});
 				});
 			});

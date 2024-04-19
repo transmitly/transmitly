@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -19,5 +19,6 @@
 		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.1.0-*" />
 		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="0.1.0-*" />
 		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.1.0-*" />
+		<PackageReference Include="Twilio.AspNet.Core" Version="8.0.2" />
 	</ItemGroup>
 </Project>

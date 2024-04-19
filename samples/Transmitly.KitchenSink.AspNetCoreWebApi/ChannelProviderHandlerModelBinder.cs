@@ -57,18 +57,29 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			}).Unwrap().GetAwaiter().GetResult();
 		}
 	}
-	class DefaultRequestAdaptorContext(IQueryCollection valueProvider, string requestBody) : IRequestAdaptorContext
+	class DefaultRequestAdaptorContext : IRequestAdaptorContext
 	{
-		private readonly IQueryCollection _valueProvider = valueProvider;
+		private readonly HttpRequest _httpRequest;
+
+		public DefaultRequestAdaptorContext(HttpRequest request)
+		{
+			_httpRequest = Guard.AgainstNull(request);
+			Content = new StreamReader(request.BodyReader.AsStream()).ReadToEnd();
+		}
 
 		public string? GetValue(string key)
 		{
-			if (_valueProvider.TryGetValue(key, out var result))
+			if (_httpRequest.Query.TryGetValue(key, out var result))
 				return result.ToString();
+			if (_httpRequest.Form.TryGetValue(key, out var formResult))
+				return formResult.ToString();
+			if (_httpRequest.Headers.TryGetValue(key, out var headersResult))
+				return headersResult.ToString();
+
 			return null;
 		}
 
-		public string? Content { get; } = requestBody;
+		public string? Content { get; }
 
 		public string? PipelineName => GetValue(DeliveryUtil.PipelineNameKey);
 
@@ -88,12 +99,11 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 		public async Task BindModelAsync(ModelBindingContext bindingContext)
 		{
 
-			var str = await new StreamReader(bindingContext.ActionContext.HttpContext.Request.Body).ReadToEndAsync();
 			foreach (var adaptor in _adaptorInstances)
 			{
 				try
 				{
-					var handled = await adaptor.Value.AdaptAsync(new DefaultRequestAdaptorContext(bindingContext.HttpContext.Request.Query, str));
+					var handled = await adaptor.Value.AdaptAsync(new DefaultRequestAdaptorContext(bindingContext.HttpContext.Request));
 					if (handled != null)
 					{
 						bindingContext.Result = ModelBindingResult.Success(new ChannelProviderDeliveryReportRequest(handled));
