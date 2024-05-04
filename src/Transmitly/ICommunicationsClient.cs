@@ -19,7 +19,7 @@ namespace Transmitly
 	/// <summary>
 	/// Client for dispatching communications
 	/// </summary>
-	public interface ICommunicationsClient
+	public interface ICommunicationsClient : ISenderVerificationCommunicationsClient
 	{
 		/// <summary>
 		/// Dispatches the communications for the provided pipeline name.

@@ -18,6 +18,7 @@ using Transmitly.Delivery;
 using Transmitly.Exceptions;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
+using Transmitly.Verification;
 
 namespace Transmitly
 {
@@ -155,6 +156,31 @@ namespace Transmitly
 			Guard.AgainstNull(reports);
 			foreach (var report in reports)
 				_deliveryReportProvider.DispatchReport(report);
+		}
+
+		public Task<ISenderVerificationResult> InitiateSenderVerification(string channelProviderId, string channelId, string audienceAddress)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IValidateSenderVerificationResult> ValidateSenderVerification(string channelProviderId, string channelId, string audienceAddress, string code, string? nonce = null)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<ISenderVerifiedResult> IsSenderVerified(string channelProviderId, string channelId, string audienceAddress)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IReadOnlyCollection<ISenderVerifiedResult>> IsSenderVerified(string audienceAddress)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IReadOnlyCollection<IChannelProviderSenderVerificationOption>> GetSenderVerificationSupportedChannelProviders()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -19,6 +19,7 @@ using Transmitly.Delivery;
 using Transmitly.Delivery.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
+using Transmitly.Verification.Configuration;
 
 namespace Transmitly
 {
@@ -46,6 +47,7 @@ namespace Transmitly
 			//AudienceResolver = new(this, ar => _audienceResolvers.Add(ar));
 			TemplateEngine = new(this, te => _templateEngines.Add(te));
 			DeliveryReport = new(this);
+			SenderVerification = new(this);
 		}
 
 		/// <summary>
@@ -72,6 +74,11 @@ namespace Transmitly
 		/// Gets the delivery report configuration builder.
 		/// </summary>
 		public DeliveryReportConfigurationBuilder DeliveryReport { get; }
+
+		/// <summary>
+		/// Gets the sender verification configuration builder.
+		/// </summary>
+		public SenderVerificationConfigurationBuilder SenderVerification { get; }
 
 		/// <summary>
 		/// Adds a template engine to the configuration.
@@ -214,6 +221,11 @@ namespace Transmitly
 		public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
 		{
 			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
+		}
+
+		public CommunicationsClientBuilder AddSenderVerificationSupport(Action<ISenderVerificationConfiguration> configure)
+		{
+			return SenderVerification.Configure(configure);
 		}
 
 		/// <summary>
