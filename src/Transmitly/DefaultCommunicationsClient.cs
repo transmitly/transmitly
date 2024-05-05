@@ -131,8 +131,8 @@ namespace Transmitly
 							(!c.AllowedChannelProviderIds.Any() || c.AllowedChannelProviderIds.Contains(x.Id)) &&
 							x.SupportsChannel(c.Id) &&
 							(x.CommunicationType == typeof(object) || c.CommunicationType == x.CommunicationType) &&
-							audienceAddresses.Any(a => c.SupportsAudienceAddress(a))
-						).Select(m => new ChannelProviderEntity(m, async () => await channelProviderFactory.ResolveClientAsync(m)))
+							audienceAddresses.Any(a => c.SupportsAudienceAddress(a) /*|| x.SupportsAudienceAddress(a)*/)
+						).Select(m => new ChannelProviderWrapper(m, async () => await channelProviderFactory.ResolveClientAsync(m)))
 						.ToList();
 
 				return Task.FromResult(new ChannelChannelProviderGroup(
@@ -169,6 +169,11 @@ namespace Transmitly
 		}
 
 		public Task<ISenderVerifiedResult> IsSenderVerified(string channelProviderId, string channelId, string audienceAddress)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<ISenderVerifiedResult> IsSenderVerified(string channelId, string audienceAddress)
 		{
 			throw new NotImplementedException();
 		}

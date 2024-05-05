@@ -51,7 +51,7 @@ namespace Transmitly.ChannelProvider.Configuration
 			return Array.Exists(_supportedChannels, a => string.Equals(a, channel, StringComparison.OrdinalIgnoreCase));
 		}
 
-		public bool SupportAudienceAddress(IAudienceAddress audienceAddress)
+		public bool SupportsAudienceAddress(IAudienceAddress audienceAddress)
 		{
 			return _supportedAudienceAddress(audienceAddress);
 		}

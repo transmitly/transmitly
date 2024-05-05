@@ -14,6 +14,7 @@
 
 using Transmitly.Exceptions;
 using Transmitly.Delivery;
+using Transmitly.Verification;
 
 namespace Transmitly.ChannelProvider.Configuration
 {
@@ -137,6 +138,14 @@ namespace Transmitly.ChannelProvider.Configuration
 				throw new CommunicationsException("Provided adaptor must implement " + nameof(IChannelProviderDeliveryReportRequestAdaptor));
 			_addHandlers(new ChannelProviderDeliveryReportRequestAdaptorRegistration(type));
 			return this;
+		}
+
+		public ChannelProviderConfigurationBuilder AddSenderVerificationClient<TClient>(params string[]? supportedChannelIds)
+			where TClient : ISenderVerificationClient
+		{
+			var x = new ChannelProviderSenderVerificationRegistration(typeof(TClient), supportedChannelIds);
+			throw new NotImplementedException();
+			//return this;
 		}
 	}
 }

@@ -18,9 +18,9 @@ namespace Transmitly.Verification.Configuration
 	{
 		private readonly CommunicationsClientBuilder _communicationsClientBuilder = Guard.AgainstNull(communicationsClientBuilder);
 
-		public CommunicationsClientBuilder Configure(Action<ISenderVerificationConfiguration> configure)
+		public CommunicationsClientBuilder Configure(Action<ISenderVerificationRegistration> configure)
 		{
-			var config = new SenderVerificationConfiguration();
+			var config = new SenderVerificationRegistration();
 			configure(config);
 			return _communicationsClientBuilder;
 		}

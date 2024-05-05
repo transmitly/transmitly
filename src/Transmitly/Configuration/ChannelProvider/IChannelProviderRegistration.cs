@@ -30,7 +30,7 @@ namespace Transmitly.ChannelProvider.Configuration
 		/// <returns>True if the channel is supported, otherwise false.</returns>
 		bool SupportsChannel(string channel);
 
-		bool SupportAudienceAddress(IAudienceAddress audienceAddress);
+		bool SupportsAudienceAddress(IAudienceAddress audienceAddress);
 
 		object? Configuration { get; }
 

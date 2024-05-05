@@ -12,11 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Verification.Configuration
+namespace Transmitly.ChannelProvider.Configuration
 {
-	public interface ISenderVerificationService
+	internal sealed class ChannelProviderSenderVerificationRegistration(Type clientType, string[]? supportedChannelIds = null)
 	{
-		public bool? SenderIsAlreadyVerified(string channelProviderId, string channelId, string recipient);
-		public string GenerateCode(int length = 6);
+		public Type ClientType { get; } = clientType;
+		public IReadOnlyCollection<string> SupportedChannelIds { get; } = supportedChannelIds ?? [];
 	}
 }

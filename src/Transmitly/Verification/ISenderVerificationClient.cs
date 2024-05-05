@@ -12,10 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Verification.Configuration
+namespace Transmitly.Verification
 {
-	public interface ISenderVerificationCodeGenerator
+	public interface ISenderVerificationClient
 	{
-		string GenerateCode(int length = 6);
+		Task<ISenderVerificationResult> InitiateSenderVerification(string channelId, IAudienceAddress audienceAddress, ISenderVerificationContext senderVerificationContext);
+		Task<IValidateSenderVerificationResult> ValidateSenderVerification(string channelId, IAudienceAddress audienceAddress, string code, ISenderVerificationContext senderVerificationContext, string? nonce = null);
+		Task<ISenderVerifiedResult> IsSenderVerified(string channelId, string audienceAddress, ISenderVerificationContext senderVerificationContext);
 	}
 }

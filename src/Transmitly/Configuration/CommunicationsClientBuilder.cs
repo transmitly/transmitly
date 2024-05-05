@@ -222,8 +222,8 @@ namespace Transmitly
 		{
 			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
 		}
-
-		public CommunicationsClientBuilder AddSenderVerificationSupport(Action<ISenderVerificationConfiguration> configure)
+		
+		public CommunicationsClientBuilder AddSenderVerificationSupport(Action<ISenderVerificationRegistration> configure)
 		{
 			return SenderVerification.Configure(configure);
 		}

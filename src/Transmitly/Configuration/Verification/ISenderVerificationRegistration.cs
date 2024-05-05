@@ -12,21 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Template.Configuration;
+
 namespace Transmitly.Verification.Configuration
 {
-	///Source=https://stackoverflow.com/a/46443056
-	internal sealed class DefaultSenderVerificationService(ISenderVerificationCodeGenerator codeGenerator) : ISenderVerificationService
+	public interface ISenderVerificationRegistration
 	{
-		private readonly ISenderVerificationCodeGenerator _codeGenerator = Guard.AgainstNull(codeGenerator);
-
-		public string GenerateCode(int length = 6)
-		{
-			return _codeGenerator.GenerateCode(length);
-		}
-
-		public bool? SenderIsAlreadyVerified(string channelProviderId, string channelId, string recipient)
-		{
-			return null;
-		}
+		Func<ISenderVerificationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+		string? DeliveryReportCallbackUrl { get; set; }
+		IContentTemplateConfiguration Message { get; }
 	}
 }

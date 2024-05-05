@@ -12,10 +12,25 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly
 {
-	public interface IContentTemplateConfiguration
+	/// <summary>
+	/// Context of the sender verification request.
+	/// </summary>
+	public interface ISenderVerificationContext
 	{
-		ICollection<IContentTemplateRegistration> TemplateRegistrations { get; }
+		/// <summary>
+		/// The <see cref="Id.Channel"/> of the verification context.
+		/// </summary>
+		string ChannelId { get; }
+		/// <summary>
+		/// The <see cref="Id.ChannelProvider"/> of the verification context.
+		/// </summary>
+		string ChannelProviderId { get; }
+		/// <summary>
+		/// The sender address to verify.
+		/// </summary>
+		IAudienceAddress SenderAddress { get; }
+
 	}
 }

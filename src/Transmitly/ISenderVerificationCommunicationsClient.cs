@@ -21,6 +21,7 @@ namespace Transmitly
 		Task<ISenderVerificationResult> InitiateSenderVerification(string channelProviderId, string channelId, string audienceAddress);
 		Task<IValidateSenderVerificationResult> ValidateSenderVerification(string channelProviderId, string channelId, string audienceAddress, string code, string? nonce = null);
 		Task<ISenderVerifiedResult> IsSenderVerified(string channelProviderId, string channelId, string audienceAddress);
+		Task<ISenderVerifiedResult> IsSenderVerified(string channelId, string audienceAddress);
 		Task<IReadOnlyCollection<ISenderVerifiedResult>> IsSenderVerified(string audienceAddress);
 		Task<IReadOnlyCollection<IChannelProviderSenderVerificationOption>> GetSenderVerificationSupportedChannelProviders();
 	}
