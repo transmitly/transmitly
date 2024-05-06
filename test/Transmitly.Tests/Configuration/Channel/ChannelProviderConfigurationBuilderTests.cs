@@ -25,22 +25,18 @@ namespace Transmitly.Channel.Configuration.Tests
 		{
 			Assert.Fail();
 		};
-		private readonly Action<IChannelProviderDeliveryReportRequestAdaptorRegistration> fail_addAdaptorConfirm = (provider) =>
-		{
-			Assert.Fail();
-		};
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 		[TestMethod]
 		public void NewShouldRequireConfigurationBuilder()
 		{
-			Assert.ThrowsException<ArgumentNullException>(() => new ChannelProviderConfigurationBuilder(null, (opt) => { }, (opt) => { }));
+			Assert.ThrowsException<ArgumentNullException>(() => new ChannelProviderConfigurationBuilder(null, (opt) => { }));
 		}
 
 		[TestMethod]
 		public void NewShouldRequireAddMethod()
 		{
-			Assert.ThrowsException<ArgumentNullException>(() => new ChannelProviderConfigurationBuilder(new CommunicationsClientBuilder(), null, null));
+			Assert.ThrowsException<ArgumentNullException>(() => new ChannelProviderConfigurationBuilder(new CommunicationsClientBuilder(), null));
 		}
 
 		[TestMethod()]
@@ -51,16 +47,16 @@ namespace Transmitly.Channel.Configuration.Tests
 		{
 			var client = new Mock<IChannelProviderClient<object>>();
 			var builder = new CommunicationsClientBuilder();
-			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, fail_addConfirm, fail_addAdaptorConfirm);
-			Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add(value, client.Object.GetType(), typeof(object), null));
+			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, fail_addConfirm);
+			Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add(value, client.Object.GetType(), typeof(object)));
 		}
 
 		[TestMethod]
 		public void AddShouldGuardAgainstNullClient()
 		{
 			var builder = new CommunicationsClientBuilder();
-			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, fail_addConfirm, fail_addAdaptorConfirm);
-			Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add("test", null, typeof(object), null));
+			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, fail_addConfirm);
+			Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add("test", null, typeof(object)));
 		}
 
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -76,7 +72,7 @@ namespace Transmitly.Channel.Configuration.Tests
 			}
 			var client = new Mock<IChannelProviderClient<object>>();
 			var builder = new CommunicationsClientBuilder();
-			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, addConfirm, fail_addAdaptorConfirm);
+			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, addConfirm);
 			providerBuilder.Add(expectedId, client.Object.GetType(), typeof(object), null);
 		}
 	}

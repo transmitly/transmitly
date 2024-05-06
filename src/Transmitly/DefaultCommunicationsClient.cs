@@ -22,6 +22,40 @@ using Transmitly.Verification;
 
 namespace Transmitly
 {
+	sealed class SenderVerificationCommunicationsClient : ISenderVerificationCommunicationsClient
+	{
+		//private readonly IChannelProviderFactory _channelProviderFactory;
+
+		public SenderVerificationCommunicationsClient(IChannelProviderFactory channelProviderFactory)
+		{
+			//_channelProviderFactory = Guard.AgainstNull(channelProviderFactory);
+		}
+		public Task<IReadOnlyCollection<ISenderVerifiedResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IReadOnlyCollection<IChannelProviderSenderVerificationOption>> GetSenderVerificationSupportedChannelProvidersAsync()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<ISenderVerificationResult> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<bool?> IsSenderVerifiedAsync(string audienceAddress)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? nonce = null)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
 	public sealed class DefaultCommunicationsClient(
 		IPipelineFactory pipelineRegistrations,
 		IChannelProviderFactory channelProviderRegistrations,
@@ -123,20 +157,47 @@ namespace Transmitly
 			IReadOnlyCollection<string> allowedChannels,
 			IReadOnlyCollection<IAudience> audiences)
 		{
-			return (await Task.WhenAll(configuredChannels.Select(c =>
+
+			return (await Task.WhenAll(configuredChannels.Select(channel =>
 			{
 				var audienceAddresses = audiences.SelectMany(m => m.Addresses);
+				bool filterClientRegistrations(IChannelProviderClientRegistration clientRegistration)
+				{
+					return clientRegistration
+						.SupportsChannel(channel.Id) &&
+						(
+							clientRegistration.CommunicationType == typeof(object) ||
+							channel.CommunicationType == clientRegistration.CommunicationType
+						) &&
+						audienceAddresses.Any(a => channel.SupportsAudienceAddress(a));
+				}
+
 				var channelProviders = allowedChannelProviders.Where(x =>
-							(allowedChannels.Count == 0 || allowedChannels.Any(a => c.Id == a)) &&
-							(!c.AllowedChannelProviderIds.Any() || c.AllowedChannelProviderIds.Contains(x.Id)) &&
-							x.SupportsChannel(c.Id) &&
-							(x.CommunicationType == typeof(object) || c.CommunicationType == x.CommunicationType) &&
-							audienceAddresses.Any(a => c.SupportsAudienceAddress(a) /*|| x.SupportsAudienceAddress(a)*/)
-						).Select(m => new ChannelProviderWrapper(m, async () => await channelProviderFactory.ResolveClientAsync(m)))
+							(
+								allowedChannels.Count == 0 ||
+								allowedChannels.Any(a => channel.Id == a)
+							) &&
+							(
+								!channel.AllowedChannelProviderIds.Any() ||
+								channel.AllowedChannelProviderIds.Contains(x.Id)
+							) //&&
+							  //x.ClientRegistrations.Any(filterClients)
+						).SelectMany(providerRegistration =>
+						{
+							return providerRegistration.ClientRegistrations
+							.Where(filterClientRegistrations)
+							.Select(clientRegistration =>
+								new ChannelProviderWrapper(
+									providerRegistration.Id,
+									clientRegistration,
+									async () => await channelProviderFactory.ResolveClientAsync(providerRegistration, clientRegistration)
+								)
+							);
+						})
 						.ToList();
 
 				return Task.FromResult(new ChannelChannelProviderGroup(
-						c,
+						channel,
 						channelProviders
 					));
 
@@ -158,32 +219,27 @@ namespace Transmitly
 				_deliveryReportProvider.DispatchReport(report);
 		}
 
-		public Task<ISenderVerificationResult> InitiateSenderVerification(string channelProviderId, string channelId, string audienceAddress)
+		public Task<ISenderVerificationResult> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<IValidateSenderVerificationResult> ValidateSenderVerification(string channelProviderId, string channelId, string audienceAddress, string code, string? nonce = null)
+		public Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? nonce = null)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<ISenderVerifiedResult> IsSenderVerified(string channelProviderId, string channelId, string audienceAddress)
+		public Task<IReadOnlyCollection<ISenderVerifiedResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<ISenderVerifiedResult> IsSenderVerified(string channelId, string audienceAddress)
+		public Task<bool?> IsSenderVerifiedAsync(string audienceAddress)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<IReadOnlyCollection<ISenderVerifiedResult>> IsSenderVerified(string audienceAddress)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<IReadOnlyCollection<IChannelProviderSenderVerificationOption>> GetSenderVerificationSupportedChannelProviders()
+		public Task<IReadOnlyCollection<IChannelProviderSenderVerificationOption>> GetSenderVerificationSupportedChannelProvidersAsync()
 		{
 			throw new NotImplementedException();
 		}

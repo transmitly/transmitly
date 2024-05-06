@@ -22,20 +22,35 @@ using System.Threading.Tasks;
 
 namespace Transmitly.Tests.Verification
 {
-    [TestClass]
-    public class SenderVerificationTests
-    {
-        [TestMethod]
-        public async Task MyTestMethod()
-        {
-   //         var commClient = new Mock<ICommunicationsClient>();
-   //         var client = commClient.Object;
-   //         var verificationProviders = await client.GetSenderVerificationSupportedChannelProviders();
-   //         if(client.InitiateSenderVerification(ChannelProviderId
-			//foreach (var provider in )
-   //         {
-                
-   //         }
-        }
-    }
+	[TestClass]
+	public class SenderVerificationTests
+	{
+		[TestMethod]
+		public async Task SenderVerificationWithFirstSucessfulChannelProvider()
+		{
+			//var commClient = new Mock<ICommunicationsClient>();
+			//var client = commClient.Object;
+			//var verificationProviders = await client.GetSenderVerificationSupportedChannelProvidersAsync();
+			//var sender = "123456789";
+
+			//foreach (var provider in verificationProviders)
+			//{
+			//	//are we validated with ANY channel or channel provider
+			//	var isValidated = await client.IsSenderVerifiedAsync(sender);
+				
+			//	// null = no provider supports checking or unknown
+			//	// true = validated
+			//	// false = not validated
+			//	if (isValidated.HasValue && !isValidated.Value)
+			//	{
+			//		var result = await client.InitiateSenderVerificationAsync(sender, provider.ChannelProviderId, provider.ChannelId);
+			//		if (result.IsSuccessful)
+			//		{
+			//			result.Code;
+			//			break;
+			//		}
+			//	}
+			//}
+		}
+	}
 }

@@ -22,15 +22,12 @@ namespace Transmitly
 {
 	internal sealed class CreateCommunicationsClientContext(
 		IReadOnlyCollection<IChannelProviderRegistration> channelProviders,
-		IReadOnlyCollection<IChannelProviderDeliveryReportRequestAdaptorRegistration> channelProviderDeliveryReportRequestAdaptor,
 		IReadOnlyCollection<IPipeline> pipelines,
 		IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
 		IDeliveryReportReporter deliveryReportProvider
 	) : ICreateCommunicationsClientContext
 	{
 		public IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; } = channelProviders;
-
-		public IReadOnlyCollection<IChannelProviderDeliveryReportRequestAdaptorRegistration> ChannelProviderDeliveryReportRequestAdaptors { get; } = channelProviderDeliveryReportRequestAdaptor;
 
 		public IReadOnlyCollection<IPipeline> Pipelines { get; } = pipelines;
 

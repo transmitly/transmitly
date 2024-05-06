@@ -35,14 +35,13 @@ namespace Transmitly
 		private readonly List<IPipeline> _pipelines = [];
 		//private readonly List<IAudienceResolver> _audienceResolvers = [];
 		private readonly List<ITemplateEngineRegistration> _templateEngines = [];
-		private readonly List<IChannelProviderDeliveryReportRequestAdaptorRegistration> _channelProviderDeliveryReportRequestAdaptorRegistrations = [];
 
 		/// <summary>
 		/// Creates an instance of the class
 		/// </summary>
 		public CommunicationsClientBuilder()
 		{
-			ChannelProvider = new(this, cp => _channelProviders.Add(cp), a => _channelProviderDeliveryReportRequestAdaptorRegistrations.Add(a));
+			ChannelProvider = new(this, cp => _channelProviders.Add(cp));
 			Pipeline = new(this, p => _pipelines.Add(p));
 			//AudienceResolver = new(this, ar => _audienceResolvers.Add(ar));
 			TemplateEngine = new(this, te => _templateEngines.Add(te));
@@ -99,30 +98,30 @@ namespace Transmitly
 			where TEngine : ITemplateEngine, new() =>
 			TemplateEngine.Add(new TEngine(), id);
 
-		/// <summary>
-		/// Adds a channel provider to the configuration.
-		/// </summary>
-		/// <typeparam name="TCommunication">The type of communication the client will handle.</typeparam>
-		/// <param name="providerId">The ID of the channel provider.</param>
-		/// <param name="supportedChannelIds">The array of supported channel IDs.</param>
-		/// <typeparam name="TClient">Concrete type of the channel provider client.</typeparam>
-		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, params string[]? supportedChannelIds)
-			where TClient : IChannelProviderClient<TCommunication>
-			=> ChannelProvider.Add<TClient, TCommunication>(providerId, null, supportedChannelIds);
+		///// <summary>
+		///// Adds a channel provider to the configuration.
+		///// </summary>
+		///// <typeparam name="TCommunication">The type of communication the client will handle.</typeparam>
+		///// <param name="providerId">The ID of the channel provider.</param>
+		///// <param name="supportedChannelIds">The array of supported channel IDs.</param>
+		///// <typeparam name="TClient">Concrete type of the channel provider client.</typeparam>
+		///// <returns>The configuration builder.</returns>
+		//public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, params string[]? supportedChannelIds)
+		//	where TClient : IChannelProviderClient<TCommunication>
+		//	=> ChannelProvider.Add<TClient, TCommunication>(providerId, null, supportedChannelIds);
 
-		/// <summary>
-		/// Adds a channel provider to the configuration.
-		/// </summary>
-		/// <typeparam name="TCommunication">The type of communication the client will handle.</typeparam>
-		/// <param name="providerId">The ID of the channel provider.</param>
-		/// <param name="configuration">Configuration settings for the client.</param>
-		/// <param name="supportedChannelIds">The array of supported channel IDs.</param>
-		/// <typeparam name="TClient">Concrete type of the channel provider client.</typeparam>
-		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, object? configuration, params string[]? supportedChannelIds)
-			where TClient : IChannelProviderClient<TCommunication>
-			=> ChannelProvider.Add<TClient, TCommunication>(providerId, configuration, supportedChannelIds);
+		///// <summary>
+		///// Adds a channel provider to the configuration.
+		///// </summary>
+		///// <typeparam name="TCommunication">The type of communication the client will handle.</typeparam>
+		///// <param name="providerId">The ID of the channel provider.</param>
+		///// <param name="configuration">Configuration settings for the client.</param>
+		///// <param name="supportedChannelIds">The array of supported channel IDs.</param>
+		///// <typeparam name="TClient">Concrete type of the channel provider client.</typeparam>
+		///// <returns>The configuration builder.</returns>
+		//public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, object? configuration, params string[]? supportedChannelIds)
+		//	where TClient : IChannelProviderClient<TCommunication>
+		//	=> ChannelProvider.Add<TClient, TCommunication>(providerId, configuration, supportedChannelIds);
 
 		/// <summary>
 		/// Adds a pipeline to the configuration.
@@ -243,7 +242,6 @@ namespace Transmitly
 			var client = _clientFactory.CreateClient(
 				new CreateCommunicationsClientContext(
 					_channelProviders,
-					_channelProviderDeliveryReportRequestAdaptorRegistrations,
 					_pipelines,
 					_templateEngines,
 					deliveryReportProvider

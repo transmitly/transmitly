@@ -18,11 +18,10 @@ namespace Transmitly
 {
 	public interface ISenderVerificationCommunicationsClient
 	{
-		Task<ISenderVerificationResult> InitiateSenderVerification(string channelProviderId, string channelId, string audienceAddress);
-		Task<IValidateSenderVerificationResult> ValidateSenderVerification(string channelProviderId, string channelId, string audienceAddress, string code, string? nonce = null);
-		Task<ISenderVerifiedResult> IsSenderVerified(string channelProviderId, string channelId, string audienceAddress);
-		Task<ISenderVerifiedResult> IsSenderVerified(string channelId, string audienceAddress);
-		Task<IReadOnlyCollection<ISenderVerifiedResult>> IsSenderVerified(string audienceAddress);
-		Task<IReadOnlyCollection<IChannelProviderSenderVerificationOption>> GetSenderVerificationSupportedChannelProviders();
+		Task<ISenderVerificationResult> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId);
+		Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? nonce = null);
+		Task<IReadOnlyCollection<ISenderVerifiedResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null);
+		Task<bool?> IsSenderVerifiedAsync(string audienceAddress);
+		Task<IReadOnlyCollection<IChannelProviderSenderVerificationOption>> GetSenderVerificationSupportedChannelProvidersAsync();
 	}
 }

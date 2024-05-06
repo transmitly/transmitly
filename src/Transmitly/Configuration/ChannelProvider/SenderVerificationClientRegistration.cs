@@ -12,18 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.ChannelProvider.Configuration;
-using Transmitly.Pipeline.Configuration;
-using Transmitly.Template.Configuration;
-using Transmitly.Delivery;
 
-namespace Transmitly
+using Transmitly.Verification;
+
+namespace Transmitly.ChannelProvider.Configuration
 {
-	public interface ICreateCommunicationsClientContext
+	internal class SenderVerificationClientRegistration<TClient> : ISenderVerificationClientRegistration
+		where TClient : ISenderVerificationClient
 	{
-		IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; }
-		IReadOnlyCollection<IPipeline> Pipelines { get; }
-		IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
-		IDeliveryReportReporter DeliveryReportProvider { get; }
+		public Type ClientType => typeof(TClient);
 	}
 }

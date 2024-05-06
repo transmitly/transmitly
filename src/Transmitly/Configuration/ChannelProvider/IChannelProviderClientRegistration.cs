@@ -12,18 +12,18 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.ChannelProvider.Configuration;
-using Transmitly.Pipeline.Configuration;
-using Transmitly.Template.Configuration;
-using Transmitly.Delivery;
 
-namespace Transmitly
+namespace Transmitly.ChannelProvider.Configuration
 {
-	public interface ICreateCommunicationsClientContext
+	public interface IChannelProviderClientRegistration
 	{
-		IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; }
-		IReadOnlyCollection<IPipeline> Pipelines { get; }
-		IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
-		IDeliveryReportReporter DeliveryReportProvider { get; }
+		Type ClientType { get; }
+		Type CommunicationType { get; }
+		/// <summary>
+		/// Checks if the channel provider client supports the specified channel.
+		/// </summary>
+		/// <param name="channel">The channel to check.</param>
+		/// <returns>True if the channel is supported, otherwise false.</returns>
+		bool SupportsChannel(string channel);
 	}
 }

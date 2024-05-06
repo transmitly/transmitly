@@ -12,23 +12,25 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+
+using Transmitly.Verification;
+
 namespace Transmitly.ChannelProvider.Configuration
 {
-
-	/// <summary>
-	/// Represents a channel provider.
-	/// </summary>
-	public interface IChannelProviderRegistration
+	internal class ChannelProviderClientRegistration<TClient, TCommunication>(params string[]? supportedChannelIds) : IChannelProviderClientRegistration
+		where TClient : IChannelProviderClient<TCommunication>
 	{
-		/// <summary>
-		/// Gets the Id of the channel provider.
-		/// </summary>
-		string Id { get; }
+		public Type ClientType => typeof(TClient);
 
-		object? Configuration { get; }
+		public Type CommunicationType => typeof(TCommunication);
 
-		IReadOnlyCollection<IChannelProviderClientRegistration> ClientRegistrations { get; }
-		IReadOnlyCollection<ISenderVerificationClientRegistration> SenderVerificationClientRegistrations { get; }
-		IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRequestAdaptorRegistrations { get; }
+		readonly string[] _supportedChannelIds = supportedChannelIds ?? [];
+
+		public bool SupportsChannel(string channel)
+		{
+			if (_supportedChannelIds.Length == 0)
+				return true;
+			return Array.Exists(_supportedChannelIds, x => x.Equals(channel, StringComparison.InvariantCultureIgnoreCase));
+		}
 	}
 }

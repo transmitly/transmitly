@@ -14,7 +14,7 @@
 
 namespace Transmitly.Verification
 {
-    public interface IValidateSenderVerificationResult
+    public interface ISenderVerificationValidationResult
     {
         bool IsSuccessful { get; }
         bool IsVerified { get; }

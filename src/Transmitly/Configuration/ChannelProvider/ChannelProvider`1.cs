@@ -12,48 +12,26 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+
 namespace Transmitly.ChannelProvider.Configuration
 {
 	///<inheritdoc/>
-	internal class ChannelProviderRegistration<TClient, TCommunication>(string providerId, Func<IAudienceAddress, bool> supportAudienceAddress, object? configuration, params string[]? supportedChannels) : IChannelProviderRegistration
-		where TClient : IChannelProviderClient<TCommunication>
+	internal class ChannelProviderRegistration(string providerId,
+		IReadOnlyCollection<IChannelProviderClientRegistration>? clientTypes,
+		IReadOnlyCollection<ISenderVerificationClientRegistration>? senderVerificationTypes,
+		IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>? deliveryReportRequestAdaptors,
+		object? configuration) : IChannelProviderRegistration
 	{
-		public ChannelProviderRegistration(string providerId, params string[]? supportedChannels)
-			: this(providerId, (audienceAddress) => true, null, supportedChannels)
-		{
-
-		}
-
-		public ChannelProviderRegistration(string providerId, object? configuration, params string[]? supportedChannels)
-		: this(providerId, (audienceAddress) => true, configuration, supportedChannels)
-		{
-
-		}
-
-		private readonly Func<IAudienceAddress, bool> _supportedAudienceAddress = Guard.AgainstNull(supportAudienceAddress);
-
-		private readonly string[] _supportedChannels = supportedChannels ?? [];
-
 		///<inheritdoc/>
 		public string Id { get; } = Guard.AgainstNullOrWhiteSpace(providerId);
 
 		public object? Configuration => configuration;
 
-		public Type ClientType => typeof(TClient);
+		public IReadOnlyCollection<IChannelProviderClientRegistration> ClientRegistrations => clientTypes ?? [];
 
-		public Type CommunicationType => typeof(TCommunication);
+		public IReadOnlyCollection<ISenderVerificationClientRegistration> SenderVerificationClientRegistrations => senderVerificationTypes ?? [];
 
-		///<inheritdoc />
-		public bool SupportsChannel(string channel)
-		{
-			if (_supportedChannels.Length == 0)
-				return true;
-			return Array.Exists(_supportedChannels, a => string.Equals(a, channel, StringComparison.OrdinalIgnoreCase));
-		}
+		public IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRequestAdaptorRegistrations => deliveryReportRequestAdaptors ?? [];
 
-		public bool SupportsAudienceAddress(IAudienceAddress audienceAddress)
-		{
-			return _supportedAudienceAddress(audienceAddress);
-		}
 	}
 }

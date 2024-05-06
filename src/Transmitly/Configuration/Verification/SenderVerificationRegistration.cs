@@ -22,5 +22,9 @@ namespace Transmitly.Verification.Configuration
 		public Func<ISenderVerificationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 		public string? DeliveryReportCallbackUrl { get; set; }
 
+		public Func<bool?> IsSenderVerified(string audienceAddress, string channelProvider, string channelId)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
