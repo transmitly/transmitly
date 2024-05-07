@@ -114,7 +114,7 @@ namespace Transmitly.Tests.Verification
 				Assert.IsNull(result.Nonce);
 			}
 
-			var validateResult = await client.ValidateSenderVerificationAsync(sender, result.ChannelProviderId, result.ChannelId, result.Code, result.Nonce);
+			var validateResult = await client.ValidateSenderVerificationAsync(sender, result!.ChannelProviderId, result.ChannelId, result.Code, result.Nonce);
 
 			Assert.IsNotNull(validateResult);
 			Assert.IsTrue(validateResult.IsSuccessful);
@@ -201,26 +201,79 @@ namespace Transmitly.Tests.Verification
 			const string channelProviderId = "unit-test-channel-provider";
 			const string channelId = "unit-test-channel";
 			const string senderAddress = "test-address";
-			const string code = "123456";
+			bool verified = false;
 
 			builder
-				.AddSenderVerificationSupport(config => { })
+				.AddSenderVerificationSupport(config =>
+				{
+					config.OnIsSenderVerified = (context) =>
+					{
+						Assert.AreEqual(channelId, context.ChannelId);
+						Assert.AreEqual(channelProviderId, context.ChannelProviderId);
+						Assert.AreEqual(senderAddress, context.SenderAddress.Value);
+						verified = true;
+						return Task.FromResult<ISenderVerificationStatus>(new SenderVerifiedStatus(verified, channelProviderId, channelId));
+					};
+				})
 				.ChannelProvider
 				.Create(channelProviderId, null)
 				.AddSenderVerificationClient<UnitTestSenderVerificationProviderClient>(channelId)
 				.Register();
-			
+
 			var client = builder.BuildClient();
-			var initiateResult = await client.InitiateSenderVerificationAsync(senderAddress, channelProviderId, channelId);
+			var initiateResult = await client.IsSenderVerifiedAsync(senderAddress, channelProviderId, channelId);
 
 			Assert.IsNotNull(initiateResult);
-			Assert.AreEqual(true, initiateResult.IsSuccessful);
-			Assert.AreEqual(code, initiateResult.Code);
+			Assert.AreEqual(true, initiateResult.HasValue);
+			Assert.AreEqual(true, initiateResult.Value);
+			Assert.IsTrue(verified);
+		}
 
-			var verificationResult = await client.ValidateSenderVerificationAsync(senderAddress, channelProviderId, channelId, initiateResult.Code, null);
-			Assert.IsNotNull(verificationResult);
-			Assert.AreEqual(true, verificationResult.IsSuccessful);
-			Assert.AreEqual(true, verificationResult.IsVerified);
+		[TestMethod]
+		public async Task OnIsVerifiedOverrideIsCalledWithChannelProviderClient()
+		{
+			var builder = new CommunicationsClientBuilder();
+			const string channelProviderId = "unit-test-channel-provider";
+			const string channelId = "unit-test-channel";
+			const string senderAddress = "test-address";
+			bool verified = false;
+			UnitTestSenderVerificationProviderClient.SenderVerified = null;
+			builder
+				.AddSenderVerificationSupport(config =>
+				{
+					config.OnIsSenderVerified = (context) =>
+					{
+						Assert.AreEqual(channelId, context.ChannelId);
+						Assert.AreEqual(channelProviderId, context.ChannelProviderId);
+						Assert.AreEqual(senderAddress, context.SenderAddress.Value);
+						verified = true;
+						return Task.FromResult<ISenderVerificationStatus>(new SenderVerifiedStatus(verified, null, channelId));
+					};
+				})
+				.ChannelProvider
+				.Create(channelProviderId, null)
+				.AddSenderVerificationClient<UnitTestSenderVerificationProviderClient>(channelId)
+				.Register();
+
+			var client = builder.BuildClient();
+			var initiateResult = await client.GetSenderVerificationStatusAsync(senderAddress, channelProviderId, channelId);
+
+			Assert.IsNotNull(initiateResult);
+			Assert.AreEqual(2, initiateResult.Count);
+			Assert.IsTrue(verified);
+
+			var overrideResult = initiateResult.First();
+			Assert.IsNotNull(overrideResult);
+			Assert.IsNotNull(overrideResult.IsVerified);
+			Assert.AreEqual(true, overrideResult.IsVerified.Value);
+			Assert.AreEqual(channelId, overrideResult.ChannelId);
+			Assert.AreEqual(null, overrideResult.ChannelProviderId);
+
+			var providerResult = initiateResult.Skip(1).First();
+			Assert.IsNotNull(providerResult);
+			Assert.IsNull(providerResult.IsVerified);
+			Assert.AreEqual(channelProviderId, providerResult.ChannelProviderId);
+			Assert.AreEqual(channelId, providerResult.ChannelId);			
 		}
 	}
 }

@@ -19,7 +19,7 @@ namespace Transmitly.Verification.Configuration
 {
 	public sealed class EmptySenderVerificationCommunicationsClient : ISenderVerificationCommunicationsClient
 	{
-		private readonly string Message = $"You must call {nameof(CommunicationsClientBuilder)}.{nameof(CommunicationsClientBuilder.AddSenderVerificationSupport)} before being able to use sender verification services.";
+		private static readonly string Message = $"You must call {nameof(CommunicationsClientBuilder)}.{nameof(CommunicationsClientBuilder.AddSenderVerificationSupport)} before being able to use sender verification services.";
 
 		public Task<IReadOnlyCollection<ISenderVerificationStatus>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
 		{

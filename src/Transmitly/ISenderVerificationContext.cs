@@ -12,6 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Template.Configuration;
+using Transmitly.Verification.Configuration;
+
 namespace Transmitly
 {
 	/// <summary>
@@ -22,15 +25,30 @@ namespace Transmitly
 		/// <summary>
 		/// The <see cref="Id.Channel"/> of the verification context.
 		/// </summary>
-		string ChannelId { get; }
+		string? ChannelId { get; }
 		/// <summary>
 		/// The <see cref="Id.ChannelProvider"/> of the verification context.
 		/// </summary>
-		string ChannelProviderId { get; }
+		string? ChannelProviderId { get; }
 		/// <summary>
 		/// The sender address to verify.
 		/// </summary>
 		IAudienceAddress SenderAddress { get; }
-
+		/// <summary>
+		/// Extended extensibility properties.
+		/// </summary>
+		IExtendedProperties ExtendedProperties { get; }
+		/// <summary>
+		/// Optional status sender verification status callback url.
+		/// </summary>
+		string? DeliveryReportStatusCallbackUrl { get; }
+		/// <summary>
+		/// Optional status sender verification status callback url resolver.
+		/// </summary>
+		Func<ISenderVerificationContext, Task<string?>>? DeliveryReportStatusCallbackUrlResolver { get; }
+		/// <summary>
+		/// Optional sender verification message.
+		/// </summary>
+		IContentTemplateConfiguration Message { get; }
 	}
 }

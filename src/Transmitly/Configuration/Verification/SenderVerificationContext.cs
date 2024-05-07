@@ -12,14 +12,45 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Template.Configuration;
+
 namespace Transmitly.Verification.Configuration
 {
-	internal sealed class SenderVerificationContext(IAudienceAddress audienceAddress, string channelProviderId, string channelId) : ISenderVerificationContext
+
+	internal sealed class SenderVerificationContext : ISenderVerificationContext
 	{
-		public string ChannelId => Guard.AgainstNullOrWhiteSpace(channelId);
+		public SenderVerificationContext(
+			IAudienceAddress audienceAddress,
+			string? channelProviderId,
+			string? channelId,
+			ISenderVerificationConfiguration senderVerificationConfiguration
+		)
+		{
+			Guard.AgainstNull(senderVerificationConfiguration);
 
-		public string ChannelProviderId => Guard.AgainstNullOrWhiteSpace(channelProviderId);
+			SenderAddress = Guard.AgainstNull(audienceAddress);
+			ChannelProviderId = channelProviderId;
+			ChannelId = channelId;
 
-		public IAudienceAddress SenderAddress => Guard.AgainstNull(audienceAddress);
+			DeliveryReportStatusCallbackUrl = senderVerificationConfiguration.DeliveryReportCallbackUrl;
+			DeliveryReportStatusCallbackUrlResolver = senderVerificationConfiguration.DeliveryReportCallbackUrlResolver;
+			Message = senderVerificationConfiguration.Message;
+
+			ExtendedProperties = senderVerificationConfiguration.ExtendedProperties;
+		}
+
+		public string? ChannelId { get; }
+
+		public string? ChannelProviderId { get; }
+
+		public IAudienceAddress SenderAddress { get; }
+
+		public IExtendedProperties ExtendedProperties { get; }
+
+		public string? DeliveryReportStatusCallbackUrl { get; }
+
+		public Func<ISenderVerificationContext, Task<string?>>? DeliveryReportStatusCallbackUrlResolver { get; }
+
+		public IContentTemplateConfiguration Message { get; }
 	}
 }

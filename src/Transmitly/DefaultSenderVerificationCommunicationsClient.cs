@@ -22,15 +22,103 @@ namespace Transmitly
 	{
 		private readonly IChannelProviderFactory _channelProviderFactory = Guard.AgainstNull(channelProviderFactory);
 		private readonly ISenderVerificationConfiguration _senderVerificationConfiguration = Guard.AgainstNull(senderVerificationConfiguration);
-		public Task<IReadOnlyCollection<ISenderVerificationStatus>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
+
+		private SenderVerificationContext CreateContext(string audienceAddress, string? channelProviderId, string? channelId)
 		{
-			var config = _senderVerificationConfiguration;
-			throw new NotImplementedException();
+			return new SenderVerificationContext(
+				audienceAddress.AsAudienceAddress(),
+				channelProviderId,
+				channelId,
+				_senderVerificationConfiguration
+			);
 		}
 
-		public Task<bool?> IsSenderVerifiedAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
+		public async Task<IReadOnlyCollection<ISenderVerificationStatus>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
 		{
-			throw new NotImplementedException();
+			List<ISenderVerificationStatus> results = [];
+
+
+			if (_senderVerificationConfiguration?.OnIsSenderVerified != null)
+			{
+				results.Add(await _senderVerificationConfiguration.OnIsSenderVerified(CreateContext(audienceAddress, channelProviderId, channelId)));
+			}
+			var channelProviders = await _channelProviderFactory.GetAllAsync().ConfigureAwait(false);
+			var clientRegistrations = channelProviders
+			.Where(f =>
+				string.IsNullOrEmpty(channelProviderId) ||
+				f.Id.Equals(channelProviderId, StringComparison.OrdinalIgnoreCase)
+			)
+			.Select(x =>
+				new
+				{
+					Registration = x.SenderVerificationClientRegistrations
+					.FirstOrDefault(a =>
+					string.IsNullOrEmpty(channelId) ||
+						a.SupportedChannelIds.Any(a => a.Equals(channelId, StringComparison.OrdinalIgnoreCase))
+					),
+					ChannelProviderId = x.Id
+				}
+			)
+			.Where(x => x != null)
+			.ToList();
+
+			foreach (var registration in clientRegistrations)
+			{
+				foreach (var channel in registration.Registration!.SupportedChannelIds)
+				{
+					var client = await _channelProviderFactory.ResolveSenderVerificationClientAsync(registration.Registration);
+					results.Add(await client.IsSenderVerified(CreateContext(audienceAddress, registration.ChannelProviderId, channelId)));
+				}
+			}
+			return results;
+		}
+
+		public async Task<bool?> IsSenderVerifiedAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
+		{
+			bool? result = null;
+
+			if (_senderVerificationConfiguration?.OnIsSenderVerified != null)
+			{
+				var configResult = await _senderVerificationConfiguration.OnIsSenderVerified(CreateContext(audienceAddress, channelProviderId, channelId));
+				result = configResult.IsVerified;
+			}
+
+			if (result == null)
+			{
+				var channelProviders = await _channelProviderFactory.GetAllAsync().ConfigureAwait(false);
+				var clientRegistrations = channelProviders
+				.Where(f =>
+					string.IsNullOrEmpty(channelProviderId) ||
+					f.Id.Equals(channelProviderId, StringComparison.OrdinalIgnoreCase)
+				)
+				.Select(x =>
+					new
+					{
+						Registration =
+						x.SenderVerificationClientRegistrations
+							.FirstOrDefault(a =>
+							string.IsNullOrEmpty(channelId) ||
+								a.SupportedChannelIds.Any(a => a.Equals(channelId, StringComparison.OrdinalIgnoreCase))
+							),
+						ChannelProviderId = x.Id
+					}
+				)
+				.Where(x => x != null)
+				.ToList();
+
+				foreach (var registration in clientRegistrations)
+				{
+					var client = await _channelProviderFactory.ResolveSenderVerificationClientAsync(registration.Registration!);
+					foreach (var channel in registration.Registration!.SupportedChannelIds)
+					{
+						var status = await client.IsSenderVerified(CreateContext(audienceAddress, registration.ChannelProviderId, channel));
+						result = status.IsVerified;
+						if (result != null)
+							return result;
+					}
+				}
+			}
+			return result;
 		}
 
 		public async Task<IReadOnlyCollection<ISenderVerificationSupportedResult>> GetSenderVerificationSupportedChannelProvidersAsync()
@@ -65,7 +153,7 @@ namespace Transmitly
 			var firstClient = Guard.AgainstNull(client[0]);
 			var instance = await _channelProviderFactory.ResolveSenderVerificationClientAsync(firstClient);
 
-			return await instance.InitiateSenderVerification(new SenderVerificationContext(audienceAddress.AsAudienceAddress(), channelProviderId, channelId)).ConfigureAwait(false);
+			return await instance.InitiateSenderVerification(CreateContext(audienceAddress, channelProviderId, channelId)).ConfigureAwait(false);
 		}
 
 		public async Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? nonce = null)
@@ -85,7 +173,7 @@ namespace Transmitly
 
 			var instance = await _channelProviderFactory.ResolveSenderVerificationClientAsync(client[0]!);
 
-			return await instance.ValidateSenderVerification(new SenderVerificationContext(audienceAddress.AsAudienceAddress(), channelProviderId, channelId), code, nonce).ConfigureAwait(false);
+			return await instance.ValidateSenderVerification(CreateContext(audienceAddress, channelProviderId, channelId), code, nonce).ConfigureAwait(false);
 		}
 	}
 }

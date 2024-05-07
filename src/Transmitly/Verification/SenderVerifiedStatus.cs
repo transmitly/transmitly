@@ -14,12 +14,12 @@
 
 namespace Transmitly.Verification
 {
-	internal sealed class SenderVerifiedStatus(bool? isVerified, string channelProviderId, string channelId) : ISenderVerificationStatus
+	internal sealed class SenderVerifiedStatus(bool? isVerified, string? channelProviderId, string? channelId) : ISenderVerificationStatus
 	{
 		public bool? IsVerified { get; } = isVerified;
 
-		public string ChannelId { get; } = Guard.AgainstNullOrWhiteSpace(channelId);
+		public string? ChannelId { get; } = channelId;
 
-		public string ChannelProviderId { get; } = Guard.AgainstNullOrWhiteSpace(channelProviderId);
+		public string? ChannelProviderId { get; } = channelProviderId;
 	}
 }

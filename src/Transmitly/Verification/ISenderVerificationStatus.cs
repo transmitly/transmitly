@@ -17,7 +17,7 @@ namespace Transmitly.Verification
     public interface ISenderVerificationStatus
     {
         bool? IsVerified { get; }
-        string ChannelId { get; }
-        string ChannelProviderId { get; }
+        string? ChannelId { get; }
+        string? ChannelProviderId { get; }
     }
 }

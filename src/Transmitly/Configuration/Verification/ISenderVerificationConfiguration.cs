@@ -21,6 +21,7 @@ namespace Transmitly.Verification.Configuration
 		Func<ISenderVerificationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 		string? DeliveryReportCallbackUrl { get; set; }
 		IContentTemplateConfiguration Message { get; }
-		Func<ISenderVerificationContext, Task<bool?>>? OnIsSenderVerified { get; set; }
+		Func<ISenderVerificationContext, Task<ISenderVerificationStatus>>? OnIsSenderVerified { get; set; }
+		IExtendedProperties ExtendedProperties { get; }
 	}
 }
