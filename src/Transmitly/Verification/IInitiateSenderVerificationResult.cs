@@ -17,7 +17,7 @@ namespace Transmitly.Verification
 	public interface IInitiateSenderVerificationResult
 	{
 		bool IsSuccessful { get; }
-		string Code { get; }
+		string? Code { get; }
 		string? Nonce { get; }
 		string ChannelId { get; }
 		string ChannelProviderId { get; }
