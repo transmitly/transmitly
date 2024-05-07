@@ -15,6 +15,7 @@
 using Transmitly.Channel.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
+using Transmitly.Verification.Configuration;
 
 namespace Transmitly
 {
@@ -22,12 +23,21 @@ namespace Transmitly
 	{
 		public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
 		{
+			ISenderVerificationCommunicationsClient senderVerificationCommunicationsClient;
+			var channelProviderFactory = new DefaultChannelProviderFactory(context.ChannelProviders);
+
+			if (context.SenderVerificationConfiguration == null)
+				senderVerificationCommunicationsClient = new EmptySenderVerificationCommunicationsClient();
+			else
+				senderVerificationCommunicationsClient = new DefaultSenderVerificationCommunicationsClient(context.SenderVerificationConfiguration, channelProviderFactory);
+
 			return new DefaultCommunicationsClient(
 				new DefaultPipelineFactory(context.Pipelines),
-				new DefaultChannelProviderFactory(context.ChannelProviders),
+				channelProviderFactory,
 				new DefaultTemplateEngineFactory(context.TemplateEngines),
-				context.DeliveryReportProvider
-				);
+				context.DeliveryReportProvider,
+				senderVerificationCommunicationsClient
+			);
 		}
 	}
 }

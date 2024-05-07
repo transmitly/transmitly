@@ -16,6 +16,7 @@ using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Exceptions;
 using Transmitly.Delivery;
+using Transmitly.Verification;
 
 namespace Transmitly.Channel.Configuration
 {
@@ -45,6 +46,13 @@ namespace Transmitly.Channel.Configuration
 			Guard.AgainstNull(channelProviderDeliveryReportRequestAdaptor);
 			var adaptor = Activator.CreateInstance(channelProviderDeliveryReportRequestAdaptor.Type) as IChannelProviderDeliveryReportRequestAdaptor;
 			return Task.FromResult(Guard.AgainstNull(adaptor));
+		}
+
+		public override Task<ISenderVerificationChannelProviderClient> ResolveSenderVerificationClientAsync(ISenderVerificationClientRegistration senderVerificationClientRegistration)
+		{
+			Guard.AgainstNull(senderVerificationClientRegistration);
+			var client = Activator.CreateInstance(senderVerificationClientRegistration.ClientType) as ISenderVerificationChannelProviderClient;
+			return Task.FromResult(Guard.AgainstNull(client));
 		}
 	}
 }

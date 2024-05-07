@@ -12,20 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Template.Configuration;
+
 namespace Transmitly.Verification.Configuration
 {
-	public sealed class SenderVerificationConfigurationBuilder(CommunicationsClientBuilder communicationsClientBuilder)
+	public interface ISenderVerificationConfiguration
 	{
-		internal ISenderVerificationConfiguration? Configuration { get; private set; }
-
-		private readonly CommunicationsClientBuilder _communicationsClientBuilder = Guard.AgainstNull(communicationsClientBuilder);
-
-		public CommunicationsClientBuilder Configure(Action<ISenderVerificationConfiguration> configure)
-		{
-			var config = new SenderVerificationRegistration();
-			configure(config);
-			Configuration = config;
-			return _communicationsClientBuilder;
-		}
+		Func<ISenderVerificationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+		string? DeliveryReportCallbackUrl { get; set; }
+		IContentTemplateConfiguration Message { get; }
+		Func<ISenderVerificationContext, Task<bool?>>? OnIsSenderVerified { get; set; }
 	}
 }

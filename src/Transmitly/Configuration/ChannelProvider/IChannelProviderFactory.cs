@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using Transmitly.Delivery;
+using Transmitly.Verification;
 namespace Transmitly.ChannelProvider.Configuration
 {
 	public interface IChannelProviderFactory
@@ -22,11 +23,13 @@ namespace Transmitly.ChannelProvider.Configuration
 		/// </summary>
 		/// <returns>A read-only list of channel providers.</returns>
 		Task<IReadOnlyCollection<IChannelProviderRegistration>> GetAllAsync();
-		
+
 		Task<IChannelProviderClient?> ResolveClientAsync(IChannelProviderRegistration channelProvider, IChannelProviderClientRegistration channelProviderClientRegistration);
 
 		Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor);
-		
+
+		Task<ISenderVerificationChannelProviderClient> ResolveSenderVerificationClientAsync(ISenderVerificationClientRegistration senderVerificationClientRegistration);
+
 		Task<IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>> GetAllDeliveryReportRequestAdaptorsAsync();
 	}
 }

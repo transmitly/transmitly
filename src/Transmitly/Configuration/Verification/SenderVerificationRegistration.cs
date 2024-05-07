@@ -16,15 +16,11 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly.Verification.Configuration
 {
-	sealed class SenderVerificationRegistration : ISenderVerificationRegistration
+	sealed class SenderVerificationRegistration : ISenderVerificationConfiguration
 	{
 		public IContentTemplateConfiguration Message { get; } = new ContentTemplateConfiguration();
 		public Func<ISenderVerificationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 		public string? DeliveryReportCallbackUrl { get; set; }
-
-		public Func<bool?> IsSenderVerified(string audienceAddress, string channelProvider, string channelId)
-		{
-			throw new NotImplementedException();
-		}
+		Func<ISenderVerificationContext, Task<bool?>>? ISenderVerificationConfiguration.OnIsSenderVerified { get; set; }
 	}
 }

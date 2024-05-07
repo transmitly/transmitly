@@ -14,9 +14,12 @@
 
 namespace Transmitly.Verification
 {
-    public interface ISenderVerificationValidationResult
-    {
-        bool IsSuccessful { get; }
-        bool IsVerified { get; }
-    }
+	public interface ISenderVerificationValidationResult
+	{
+		bool IsSuccessful { get; }
+		bool IsVerified { get; }
+		string ChannelProviderId { get; }
+		string ChannelId { get; }
+		string SenderAddress { get; }
+	}
 }

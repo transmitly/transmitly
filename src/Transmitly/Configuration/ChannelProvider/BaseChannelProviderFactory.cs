@@ -12,9 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System.Collections.Generic;
-using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
+using Transmitly.Verification;
 
 namespace Transmitly.ChannelProvider.Configuration
 {
@@ -47,6 +46,6 @@ namespace Transmitly.ChannelProvider.Configuration
 			return Task.FromResult((IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>)adaptors);
 		}
 
-		
+		public abstract Task<ISenderVerificationChannelProviderClient> ResolveSenderVerificationClientAsync(ISenderVerificationClientRegistration senderVerificationClientRegistration);
 	}
 }

@@ -38,7 +38,7 @@ namespace Transmitly.Audience.Configuration
 		/// </summary>
 		/// <param name="audienceResolver">The audience resolver function.</param>
 		/// <returns>The communications configuration builder.</returns>
-		public CommunicationsClientBuilder AddGeneric(AudienceResolverFunc audienceResolver)
+		public CommunicationsClientBuilder AddGeneric(AudienceResolverHandler audienceResolver)
 		{
 			_addAudienceResolver(new AudienceResolverRegistration(null, audienceResolver));
 			return _communicationsConfiguration;
@@ -50,7 +50,7 @@ namespace Transmitly.Audience.Configuration
 		/// <param name="audienceTypeIdentifier">The identifier for the audience type.</param>
 		/// <param name="audienceResolver">The audience resolver function.</param>
 		/// <returns>The communications configuration builder.</returns>
-		public CommunicationsClientBuilder Add(string audienceTypeIdentifier, AudienceResolverFunc audienceResolver)
+		public CommunicationsClientBuilder Add(string audienceTypeIdentifier, AudienceResolverHandler audienceResolver)
 		{
 			if (string.IsNullOrWhiteSpace(audienceTypeIdentifier))
 			{

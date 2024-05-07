@@ -17,9 +17,13 @@ using Transmitly.Verification;
 
 namespace Transmitly.ChannelProvider.Configuration
 {
-	internal class SenderVerificationClientRegistration<TClient> : ISenderVerificationClientRegistration
-		where TClient : ISenderVerificationClient
+	internal class SenderVerificationClientRegistration<TClient>(bool isRequired = false, params string[]? supportedChannelIds) : ISenderVerificationClientRegistration
+		where TClient : ISenderVerificationChannelProviderClient
 	{
 		public Type ClientType => typeof(TClient);
+
+		public bool IsRequired => isRequired;
+
+		public IReadOnlyCollection<string> SupportedChannelIds => Guard.AgainstNullOrEmpty(supportedChannelIds?.ToList()).AsReadOnly();
 	}
 }

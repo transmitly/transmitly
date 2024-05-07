@@ -18,5 +18,7 @@ namespace Transmitly.ChannelProvider.Configuration
 	public interface ISenderVerificationClientRegistration
 	{
 		Type ClientType { get; }
+		bool IsRequired { get; }
+		IReadOnlyCollection<string> SupportedChannelIds { get; }
 	}
 }

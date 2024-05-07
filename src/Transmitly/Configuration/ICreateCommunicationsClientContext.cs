@@ -16,6 +16,7 @@ using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 using Transmitly.Delivery;
+using Transmitly.Verification.Configuration;
 
 namespace Transmitly
 {
@@ -25,5 +26,6 @@ namespace Transmitly
 		IReadOnlyCollection<IPipeline> Pipelines { get; }
 		IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
 		IDeliveryReportReporter DeliveryReportProvider { get; }
+		ISenderVerificationConfiguration? SenderVerificationConfiguration { get; }
 	}
 }

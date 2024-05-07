@@ -13,7 +13,6 @@
 //  limitations under the License.
 
 using System.ComponentModel;
-using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
 using Transmitly.Delivery.Configuration;
@@ -98,31 +97,6 @@ namespace Transmitly
 			where TEngine : ITemplateEngine, new() =>
 			TemplateEngine.Add(new TEngine(), id);
 
-		///// <summary>
-		///// Adds a channel provider to the configuration.
-		///// </summary>
-		///// <typeparam name="TCommunication">The type of communication the client will handle.</typeparam>
-		///// <param name="providerId">The ID of the channel provider.</param>
-		///// <param name="supportedChannelIds">The array of supported channel IDs.</param>
-		///// <typeparam name="TClient">Concrete type of the channel provider client.</typeparam>
-		///// <returns>The configuration builder.</returns>
-		//public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, params string[]? supportedChannelIds)
-		//	where TClient : IChannelProviderClient<TCommunication>
-		//	=> ChannelProvider.Add<TClient, TCommunication>(providerId, null, supportedChannelIds);
-
-		///// <summary>
-		///// Adds a channel provider to the configuration.
-		///// </summary>
-		///// <typeparam name="TCommunication">The type of communication the client will handle.</typeparam>
-		///// <param name="providerId">The ID of the channel provider.</param>
-		///// <param name="configuration">Configuration settings for the client.</param>
-		///// <param name="supportedChannelIds">The array of supported channel IDs.</param>
-		///// <typeparam name="TClient">Concrete type of the channel provider client.</typeparam>
-		///// <returns>The configuration builder.</returns>
-		//public CommunicationsClientBuilder AddChannelProvider<TClient, TCommunication>(string providerId, object? configuration, params string[]? supportedChannelIds)
-		//	where TClient : IChannelProviderClient<TCommunication>
-		//	=> ChannelProvider.Add<TClient, TCommunication>(providerId, configuration, supportedChannelIds);
-
 		/// <summary>
 		/// Adds a pipeline to the configuration.
 		/// </summary>
@@ -173,21 +147,6 @@ namespace Transmitly
 		public CommunicationsClientBuilder AddPipelineModule(PipelineModule module) =>
 			Pipeline.AddModule(module);
 
-		// <summary>
-		// Adds a generic audience resolver to the configuration.
-		// </summary>
-		// <param name="audienceResolver">The audience resolver function.</param>
-		// <returns>The configuration builder.</returns>
-		//public CommunicationsConfigurationBuilder AddGenericAudienceResolver(AudienceResolverFunc audienceResolver) =>
-		//    AudienceResolver.AddGeneric(audienceResolver);
-
-		// <summary>
-		// Adds an audience resolver to the configuration.
-		// </summary>
-		// <returns>The configuration builder.</returns>
-		//public CommunicationsConfigurationBuilder AddAudienceResolver(string audienceTypeIdentifier, AudienceResolverFunc audienceResolver) =>
-		//    AudienceResolver.Add(audienceTypeIdentifier, audienceResolver);
-
 		public CommunicationsClientBuilder RegisterClientFactory(ICommunicationClientFactory communicationClientFactory)
 		{
 			_clientFactory = communicationClientFactory;
@@ -221,8 +180,8 @@ namespace Transmitly
 		{
 			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
 		}
-		
-		public CommunicationsClientBuilder AddSenderVerificationSupport(Action<ISenderVerificationRegistration> configure)
+
+		public CommunicationsClientBuilder AddSenderVerificationSupport(Action<ISenderVerificationConfiguration> configure)
 		{
 			return SenderVerification.Configure(configure);
 		}
@@ -244,7 +203,8 @@ namespace Transmitly
 					_channelProviders,
 					_pipelines,
 					_templateEngines,
-					deliveryReportProvider
+					deliveryReportProvider,
+					SenderVerification.Configuration
 				)
 			);
 

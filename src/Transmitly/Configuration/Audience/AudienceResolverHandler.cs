@@ -12,15 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Template.Configuration;
-
-namespace Transmitly.Verification.Configuration
+namespace Transmitly.Audience.Configuration
 {
-	public interface ISenderVerificationRegistration
-	{
-		Func<ISenderVerificationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
-		string? DeliveryReportCallbackUrl { get; set; }
-		IContentTemplateConfiguration Message { get; }
-		Func<bool?> IsSenderVerified(string audienceAddress, string channelProvider, string channelId);
-	}
+	/// <summary>
+	/// Resolves an audience object based on an provided audience ID.
+	/// </summary>
+	/// <param name="audienceId">The ID of the audience.</param>
+	/// <returns>The resolved audience or null if not found.</returns>
+	public delegate Task<IAudience?> AudienceResolverHandler(object? audienceId);
 }

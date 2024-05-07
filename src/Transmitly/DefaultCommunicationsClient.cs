@@ -19,56 +19,25 @@ using Transmitly.Exceptions;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 using Transmitly.Verification;
+using Transmitly.Verification.Configuration;
 
 namespace Transmitly
 {
-	sealed class SenderVerificationCommunicationsClient : ISenderVerificationCommunicationsClient
-	{
-		//private readonly IChannelProviderFactory _channelProviderFactory;
-
-		public SenderVerificationCommunicationsClient(IChannelProviderFactory channelProviderFactory)
-		{
-			//_channelProviderFactory = Guard.AgainstNull(channelProviderFactory);
-		}
-		public Task<IReadOnlyCollection<ISenderVerifiedResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<IReadOnlyCollection<IChannelProviderSenderVerificationOption>> GetSenderVerificationSupportedChannelProvidersAsync()
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<ISenderVerificationResult> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<bool?> IsSenderVerifiedAsync(string audienceAddress)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? nonce = null)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
 	public sealed class DefaultCommunicationsClient(
 		IPipelineFactory pipelineRegistrations,
 		IChannelProviderFactory channelProviderRegistrations,
 		ITemplateEngineFactory templateEngineRegistrations,
-		IDeliveryReportReporter deliveryReportHandler//,
-													 //IAudienceResolverRegistrationStore audienceResolvers
-		) : ICommunicationsClient
+		IDeliveryReportReporter deliveryReportHandler,
+		ISenderVerificationCommunicationsClient senderVerificationCommunicationsClient
+		//IAudienceResolverRegistrationStore audienceResolvers
+		) :
+		ICommunicationsClient
 	{
 		private readonly IPipelineFactory _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations);
 		private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
 		private readonly ITemplateEngineFactory _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
 		private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
-
+		private readonly ISenderVerificationCommunicationsClient _senderVerificationCommunicationsClient = senderVerificationCommunicationsClient;
 		//private readonly IAudienceResolverRegistrationStore _audienceResolvers = Guard.AgainstNull(audienceResolvers);
 
 		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudienceAddress> audienceAddresses, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
@@ -219,29 +188,29 @@ namespace Transmitly
 				_deliveryReportProvider.DispatchReport(report);
 		}
 
-		public Task<ISenderVerificationResult> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
+		public Task<IInitiateSenderVerificationResult> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
 		{
-			throw new NotImplementedException();
+			return _senderVerificationCommunicationsClient!.InitiateSenderVerificationAsync(audienceAddress, channelProviderId, channelId);
 		}
 
 		public Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? nonce = null)
 		{
-			throw new NotImplementedException();
+			return _senderVerificationCommunicationsClient!.ValidateSenderVerificationAsync(audienceAddress, channelProviderId, channelId, code, nonce);
 		}
 
-		public Task<IReadOnlyCollection<ISenderVerifiedResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
+		public Task<IReadOnlyCollection<ISenderVerificationStatus>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
 		{
-			throw new NotImplementedException();
+			return _senderVerificationCommunicationsClient!.GetSenderVerificationStatusAsync(audienceAddress, channelProviderId, channelId);
 		}
 
-		public Task<bool?> IsSenderVerifiedAsync(string audienceAddress)
+		public Task<IReadOnlyCollection<ISenderVerificationSupportedResult>> GetSenderVerificationSupportedChannelProvidersAsync()
 		{
-			throw new NotImplementedException();
+			return _senderVerificationCommunicationsClient!.GetSenderVerificationSupportedChannelProvidersAsync();
 		}
 
-		public Task<IReadOnlyCollection<IChannelProviderSenderVerificationOption>> GetSenderVerificationSupportedChannelProvidersAsync()
+		public Task<bool?> IsSenderVerifiedAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
 		{
-			throw new NotImplementedException();
+			return _senderVerificationCommunicationsClient!.IsSenderVerifiedAsync(audienceAddress, channelProviderId, channelId);
 		}
 	}
 }

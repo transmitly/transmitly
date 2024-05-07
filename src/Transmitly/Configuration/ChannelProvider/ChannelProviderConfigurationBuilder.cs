@@ -144,7 +144,7 @@ namespace Transmitly.ChannelProvider.Configuration
 			return _communicationsConfiguration;
 		}
 
-		public ChannelProviderRegistrationBuilder Create(string providerId, object? configuration)
+		public ChannelProviderRegistrationBuilder Create(string providerId, object? configuration = null)
 		{
 			return new ChannelProviderRegistrationBuilder(this, providerId, configuration);
 		}

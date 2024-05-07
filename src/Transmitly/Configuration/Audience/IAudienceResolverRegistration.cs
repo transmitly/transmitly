@@ -27,6 +27,6 @@ namespace Transmitly.Audience.Configuration
 		/// <summary>
 		/// Gets the audience resolution resolver.
 		/// </summary>
-		AudienceResolverFunc ResolveAsync { get; }
+		AudienceResolverHandler ResolveAsync { get; }
 	}
 }

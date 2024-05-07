@@ -14,10 +14,12 @@
 
 namespace Transmitly.Verification
 {
-	public interface ISenderVerificationClient
+	public interface IInitiateSenderVerificationResult
 	{
-		Task<ISenderVerificationResult> InitiateSenderVerification(string channelId, IAudienceAddress audienceAddress, ISenderVerificationContext senderVerificationContext);
-		Task<ISenderVerificationValidationResult> ValidateSenderVerification(string channelId, IAudienceAddress audienceAddress, string code, ISenderVerificationContext senderVerificationContext, string? nonce = null);
-		Task<ISenderVerifiedResult> IsSenderVerified(string channelId, string audienceAddress, ISenderVerificationContext senderVerificationContext);
+		bool IsSuccessful { get; }
+		string Code { get; }
+		string? Nonce { get; }
+		string ChannelId { get; }
+		string ChannelProviderId { get; }
 	}
 }

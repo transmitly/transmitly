@@ -12,20 +12,18 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Verification.Configuration
+namespace Transmitly.Verification
 {
-	public sealed class SenderVerificationConfigurationBuilder(CommunicationsClientBuilder communicationsClientBuilder)
+	internal sealed class InitiateSenderVerificationResult(bool isSuccessful, string code, string channelProviderId, string channelId, string? nonce = null) : IInitiateSenderVerificationResult
 	{
-		internal ISenderVerificationConfiguration? Configuration { get; private set; }
+		public bool IsSuccessful => isSuccessful;
 
-		private readonly CommunicationsClientBuilder _communicationsClientBuilder = Guard.AgainstNull(communicationsClientBuilder);
+		public string Code => Guard.AgainstNullOrWhiteSpace(code);
 
-		public CommunicationsClientBuilder Configure(Action<ISenderVerificationConfiguration> configure)
-		{
-			var config = new SenderVerificationRegistration();
-			configure(config);
-			Configuration = config;
-			return _communicationsClientBuilder;
-		}
+		public string? Nonce => nonce;
+
+		public string ChannelId => channelId;
+
+		public string ChannelProviderId => channelProviderId;
 	}
 }

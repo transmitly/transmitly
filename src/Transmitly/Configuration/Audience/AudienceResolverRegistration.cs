@@ -22,7 +22,7 @@ namespace Transmitly.Audience.Configuration
 	/// </remarks>
 	/// <param name="audienceTypeIdentifier">The identifier for the audience type.</param>
 	/// <param name="audienceResolver">The audience resolver function.</param>
-	internal class AudienceResolverRegistration(string? audienceTypeIdentifier, AudienceResolverFunc audienceResolver) : IAudienceResolver
+	internal class AudienceResolverRegistration(string? audienceTypeIdentifier, AudienceResolverHandler audienceResolver) : IAudienceResolver
 	{
 
 		/// <summary>
@@ -33,6 +33,6 @@ namespace Transmitly.Audience.Configuration
 		/// <summary>
 		/// Gets the audience resolver function.
 		/// </summary>
-		public AudienceResolverFunc ResolveAsync { get; } = Guard.AgainstNull(audienceResolver);
+		public AudienceResolverHandler ResolveAsync { get; } = Guard.AgainstNull(audienceResolver);
 	}
 }

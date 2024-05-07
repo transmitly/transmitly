@@ -12,12 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Audience.Configuration
+namespace Transmitly.Verification.Configuration
 {
-	/// <summary>
-	/// Resolves an audience object based on an provided audience ID.
-	/// </summary>
-	/// <param name="audienceId">The ID of the audience.</param>
-	/// <returns>The resolved audience or null if not found.</returns>
-	public delegate Task<IAudience?> AudienceResolverFunc(object? audienceId);
+	internal sealed class SenderVerificationContext(IAudienceAddress audienceAddress, string channelProviderId, string channelId) : ISenderVerificationContext
+	{
+		public string ChannelId => Guard.AgainstNullOrWhiteSpace(channelId);
+
+		public string ChannelProviderId => Guard.AgainstNullOrWhiteSpace(channelProviderId);
+
+		public IAudienceAddress SenderAddress => Guard.AgainstNull(audienceAddress);
+	}
 }

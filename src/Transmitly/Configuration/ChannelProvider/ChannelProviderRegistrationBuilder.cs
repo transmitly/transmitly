@@ -51,12 +51,34 @@ namespace Transmitly.ChannelProvider.Configuration
 			return this;
 		}
 
-		public ChannelProviderRegistrationBuilder AddSenderVerificationClient<TClient>(params string[] supportedChannelIds)
-			where TClient : ISenderVerificationClient
+		public ChannelProviderRegistrationBuilder AddSenderVerificationClient<TClient>(bool isRequired, params string[] supportedChannelIds)
+			where TClient : ISenderVerificationChannelProviderClient
 		{
-			_senderVerificationClientRegistrations.Add(new SenderVerificationClientRegistration<TClient>());
+			_senderVerificationClientRegistrations.Add(new SenderVerificationClientRegistration<TClient>(isRequired, supportedChannelIds));
 			return this;
 		}
+
+		public ChannelProviderRegistrationBuilder AddSenderVerificationClient<TClient>(params string[] supportedChannelIds)
+			where TClient : ISenderVerificationChannelProviderClient
+		{
+			return AddSenderVerificationClient<TClient>(false, supportedChannelIds);
+		}
+
+		public ChannelProviderRegistrationBuilder AddSenderVerificationClient(Type clientType, bool isRequired, params string[] supportedChannelIds)
+		{
+			if (!typeof(ISenderVerificationChannelProviderClient).IsAssignableFrom(clientType))
+				throw new Transmitly.Exceptions.CommunicationsException("Provided type must implement " + nameof(ISenderVerificationChannelProviderClient));
+
+			var registration = Activator.CreateInstance(typeof(SenderVerificationClientRegistration<>).MakeGenericType(clientType), isRequired, supportedChannelIds) as ISenderVerificationClientRegistration;
+			_senderVerificationClientRegistrations.Add(Guard.AgainstNull(registration));
+			return this;
+		}
+
+		public ChannelProviderRegistrationBuilder AddSenderVerificationClient(Type clientType, params string[] supportedChannelIds)
+		{
+			return AddSenderVerificationClient(clientType, false, supportedChannelIds);
+		}
+
 		public void Register()
 		{
 			_communicationsClientBuilder.Add(ProviderId, _channelProviderClientRegistrations, _senderVerificationClientRegistrations, _channelProviderDeliveryReportRequestAdaptorRegistrations, Configuration);
