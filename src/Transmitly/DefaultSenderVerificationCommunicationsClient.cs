@@ -67,7 +67,7 @@ namespace Transmitly
 				foreach (var channel in registration.Registration!.SupportedChannelIds)
 				{
 					var client = await _channelProviderFactory.ResolveSenderVerificationClientAsync(registration.Registration);
-					results.Add(await client.IsSenderVerified(CreateContext(audienceAddress, registration.ChannelProviderId, channelId)));
+					results.Add(await client.IsSenderVerifiedAsync(CreateContext(audienceAddress, registration.ChannelProviderId, channelId)));
 				}
 			}
 			return results;
@@ -111,7 +111,7 @@ namespace Transmitly
 					var client = await _channelProviderFactory.ResolveSenderVerificationClientAsync(registration.Registration!);
 					foreach (var channel in registration.Registration!.SupportedChannelIds)
 					{
-						var status = await client.IsSenderVerified(CreateContext(audienceAddress, registration.ChannelProviderId, channel));
+						var status = await client.IsSenderVerifiedAsync(CreateContext(audienceAddress, registration.ChannelProviderId, channel));
 						result = status.IsVerified;
 						if (result != null)
 							return result;
@@ -153,7 +153,7 @@ namespace Transmitly
 			var firstClient = Guard.AgainstNull(client[0]);
 			var instance = await _channelProviderFactory.ResolveSenderVerificationClientAsync(firstClient);
 
-			return await instance.InitiateSenderVerification(CreateContext(audienceAddress, channelProviderId, channelId)).ConfigureAwait(false);
+			return await instance.InitiateSenderVerificationAsync(CreateContext(audienceAddress, channelProviderId, channelId)).ConfigureAwait(false);
 		}
 
 		public async Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? token = null)
@@ -173,7 +173,7 @@ namespace Transmitly
 
 			var instance = await _channelProviderFactory.ResolveSenderVerificationClientAsync(client[0]!).ConfigureAwait(false);
 
-			return await instance.ValidateSenderVerification(CreateContext(audienceAddress, channelProviderId, channelId), code, token).ConfigureAwait(false);
+			return await instance.ConfirmSenderVerificationAsync(CreateContext(audienceAddress, channelProviderId, channelId), code, token).ConfigureAwait(false);
 		}
 	}
 }

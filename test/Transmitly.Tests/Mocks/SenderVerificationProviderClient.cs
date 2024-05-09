@@ -48,7 +48,7 @@ namespace Transmitly.Tests
 			return Task.FromResult<ISenderVerificationStatusResult>(new SenderVerifiedStatus(SenderVerified, "unit-test-channel-provider", senderVerificationContext.ChannelId));
 		}
 
-		public Task<ISenderVerificationValidationResult> ValidateSenderVerification(ISenderVerificationContext senderVerificationContext, string code, string? nonce = null)
+		public Task<ISenderVerificationValidationResult> ConfirmSenderVerificationAsync(ISenderVerificationContext senderVerificationContext, string code, string? nonce = null)
 		{
 			EnsureChannelAllowed(senderVerificationContext.ChannelId);
 			var isValidated = IsValidated;
