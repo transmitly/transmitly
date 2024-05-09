@@ -12,24 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly.Verification
 {
-	/// <summary>
-	/// See <see cref="Id"/>
-	/// </summary>
-	//[DebuggerStepThrough]
-	public sealed class ChannelProviders
-	{
-		private const string DefaultProviderId = "";
-
-		internal ChannelProviders() { }
-
-#pragma warning disable CA1822 // Mark members as static
-		public string GetId(string providerId, string? clientId = DefaultProviderId)
-#pragma warning restore CA1822 // Mark members as static
-		{
-			Guard.AgainstNullOrWhiteSpace(providerId);
-			return string.Join(".", providerId, !string.IsNullOrWhiteSpace(clientId) ? clientId : DefaultProviderId).Trim('.');
-		}
-	}
+    public interface ISenderVerificationStatusResult
+    {
+        bool? IsVerified { get; }
+        string? ChannelId { get; }
+        string? ChannelProviderId { get; }
+    }
 }

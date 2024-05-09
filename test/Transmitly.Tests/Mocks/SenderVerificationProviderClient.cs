@@ -18,22 +18,22 @@ namespace Transmitly.Tests
 {
 	internal sealed class UnitTestSenderVerificationProviderClient : ISenderVerificationChannelProviderClient
 	{
-        public UnitTestSenderVerificationProviderClient()
-        {
-            
-        }
-        public static string Code { get; set; } = "123456";
+		public UnitTestSenderVerificationProviderClient()
+		{
+
+		}
 		public static bool InitiateSuccessful { get; set; } = true;
 		public static bool? SenderVerified { get; set; } = true;
 		public static bool IsValidated { get; set; } = true;
 		public static bool IsValidatedSuccessful { get; set; } = true;
 		public static string ChannelProviderId { get; set; } = "unit-test-channel-provider";
 		public static List<string> AllowedChannelIds { get; set; } = [];
-
-		public Task<IInitiateSenderVerificationResult> InitiateSenderVerification(ISenderVerificationContext senderVerificationContext)
+		public static bool ValidateCode { get; set; } = true;
+		public static string Code { get; set; } = "012345";
+		public Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerification(ISenderVerificationContext senderVerificationContext)
 		{
 			EnsureChannelAllowed(senderVerificationContext.ChannelId);
-			return Task.FromResult<IInitiateSenderVerificationResult>(new InitiateSenderVerificationResult(InitiateSuccessful, Code, ChannelProviderId, senderVerificationContext.ChannelId!, null));
+			return Task.FromResult<IReadOnlyCollection<IInitiateSenderVerificationResult>>([new InitiateSenderVerificationResult(SenderVerificationStatus.Delivered, ChannelProviderId, senderVerificationContext.ChannelId!, null)]);
 		}
 
 		private static void EnsureChannelAllowed(string? channelId)
@@ -42,16 +42,21 @@ namespace Transmitly.Tests
 				throw new Exception("ChannelId not allowed.");
 		}
 
-		public Task<ISenderVerificationStatus> IsSenderVerified(ISenderVerificationContext senderVerificationContext)
+		public Task<ISenderVerificationStatusResult> IsSenderVerified(ISenderVerificationContext senderVerificationContext, string? token = null)
 		{
 			EnsureChannelAllowed(senderVerificationContext.ChannelId);
-			return Task.FromResult<ISenderVerificationStatus>(new SenderVerifiedStatus(SenderVerified, "unit-test-channel-provider", senderVerificationContext.ChannelId));
+			return Task.FromResult<ISenderVerificationStatusResult>(new SenderVerifiedStatus(SenderVerified, "unit-test-channel-provider", senderVerificationContext.ChannelId));
 		}
 
 		public Task<ISenderVerificationValidationResult> ValidateSenderVerification(ISenderVerificationContext senderVerificationContext, string code, string? nonce = null)
 		{
 			EnsureChannelAllowed(senderVerificationContext.ChannelId);
-			return Task.FromResult<ISenderVerificationValidationResult>(new SenderVerificationValidationResult(IsValidatedSuccessful, IsValidated, ChannelProviderId, senderVerificationContext.ChannelId!, senderVerificationContext.SenderAddress.Value));
+			var isValidated = IsValidated;
+			if (ValidateCode)
+				isValidated = code == Code;
+			return Task.FromResult<ISenderVerificationValidationResult>(new SenderVerificationValidationResult(IsValidatedSuccessful, isValidated, ChannelProviderId, senderVerificationContext.ChannelId!, senderVerificationContext.SenderAddress.Value));
+
+
 		}
 	}
 }

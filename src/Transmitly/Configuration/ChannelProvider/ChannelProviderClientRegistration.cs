@@ -12,9 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-
-using Transmitly.Verification;
-
 namespace Transmitly.ChannelProvider.Configuration
 {
 	internal class ChannelProviderClientRegistration<TClient, TCommunication>(params string[]? supportedChannelIds) : IChannelProviderClientRegistration

@@ -13,7 +13,6 @@
 //  limitations under the License.
 
 using Transmitly.Template.Configuration;
-using Transmitly.Verification.Configuration;
 
 namespace Transmitly
 {

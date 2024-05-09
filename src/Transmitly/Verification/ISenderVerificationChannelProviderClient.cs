@@ -16,8 +16,8 @@ namespace Transmitly.Verification
 {
 	public interface ISenderVerificationChannelProviderClient
 	{
-		Task<IInitiateSenderVerificationResult> InitiateSenderVerification(ISenderVerificationContext senderVerificationContext);
-		Task<ISenderVerificationValidationResult> ValidateSenderVerification(ISenderVerificationContext senderVerificationContext, string code, string? nonce = null);
-		Task<ISenderVerificationStatus> IsSenderVerified(ISenderVerificationContext senderVerificationContext);
+		Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerification(ISenderVerificationContext senderVerificationContext);
+		Task<ISenderVerificationValidationResult> ValidateSenderVerification(ISenderVerificationContext senderVerificationContext, string code, string? token = null);
+		Task<ISenderVerificationStatusResult> IsSenderVerified(ISenderVerificationContext senderVerificationContext, string? token = null);
 	}
 }

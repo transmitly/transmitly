@@ -14,16 +14,14 @@
 
 namespace Transmitly.Verification
 {
-	internal sealed class InitiateSenderVerificationResult(bool isSuccessful, string code, string channelProviderId, string channelId, string? nonce = null) : IInitiateSenderVerificationResult
+	internal sealed class InitiateSenderVerificationResult(SenderVerificationStatus status, string channelProviderId, string channelId, string? token = null) : IInitiateSenderVerificationResult
 	{
-		public bool IsSuccessful => isSuccessful;
-
-		public string Code => Guard.AgainstNullOrWhiteSpace(code);
-
-		public string? Nonce => nonce;
+		public string? Token => token;
 
 		public string ChannelId => channelId;
 
 		public string ChannelProviderId => channelProviderId;
+
+		public SenderVerificationStatus Status => status;
 	}
 }

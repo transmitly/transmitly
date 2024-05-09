@@ -13,10 +13,6 @@
 //  limitations under the License.
 
 using Transmitly.Exceptions;
-using Transmitly.Delivery;
-using Transmitly.Verification;
-using System.Net.Sockets;
-using Transmitly.Verification.Configuration;
 
 namespace Transmitly.ChannelProvider.Configuration
 {
@@ -144,7 +140,7 @@ namespace Transmitly.ChannelProvider.Configuration
 			return _communicationsConfiguration;
 		}
 
-		public ChannelProviderRegistrationBuilder Create(string providerId, object? configuration = null)
+		public ChannelProviderRegistrationBuilder Build(string providerId, object? configuration = null)
 		{
 			return new ChannelProviderRegistrationBuilder(this, providerId, configuration);
 		}

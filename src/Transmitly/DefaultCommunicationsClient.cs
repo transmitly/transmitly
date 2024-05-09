@@ -19,7 +19,6 @@ using Transmitly.Exceptions;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 using Transmitly.Verification;
-using Transmitly.Verification.Configuration;
 
 namespace Transmitly
 {
@@ -188,17 +187,17 @@ namespace Transmitly
 				_deliveryReportProvider.DispatchReport(report);
 		}
 
-		public Task<IInitiateSenderVerificationResult> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
+		public Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
 		{
 			return _senderVerificationCommunicationsClient!.InitiateSenderVerificationAsync(audienceAddress, channelProviderId, channelId);
 		}
 
-		public Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? nonce = null)
+		public Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? token = null)
 		{
-			return _senderVerificationCommunicationsClient!.ValidateSenderVerificationAsync(audienceAddress, channelProviderId, channelId, code, nonce);
+			return _senderVerificationCommunicationsClient!.ValidateSenderVerificationAsync(audienceAddress, channelProviderId, channelId, code, token);
 		}
 
-		public Task<IReadOnlyCollection<ISenderVerificationStatus>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
+		public Task<IReadOnlyCollection<ISenderVerificationStatusResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
 		{
 			return _senderVerificationCommunicationsClient!.GetSenderVerificationStatusAsync(audienceAddress, channelProviderId, channelId);
 		}

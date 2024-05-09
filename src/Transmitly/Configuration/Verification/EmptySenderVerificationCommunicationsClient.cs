@@ -21,7 +21,7 @@ namespace Transmitly.Verification.Configuration
 	{
 		private static readonly string Message = $"You must call {nameof(CommunicationsClientBuilder)}.{nameof(CommunicationsClientBuilder.AddSenderVerificationSupport)} before being able to use sender verification services.";
 
-		public Task<IReadOnlyCollection<ISenderVerificationStatus>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
+		public Task<IReadOnlyCollection<ISenderVerificationStatusResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
 		{
 			throw new CommunicationsException(Message);
 		}
@@ -31,7 +31,7 @@ namespace Transmitly.Verification.Configuration
 			throw new CommunicationsException(Message);
 		}
 
-		public Task<IInitiateSenderVerificationResult> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
+		public Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
 		{
 			throw new CommunicationsException(Message);
 		}
@@ -41,7 +41,7 @@ namespace Transmitly.Verification.Configuration
 			throw new CommunicationsException(Message);
 		}
 
-		public Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? nonce = null)
+		public Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? token = null)
 		{
 			throw new CommunicationsException(Message);
 		}

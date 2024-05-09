@@ -12,7 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel;
 using Transmitly.Channel.Configuration;
 using Transmitly.Template.Configuration;
 

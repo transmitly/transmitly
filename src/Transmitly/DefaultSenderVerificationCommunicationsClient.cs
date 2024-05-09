@@ -33,9 +33,9 @@ namespace Transmitly
 			);
 		}
 
-		public async Task<IReadOnlyCollection<ISenderVerificationStatus>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
+		public async Task<IReadOnlyCollection<ISenderVerificationStatusResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
 		{
-			List<ISenderVerificationStatus> results = [];
+			List<ISenderVerificationStatusResult> results = [];
 
 
 			if (_senderVerificationConfiguration?.OnIsSenderVerified != null)
@@ -135,7 +135,7 @@ namespace Transmitly
 				.AsReadOnly();
 		}
 
-		public async Task<IInitiateSenderVerificationResult> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
+		public async Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
 		{
 			var channelProviders = await _channelProviderFactory.GetAllAsync().ConfigureAwait(false);
 			var client = channelProviders
@@ -156,7 +156,7 @@ namespace Transmitly
 			return await instance.InitiateSenderVerification(CreateContext(audienceAddress, channelProviderId, channelId)).ConfigureAwait(false);
 		}
 
-		public async Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? nonce = null)
+		public async Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? token = null)
 		{
 			var channelProviders = await _channelProviderFactory.GetAllAsync().ConfigureAwait(false);
 			var client = channelProviders
@@ -171,9 +171,9 @@ namespace Transmitly
 			if (client.Count != 1)
 				throw new CommunicationsException($"Unexpected number of supported channel provider sender verification clients. Expected=1, Actual={client.Count}");
 
-			var instance = await _channelProviderFactory.ResolveSenderVerificationClientAsync(client[0]!);
+			var instance = await _channelProviderFactory.ResolveSenderVerificationClientAsync(client[0]!).ConfigureAwait(false);
 
-			return await instance.ValidateSenderVerification(CreateContext(audienceAddress, channelProviderId, channelId), code, nonce).ConfigureAwait(false);
+			return await instance.ValidateSenderVerification(CreateContext(audienceAddress, channelProviderId, channelId), code, token).ConfigureAwait(false);
 		}
 	}
 }

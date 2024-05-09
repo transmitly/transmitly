@@ -27,8 +27,8 @@ namespace Transmitly
 		/// <param name="audienceAddress">Address to verify.</param>
 		/// <param name="channelProviderId">Channel provider to verify with.</param>
 		/// <param name="channelId">Channel to utilize for verification.</param>
-		/// <returns>Verification result.</returns>
-		Task<IInitiateSenderVerificationResult> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId);
+		/// <returns>Verification results.</returns>
+		Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId);
 		/// <summary>
 		/// Attempts to verify the provided code with the provided channel provider for the provided channel.
 		/// </summary>
@@ -36,9 +36,9 @@ namespace Transmitly
 		/// <param name="channelProviderId">Channel provider used to send code.</param>
 		/// <param name="channelId">Channel used to send code.</param>
 		/// <param name="code">Channel provider provided OTP/Code.</param>
-		/// <param name="nonce">Optional nonce or token provided by some channel providers.</param>
+		/// <param name="token">Optional nonce or token provided by some channel providers.</param>
 		/// <returns>Result of the verification attempt.</returns>
-		Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? nonce = null);
+		Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? token = null);
 		/// <summary>
 		/// Get the verification status of the provided address across registered channel providers and channels.
 		/// </summary>
@@ -46,7 +46,7 @@ namespace Transmitly
 		/// <param name="channelProviderId">Optional channel provider to get the status from.</param>
 		/// <param name="channelId">Optional channel to get the status for.</param>
 		/// <returns>List of verification statues.</returns>
-		Task<IReadOnlyCollection<ISenderVerificationStatus>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null);
+		Task<IReadOnlyCollection<ISenderVerificationStatusResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null);
 		/// <summary>
 		/// Gets whether the provided sender address is verified with the registered channel providers and channels.
 		/// </summary>
