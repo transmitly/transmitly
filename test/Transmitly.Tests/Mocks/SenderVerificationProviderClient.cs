@@ -30,7 +30,7 @@ namespace Transmitly.Tests
 		public static List<string> AllowedChannelIds { get; set; } = [];
 		public static bool ValidateCode { get; set; } = true;
 		public static string Code { get; set; } = "012345";
-		public Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerification(ISenderVerificationContext senderVerificationContext)
+		public Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerificationAsync(ISenderVerificationContext senderVerificationContext)
 		{
 			EnsureChannelAllowed(senderVerificationContext.ChannelId);
 			return Task.FromResult<IReadOnlyCollection<IInitiateSenderVerificationResult>>([new InitiateSenderVerificationResult(SenderVerificationStatus.Delivered, ChannelProviderId, senderVerificationContext.ChannelId!, null)]);
@@ -42,7 +42,7 @@ namespace Transmitly.Tests
 				throw new Exception("ChannelId not allowed.");
 		}
 
-		public Task<ISenderVerificationStatusResult> IsSenderVerified(ISenderVerificationContext senderVerificationContext, string? token = null)
+		public Task<ISenderVerificationStatusResult> IsSenderVerifiedAsync(ISenderVerificationContext senderVerificationContext, string? token = null)
 		{
 			EnsureChannelAllowed(senderVerificationContext.ChannelId);
 			return Task.FromResult<ISenderVerificationStatusResult>(new SenderVerifiedStatus(SenderVerified, "unit-test-channel-provider", senderVerificationContext.ChannelId));

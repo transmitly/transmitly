@@ -14,7 +14,7 @@
 
 namespace Transmitly.Verification
 {
-	internal sealed class SenderVerificationValidationResult(bool isSuccessful, bool isVerified, string channelProviderId, string channelId, string senderAddress) : ISenderVerificationValidationResult
+	public sealed class SenderVerificationValidationResult(bool isSuccessful, bool isVerified, string channelProviderId, string channelId, string senderAddress) : ISenderVerificationValidationResult
 	{
 		public bool IsSuccessful => isSuccessful;
 
