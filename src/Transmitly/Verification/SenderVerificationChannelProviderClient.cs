@@ -12,14 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider.Configuration
+namespace Transmitly.Verification
 {
-
-	public interface ISenderVerificationClientRegistration
+	public abstract class SenderVerificationChannelProviderClient : ISenderVerificationChannelProviderClient
 	{
-		Type ClientType { get; }
-		object? Configuration { get; }
-		bool IsRequired { get; }
-		IReadOnlyCollection<string> SupportedChannelIds { get; }
+		public abstract Task<ISenderVerificationValidationResult> ConfirmSenderVerificationAsync(ISenderVerificationContext senderVerificationContext, string code, string? token = null);
+		public abstract Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerificationAsync(ISenderVerificationContext senderVerificationContext);
+		public abstract Task<ISenderVerificationStatusResult> IsSenderVerifiedAsync(ISenderVerificationContext senderVerificationContext, string? token = null);
 	}
 }

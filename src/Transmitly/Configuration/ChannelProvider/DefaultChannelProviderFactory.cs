@@ -36,8 +36,9 @@ namespace Transmitly.Channel.Configuration
 				resolvedClient = Activator.CreateInstance(channelProviderClientRegistration.ClientType, channelProviderClientRegistration.ClientType.GetConstructors()[0].GetParameters().Select(x => Activator.CreateInstance(x.ParameterType)).ToArray()) as IChannelProviderClient;
 			}
 			else
+			{
 				resolvedClient = Activator.CreateInstance(channelProviderClientRegistration.ClientType, channelProvider.Configuration) as IChannelProviderClient;
-
+			}
 			return Task.FromResult(resolvedClient);
 		}
 
@@ -51,7 +52,16 @@ namespace Transmitly.Channel.Configuration
 		public override Task<ISenderVerificationChannelProviderClient> ResolveSenderVerificationClientAsync(ISenderVerificationClientRegistration senderVerificationClientRegistration)
 		{
 			Guard.AgainstNull(senderVerificationClientRegistration);
-			var client = Activator.CreateInstance(senderVerificationClientRegistration.ClientType) as ISenderVerificationChannelProviderClient;
+			ISenderVerificationChannelProviderClient? client;
+			if (senderVerificationClientRegistration.Configuration == null)
+			{
+				client = Activator.CreateInstance(senderVerificationClientRegistration.ClientType) as ISenderVerificationChannelProviderClient;
+			}
+			else
+			{
+				client = Activator.CreateInstance(senderVerificationClientRegistration.ClientType, senderVerificationClientRegistration.Configuration) as ISenderVerificationChannelProviderClient;
+			}
+
 			return Task.FromResult(Guard.AgainstNull(client));
 		}
 	}

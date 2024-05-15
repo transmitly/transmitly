@@ -51,17 +51,17 @@ namespace Transmitly.ChannelProvider.Configuration
 			return this;
 		}
 
-		public ChannelProviderRegistrationBuilder AddSenderVerificationClient<TClient>(bool isRequired, params string[] supportedChannelIds)
+		public ChannelProviderRegistrationBuilder AddSenderVerificationClient<TClient>(bool isRequired, object? configuration = null, params string[] supportedChannelIds)
 			where TClient : ISenderVerificationChannelProviderClient
 		{
-			_senderVerificationClientRegistrations.Add(new SenderVerificationClientRegistration<TClient>(isRequired, supportedChannelIds));
+			_senderVerificationClientRegistrations.Add(new SenderVerificationClientRegistration<TClient>(isRequired, configuration, supportedChannelIds));
 			return this;
 		}
 
-		public ChannelProviderRegistrationBuilder AddSenderVerificationClient<TClient>(params string[] supportedChannelIds)
+		public ChannelProviderRegistrationBuilder AddSenderVerificationClient<TClient>(object? configuration = null, params string[] supportedChannelIds)
 			where TClient : ISenderVerificationChannelProviderClient
 		{
-			return AddSenderVerificationClient<TClient>(false, supportedChannelIds);
+			return AddSenderVerificationClient<TClient>(false, configuration, supportedChannelIds);
 		}
 
 		public ChannelProviderRegistrationBuilder AddSenderVerificationClient(Type clientType, bool isRequired, params string[] supportedChannelIds)
