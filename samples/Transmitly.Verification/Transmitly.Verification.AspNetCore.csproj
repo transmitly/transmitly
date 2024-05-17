@@ -17,7 +17,9 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3" PrivateAssets="All" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" PrivateAssets="All" />
-        <PackageReference Include="Transmitly" Version="0.1.0-175.f6ebc70" />
+        <PackageReference Include="Transmitly" Version="0.1.0-*" />
+		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.1.0-*" />
+		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.0-*" />
         <PackageReference Include="Twilio" Version="6.0.1" />
     </ItemGroup>
 
@@ -51,12 +53,6 @@
 
     <ItemGroup>
       <None Include="twilio.json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\..\transmitly-channel-provider-twilio\src\Transmitly.ChannelProvider.Twilio\Transmitly.ChannelProvider.Twilio.csproj" />
-      <ProjectReference Include="..\..\..\transmitly-microsoft-extensions-dependencyinjection\src\Transmitly.Microsoft.Extensions.DependencyInjection\Transmitly.Microsoft.Extensions.DependencyInjection.csproj" />
-      <ProjectReference Include="..\..\src\Transmitly\Transmitly.csproj" />
     </ItemGroup>
 
 </Project>
