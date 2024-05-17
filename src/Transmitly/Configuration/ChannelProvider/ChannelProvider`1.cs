@@ -18,7 +18,7 @@ namespace Transmitly.ChannelProvider.Configuration
 	///<inheritdoc/>
 	internal class ChannelProviderRegistration(string providerId,
 		IReadOnlyCollection<IChannelProviderClientRegistration>? clientTypes,
-		IReadOnlyCollection<ISenderVerificationClientRegistration>? senderVerificationTypes,
+		IReadOnlyCollection<IChannelVerificationClientRegistration>? channelVerificationTypes,
 		IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>? deliveryReportRequestAdaptors,
 		object? configuration) : IChannelProviderRegistration
 	{
@@ -29,7 +29,7 @@ namespace Transmitly.ChannelProvider.Configuration
 
 		public IReadOnlyCollection<IChannelProviderClientRegistration> ClientRegistrations => clientTypes ?? [];
 
-		public IReadOnlyCollection<ISenderVerificationClientRegistration> SenderVerificationClientRegistrations => senderVerificationTypes ?? [];
+		public IReadOnlyCollection<IChannelVerificationClientRegistration> ChannelVerificationClientRegistrations => channelVerificationTypes ?? [];
 
 		public IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRequestAdaptorRegistrations => deliveryReportRequestAdaptors ?? [];
 

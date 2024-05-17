@@ -28,7 +28,7 @@ namespace Transmitly.ChannelProvider.Configuration
 		object? Configuration { get; }
 
 		IReadOnlyCollection<IChannelProviderClientRegistration> ClientRegistrations { get; }
-		IReadOnlyCollection<ISenderVerificationClientRegistration> SenderVerificationClientRegistrations { get; }
+		IReadOnlyCollection<IChannelVerificationClientRegistration> ChannelVerificationClientRegistrations { get; }
 		IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRequestAdaptorRegistrations { get; }
 	}
 }

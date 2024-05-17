@@ -14,7 +14,7 @@
 
 namespace Transmitly.ChannelProvider.Configuration
 {
-	internal sealed class ChannelProviderSenderVerificationRegistration(Type clientType, string[]? supportedChannelIds = null)
+	internal sealed class ChannelProviderChannelVerificationRegistration(Type clientType, string[]? supportedChannelIds = null)
 	{
 		public Type ClientType { get; } = clientType;
 		public IReadOnlyCollection<string> SupportedChannelIds { get; } = supportedChannelIds ?? [];

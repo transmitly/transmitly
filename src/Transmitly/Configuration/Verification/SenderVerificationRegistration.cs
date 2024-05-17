@@ -19,12 +19,9 @@ namespace Transmitly.Verification.Configuration
 	//todo: this should be able to support channel & channel provider specific settings
 	//ie. should be able to specify a sms vs voice message
 
-	sealed class SenderVerificationRegistration : ISenderVerificationConfiguration
+	sealed class ChannelVerificationRegistration : IChannelVerificationConfiguration
 	{
 		public IContentTemplateConfiguration Message { get; } = new ContentTemplateConfiguration();
-		public Func<ISenderVerificationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
-		public string? DeliveryReportCallbackUrl { get; set; }
-		public Func<ISenderVerificationContext, Task<ISenderVerificationStatusResult>>? OnIsSenderVerified { get; set; }
 		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 	}
 }

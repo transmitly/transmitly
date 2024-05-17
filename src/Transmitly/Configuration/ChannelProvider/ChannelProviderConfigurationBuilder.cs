@@ -81,14 +81,14 @@ namespace Transmitly.ChannelProvider.Configuration
 		public CommunicationsClientBuilder Add(
 			string providerId,
 			IReadOnlyCollection<IChannelProviderClientRegistration>? channelProviderClientRegistrations,
-			IReadOnlyCollection<ISenderVerificationClientRegistration>? senderVerificationClientRegistrations,
+			IReadOnlyCollection<IChannelVerificationClientRegistration>? channelVerificationClientRegistrations,
 			IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>? deliveryReportRequestAdaptorRegistrations,
 			object? configuration)
 		{
 			_addProvider(new ChannelProviderRegistration(
 					Guard.AgainstNullOrWhiteSpace(providerId),
 					channelProviderClientRegistrations,
-					senderVerificationClientRegistrations,
+					channelVerificationClientRegistrations,
 					deliveryReportRequestAdaptorRegistrations,
 					configuration: configuration
 				)

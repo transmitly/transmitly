@@ -17,33 +17,33 @@ using Transmitly.Exceptions;
 
 namespace Transmitly.Verification.Configuration
 {
-	public sealed class EmptySenderVerificationCommunicationsClient : ISenderVerificationCommunicationsClient
+	public sealed class EmptyChannelVerificationCommunicationsClient : IChannelVerificationCommunicationsClient
 	{
-		private static readonly string Message = $"You must call {nameof(CommunicationsClientBuilder)}.{nameof(CommunicationsClientBuilder.AddSenderVerificationSupport)} before being able to use sender verification services.";
+		private static readonly string Message = $"You must call {nameof(CommunicationsClientBuilder)}.{nameof(CommunicationsClientBuilder.AddChannelVerificationSupport)} before being able to use sender verification services.";
 
-		public Task<IReadOnlyCollection<ISenderVerificationStatusResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
-		{
-			throw new CommunicationsException(Message);
-		}
+        public Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string audienceAddress, string? channelProviderId, string? channelId, string code, string? token = null)
+        {
+            throw new CommunicationsException(Message);
+        }
 
-		public Task<IReadOnlyCollection<ISenderVerificationSupportedResult>> GetSenderVerificationSupportedChannelProvidersAsync()
-		{
-			throw new CommunicationsException(Message);
-		}
+        public Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string audienceAddress, string code, string? token = null)
+        {
+            throw new CommunicationsException(Message);
+        }
 
-		public Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
-		{
-			throw new CommunicationsException(Message);
-		}
+        public Task<IReadOnlyCollection<IChannelVerificationSupportedResult>> GetChannelVerificationSupportedChannelProvidersAsync()
+        {
+            throw new CommunicationsException(Message);
+        }
 
-		public Task<bool?> IsSenderVerifiedAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
-		{
-			throw new CommunicationsException(Message);
-		}
+        public Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string audienceAddress, string? channelProviderId, string channelId)
+        {
+            throw new CommunicationsException(Message);
+        }
 
-		public Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? token = null)
-		{
-			throw new CommunicationsException(Message);
-		}
-	}
+        public Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string audienceAddress, string channelId)
+        {
+            throw new CommunicationsException(Message);
+        }
+    }
 }

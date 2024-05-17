@@ -18,7 +18,6 @@ using Transmitly.Delivery;
 using Transmitly.Exceptions;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
-using Transmitly.Verification;
 
 namespace Transmitly
 {
@@ -26,8 +25,7 @@ namespace Transmitly
 		IPipelineFactory pipelineRegistrations,
 		IChannelProviderFactory channelProviderRegistrations,
 		ITemplateEngineFactory templateEngineRegistrations,
-		IDeliveryReportReporter deliveryReportHandler,
-		ISenderVerificationCommunicationsClient senderVerificationCommunicationsClient
+		IDeliveryReportReporter deliveryReportHandler
 		//IAudienceResolverRegistrationStore audienceResolvers
 		) :
 		ICommunicationsClient
@@ -36,7 +34,6 @@ namespace Transmitly
 		private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
 		private readonly ITemplateEngineFactory _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
 		private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
-		private readonly ISenderVerificationCommunicationsClient _senderVerificationCommunicationsClient = senderVerificationCommunicationsClient;
 		//private readonly IAudienceResolverRegistrationStore _audienceResolvers = Guard.AgainstNull(audienceResolvers);
 
 		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudienceAddress> audienceAddresses, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
@@ -185,31 +182,6 @@ namespace Transmitly
 			Guard.AgainstNull(reports);
 			foreach (var report in reports)
 				_deliveryReportProvider.DispatchReport(report);
-		}
-
-		public Task<IReadOnlyCollection<IInitiateSenderVerificationResult>> InitiateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId)
-		{
-			return _senderVerificationCommunicationsClient!.InitiateSenderVerificationAsync(audienceAddress, channelProviderId, channelId);
-		}
-
-		public Task<ISenderVerificationValidationResult> ValidateSenderVerificationAsync(string audienceAddress, string channelProviderId, string channelId, string code, string? token = null)
-		{
-			return _senderVerificationCommunicationsClient!.ValidateSenderVerificationAsync(audienceAddress, channelProviderId, channelId, code, token);
-		}
-
-		public Task<IReadOnlyCollection<ISenderVerificationStatusResult>> GetSenderVerificationStatusAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
-		{
-			return _senderVerificationCommunicationsClient!.GetSenderVerificationStatusAsync(audienceAddress, channelProviderId, channelId);
-		}
-
-		public Task<IReadOnlyCollection<ISenderVerificationSupportedResult>> GetSenderVerificationSupportedChannelProvidersAsync()
-		{
-			return _senderVerificationCommunicationsClient!.GetSenderVerificationSupportedChannelProvidersAsync();
-		}
-
-		public Task<bool?> IsSenderVerifiedAsync(string audienceAddress, string? channelProviderId = null, string? channelId = null)
-		{
-			return _senderVerificationCommunicationsClient!.IsSenderVerifiedAsync(audienceAddress, channelProviderId, channelId);
 		}
 	}
 }

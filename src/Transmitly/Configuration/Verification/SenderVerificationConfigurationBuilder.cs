@@ -14,15 +14,15 @@
 
 namespace Transmitly.Verification.Configuration
 {
-	public sealed class SenderVerificationConfigurationBuilder(CommunicationsClientBuilder communicationsClientBuilder)
+	public sealed class ChannelVerificationConfigurationBuilder(CommunicationsClientBuilder communicationsClientBuilder)
 	{
-		internal ISenderVerificationConfiguration? Configuration { get; private set; }
+		internal IChannelVerificationConfiguration? Configuration { get; private set; }
 
 		private readonly CommunicationsClientBuilder _communicationsClientBuilder = Guard.AgainstNull(communicationsClientBuilder);
 
-		public CommunicationsClientBuilder Configure(Action<ISenderVerificationConfiguration> configure)
+		public CommunicationsClientBuilder Configure(Action<IChannelVerificationConfiguration> configure)
 		{
-			var config = new SenderVerificationRegistration();
+			var config = new ChannelVerificationRegistration();
 			configure(config);
 			Configuration = config;
 			return _communicationsClientBuilder;

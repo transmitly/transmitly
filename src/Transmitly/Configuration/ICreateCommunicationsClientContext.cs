@@ -26,6 +26,6 @@ namespace Transmitly
 		IReadOnlyCollection<IPipeline> Pipelines { get; }
 		IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
 		IDeliveryReportReporter DeliveryReportProvider { get; }
-		ISenderVerificationConfiguration? SenderVerificationConfiguration { get; }
+		IChannelVerificationConfiguration? ChannelVerificationConfiguration { get; }
 	}
 }

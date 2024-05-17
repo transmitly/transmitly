@@ -45,7 +45,7 @@ namespace Transmitly
 			//AudienceResolver = new(this, ar => _audienceResolvers.Add(ar));
 			TemplateEngine = new(this, te => _templateEngines.Add(te));
 			DeliveryReport = new(this);
-			SenderVerification = new(this);
+			ChannelVerification = new(this);
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace Transmitly
 		/// <summary>
 		/// Gets the sender verification configuration builder.
 		/// </summary>
-		public SenderVerificationConfigurationBuilder SenderVerification { get; }
+		public ChannelVerificationConfigurationBuilder ChannelVerification { get; }
 
 		/// <summary>
 		/// Adds a template engine to the configuration.
@@ -181,9 +181,9 @@ namespace Transmitly
 			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
 		}
 
-		public CommunicationsClientBuilder AddSenderVerificationSupport(Action<ISenderVerificationConfiguration> configure)
+		public CommunicationsClientBuilder AddChannelVerificationSupport(Action<IChannelVerificationConfiguration> configure)
 		{
-			return SenderVerification.Configure(configure);
+			return ChannelVerification.Configure(configure);
 		}
 
 		/// <summary>
@@ -204,7 +204,7 @@ namespace Transmitly
 					_pipelines,
 					_templateEngines,
 					deliveryReportProvider,
-					SenderVerification.Configuration
+					ChannelVerification.Configuration
 				)
 			);
 

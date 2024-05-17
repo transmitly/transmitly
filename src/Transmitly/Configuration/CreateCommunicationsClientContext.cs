@@ -26,7 +26,7 @@ namespace Transmitly
 		IReadOnlyCollection<IPipeline> pipelines,
 		IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
 		IDeliveryReportReporter deliveryReportProvider,
-		ISenderVerificationConfiguration? senderVerificationConfiguration
+		IChannelVerificationConfiguration? channelVerificationConfiguration
 	) : ICreateCommunicationsClientContext
 	{
 		public IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; } = channelProviders;
@@ -37,6 +37,6 @@ namespace Transmitly
 
 		public IDeliveryReportReporter DeliveryReportProvider { get; } = deliveryReportProvider;
 
-		public ISenderVerificationConfiguration? SenderVerificationConfiguration { get; } = senderVerificationConfiguration;
+		public IChannelVerificationConfiguration? ChannelVerificationConfiguration { get; } = channelVerificationConfiguration;
 	}
 }
