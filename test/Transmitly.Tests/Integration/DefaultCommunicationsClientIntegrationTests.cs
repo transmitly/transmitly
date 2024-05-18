@@ -33,7 +33,7 @@ namespace Transmitly.Tests.Integration
 
 
 			var client = new CommunicationsClientBuilder()
-			.AddChannelProvider<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>(
+			.ChannelProvider.Add<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>(
 				ChannelProviderId,
 				ChannelId, ChannelId + "-2"
 			 ).
@@ -87,7 +87,7 @@ namespace Transmitly.Tests.Integration
 				//   - SendGrid - Email, SMS
 				//   - Twilio - Voice
 				//   - FortuneCookie - Print
-				.AddChannelProvider<MinimalConfigurationTestChannelProviderClient, UnitTestCommunication>(
+				.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, UnitTestCommunication>(
 					ChannelProviderId,
 					ChannelId)
 

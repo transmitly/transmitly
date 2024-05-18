@@ -19,5 +19,5 @@ namespace Transmitly.Audience.Configuration
 	/// </summary>
 	/// <param name="audienceId">The ID of the audience.</param>
 	/// <returns>The resolved audience or null if not found.</returns>
-	public delegate Task<IAudience?> AudienceResolverFunc(object? audienceId);
+	public delegate Task<IAudience?> AudienceResolverHandler(object? audienceId);
 }

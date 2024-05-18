@@ -28,7 +28,7 @@ namespace Transmitly.Delivery
 		{
 			var internalContext = new DispatchCommunicationContext(context, channel, provider)
 			{
-				RecipientAudiences = FilterRecipientAddresses(channel, provider, context.RecipientAudiences)
+				RecipientAudiences = FilterRecipientAddresses(channel, context.RecipientAudiences)
 			};
 
 			var communication = await GetChannelCommunicationAsync(channel, internalContext).ConfigureAwait(false);
@@ -89,12 +89,12 @@ namespace Transmitly.Delivery
 			return await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);
 		}
 
-		private static ReadOnlyCollection<AudienceRecord> FilterRecipientAddresses(IChannel channel, IChannelProvider provider, IReadOnlyCollection<IAudience> audiences)
+		private static ReadOnlyCollection<AudienceRecord> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IAudience> audiences)
 		{
 			return audiences.Select(x =>
 			   new AudienceRecord(
 				   x.Addresses.Where(a =>
-						   channel.SupportsAudienceAddress(a) && provider.SupportAudienceAddress(a)
+						   channel.SupportsAudienceAddress(a) //&& provider.SupportAudienceAddress(a) - this was always true
 					   )
 				   )
 			   ).ToList().AsReadOnly();

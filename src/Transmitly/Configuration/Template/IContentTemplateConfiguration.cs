@@ -16,6 +16,6 @@ namespace Transmitly.Template.Configuration
 {
 	public interface IContentTemplateConfiguration
 	{
-		IList<IContentTemplateRegistration> TemplateRegistrations { get; }
+		ICollection<IContentTemplateRegistration> TemplateRegistrations { get; }
 	}
 }

@@ -16,6 +16,6 @@ namespace Transmitly.Template.Configuration
 {
 	public sealed class ContentTemplateConfiguration : IContentTemplateConfiguration
 	{
-		public IList<IContentTemplateRegistration> TemplateRegistrations { get; } = new List<IContentTemplateRegistration>(1);
+		public ICollection<IContentTemplateRegistration> TemplateRegistrations { get; } = new List<IContentTemplateRegistration>(1);
 	}
 }

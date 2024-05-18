@@ -1,0 +1,49 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+@section header
+{
+    <h1>Register</h1>
+}
+
+<form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="Input.UserName"></label>
+        <input asp-for="Input.UserName" class="form-control"/>
+        <span asp-validation-for="Input.UserName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Input.Password"></label>
+        <input asp-for="Input.Password" class="form-control"/>
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Input.PhoneNumber"></label>
+        <input asp-for="Input.PhoneNumber" class="form-control"/>
+        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        SMS
+        @Html.RadioButtonFor(model => model.Input.Channel, "sms")
+        Call
+        @Html.RadioButtonFor(model => model.Input.Channel, "call")
+    </div>
+    <button type="submit" class="btn btn-default">Register</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/intlTelInput.js"></script>
+    <script>
+      var input = document.querySelector("#Input_PhoneNumber");
+      window.intlTelInput(input, {
+        hiddenInput: "Input.FullPhoneNumber",
+        preferredCountries: ["us", "gb", "co", "de"],
+        utilsScript: "/js/utils.js"
+      });
+    </script>
+}

@@ -14,7 +14,7 @@
 
 namespace Transmitly.ChannelProvider.Configuration
 {
-	internal sealed class ChannelProviderDeliveryReportRequestAdaptorRegistration(Type adaptorType) : IChannelProviderDeliveryReportRequestAdaptorRegistration
+	internal sealed class DeliveryReportRequestAdaptorRegistration(Type adaptorType) : IDeliveryReportRequestAdaptorRegistration
 	{
 		public Type Type { get; } = Guard.AgainstNull(adaptorType);
 	}

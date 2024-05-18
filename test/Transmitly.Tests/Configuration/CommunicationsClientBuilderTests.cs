@@ -58,8 +58,8 @@ namespace Transmitly.Tests
 
 
 			var client = new CommunicationsClientBuilder()
-				.AddChannelProvider<Test1, object>(expectedId)
-				.AddChannelProvider<Test2, UnitTestCommunication>(expectedId)
+				.ChannelProvider.Add<Test1, object>(expectedId)
+				.ChannelProvider.Add<Test2, UnitTestCommunication>(expectedId)
 				.AddPipeline("test", options =>
 				{
 					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("object"));
@@ -84,8 +84,8 @@ namespace Transmitly.Tests
 
 
 			var client = new CommunicationsClientBuilder()
-				.AddChannelProvider<Test1, object>(expectedId)
-				.AddChannelProvider<Test2, UnitTestCommunication>(expectedId)
+				.ChannelProvider.Add<Test1, object>(expectedId)
+				.ChannelProvider.Add<Test2, UnitTestCommunication>(expectedId)
 				.AddPipeline("test", options =>
 				{
 					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("nothing"));
@@ -108,7 +108,7 @@ namespace Transmitly.Tests
 			var providerUnitTest = new Mock<IChannelProviderClient<UnitTestCommunication>>();
 
 			var client = new CommunicationsClientBuilder()
-				.AddChannelProvider<FailChannelProviderClient, object>(expectedId)
+				.ChannelProvider.Add<FailChannelProviderClient, object>(expectedId)
 				.AddPipeline("test", options =>
 				{
 					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("unit-test"));
@@ -129,8 +129,8 @@ namespace Transmitly.Tests
 			var providerUnitTest = new Mock<IChannelProviderClient<UnitTestCommunication>>();
 
 			var client = new CommunicationsClientBuilder()
-				.AddChannelProvider<FailChannelProviderClient, object>(expectedId)
-				.AddChannelProvider<SuccessChannelProviderClient, object>("test-2")
+				.ChannelProvider.Add<FailChannelProviderClient, object>(expectedId)
+				.ChannelProvider.Add<SuccessChannelProviderClient, object>("test-2")
 				.AddPipeline("test", options =>
 				{
 					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("unit-test"));

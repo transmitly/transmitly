@@ -14,28 +14,21 @@
 
 namespace Transmitly.ChannelProvider.Configuration
 {
+
 	/// <summary>
 	/// Represents a channel provider.
 	/// </summary>
 	public interface IChannelProviderRegistration
 	{
 		/// <summary>
-		/// Gets the ID of the channel provider.
+		/// Gets the Id of the channel provider.
 		/// </summary>
 		string Id { get; }
-		/// <summary>
-		/// Checks if the channel provider supports the specified channel.
-		/// </summary>
-		/// <param name="channel">The channel to check.</param>
-		/// <returns>True if the channel is supported, otherwise false.</returns>
-		bool SupportsChannel(string channel);
-
-		bool SupportAudienceAddress(IAudienceAddress audienceAddress);
 
 		object? Configuration { get; }
 
-		Type ClientType { get; }
-
-		Type CommunicationType { get; }
+		IReadOnlyCollection<IChannelProviderClientRegistration> ClientRegistrations { get; }
+		IReadOnlyCollection<IChannelVerificationClientRegistration> ChannelVerificationClientRegistrations { get; }
+		IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRequestAdaptorRegistrations { get; }
 	}
 }

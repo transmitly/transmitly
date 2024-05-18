@@ -19,8 +19,8 @@ namespace Transmitly
 	{
 		string Id { get; }
 		bool SupportsChannel(string channel);
-		bool SupportAudienceAddress(IAudienceAddress audienceAddress);
+		//bool SupportAudienceAddress(IAudienceAddress audienceAddress);
 		Type CommunicationType{get; }
-		Func<Task<IChannelProviderClient>> ClientInstance { get; }
+		Func<Task<IChannelProviderClient?>> ClientInstance { get; }
 	}
 }

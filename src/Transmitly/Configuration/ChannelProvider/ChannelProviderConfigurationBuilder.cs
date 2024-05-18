@@ -13,15 +13,9 @@
 //  limitations under the License.
 
 using Transmitly.Exceptions;
-using Transmitly.Delivery;
 
 namespace Transmitly.ChannelProvider.Configuration
 {
-	public interface IChannelProviderDeliveryReportRequestAdaptorRegistration
-	{
-		Type Type { get; }
-	}
-
 	/// <summary>
 	/// A builder for configuring channel providers in the communications configuration.
 	/// </summary>
@@ -29,19 +23,16 @@ namespace Transmitly.ChannelProvider.Configuration
 	{
 		private readonly CommunicationsClientBuilder _communicationsConfiguration;
 		private readonly Action<IChannelProviderRegistration> _addProvider;
-		private readonly Action<IChannelProviderDeliveryReportRequestAdaptorRegistration> _addHandlers;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ChannelProviderConfigurationBuilder"/> class.
 		/// </summary>
 		/// <param name="communicationsConfiguration">The communications configuration builder.</param>
 		/// <param name="addProvider">The action to add a channel provider.</param>
-		/// <param name="addHandlers">The action to add a channel provider request adaptor.</param>
-		internal ChannelProviderConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IChannelProviderRegistration> addProvider, Action<IChannelProviderDeliveryReportRequestAdaptorRegistration> addHandlers)
+		internal ChannelProviderConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IChannelProviderRegistration> addProvider)
 		{
 			_communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
 			_addProvider = Guard.AgainstNull(addProvider);
-			_addHandlers = Guard.AgainstNull(addHandlers);
 		}
 
 		/// <summary>
@@ -57,6 +48,12 @@ namespace Transmitly.ChannelProvider.Configuration
 			return Add(providerId, typeof(TClient), typeof(object), supportedChannelIds);
 		}
 
+		public CommunicationsClientBuilder Add(IChannelProviderRegistration channelProviderClientRegistration)
+		{
+			_addProvider(Guard.AgainstNull(channelProviderClientRegistration));
+			return _communicationsConfiguration;
+		}
+
 		/// <summary>
 		/// Adds a channel provider to the communications configuration.
 		/// </summary>
@@ -70,10 +67,31 @@ namespace Transmitly.ChannelProvider.Configuration
 			where TClient : IChannelProviderClient<TCommunication>
 		{
 			_addProvider(
-				new ChannelProviderRegistration<TClient, TCommunication>(
+				new ChannelProviderRegistration(
 					Guard.AgainstNullOrWhiteSpace(providerId),
-					configuration: configuration,
-					supportedChannelIds ?? [])
+					[new ChannelProviderClientRegistration<TClient, TCommunication>(supportedChannelIds)],
+					[],
+					[],
+					configuration: configuration
+					)
+			);
+			return _communicationsConfiguration;
+		}
+
+		public CommunicationsClientBuilder Add(
+			string providerId,
+			IReadOnlyCollection<IChannelProviderClientRegistration>? channelProviderClientRegistrations,
+			IReadOnlyCollection<IChannelVerificationClientRegistration>? channelVerificationClientRegistrations,
+			IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>? deliveryReportRequestAdaptorRegistrations,
+			object? configuration)
+		{
+			_addProvider(new ChannelProviderRegistration(
+					Guard.AgainstNullOrWhiteSpace(providerId),
+					channelProviderClientRegistrations,
+					channelVerificationClientRegistrations,
+					deliveryReportRequestAdaptorRegistrations,
+					configuration: configuration
+				)
 			);
 			return _communicationsConfiguration;
 		}
@@ -115,28 +133,16 @@ namespace Transmitly.ChannelProvider.Configuration
 				throw new CommunicationsException($"{nameof(clientType)} must be of type, {nameof(IChannelProviderClient)}<{communicationType.Name}>");
 			}
 
-			var registration = Activator
-				.CreateInstance(typeof(ChannelProviderRegistration<,>)
-				.MakeGenericType(clientType, communicationType), Guard.AgainstNullOrWhiteSpace(providerId), supportedChannelIds ?? []) as IChannelProviderRegistration;
+			var clientRegistration = Activator.CreateInstance(typeof(ChannelProviderClientRegistration<,>).MakeGenericType(clientType, communicationType), supportedChannelIds) as IChannelProviderClientRegistration
+				?? throw new CommunicationsException("Unable to create channel provider client registration type with provided client type and communication type.");
 
-			_addProvider(Guard.AgainstNull(registration));
-
+			_addProvider(new ChannelProviderRegistration(providerId, [clientRegistration], [], [], null));
 			return _communicationsConfiguration;
 		}
 
-		public ChannelProviderConfigurationBuilder AddDeliveryReportRequestAdaptor<TAdaptor>()
-			where TAdaptor : IChannelProviderDeliveryReportRequestAdaptor
+		public ChannelProviderRegistrationBuilder Build(string providerId, object? configuration = null)
 		{
-			AddDeliveryReportRequestAdaptor(typeof(TAdaptor));
-			return this;
-		}
-
-		public ChannelProviderConfigurationBuilder AddDeliveryReportRequestAdaptor(Type type)
-		{
-			if (!typeof(IChannelProviderDeliveryReportRequestAdaptor).IsAssignableFrom(type))
-				throw new CommunicationsException("Provided adaptor must implement " + nameof(IChannelProviderDeliveryReportRequestAdaptor));
-			_addHandlers(new ChannelProviderDeliveryReportRequestAdaptorRegistration(type));
-			return this;
+			return new ChannelProviderRegistrationBuilder(this, providerId, configuration);
 		}
 	}
 }

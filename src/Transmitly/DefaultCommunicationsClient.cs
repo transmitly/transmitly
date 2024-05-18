@@ -25,15 +25,15 @@ namespace Transmitly
 		IPipelineFactory pipelineRegistrations,
 		IChannelProviderFactory channelProviderRegistrations,
 		ITemplateEngineFactory templateEngineRegistrations,
-		IDeliveryReportReporter deliveryReportHandler//,
-													 //IAudienceResolverRegistrationStore audienceResolvers
-		) : ICommunicationsClient
+		IDeliveryReportReporter deliveryReportHandler
+		//IAudienceResolverRegistrationStore audienceResolvers
+		) :
+		ICommunicationsClient
 	{
 		private readonly IPipelineFactory _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations);
 		private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
 		private readonly ITemplateEngineFactory _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
 		private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
-
 		//private readonly IAudienceResolverRegistrationStore _audienceResolvers = Guard.AgainstNull(audienceResolvers);
 
 		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudienceAddress> audienceAddresses, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
@@ -122,20 +122,47 @@ namespace Transmitly
 			IReadOnlyCollection<string> allowedChannels,
 			IReadOnlyCollection<IAudience> audiences)
 		{
-			return (await Task.WhenAll(configuredChannels.Select(c =>
+
+			return (await Task.WhenAll(configuredChannels.Select(channel =>
 			{
 				var audienceAddresses = audiences.SelectMany(m => m.Addresses);
+				bool filterClientRegistrations(IChannelProviderClientRegistration clientRegistration)
+				{
+					return clientRegistration
+						.SupportsChannel(channel.Id) &&
+						(
+							clientRegistration.CommunicationType == typeof(object) ||
+							channel.CommunicationType == clientRegistration.CommunicationType
+						) &&
+						audienceAddresses.Any(a => channel.SupportsAudienceAddress(a));
+				}
+
 				var channelProviders = allowedChannelProviders.Where(x =>
-							(allowedChannels.Count == 0 || allowedChannels.Any(a => c.Id == a)) &&
-							(!c.AllowedChannelProviderIds.Any() || c.AllowedChannelProviderIds.Contains(x.Id)) &&
-							x.SupportsChannel(c.Id) &&
-							(x.CommunicationType == typeof(object) || c.CommunicationType == x.CommunicationType) &&
-							audienceAddresses.Any(a => c.SupportsAudienceAddress(a))
-						).Select(m => new ChannelProviderEntity(m, async () => await channelProviderFactory.ResolveClientAsync(m)))
+							(
+								allowedChannels.Count == 0 ||
+								allowedChannels.Any(a => channel.Id == a)
+							) &&
+							(
+								!channel.AllowedChannelProviderIds.Any() ||
+								channel.AllowedChannelProviderIds.Contains(x.Id)
+							) //&&
+							  //x.ClientRegistrations.Any(filterClients)
+						).SelectMany(providerRegistration =>
+						{
+							return providerRegistration.ClientRegistrations
+							.Where(filterClientRegistrations)
+							.Select(clientRegistration =>
+								new ChannelProviderWrapper(
+									providerRegistration.Id,
+									clientRegistration,
+									async () => await channelProviderFactory.ResolveClientAsync(providerRegistration, clientRegistration)
+								)
+							);
+						})
 						.ToList();
 
 				return Task.FromResult(new ChannelChannelProviderGroup(
-						c,
+						channel,
 						channelProviders
 					));
 

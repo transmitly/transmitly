@@ -12,8 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
+using Transmitly.Verification;
 
 namespace Transmitly.ChannelProvider.Configuration
 {
@@ -21,16 +21,12 @@ namespace Transmitly.ChannelProvider.Configuration
 	/// Creates a new instance of <see cref="BaseChannelProviderFactory"/>
 	/// </summary>
 	/// <param name="registrations">Enumerable of registered channel providers.</param>
-	/// <param name="adaptorRegistrations">Enumerable of registered channel provider request adaptor registrations.</param>
 	/// <exception cref="ArgumentNullException">When the registrations is null</exception>
 	/// 
-	public abstract class BaseChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations, IEnumerable<IChannelProviderDeliveryReportRequestAdaptorRegistration> adaptorRegistrations) : IChannelProviderFactory
+	public abstract class BaseChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations) : IChannelProviderFactory
 	{
 		private readonly List<IChannelProviderRegistration> _registrations = Guard.AgainstNull(registrations).ToList();
 		protected IReadOnlyCollection<IChannelProviderRegistration> Registrations => _registrations.AsReadOnly();
-
-		private readonly List<IChannelProviderDeliveryReportRequestAdaptorRegistration> _adaptorRegistrations = Guard.AgainstNull(adaptorRegistrations).ToList();
-		protected IReadOnlyCollection<IChannelProviderDeliveryReportRequestAdaptorRegistration> AdaptorRegistrations => _adaptorRegistrations.AsReadOnly();
 
 		///<inheritdoc/>
 		public virtual Task<IReadOnlyCollection<IChannelProviderRegistration>> GetAllAsync()
@@ -38,28 +34,18 @@ namespace Transmitly.ChannelProvider.Configuration
 			return Task.FromResult(Registrations);
 		}
 
+		public abstract Task<IChannelProviderClient?> ResolveClientAsync(IChannelProviderRegistration channelProvider, IChannelProviderClientRegistration channelProviderClientRegistration);
+
 		///<inheritdoc/>
-		public virtual Task<IReadOnlyCollection<IChannelProviderRegistration>> GetAllAsync(IReadOnlyCollection<string> supportedChannelProviders, IReadOnlyCollection<IChannel> channels)
+		public abstract Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor);
+
+		///<inheritdoc/>
+		public virtual Task<IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>> GetAllDeliveryReportRequestAdaptorsAsync()
 		{
-			return Task.FromResult<IReadOnlyCollection<IChannelProviderRegistration>>(
-				_registrations
-				.Where(r =>
-					(supportedChannelProviders.Count == 0 || supportedChannelProviders.Any(a => r.Id == a)) &&
-					channels.Any(c => r.SupportsChannel(c.Id))
-				).ToList().AsReadOnly()
-			);
+			var adaptors = _registrations.SelectMany(m => m.DeliveryReportRequestAdaptorRegistrations).ToList().AsReadOnly();
+			return Task.FromResult((IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>)adaptors);
 		}
 
-		///<inheritdoc/>
-		public abstract Task<IChannelProviderClient> ResolveClientAsync(IChannelProviderRegistration channelProvider);
-
-		///<inheritdoc/>
-		public abstract Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IChannelProviderDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor);
-
-		///<inheritdoc/>
-		public virtual Task<IReadOnlyCollection<IChannelProviderDeliveryReportRequestAdaptorRegistration>> GetAllDeliveryReportRequestAdaptorsAsync()
-		{
-			return Task.FromResult(AdaptorRegistrations);
-		}
+		public abstract Task<IChannelVerificationChannelProviderClient?> ResolveChannelVerificationClientAsync(IChannelVerificationClientRegistration channelVerificationClientRegistration);
 	}
 }

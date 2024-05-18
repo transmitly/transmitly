@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Users";
+}
+
+<table>
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Phone Number</th>
+      <th>Verified</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var user in ViewBag.Users)
+    {
+      <tr>
+        <td>@user.UserName</td>
+        <td>@user.PhoneNumber</td>
+        <td>@user.Verified</td>
+      </tr>
+    }
+  </tbody>
+</table>

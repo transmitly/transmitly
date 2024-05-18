@@ -24,7 +24,7 @@ namespace Transmitly.Tests
 			props.Add("unit", "test", true);
 			Assert.AreEqual(true, props.GetValue<bool>("unit", "test"));
 			Assert.AreEqual(null, props.GetValue<bool?>("fake", "test"));
-			Assert.AreEqual(false, props.GetValue<bool>("fake", "test")); ;
+			Assert.AreEqual(false, props.GetValue<bool>("fake", "test"));
 		}
 
 		[TestMethod()]
