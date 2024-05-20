@@ -194,6 +194,7 @@ namespace Transmitly
         /// <param name="platformIdentityType">Limit this resolver to only resolve platform identities to the provided type.</param>
         /// <returns>The configuration builder.</returns>
         public CommunicationsClientBuilder AddPlatformIdentityResolver<TResolver>(string? platformIdentityType = null)
+            where TResolver : IPlatformIdentityResolver
         {
             return PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
         }

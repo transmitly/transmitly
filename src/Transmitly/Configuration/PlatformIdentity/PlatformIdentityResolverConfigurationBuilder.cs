@@ -38,7 +38,8 @@ namespace Transmitly.PlatformIdentity.Configuration
         /// </summary>
         /// <param name="platformIdentityType">The platform identity type.</param>
         /// <returns>The communications configuration builder.</returns>
-        public CommunicationsClientBuilder Add<TResolver>(string? platformIdentityType=null)
+        public CommunicationsClientBuilder Add<TResolver>(string? platformIdentityType = null)
+            where TResolver : IPlatformIdentityResolver
         {
             _addPlatformIdentityResolver(new PlatformIdentityResolverRegistration(typeof(TResolver), platformIdentityType));
 
