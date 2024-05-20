@@ -17,15 +17,17 @@ using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 using Transmitly.Delivery;
 using Transmitly.Verification.Configuration;
+using Transmitly.PlatformIdentity.Configuration;
 
 namespace Transmitly
 {
-	public interface ICreateCommunicationsClientContext
-	{
-		IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; }
-		IReadOnlyCollection<IPipeline> Pipelines { get; }
-		IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
-		IDeliveryReportReporter DeliveryReportProvider { get; }
-		IChannelVerificationConfiguration? ChannelVerificationConfiguration { get; }
-	}
+    public interface ICreateCommunicationsClientContext
+    {
+        IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; }
+        IReadOnlyCollection<IPipeline> Pipelines { get; }
+        IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
+        IDeliveryReportReporter DeliveryReportProvider { get; }
+        IChannelVerificationConfiguration? ChannelVerificationConfiguration { get; }
+        IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; }
+    }
 }

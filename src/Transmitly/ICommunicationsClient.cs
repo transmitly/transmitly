@@ -37,9 +37,10 @@ namespace Transmitly
 		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, object contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
 		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<string> identityAddresses, object contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
 		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
-		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platofmrIdentities, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
+		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
+        Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
 
-		void DeliverReport(DeliveryReport report);
+        void DeliverReport(DeliveryReport report);
 		void DeliverReports(IReadOnlyCollection<DeliveryReport> reports);
 	}
 }

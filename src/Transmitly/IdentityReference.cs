@@ -12,12 +12,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.PlatformIdentity.Configuration
+namespace Transmitly
 {
-	/// <summary>
-	/// Default platform identity resolvers factory.
-	/// </summary>
-	sealed class DefaultPlatformIdentityResolverRegistrationFactory(IEnumerable<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations) : BasePlatformIdentityResolverRegistrationFactory(platformIdentityResolverRegistrations)
-	{
-	}
+    public sealed record IdentityReference : IIdentityReference
+    {
+        public IdentityReference(string id, string type)
+        {
+            Id = Guard.AgainstNullOrWhiteSpace(id);
+            Type = Guard.AgainstNullOrWhiteSpace(type);
+        }
+
+        public string Id { get; init; }
+        public string Type { get; init; }
+    }
 }

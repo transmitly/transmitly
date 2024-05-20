@@ -176,7 +176,7 @@ namespace Transmitly
         /// <param name="filterChannelIds">List of channel ids to listen to. See <see cref="Id.Channel"/></param>
         /// <param name="filterChannelProviderIds">List of channel provider ids to listen to. See <see cref="Id.ChannelProvider"/></param>
         /// <param name="filterPipelineNames">List of pipeline names to listen to.</param>
-        /// <returns>The configuration builder</returns>
+        /// <returns>The configuration builder.</returns>
         public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
         {
             return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
@@ -187,6 +187,12 @@ namespace Transmitly
             return ChannelVerification.Configure(configure);
         }
 
+        /// <summary>
+        /// Adds a platform identity resolver to the configuration.
+        /// </summary>
+        /// <typeparam name="TResolver">Platform identity resolver to register.</typeparam>
+        /// <param name="platformIdentityType">Limit this resolver to only resolve platform identities to the provided type.</param>
+        /// <returns>The configuration builder.</returns>
         public CommunicationsClientBuilder AddPlatformIdentityResolver<TResolver>(string? platformIdentityType = null)
         {
             return PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
@@ -204,11 +210,13 @@ namespace Transmitly
                 AddTemplateEngine(new NoopTemplatingEngine(), DefaultTemplateEngineId);
 
             IDeliveryReportReporter deliveryReportProvider = DeliveryReport.BuildHandler();
+
             var client = _clientFactory.CreateClient(
                 new CreateCommunicationsClientContext(
                     _channelProviders,
                     _pipelines,
                     _templateEngines,
+                    _platformIdentityResolvers,
                     deliveryReportProvider,
                     ChannelVerification.Configuration
                 )

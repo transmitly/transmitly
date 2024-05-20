@@ -14,6 +14,7 @@
 
 using Transmitly.Channel.Configuration;
 using Transmitly.Pipeline.Configuration;
+using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Template.Configuration;
 
 namespace Transmitly
@@ -26,6 +27,7 @@ namespace Transmitly
 				new DefaultPipelineFactory(context.Pipelines),
                 new DefaultChannelProviderFactory(context.ChannelProviders),
 				new DefaultTemplateEngineFactory(context.TemplateEngines),
+				new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers),
 				context.DeliveryReportProvider
 			);
 		}

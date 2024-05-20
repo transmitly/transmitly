@@ -14,7 +14,7 @@
 
 namespace Transmitly
 {
-	public sealed class PlatformIdentityRecord : IPlatformIdentity
+    public sealed class PlatformIdentityRecord : IPlatformIdentity
 	{
 		private List<IIdentityAddress> _addresses;
 		public PlatformIdentityRecord() : this([])

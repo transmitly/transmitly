@@ -14,10 +14,15 @@
 
 namespace Transmitly.PlatformIdentity.Configuration
 {
+    public interface IPlatformIdentityResolver
+    {
+        Task<IReadOnlyCollection<IPlatformIdentity>?> Resolve(IReadOnlyCollection<IIdentityReference> identityReferences);
+    }
+
     /// <summary>
     /// Represents a store for registering platform identity resolvers.
     /// </summary>
-    public interface IPlatformIdentityResolverRegistrationFactory
+    public interface IPlatformIdentityResolverFactory
     {
         /// <summary>
         /// Gets all the registered platform identity resolvers.
@@ -28,9 +33,10 @@ namespace Transmitly.PlatformIdentity.Configuration
         /// <summary>
         /// Gets the platform identity resolvers based on the specified platform identity type.
         /// </summary>
-        /// <param name="platformIdentityType">The platformIdentityType.</param>
-        /// <param name="includeGenericResolvers">Whether to include generic platform identity resolvers.</param>
+        /// <param name="platformIdentityTypes">The platformIdentityType.</param>
         /// <returns>A read-only list of platform identity resolvers.</returns>
-        Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAsync(string platformIdentityType, bool includeGenericResolvers = false);
+        Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAsync(params string[] platformIdentityTypes);
+
+        Task<IPlatformIdentityResolver?> ResolveResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration);
     }
 }
