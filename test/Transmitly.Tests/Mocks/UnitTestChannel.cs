@@ -31,12 +31,12 @@ namespace Transmitly.Tests
 			{
 				AllowedChannelProviderIds = allowedChannelProviders;
 			}
-			FromAddress = Guard.AgainstNullOrWhiteSpace(fromAddress).AsAudienceAddress();
+			FromAddress = Guard.AgainstNullOrWhiteSpace(fromAddress).AsIdentityAddress();
 
 			Id = channelId;
 		}
 
-		public IAudienceAddress FromAddress { get; set; }
+		public IIdentityAddress FromAddress { get; set; }
 
 		public IContentTemplateConfiguration Subject { get; } = new ContentTemplateConfiguration();
 
@@ -48,9 +48,9 @@ namespace Transmitly.Tests
 
 		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
-		public bool SupportsAudienceAddress(IAudienceAddress audienceAddress)
+		public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
 		{
-			return audienceAddress.Value?.StartsWith(_handlesAddressStartsWith) ?? false;
+			return identityAddress.Value?.StartsWith(_handlesAddressStartsWith) ?? false;
 		}
 		public UnitTestChannel HandlesAddressStartsWith(string handlingAddressStarts)
 		{

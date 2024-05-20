@@ -14,7 +14,7 @@
 
 namespace Transmitly.Tests
 {
-	internal sealed record TestAudienceAddress(string Value) : IAudienceAddress
+	internal sealed record TestIdentityAddressAddress(string Value) : IIdentityAddress
 	{
 		public string Value { get; set; } = Guard.AgainstNullOrWhiteSpace(Value);
 		public string? Type { get; set; }

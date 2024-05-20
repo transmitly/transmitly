@@ -29,10 +29,10 @@ namespace Transmitly.Pipeline.Configuration
 		public MessagePriority MessagePriority { get; set; } = MessagePriority.Normal;
 
 		/// <inheritdoc />
-		public ICollection<string> BlindCopyAudiences { get; } = [];
+		public ICollection<string> BlindCopyIdentityAddresses { get; } = [];
 
 		/// <inheritdoc />
-		public ICollection<string> CopyAudiences { get; } = [];
+		public ICollection<string> CopyIdentityAddresses { get; } = [];
 
 		/// <inheritdoc />
 		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
@@ -47,9 +47,9 @@ namespace Transmitly.Pipeline.Configuration
 		}
 
 		/// <inheritdoc />
-		public void BlindCopyAudience(params string[] audienceType)
+		public void BlindCopyIdentityAddress(params string[] platformIdentityType)
 		{
-			Array.ForEach(audienceType, BlindCopyAudiences.Add);
+			Array.ForEach(platformIdentityType, BlindCopyIdentityAddresses.Add);
 		}
 
 		/// <inheritdoc />
@@ -59,9 +59,9 @@ namespace Transmitly.Pipeline.Configuration
 		}
 
 		/// <inheritdoc />
-		public void CopyAudience(params string[] audienceType)
+		public void CopyIdentityAddress(params string[] platformIdentityType)
 		{
-			Array.ForEach(audienceType, CopyAudiences.Add);
+			Array.ForEach(platformIdentityType, CopyIdentityAddresses.Add);
 		}
 	}
 }

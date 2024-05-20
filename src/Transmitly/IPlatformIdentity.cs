@@ -14,10 +14,10 @@
 
 namespace Transmitly
 {
-	/// <summary>
-	/// Marker interface for allowing <see cref="Transmitly.Channel.Configuration.IChannel"/>'s to define address types programmatically.
-	/// </summary>
-	public interface IAudienceAddressType
+	public interface IPlatformIdentity
 	{
+		string? Id { get; set; }
+		string? Type { get; set; }
+		IReadOnlyCollection<IIdentityAddress> Addresses { get; set; }
 	}
 }

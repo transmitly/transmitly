@@ -40,7 +40,7 @@ namespace Transmitly
 		/// <param name="fromAddress">Address used as the 'from' address</param>
 		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
 		/// <returns></returns>
-		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, IAudienceAddress fromAddress, Action<IEmailChannel> emailChannelConfiguration)
+		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<IEmailChannel> emailChannelConfiguration)
 		{
 			return AddEmail(pipelineChannelConfiguration, fromAddress, emailChannelConfiguration, null);
 		}
@@ -53,7 +53,7 @@ namespace Transmitly
 		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
 		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel</param>
 		/// <returns></returns>
-		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, IAudienceAddress fromAddress, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
+		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
 		{
 			var emailOptions = new EmailChannel(fromAddress, allowedChannelProviders);
 			emailChannelConfiguration(emailOptions);
@@ -65,11 +65,11 @@ namespace Transmitly
 		/// Adds the 'Email' communication channel to provider pipeline
 		/// </summary>
 		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
-		/// <param name="fromAddressResolver">Resolver that will return a <see cref="IAudienceAddress"/></param>
+		/// <param name="fromAddressResolver">Resolver that will return a <see cref="IIdentityAddress"/></param>
 		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
 		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel</param>
 		/// <returns></returns>
-		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
+		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
 		{
 			var emailOptions = new EmailChannel(fromAddressResolver, allowedChannelProviders);
 			emailChannelConfiguration(emailOptions);
@@ -91,7 +91,7 @@ namespace Transmitly
 		{
 			return communicationsConfigurationBuilder.AddPipeline(Guard.AgainstNullOrWhiteSpace(messageId), options =>
 			{
-				options.AddEmail(Guard.AgainstNullOrWhiteSpace(fromAddress).AsAudienceAddress(), email =>
+				options.AddEmail(Guard.AgainstNullOrWhiteSpace(fromAddress).AsIdentityAddress(), email =>
 				{
 					email.Subject.AddStringTemplate(Guard.AgainstNullOrWhiteSpace(subject));
 					if (!string.IsNullOrWhiteSpace(htmlBody))
@@ -107,13 +107,13 @@ namespace Transmitly
 			});
 		}
 
-		public static string ToEmailAddress(this IAudienceAddress audienceAddress)
+		public static string ToEmailAddress(this IIdentityAddress identityAddress)
 		{
-			Guard.AgainstNull(audienceAddress);
-			Guard.AgainstNullOrWhiteSpace(audienceAddress.Value);
-			if (string.IsNullOrEmpty(audienceAddress.Display))
-				return audienceAddress.Value;
-			return $"{audienceAddress.Display} <{audienceAddress.Display}>";
+			Guard.AgainstNull(identityAddress);
+			Guard.AgainstNullOrWhiteSpace(identityAddress.Value);
+			if (string.IsNullOrEmpty(identityAddress.Display))
+				return identityAddress.Value;
+			return $"{identityAddress.Display} <{identityAddress.Display}>";
 		}
 	}
 }

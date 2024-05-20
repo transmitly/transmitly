@@ -22,7 +22,7 @@ namespace Transmitly
 		IContentTemplateConfiguration Subject { get; }
 		IContentTemplateConfiguration HtmlBody { get; }
 		IContentTemplateConfiguration TextBody { get; }
-		IAudienceAddress? FromAddress { get; }
+		IIdentityAddress? FromAddress { get; }
 		/// <summary>
 		/// The URL to call for status updates for the dispatched communication.
 		/// </summary>

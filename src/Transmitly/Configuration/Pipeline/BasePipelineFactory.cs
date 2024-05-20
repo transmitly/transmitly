@@ -24,10 +24,10 @@ namespace Transmitly.Pipeline.Configuration
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelines);
 		}
 		///<inheritdoc/>
-		public virtual Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string audienceTypeIdentifier){
+		public virtual Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string platformIdentityType){
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
 				_pipelines
-				.Where(x => x.AudienceTypeIdentifier == audienceTypeIdentifier && pipelineName == x.PipelineName)
+				.Where(x => x.PlatformIdentityType == platformIdentityType && pipelineName == x.PipelineName)
 				.ToList()
 			);
 		}
@@ -39,11 +39,11 @@ namespace Transmitly.Pipeline.Configuration
 			);
 		}
 		///<inheritdoc/>
-		public virtual Task<IReadOnlyCollection<IPipeline>> GetByAudienceTypeIdAsync(string audienceTypeIdentifier)
+		public virtual Task<IReadOnlyCollection<IPipeline>> GetByPlatformIdentityTypeAsync(string platformIdentityType)
 		{
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
 				_pipelines
-				.Where(x => x.AudienceTypeIdentifier == audienceTypeIdentifier)
+				.Where(x => x.PlatformIdentityType == platformIdentityType)
 				.ToList()
 			);
 		}

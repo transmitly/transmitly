@@ -62,9 +62,9 @@ namespace Transmitly.Channel.Email.Tests
 		[DataRow("Abc..123@example.com", false)]
 		public void MatchesEmailAddressesAsExpected(string email, bool expected)
 		{
-			var channel = new EmailChannel("unit@test.com".AsAudienceAddress());
+			var channel = new EmailChannel("unit@test.com".AsIdentityAddress());
 
-			var result = channel.SupportsAudienceAddress(email.AsAudienceAddress());
+			var result = channel.SupportsIdentityAddress(email.AsIdentityAddress());
 			Assert.AreEqual(expected, result, email);
 		}
 	}

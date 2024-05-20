@@ -37,7 +37,7 @@ namespace Transmitly
 		/// <summary>
 		/// Gets or sets the collection of recipients.
 		/// </summary>
-		IReadOnlyCollection<IAudience> RecipientAudiences { get; }
+		IReadOnlyCollection<IPlatformIdentity> PlatformIdentities { get; }
 
 		/// <summary>
 		/// Gets or sets the transport priority.

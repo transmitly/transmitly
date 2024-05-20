@@ -31,10 +31,10 @@ namespace Transmitly.Channel.Voice.Tests
         [DataRow("+64010", true)]//NZ service number
         [DataRow("+1231234567890", true)]
         [DataRow("+2902124", true)]
-        public void SupportsAudienceAddressTest(string value, bool expected)
+        public void SupportsIdentityAddressTest(string value, bool expected)
         {
             var sms = new VoiceChannel();
-            var result = sms.SupportsAudienceAddress(value.AsAudienceAddress());
+            var result = sms.SupportsIdentityAddress(value.AsIdentityAddress());
             Assert.AreEqual(expected, result, value);
         }
     }

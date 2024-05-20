@@ -25,7 +25,7 @@ namespace Transmitly
 		/// <summary>
 		/// From Address
 		/// </summary>
-		IAudienceAddress? From { get; }
+		IIdentityAddress? From { get; }
 		/// <summary>
 		/// Details of the voice to use.
 		/// </summary>

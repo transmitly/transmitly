@@ -23,7 +23,7 @@ namespace Transmitly.Channel.Configuration
 	internal class DispatchCommunicationContext(
 		IContentModel? contentModel,
 		IPipelineChannelConfiguration channelConfiguration,
-		IReadOnlyCollection<IAudience> recipients,
+		IReadOnlyCollection<IPlatformIdentity> recipients,
 		ITemplateEngine templateEngine,
 		IDeliveryReportReporter deliveryReportManager,
 		CultureInfo cultureInfo,
@@ -33,7 +33,7 @@ namespace Transmitly.Channel.Configuration
 		string? ChannelId = null, string? ChannelProviderId = null) : IDispatchCommunicationContext
 	{
 		public DispatchCommunicationContext(IDispatchCommunicationContext context, IChannel channel, IChannelProvider channelProvider)
-			: this(context.ContentModel, context.ChannelConfiguration, context.RecipientAudiences, context.TemplateEngine, context.DeliveryReportManager,
+			: this(context.ContentModel, context.ChannelConfiguration, context.PlatformIdentities, context.TemplateEngine, context.DeliveryReportManager,
 				  context.CultureInfo, context.PipelineName, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
 		{
 
@@ -46,7 +46,7 @@ namespace Transmitly.Channel.Configuration
 		public CultureInfo CultureInfo { get; set; } = GuardCulture.AgainstNull(cultureInfo);
 
 		/// <inheritdoc/>
-		public IReadOnlyCollection<IAudience> RecipientAudiences { get; set; } = Guard.AgainstNull(recipients);
+		public IReadOnlyCollection<IPlatformIdentity> PlatformIdentities { get; set; } = Guard.AgainstNull(recipients);
 
 		/// <inheritdoc/>
 		public TransportPriority TransportPriority { get; set; } = transportPriority;

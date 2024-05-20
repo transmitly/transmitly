@@ -33,13 +33,13 @@ namespace Transmitly.Pipeline.Configuration
 		/// <summary>
 		/// Recipients to copy the message to (if supported)
 		/// </summary>
-		/// <param name="audienceType"></param>
-		void CopyAudience(params string[] audienceType);
+		/// <param name="platformIdentityType"></param>
+		void CopyIdentityAddress(params string[] platformIdentityType);
 		/// <summary>
 		/// Recipients to blind copy the message to (if supported)
 		/// </summary>
-		/// <param name="audienceType"></param>
-		void BlindCopyAudience(params string[] audienceType);
+		/// <param name="platformIdentityType"></param>
+		void BlindCopyIdentityAddress(params string[] platformIdentityType);
 		/// <summary>
 		/// Registers a communication channel with the pipeline
 		/// </summary>

@@ -14,27 +14,26 @@
 
 namespace Transmitly
 {
-	public sealed class AudienceRecord : IAudience
+	public sealed class PlatformIdentityRecord : IPlatformIdentity
 	{
-		private List<IAudienceAddress> _addresses;
-		public AudienceRecord() : this([])
+		private List<IIdentityAddress> _addresses;
+		public PlatformIdentityRecord() : this([])
 		{
 
 		}
-		public AudienceRecord(string id, string type, IEnumerable<IAudienceAddress> audienceAddresses) : this(audienceAddresses)
+		public PlatformIdentityRecord(string id, string type, IEnumerable<IIdentityAddress> identityAddresses) : this(identityAddresses)
 		{
 			Id = Guard.AgainstNullOrWhiteSpace(id);
 			Type = Guard.AgainstNullOrWhiteSpace(type);
 		}
-		public AudienceRecord(IEnumerable<IAudienceAddress> audienceAddresses)
+		public PlatformIdentityRecord(IEnumerable<IIdentityAddress> identityAddresses)
 		{
-			Guard.AgainstNull(audienceAddresses);
-			_addresses = new List<IAudienceAddress>(audienceAddresses);
+			Guard.AgainstNull(identityAddresses);
+			_addresses = new List<IIdentityAddress>(identityAddresses);
 		}
 
 		public string? Id { get; set; }
 		public string? Type { get; set; }
-		public IReadOnlyCollection<IAudienceAddress> Addresses { get => _addresses; set => _addresses = new List<IAudienceAddress>(value); }
-		public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
+		public IReadOnlyCollection<IIdentityAddress> Addresses { get => _addresses; set => _addresses = new List<IIdentityAddress>(value); }
 	}
 }

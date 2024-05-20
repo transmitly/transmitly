@@ -17,7 +17,7 @@ namespace Transmitly.Pipeline.Configuration
 	internal class PipelineRegistration(
 		   IPipelineChannelConfiguration configuration,
 		   string pipelineName,
-		   string? audienceTypeIdentifier,
+		   string? platformIdentityType,
 		   string? category,
 		   TransportPriority transportPriority = TransportPriority.Normal,
 		   MessagePriority messagePriority = MessagePriority.Normal
@@ -25,7 +25,7 @@ namespace Transmitly.Pipeline.Configuration
 	{
 		public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);
 
-		public string? AudienceTypeIdentifier { get; } = audienceTypeIdentifier;
+		public string? PlatformIdentityType { get; } = platformIdentityType;
 
 		public string? Category { get; } = category;
 

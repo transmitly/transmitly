@@ -28,7 +28,7 @@ namespace Transmitly.Tests.Integration
 			const string ExpectedMessage = "Your OTP Code: {{Code}}";
 			const string ChannelId = "unit-test-channel";
 
-			IReadOnlyCollection<IAudienceAddress> RecipientAddresses = new AudienceAddress[] { new("unit-test-address-recipient") };
+			IReadOnlyCollection<IIdentityAddress> RecipientAddresses = new IdentityAddress[] { new("unit-test-address-recipient") };
 			string[] SupportedChannels = [ChannelProviderId];
 
 
@@ -73,11 +73,11 @@ namespace Transmitly.Tests.Integration
 			//OTP Code to specific email address
 			const string FromAddress = "unit-test-address-from";
 			const string PipelineName = "unit-test-pipeline";
-			const string AudienceTypeIdentifier = "unit-test-audience-identifier-0";
+			const string PlatformIdentityType = "unit-test-platform-identity-type-0";
 			const string ChannelProviderId = "unit-test-channel-provider";
 			//const string ExpectedMessage = "Sent Mock Message!";
 			const string ChannelId = "unit-test-channel";
-			IReadOnlyCollection<IAudienceAddress> RecipientAddresses = new AudienceAddress[] { new("unit-test-address-recipient") };
+			IReadOnlyCollection<IIdentityAddress> RecipientAddresses = new IdentityAddress[] { new("unit-test-address-recipient") };
 			string[] SupportedChannels = [ChannelId];
 			//MinimalConfigurationTestChannelProviderClient.ExpectedMessage = ExpectedMessage;
 
@@ -97,7 +97,7 @@ namespace Transmitly.Tests.Integration
 				//     - OTP Codes, Fraud Messages
 				//   - (Observed) Signaled activity, may trigger a communication (single or grouped signals) or multiple communications
 				//     - HSA Contributions, Welcome Kit
-				.AddPipeline(PipelineName, AudienceTypeIdentifier, pipeline =>
+				.AddPipeline(PipelineName, PlatformIdentityType, pipeline =>
 				{
 					//Channel = Defines the structure of the communication for a channel provider
 					//   - Email - Subject, Body, Recipients

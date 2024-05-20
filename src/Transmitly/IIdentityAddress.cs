@@ -12,12 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Audience.Configuration
+namespace Transmitly
 {
-	/// <summary>
-	/// Default audience resolvers factory.
-	/// </summary>
-	public sealed class DefaultAudienceResolverRegistrationFactory(IEnumerable<IAudienceResolver> audienceResolverRegistrations) : BaseAudienceResolverRegistrationFactory(audienceResolverRegistrations)
+	public interface IIdentityAddress
 	{
+		string Value { get; set; }
+		string? Display { get; set; }
+		string? Type { get; set; }
+		//int Priority { get; set; }
 	}
 }

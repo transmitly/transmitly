@@ -23,7 +23,7 @@ namespace Transmitly.Tests
 		[DataRow(null)]
 		public void ShouldRequireValue(string input)
 		{
-			Assert.ThrowsException<ArgumentNullException>(() => new AudienceAddress(input, "notnull"));
+			Assert.ThrowsException<ArgumentNullException>(() => new IdentityAddress(input, "notnull"));
 		}
 
 		[TestMethod()]
@@ -33,7 +33,7 @@ namespace Transmitly.Tests
 		public void ShouldNotRequireDisplayValue(string input)
 		{
 			const string expectedValue = "value";
-			var address = new AudienceAddress(expectedValue, input);
+			var address = new IdentityAddress(expectedValue, input);
 			Assert.AreEqual(expectedValue, address.Value);
 			Assert.AreEqual(input, address.Display);
 		}
@@ -42,7 +42,7 @@ namespace Transmitly.Tests
 		public void InternetAddressImplicitFromStringShouldSetValue()
 		{
 			const string expectedValue = "test";
-			AudienceAddress address = expectedValue;
+			IdentityAddress address = expectedValue;
 			Assert.AreEqual(expectedValue, address.Value);
 			Assert.AreEqual(null, address.Display);
 		}
@@ -51,7 +51,7 @@ namespace Transmitly.Tests
 		public void FromInternetAddressShouldImplicitCastToString()
 		{
 			const string expectedDisplay = "test";
-			string? address = new AudienceAddress(expectedDisplay);
+			string? address = new IdentityAddress(expectedDisplay);
 
 			Assert.AreEqual(expectedDisplay, address);
 		}

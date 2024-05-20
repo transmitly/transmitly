@@ -24,23 +24,23 @@ namespace Transmitly
 		/// <summary>
 		/// Initiate the verification process for the provided address.
 		/// </summary>
-		/// <param name="audienceAddress">Address to verify.</param>
+		/// <param name="identityAddress">Address to verify.</param>
 		/// <param name="channelProviderId">Channel provider to verify with.</param>
 		/// <param name="channelId">Channel to utilize for verification.</param>
 		/// <returns>Verification results.</returns>
-		Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string audienceAddress, string? channelProviderId, string channelId);
-        Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string audienceAddress, string channelId);
+		Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string identityAddress, string? channelProviderId, string channelId);
+        Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string identityAddress, string channelId);
         /// <summary>
         /// Attempts to verify the provided code with the provided channel provider for the provided channel.
         /// </summary>
-        /// <param name="audienceAddress">Address in verification.</param>
+        /// <param name="identityAddress">Address in verification.</param>
         /// <param name="channelProviderId">Channel provider used to send code.</param>
         /// <param name="channelId">Channel used to send code.</param>
         /// <param name="code">Channel provider provided OTP/Code.</param>
         /// <param name="token">Optional nonce or token provided by some channel providers.</param>
         /// <returns>Result of the verification attempt.</returns>
-        Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string audienceAddress, string? channelProviderId, string? channelId, string code, string? token = null);
-        Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string audienceAddress, string code, string? token = null);
+        Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string identityAddress, string? channelProviderId, string? channelId, string code, string? token = null);
+        Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string identityAddress, string code, string? token = null);
         
         /// <summary>
         /// Retrieves a list of channel providers and channels that support sender verification.

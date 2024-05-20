@@ -12,18 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly.PlatformIdentity.Configuration
 {
-	public static class AudienceExtensions
-	{
-		public static IAudienceAddress AsAudienceAddress(this string address, string? display = null)
-		{
-			return new AudienceAddress(address, display);
-		}
+    internal sealed class PlatformIdentityResolverRegistration(Type resolverType, string? platformIdentityType) : IPlatformIdentityResolverRegistration
+    {
+        public string? PlatformIdentityType => platformIdentityType;
 
-		public static IAudience AsAudience(this IReadOnlyCollection<IAudienceAddress> audienceAddresses)
-		{
-			return new AudienceRecord(audienceAddresses);
-		}
-	}
+        public Type ResolverType => resolverType;
+    }
 }

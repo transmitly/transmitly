@@ -19,7 +19,7 @@ namespace Transmitly
 {
 	public interface ISmsChannel : IChannel
 	{
-		IAudienceAddress? From { get; }
+		IIdentityAddress? From { get; }
 		IContentTemplateConfiguration Message { get; }
 		/// <summary>
 		/// The URL to call for status updates for the dispatched communication.

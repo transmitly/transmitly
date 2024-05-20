@@ -31,13 +31,13 @@ namespace Transmitly.Channel.Voice
 
 		private const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
 
-		private readonly Func<IDispatchCommunicationContext, IAudienceAddress>? _fromAddressResolver;
+		private readonly Func<IDispatchCommunicationContext, IIdentityAddress>? _fromAddressResolver;
 
-		private static readonly string[] _supportedAddressTypes = [AudienceAddress.Types.Cell(), AudienceAddress.Types.HomePhone(), AudienceAddress.Types.Phone(), AudienceAddress.Types.Mobile()];
+		private static readonly string[] _supportedAddressTypes = [IdentityAddress.Types.Cell(), IdentityAddress.Types.HomePhone(), IdentityAddress.Types.Phone(), IdentityAddress.Types.Mobile()];
 
 		private static readonly Regex _voiceMatchRegex = CreateRegex();
 
-		public IAudienceAddress? From { get; }
+		public IIdentityAddress? From { get; }
 
 		public IVoiceType? VoiceType { get; set; }
 
@@ -57,12 +57,12 @@ namespace Transmitly.Channel.Voice
 
 		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 
-		internal VoiceChannel(IAudienceAddress? fromAddress, string[]? channelProviderIds = null) : this(channelProviderIds)
+		internal VoiceChannel(IIdentityAddress? fromAddress, string[]? channelProviderIds = null) : this(channelProviderIds)
 		{
 			From = fromAddress;
 		}
 
-		internal VoiceChannel(Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, string[]? channelProviderIds = null) : this(channelProviderIds)
+		internal VoiceChannel(Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, string[]? channelProviderIds = null) : this(channelProviderIds)
 		{
 			_fromAddressResolver = Guard.AgainstNull(fromAddressResolver);
 		}
@@ -74,27 +74,27 @@ namespace Transmitly.Channel.Voice
 			{
 				VoiceType = VoiceType,
 				From = GetSenderFromAddress(communicationContext),
-				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
+				To = communicationContext.PlatformIdentities.SelectMany(m => m.Addresses).ToArray(),
 				TransportPriority = communicationContext.TransportPriority,
 				DeliveryReportCallbackUrl = DeliveryReportCallbackUrl,
 				DeliveryReportCallbackUrlResolver = DeliveryReportCallbackUrlResolver
 			};
 		}
 
-		public bool SupportsAudienceAddress(IAudienceAddress audienceAddress)
+		public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
 		{
-			return audienceAddress != null &&
+			return identityAddress != null &&
 				(
-					string.IsNullOrWhiteSpace(audienceAddress.Type) ||
+					string.IsNullOrWhiteSpace(identityAddress.Type) ||
 					(
-						!string.IsNullOrWhiteSpace(audienceAddress.Type) &&
-						!_supportedAddressTypes.Contains(audienceAddress.Type)
+						!string.IsNullOrWhiteSpace(identityAddress.Type) &&
+						!_supportedAddressTypes.Contains(identityAddress.Type)
 					)
 				) &&
-				_voiceMatchRegex.IsMatch(audienceAddress.Value);
+				_voiceMatchRegex.IsMatch(identityAddress.Value);
 		}
 
-		private IAudienceAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
+		private IIdentityAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
 		{
 			return _fromAddressResolver != null ? _fromAddressResolver(communicationContext) : From;
 		}

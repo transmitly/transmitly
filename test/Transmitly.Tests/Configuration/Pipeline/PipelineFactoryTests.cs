@@ -41,13 +41,13 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		}
 
 		[TestMethod]
-		public async Task GetByAudienceTypeIdAsync_ReturnsMatchingPipelineRegistrations()
+		public async Task GetByPlatformIdentityTypeAsync_ReturnsMatchingPipelineRegistrations()
 		{
 			// Arrange
-			var audienceTypeIdentifier = "example";
+			var platformIdentityType = "example";
 
 			// Act
-			var result = await _pipelineRegistrationStore.GetByAudienceTypeIdAsync(audienceTypeIdentifier);
+			var result = await _pipelineRegistrationStore.GetByPlatformIdentityTypeAsync(platformIdentityType);
 
 			// Assert
 			Assert.AreEqual(0, result.Count);
@@ -71,10 +71,10 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		{
 			// Arrange
 			var pipelineName = "example";
-			var audienceTypeIdentifier = "example";
+			var platformIdentityType = "example";
 
 			// Act
-			var result = await _pipelineRegistrationStore.GetAsync(pipelineName, audienceTypeIdentifier);
+			var result = await _pipelineRegistrationStore.GetAsync(pipelineName, platformIdentityType);
 
 			// Assert
 			Assert.AreEqual(0, result.Count);

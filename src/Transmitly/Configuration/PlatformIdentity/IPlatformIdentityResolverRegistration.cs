@@ -12,13 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly.PlatformIdentity.Configuration
 {
-	public interface IAudienceAddress
+	/// <summary>
+	/// Represents an platform identity resolver.
+	/// </summary>
+	public interface IPlatformIdentityResolverRegistration
 	{
-		string Value { get; set; }
-		string? Display { get; set; }
-		string? Type { get; set; }
-		//int Priority { get; set; }
+		/// <summary>
+		/// Gets the platform identity type.
+		/// </summary>
+		string? PlatformIdentityType { get; }
+
+		/// <summary>
+		/// Gets the platform identity resolver type.
+		/// </summary>
+		Type ResolverType { get; }
 	}
 }

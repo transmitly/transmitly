@@ -25,7 +25,7 @@ namespace Transmitly.Channel
 		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
 		public abstract Task<TCommunication> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
-		public abstract bool SupportsAudienceAddress(IAudienceAddress audienceAddress);
+		public abstract bool SupportsIdentityAddress(IIdentityAddress identityAddress);
 
 		async Task<object> IChannel.GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{

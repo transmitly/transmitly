@@ -88,7 +88,7 @@ namespace Transmitly.Tests
 
 			tly.AddPipeline("test-pipeline", options =>
 			{
-				options.AddEmail("from@address.com".AsAudienceAddress(), email =>
+				options.AddEmail("from@address.com".AsIdentityAddress(), email =>
 				{
 					email.Subject.AddStringTemplate("Test sub");
 				});
@@ -107,7 +107,7 @@ namespace Transmitly.Tests
 		public async Task ShouldRespectAllowedChannelProviderPreference()
 		{
 			const string PipelineName = "test-pipeline";
-			IReadOnlyCollection<IAudienceAddress> testRecipients = ["8885556666".AsAudienceAddress()];
+			IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 			var model = ContentModel.Create(new { });
 
 			var tly = new CommunicationsClientBuilder()
@@ -152,7 +152,7 @@ namespace Transmitly.Tests
 		public async Task ShouldRespectAllowedChannelProviderPreferenceAnyDeliveryStrategy()
 		{
 			const string PipelineName = "test-pipeline";
-			IReadOnlyCollection<IAudienceAddress> testRecipients = ["8885556666".AsAudienceAddress()];
+			IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 			var model = ContentModel.Create(new { });
 
 			var tly = new CommunicationsClientBuilder()

@@ -20,7 +20,7 @@ namespace Transmitly.Verification.Configuration
 	internal sealed class ChannelVerificationContext : IChannelVerificationContext
 	{
 		public ChannelVerificationContext(
-			IAudienceAddress audienceAddress,
+			IIdentityAddress identityAddress,
 			string? channelProviderId,
 			string? channelId,
 			IChannelVerificationConfiguration channelVerificationConfiguration
@@ -28,7 +28,7 @@ namespace Transmitly.Verification.Configuration
 		{
 			Guard.AgainstNull(channelVerificationConfiguration);
 
-			RecipientAddress = Guard.AgainstNull(audienceAddress);
+			RecipientAddress = Guard.AgainstNull(identityAddress);
 			ChannelProviderId = channelProviderId;
 			ChannelId = channelId;
 
@@ -43,7 +43,7 @@ namespace Transmitly.Verification.Configuration
 
 		public string? ChannelProviderId { get; }
 
-		public IAudienceAddress RecipientAddress { get; }
+		public IIdentityAddress RecipientAddress { get; }
 
 		public IExtendedProperties ExtendedProperties { get; }
 

@@ -14,29 +14,29 @@
 
 namespace Transmitly.Tests
 {
-	internal sealed record TestAudience1 : IAudience
+	internal sealed record TestPlatformIdentity1 : IPlatformIdentity
 	{
-		public const string DefaultAudienceTypeIdentifier = "test-audience-type";
+		public const string DefaultPlatformIdentityType = "test-identity-type";
 
-		public TestAudience1(string? id, string audienceType = DefaultAudienceTypeIdentifier)
+		public TestPlatformIdentity1(string? id, string platformIdentityAddressType = DefaultPlatformIdentityType)
 		{
 			Id = id ?? Guid.Empty.ToString();
-			Type = Guard.AgainstNullOrWhiteSpace(audienceType);
+			Type = Guard.AgainstNullOrWhiteSpace(platformIdentityAddressType);
 		}
 
 
-		public TestAudience1() : this(Guid.NewGuid(), DefaultAudienceTypeIdentifier)
+		public TestPlatformIdentity1() : this(Guid.NewGuid(), DefaultPlatformIdentityType)
 		{
 
 		}
 
 
-		public TestAudience1(Guid? id, string audienceType = DefaultAudienceTypeIdentifier) : this(id?.ToString(), audienceType)
+		public TestPlatformIdentity1(Guid? id, string platformIdentityType = DefaultPlatformIdentityType) : this(id?.ToString(), platformIdentityType)
 		{
 
 		}
 
-		public IReadOnlyCollection<IAudienceAddress> Addresses { get; set; } = new List<IAudienceAddress>();
+		public IReadOnlyCollection<IIdentityAddress> Addresses { get; set; } = new List<IIdentityAddress>();
 		public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
 		public string? Id { get; set; }
 		public string? Type { get; set; }

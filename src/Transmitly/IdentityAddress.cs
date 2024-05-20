@@ -17,50 +17,50 @@ using System.Diagnostics;
 namespace Transmitly
 {
 	/// <summary>
-	/// Represents an audience address.
+	/// Represents an identity address.
 	/// </summary>
 	/// <remarks>
-	/// Initializes a new instance of the <see cref="AudienceAddress"/> class.
+	/// Initializes a new instance of the <see cref="IdentityAddress"/> class.
 	/// </remarks>
-	/// <param name="value">The value of the audience address.</param>
-	/// <param name="display">The display value of the audience address.</param>
-	/// <param name="type">Optional type for this address. See: <see cref="Transmitly.Channel.Push.AudienceAddressPushNotificationExtensions"/> for example of extending types.</param>
+	/// <param name="value">The value of the identity address.</param>
+	/// <param name="display">The display value of the identity address.</param>
+	/// <param name="type">Optional type for this address. See: <see cref="Transmitly.Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.</param>
 	[DebuggerStepThrough]
-	public sealed class AudienceAddress(string value, string? display = null, string? type = null) : IAudienceAddress, IEquatable<AudienceAddress>
+	public sealed class IdentityAddress(string value, string? display = null, string? type = null) : IIdentityAddress, IEquatable<IdentityAddress>
 	{
 		/// <summary>
-		/// Types of audience addresses defined by channels. See: <see cref="Transmitly.Channel.Push.AudienceAddressPushNotificationExtensions"/> for example of extending types.
+		/// Types of identity addresses defined by channels. See: <see cref="Transmitly.Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.
 		/// </summary>
-		public readonly static IAudienceAddressType? Types;
+		public readonly static IIdentityAddressType? Types;
 
 		/// <summary>
-		/// Gets or sets the value of the audience address.
+		/// Gets or sets the value of the identity address.
 		/// </summary>
 		public string Value { get; set; } = Guard.AgainstNullOrWhiteSpace(value);
 
 		/// <summary>
-		/// Gets or sets the display value of the audience address.
+		/// Gets or sets the display value of the identity address.
 		/// </summary>
 		public string? Display { get; set; } = display;
 
 		/// <summary>
-		/// Gets or sets the type of audience address. See: <see cref="Transmitly.Channel.Push.AudienceAddressPushNotificationExtensions"/> for example of extending types.
+		/// Gets or sets the type of identity address. See: <see cref="Transmitly.Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.
 		/// </summary>
 		public string? Type { get; set; } = type;
 
 		/// <summary>
-		/// Implicitly converts a string to an <see cref="AudienceAddress"/>.
+		/// Implicitly converts a string to an <see cref="IdentityAddress"/>.
 		/// </summary>
 		/// <param name="value">The string value to convert.</param>
-		/// <returns>The converted <see cref="AudienceAddress"/>.</returns>
-		public static implicit operator AudienceAddress(string value) => new(value);
+		/// <returns>The converted <see cref="IdentityAddress"/>.</returns>
+		public static implicit operator IdentityAddress(string value) => new(value);
 
 		/// <summary>
-		/// Implicitly converts an <see cref="AudienceAddress"/> to a string.
+		/// Implicitly converts an <see cref="IdentityAddress"/> to a string.
 		/// </summary>
-		/// <param name="address">The <see cref="AudienceAddress"/> to convert.</param>
+		/// <param name="address">The <see cref="IdentityAddress"/> to convert.</param>
 		/// <returns>The converted string.</returns>
-		public static implicit operator string?(AudienceAddress address) => address?.Value;
+		public static implicit operator string?(IdentityAddress address) => address?.Value;
 
 		/// <summary>
 		/// Determines whether the two specified operands are equal.
@@ -68,7 +68,7 @@ namespace Transmitly
 		/// <param name="address">The left hand operand in the equation.</param>
 		/// <param name="other">The right hand operand in the equation.</param>
 		/// <returns>True if equal, false if not.</returns>
-		public static bool operator ==(AudienceAddress address, AudienceAddress other)
+		public static bool operator ==(IdentityAddress address, IdentityAddress other)
 		{
 			if (address is null && other is null)
 			{
@@ -83,17 +83,17 @@ namespace Transmitly
 		/// <param name="left">The left hand operand in the equation.</param>
 		/// <param name="right">The right hand operand in the equation.</param>
 		/// <returns>True if the two operands are not equal, and false if they are.</returns>
-		public static bool operator !=(AudienceAddress left, AudienceAddress right)
+		public static bool operator !=(IdentityAddress left, IdentityAddress right)
 		{
 			return !(left == right);
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether this <see cref="AudienceAddress"/> is equal to the specified AudienceAddress.
+		/// Gets a value indicating whether this <see cref="IdentityAddress"/> is equal to the specified identity address.
 		/// </summary>
-		/// <param name="other">The comparand audience address.</param>
+		/// <param name="other">The comparand identity address.</param>
 		/// <returns>true if the objects are equal, false if they're not.</returns>
-		public bool Equals(AudienceAddress? other)
+		public bool Equals(IdentityAddress? other)
 		{
 			if (other is null)
 			{
@@ -108,7 +108,7 @@ namespace Transmitly
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether this <see cref="AudienceAddress"/> is equal to the specified object.
+		/// Gets a value indicating whether this <see cref="IdentityAddress"/> is equal to the specified object.
 		/// </summary>
 		/// <param name="obj">The comparand object.</param>
 		/// <returns>true if the objects are equal, false if they're not.</returns>
@@ -129,7 +129,7 @@ namespace Transmitly
 				return false;
 			}
 
-			return Equals((AudienceAddress)obj);
+			return Equals((IdentityAddress)obj);
 		}
 
 		/// <summary>

@@ -21,12 +21,12 @@ namespace Transmitly.Verification.Configuration
 	{
 		private static readonly string Message = $"You must call {nameof(CommunicationsClientBuilder)}.{nameof(CommunicationsClientBuilder.AddChannelVerificationSupport)} before being able to use sender verification services.";
 
-        public Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string audienceAddress, string? channelProviderId, string? channelId, string code, string? token = null)
+        public Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string identityAddress, string? channelProviderId, string? channelId, string code, string? token = null)
         {
             throw new CommunicationsException(Message);
         }
 
-        public Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string audienceAddress, string code, string? token = null)
+        public Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string identityAddress, string code, string? token = null)
         {
             throw new CommunicationsException(Message);
         }
@@ -36,12 +36,12 @@ namespace Transmitly.Verification.Configuration
             throw new CommunicationsException(Message);
         }
 
-        public Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string audienceAddress, string? channelProviderId, string channelId)
+        public Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string identityAddress, string? channelProviderId, string channelId)
         {
             throw new CommunicationsException(Message);
         }
 
-        public Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string audienceAddress, string channelId)
+        public Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string identityAddress, string channelId)
         {
             throw new CommunicationsException(Message);
         }

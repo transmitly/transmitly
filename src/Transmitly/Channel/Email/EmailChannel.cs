@@ -34,8 +34,8 @@ namespace Transmitly.Channel.Email
 		public string Id => Transmitly.Id.Channel.Email();
 		public IEnumerable<string> AllowedChannelProviderIds => _channelProviderId;
 
-		private readonly Func<IDispatchCommunicationContext, IAudienceAddress>? _fromAddressResolver;
-		public IAudienceAddress? FromAddress { get; }
+		private readonly Func<IDispatchCommunicationContext, IIdentityAddress>? _fromAddressResolver;
+		public IIdentityAddress? FromAddress { get; }
 
 		public Type CommunicationType => typeof(IEmail);
 
@@ -45,23 +45,23 @@ namespace Transmitly.Channel.Email
 
 		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 
-		internal EmailChannel(Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, string[]? channelProviderId = null)
+		internal EmailChannel(Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, string[]? channelProviderId = null)
 		{
 			_fromAddressResolver = Guard.AgainstNull(fromAddressResolver);
 			_channelProviderId = channelProviderId ?? [];
 		}
 
-		internal EmailChannel(IAudienceAddress fromAddress, string[]? channelProviderId = null)
+		internal EmailChannel(IIdentityAddress fromAddress, string[]? channelProviderId = null)
 		{
 			FromAddress = Guard.AgainstNull(fromAddress);
 			_channelProviderId = channelProviderId ?? [];
 		}
 
-		public bool SupportsAudienceAddress(IAudienceAddress audienceAddress)
+		public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
 		{
-			return audienceAddress != null &&
-				!string.IsNullOrWhiteSpace(audienceAddress.Value) &&
-				(audienceAddress.IsType(AudienceAddress.Types.Email()) || _emailMatchRegex.IsMatch(audienceAddress.Value));
+			return identityAddress != null &&
+				!string.IsNullOrWhiteSpace(identityAddress.Value) &&
+				(identityAddress.IsType(IdentityAddress.Types.Email()) || _emailMatchRegex.IsMatch(identityAddress.Value));
 		}
 
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
@@ -75,7 +75,7 @@ namespace Transmitly.Channel.Email
 
 			return new EmailCommunication(GetSenderFromAddress(communicationContext), ExtendedProperties)
 			{
-				To = communicationContext.RecipientAudiences.SelectMany(m => m.Addresses).ToArray(),
+				To = communicationContext.PlatformIdentities.SelectMany(m => m.Addresses).ToArray(),
 				Priority = communicationContext.MessagePriority,
 				TransportPriority = communicationContext.TransportPriority,
 				Subject = subject,
@@ -87,7 +87,7 @@ namespace Transmitly.Channel.Email
 			};
 		}
 
-		private IAudienceAddress GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
+		private IIdentityAddress GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
 		{
 			return Guard.AgainstNull(_fromAddressResolver != null ? _fromAddressResolver(communicationContext) : FromAddress);
 		}

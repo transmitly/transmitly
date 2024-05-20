@@ -12,21 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Email
+namespace Transmitly
 {
 	/// <summary>
-	/// Defines the Email specific audience address types
+	/// Marker interface for allowing <see cref="Transmitly.Channel.Configuration.IChannel"/>'s to define address types programmatically.
 	/// </summary>
-	public static class AudienceAddressPushNotificationExtensions
+	public interface IIdentityAddressType
 	{
-#pragma warning disable IDE0060 // Remove unused parameter
-		/// <summary>
-		/// General Email type
-		/// </summary>
-		/// <param name="audienceAddress"></param>
-		/// <returns>Device Token Identifier</returns>
-		public static string Email(this IAudienceAddressType? audienceAddress) => "email";
-
-#pragma warning restore IDE0060 // Remove unused parameter
 	}
 }

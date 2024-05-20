@@ -12,17 +12,19 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Tests
+namespace Transmitly
 {
-	internal sealed class TestAudienceRepository
+	public static class IdentityAddressExtensions
 	{
-#pragma warning disable CA1822 // Mark members as static
-		public Task<TestAudience1?> GetCustomerAsync(Guid? id)
-#pragma warning restore CA1822 // Mark members as static
+		public static bool IsType(this IIdentityAddress identityAddress, string type)
 		{
-			if (!id.HasValue || id == Guid.Empty)
-				return Task.FromResult<TestAudience1?>(null);
-			return Task.FromResult<TestAudience1?>(new TestAudience1(id.Value));
+			Guard.AgainstNull(identityAddress);
+			return type.Equals(identityAddress.Type, StringComparison.OrdinalIgnoreCase);
+		}
+
+		public static T? IfType<T>(this IIdentityAddress identityAddress, string type, T? value)
+		{
+			return identityAddress.IsType(type) ? value : default;
 		}
 	}
 }

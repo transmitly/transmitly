@@ -32,10 +32,10 @@ namespace Transmitly.Channel.Sms.Tests
 		[DataRow("+1231234567890", true)]
 		[DataRow("+2902124", true)]
 		[DataRow("15551231234", true)]
-		public void SupportsAudienceAddressTest(string value, bool expected)
+		public void SupportsIdentityAddressTest(string value, bool expected)
 		{
 			var sms = new SmsChannel();
-			var result = sms.SupportsAudienceAddress(value.AsAudienceAddress());
+			var result = sms.SupportsIdentityAddress(value.AsIdentityAddress());
 			Assert.AreEqual(expected, result, value);
 		}
 	}
