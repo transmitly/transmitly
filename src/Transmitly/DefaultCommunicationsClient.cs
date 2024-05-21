@@ -115,7 +115,7 @@ namespace Transmitly
 
             return result;
         }
-        
+
         public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
         {
             var uniqueTypes = Guard.AgainstNullOrEmpty(identityReferences?.ToList()).Select(s => s.Type).Distinct().ToArray();
@@ -123,12 +123,21 @@ namespace Transmitly
             var resolvers = await _platformIdentityResolvers.GetAsync(uniqueTypes).ConfigureAwait(false);
 
             List<IPlatformIdentity> results = [];
+
             foreach (var resolver in resolvers)
             {
                 var resolverInstance = await _platformIdentityResolvers.ResolveResolver(resolver).ConfigureAwait(false)
                     ?? throw new CommunicationsException("Unable to get an instance of platform identity resolver");
 
-                var resolvedIdentities = await resolverInstance.Resolve(identityReferences).ConfigureAwait(false);
+                var filteredByTypeReferences = identityReferences
+                    .Where(x =>
+                        string.IsNullOrEmpty(resolver.PlatformIdentityType) ||
+                        string.Equals(resolver.PlatformIdentityType, x.Type, StringComparison.OrdinalIgnoreCase)
+                    )
+                    .ToList()
+                    .AsReadOnly();
+
+                var resolvedIdentities = await resolverInstance.Resolve(filteredByTypeReferences).ConfigureAwait(false);
 
                 if (resolvedIdentities != null)
                     results.AddRange(resolvedIdentities);
@@ -206,6 +215,6 @@ namespace Transmitly
                 _deliveryReportProvider.DispatchReport(report);
         }
 
-       
+
     }
 }

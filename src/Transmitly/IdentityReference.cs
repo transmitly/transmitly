@@ -16,7 +16,7 @@ namespace Transmitly
 {
     public sealed record IdentityReference : IIdentityReference
     {
-        public IdentityReference(string id, string type)
+        public IdentityReference(string type, string id)
         {
             Id = Guard.AgainstNullOrWhiteSpace(id);
             Type = Guard.AgainstNullOrWhiteSpace(type);

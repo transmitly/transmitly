@@ -30,7 +30,7 @@ namespace Transmitly.PlatformIdentity.Configuration
         {
             return Task.FromResult<IReadOnlyList<IPlatformIdentityResolverRegistration>>(
                 _platformIdentityResolverRegistrations
-                .Where(x => !platformIdentityTypes.Any() || platformIdentityTypes.Contains(x.PlatformIdentityType, StringComparer.InvariantCultureIgnoreCase))
+                .Where(x => string.IsNullOrEmpty(x.PlatformIdentityType) || platformIdentityTypes.Contains(x.PlatformIdentityType, StringComparer.InvariantCultureIgnoreCase))
                 .ToList()
             );
         }

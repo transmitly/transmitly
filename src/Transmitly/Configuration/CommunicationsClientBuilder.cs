@@ -199,6 +199,11 @@ namespace Transmitly
             return PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
         }
 
+        public CommunicationsClientBuilder AddPersona<TPersona>(string name, string platformIdentityType, Func<TPersona, bool> personaCondition)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Creates an instance of the <see cref="ICommunicationsClient"/>.
         /// </summary>

@@ -12,17 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.PlatformIdentity.Configuration;
+
 namespace Transmitly.Tests
 {
-	internal sealed class TestPlatformIdentityRepository
-	{
-#pragma warning disable CA1822 // Mark members as static
-		public Task<TestPlatformIdentity1?> GetCustomerAsync(Guid? id)
-#pragma warning restore CA1822 // Mark members as static
-		{
-			if (!id.HasValue || id == Guid.Empty)
-				return Task.FromResult<TestPlatformIdentity1?>(null);
-			return Task.FromResult<TestPlatformIdentity1?>(new TestPlatformIdentity1(id.Value));
-		}
-	}
+    internal sealed class TestPlatformIdentityRepository : IPlatformIdentityResolver
+    {
+        public Task<IReadOnlyCollection<IPlatformIdentity>?> Resolve(IReadOnlyCollection<IIdentityReference> identityReferences)
+        {
+            var results = new List<IPlatformIdentity>();
+            foreach (var refs in identityReferences)
+            {
+                if (Guid.TryParse(refs.Id, out var parsedId))
+                    results.Add(new TestPlatformIdentity1(parsedId) { Addresses = new List<IdentityAddress>() { new("unit-test-address") } });
+            }
+            return Task.FromResult<IReadOnlyCollection<IPlatformIdentity>?>(results.AsReadOnly());
+        }
+    }
 }

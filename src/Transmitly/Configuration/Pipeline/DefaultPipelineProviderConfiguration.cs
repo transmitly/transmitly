@@ -63,5 +63,10 @@ namespace Transmitly.Pipeline.Configuration
 		{
 			Array.ForEach(platformIdentityType, CopyIdentityAddresses.Add);
 		}
-	}
+
+        public void AddPersonaFilter(string personaName)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
