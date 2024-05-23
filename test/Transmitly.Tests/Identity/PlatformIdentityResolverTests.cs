@@ -37,7 +37,7 @@ namespace Transmitly.Tests.Identity
             var builder = new CommunicationsClientBuilder()
                 .ChannelProvider.Add<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>(
                 ChannelProviderId,
-                ChannelId, ChannelId + "-2"
+                ChannelId, ChannelId
              ).
             AddPipeline(PipelineName, options =>
             {

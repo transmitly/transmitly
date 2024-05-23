@@ -50,6 +50,8 @@ namespace Transmitly.Pipeline.Configuration
         /// </summary>
         /// <see cref="AddChannel(IChannel)"/>
         IReadOnlyCollection<IChannel> Channels { get; }
+
+        IReadOnlyCollection<string> PersonaFilters { get; }
         /// <summary>
         /// Gets the registered channel sending strategy provider
         /// </summary>

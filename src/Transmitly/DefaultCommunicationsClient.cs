@@ -16,6 +16,7 @@ using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
 using Transmitly.Exceptions;
+using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Template.Configuration;
@@ -26,6 +27,7 @@ namespace Transmitly
         IPipelineFactory pipelineRegistrations,
         IChannelProviderFactory channelProviderRegistrations,
         ITemplateEngineFactory templateEngineRegistrations,
+        IPersonaFactory personaRegistrations,
         IPlatformIdentityResolverFactory platformIdentityResolverRegistrations,
         IDeliveryReportReporter deliveryReportHandler
         ) :
@@ -34,6 +36,7 @@ namespace Transmitly
         private readonly IPipelineFactory _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations);
         private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
         private readonly ITemplateEngineFactory _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
+        private readonly IPersonaFactory _personaRegistrations = Guard.AgainstNull(personaRegistrations);
         private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
         private readonly IPlatformIdentityResolverFactory _platformIdentityResolvers = Guard.AgainstNull(platformIdentityResolverRegistrations);
 
@@ -41,10 +44,7 @@ namespace Transmitly
         {
             Guard.AgainstNull(identityAddresses);
             var platformIdentities = new PlatformIdentityRecord[] {
-                new(identityAddresses) {
-                    Type = "Unknown:" + pipelineName,
-                    Id = string.Join(";", identityAddresses.Select(x => x.Value))
-                }
+                new(null,null,identityAddresses)
             };
             return await DispatchAsync(pipelineName, platformIdentities, contentModel, cultureInfo, cancellationToken).ConfigureAwait(false);
         }
@@ -91,6 +91,12 @@ namespace Transmitly
                 throw new CommunicationsException($"A communication pipeline named, '{pipelineName}', has not been registered.");
 
             var pipelineConfiguration = pipeline.ChannelConfiguration;
+
+            if (pipelineConfiguration.PersonaFilters.Count != 0 && !pipelineConfiguration.PersonaFilters.All(pf => _personaRegistrations.AnyMatch(pf, platformIdentities)))
+            {
+                var expected = string.Join(", ", pipelineConfiguration.PersonaFilters);
+                throw new CommunicationsException($"One or more pipeline persona filter criteria were not met. Expected={expected}");
+            }
 
             var deliveryStrategy = pipeline.ChannelConfiguration.PipelineDeliveryStrategyProvider;
 

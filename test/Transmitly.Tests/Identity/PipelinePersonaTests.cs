@@ -45,11 +45,12 @@ namespace Transmitly.Tests.Identity
                     options.AddPersonaFilter(ExpectedPersona);
                 })
                 .AddPersona<TestPlatformIdentity1>(ExpectedPersona, PlatformIdentityType, x => x.IsPersona)
+                .AddPersona<TestPlatformIdentity1>("OtherPersona", PlatformIdentityType, x => !x.IsPersona)
                 .AddPlatformIdentityResolver<TestPlatformIdentityRepository>();
 
             var client = builder.BuildClient();
 
-            var result = await client.DispatchAsync(PipelineName, [new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString())], ContentModel.Create(new { }));
+            var result = await client.DispatchAsync(PipelineName, [new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString()), new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString())], ContentModel.Create(new { }));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.IsSuccessful);

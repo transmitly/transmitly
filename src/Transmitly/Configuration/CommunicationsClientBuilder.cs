@@ -13,7 +13,9 @@
 //  limitations under the License.
 
 using System.ComponentModel;
+using System.Linq.Expressions;
 using Transmitly.ChannelProvider.Configuration;
+using Transmitly.Persona.Configuration;
 using Transmitly.Delivery;
 using Transmitly.Delivery.Configuration;
 using Transmitly.Pipeline.Configuration;
@@ -35,7 +37,7 @@ namespace Transmitly
         private readonly List<IPipeline> _pipelines = [];
         private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolvers = [];
         private readonly List<ITemplateEngineRegistration> _templateEngines = [];
-
+        private readonly List<IPersonaRegistration> _personaRegistrations = [];
         /// <summary>
         /// Creates an instance of the class
         /// </summary>
@@ -47,6 +49,7 @@ namespace Transmitly
             TemplateEngine = new(this, te => _templateEngines.Add(te));
             DeliveryReport = new(this);
             ChannelVerification = new(this);
+            Persona = new(this, pf => _personaRegistrations.Add(pf));
         }
 
         /// <summary>
@@ -78,6 +81,11 @@ namespace Transmitly
         /// Gets the sender verification configuration builder.
         /// </summary>
         public ChannelVerificationConfigurationBuilder ChannelVerification { get; }
+
+        /// <summary>
+        /// Gets the persona configuration builder.
+        /// </summary>
+        public PersonaConfigurationBuilder Persona { get; }
 
         /// <summary>
         /// Adds a template engine to the configuration.
@@ -199,9 +207,10 @@ namespace Transmitly
             return PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
         }
 
-        public CommunicationsClientBuilder AddPersona<TPersona>(string name, string platformIdentityType, Func<TPersona, bool> personaCondition)
+        public CommunicationsClientBuilder AddPersona<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> personaCondition)
+            where TPersona : class
         {
-            throw new NotImplementedException();
+            return Persona.Add(name, platformIdentityType, personaCondition);
         }
 
         /// <summary>
@@ -223,6 +232,7 @@ namespace Transmitly
                     _pipelines,
                     _templateEngines,
                     _platformIdentityResolvers,
+                    _personaRegistrations,
                     deliveryReportProvider,
                     ChannelVerification.Configuration
                 )

@@ -15,25 +15,19 @@
 namespace Transmitly
 {
     public sealed class PlatformIdentityRecord : IPlatformIdentity
-	{
-		private List<IIdentityAddress> _addresses;
-		public PlatformIdentityRecord() : this([])
-		{
+    {
+        private List<IIdentityAddress> _addresses;
 
-		}
-		public PlatformIdentityRecord(string id, string type, IEnumerable<IIdentityAddress> identityAddresses) : this(identityAddresses)
-		{
-			Id = Guard.AgainstNullOrWhiteSpace(id);
-			Type = Guard.AgainstNullOrWhiteSpace(type);
-		}
-		public PlatformIdentityRecord(IEnumerable<IIdentityAddress> identityAddresses)
-		{
-			Guard.AgainstNull(identityAddresses);
-			_addresses = new List<IIdentityAddress>(identityAddresses);
-		}
+        public PlatformIdentityRecord(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses)
+        {
+            Id = id;
+            Type = type;
+            Guard.AgainstNull(identityAddresses);
+            _addresses = new List<IIdentityAddress>(identityAddresses);
+        }
 
-		public string? Id { get; set; }
-		public string? Type { get; set; }
-		public IReadOnlyCollection<IIdentityAddress> Addresses { get => _addresses; set => _addresses = new List<IIdentityAddress>(value); }
-	}
+        public string? Id { get; set; }
+        public string? Type { get; set; }
+        public IReadOnlyCollection<IIdentityAddress> Addresses { get => _addresses; set => _addresses = new List<IIdentityAddress>(value); }
+    }
 }
