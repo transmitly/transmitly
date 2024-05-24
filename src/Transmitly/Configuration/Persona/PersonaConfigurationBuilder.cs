@@ -31,7 +31,7 @@ namespace Transmitly.Persona.Configuration
         public CommunicationsClientBuilder Add<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> predicate)
             where TPersona : class
         {
-            _addPersona(new PersonRegistration<TPersona>(name, platformIdentityType, predicate));
+            _addPersona(new PersonaRegistration<TPersona>(name, platformIdentityType, predicate));
             return _communicationsConfiguration;
         }
     }

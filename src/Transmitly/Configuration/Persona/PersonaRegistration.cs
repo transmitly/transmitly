@@ -16,7 +16,7 @@ using System.Linq.Expressions;
 
 namespace Transmitly.Persona.Configuration
 {
-    internal sealed class PersonRegistration<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> predicate) : IPersonaRegistration<TPersona>
+    internal sealed class PersonaRegistration<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> predicate) : IPersonaRegistration<TPersona>
         where TPersona : class
     {
         private readonly Func<TPersona, bool> _compiledExpression = Guard.AgainstNull(predicate).Compile();

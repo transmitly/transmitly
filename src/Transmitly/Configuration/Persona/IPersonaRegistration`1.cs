@@ -14,13 +14,8 @@
 
 namespace Transmitly.Persona.Configuration
 {
-    public interface IPersonaRegistration
+    public interface IPersonaRegistration<in TPersona> : IPersonaRegistration
     {
-        string PlatformIdentityType { get; }
-        string Name { get; }
-        Type PersonaType { get; }
-        bool IsMatch(object persona);
+        bool IsMatch(TPersona persona);
     }
-
-   
 }

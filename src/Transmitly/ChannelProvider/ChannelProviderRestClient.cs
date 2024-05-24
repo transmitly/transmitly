@@ -17,7 +17,7 @@ using Transmitly.Exceptions;
 
 namespace Transmitly.ChannelProvider
 {
-	public abstract class ChannelProviderRestClient<TCommunication>(HttpClient? httpClient) : ChannelProviderClient<TCommunication>
+    public abstract class ChannelProviderRestClient<TCommunication>(HttpClient? httpClient) : ChannelProviderClient<TCommunication>
 		where TCommunication : class
 	{
 		protected HttpClient HttpClient => GetHttpClient();

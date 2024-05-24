@@ -14,13 +14,8 @@
 
 namespace Transmitly.Persona.Configuration
 {
-    public interface IPersonaRegistration
+    internal sealed class DefaultPersonaFactory(IEnumerable<IPersonaRegistration> personaRegistrations) : BasePersonaFactory(personaRegistrations)
     {
-        string PlatformIdentityType { get; }
-        string Name { get; }
-        Type PersonaType { get; }
-        bool IsMatch(object persona);
-    }
 
-   
+    }
 }

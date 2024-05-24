@@ -12,14 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Transmitly.Exceptions;
 using Transmitly.Verification;
 
 namespace Transmitly.Tests.Verification
 {
-	[TestClass]
+    [TestClass]
 	public class ChannelVerificationTests
 	{
 		[TestMethod]
