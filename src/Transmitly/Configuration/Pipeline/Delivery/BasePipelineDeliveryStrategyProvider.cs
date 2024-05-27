@@ -26,12 +26,17 @@ namespace Transmitly.Delivery
 
         protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, CancellationToken cancellationToken)
         {
+            var filteredRecipients = FilterRecipientAddresses(channel, context.PlatformIdentities);
+            var contentModel = new ContentModel(context.ContentModel, filteredRecipients);
+
             var internalContext = new DispatchCommunicationContext(context, channel, provider)
             {
-                PlatformIdentities = FilterRecipientAddresses(channel, context.PlatformIdentities)
+                PlatformIdentities = filteredRecipients,
+                ContentModel = contentModel
             };
 
             var communication = await GetChannelCommunicationAsync(channel, internalContext).ConfigureAwait(false);
+
             IReadOnlyCollection<IDispatchResult?>? results = null;
             try
             {
@@ -59,7 +64,7 @@ namespace Transmitly.Delivery
                             r!.ResourceId,
                             r.DispatchStatus,
                             communication,
-                            context.ContentModel,
+                            contentModel,
                             r.Exception
                         )
                     ).ToList();

@@ -40,49 +40,49 @@ namespace Transmitly
         private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
         private readonly IPlatformIdentityResolverFactory _platformIdentityResolvers = Guard.AgainstNull(platformIdentityResolverRegistrations);
 
-        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
         {
             Guard.AgainstNull(identityAddresses);
             var platformIdentities = new PlatformIdentityRecord[] {
                 new(null,null,identityAddresses)
             };
-            return await DispatchAsync(pipelineName, platformIdentities, contentModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+            return await DispatchAsync(pipelineName, platformIdentities, transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, object contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, object transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
         {
             Guard.AgainstNullOrWhiteSpace(identityAddress);
 
-            return await DispatchAsync(pipelineName, [identityAddress], contentModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+            return await DispatchAsync(pipelineName, [identityAddress], transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<string> identityAddresses, object contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<string> identityAddresses, object transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
         {
             Guard.AgainstNull(identityAddresses);
 
-            return await DispatchAsync(pipelineName, identityAddresses.Select(x => (IIdentityAddress)new IdentityAddress(x)).ToList(), ContentModel.Create(contentModel), cultureInfo, cancellationToken).ConfigureAwait(false);
+            return await DispatchAsync(pipelineName, identityAddresses.Select(x => (IIdentityAddress)new IdentityAddress(x)).ToList(), TransactionModel.Create(transactionalModel), cultureInfo, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
         {
 
-            return await DispatchAsync(pipelineName, new IdentityAddress[] { new(identityAddress) }, contentModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+            return await DispatchAsync(pipelineName, new IdentityAddress[] { new(identityAddress) }, transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
         {
-            return await DispatchAsync(pipelineName, platformIdentities, contentModel, [], cultureInfo, cancellationToken).ConfigureAwait(false);
+            return await DispatchAsync(pipelineName, platformIdentities, transactionalModel, [], cultureInfo, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, IContentModel contentModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
         {
-            return await DispatchAsync(pipelineName, [identityAddresses.AsPlatformIdentity()], contentModel, allowedChannels, cultureInfo, cancellationToken).ConfigureAwait(false);
+            return await DispatchAsync(pipelineName, [identityAddresses.AsPlatformIdentity()], transactionalModel, allowedChannels, cultureInfo, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IContentModel contentModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
         {
             Guard.AgainstNullOrWhiteSpace(pipelineName);
-            Guard.AgainstNull(contentModel);
+            Guard.AgainstNull(transactionalModel);
             Guard.AgainstNull(platformIdentities);
 
             var culture = GuardCulture.AgainstNull(cultureInfo);
@@ -99,7 +99,7 @@ namespace Transmitly
             }
 
             var deliveryStrategy = pipeline.ChannelConfiguration.PipelineDeliveryStrategyProvider;
-
+            var contentModel = new ContentModel(transactionalModel, platformIdentities);
             var context = new DispatchCommunicationContext(
                 contentModel,
                 pipelineConfiguration,
@@ -122,7 +122,7 @@ namespace Transmitly
             return result;
         }
 
-        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
         {
             var uniqueTypes = Guard.AgainstNullOrEmpty(identityReferences?.ToList()).Select(s => s.Type).Distinct().ToArray();
 
@@ -149,7 +149,7 @@ namespace Transmitly
                     results.AddRange(resolvedIdentities);
             }
 
-            return await DispatchAsync(pipelineName, results, contentModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+            return await DispatchAsync(pipelineName, results, transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
         }
 
         private static async Task<IReadOnlyCollection<ChannelChannelProviderGroup>> CreateChannelChannelProviderGroupsAsync(

@@ -114,7 +114,7 @@ namespace Transmitly.Tests
         {
             const string PipelineName = "test-pipeline";
             IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
-            var model = ContentModel.Create(new { });
+            var model = TransactionModel.Create(new { });
 
             var tly = new CommunicationsClientBuilder()
                 .ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, ISms>("sms-provider")
@@ -159,7 +159,7 @@ namespace Transmitly.Tests
         {
             const string PipelineName = "test-pipeline";
             IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
-            var model = ContentModel.Create(new { });
+            var model = TransactionModel.Create(new { });
 
             var tly = new CommunicationsClientBuilder()
                 .ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, ISms>("sms-provider")

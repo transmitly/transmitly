@@ -44,7 +44,7 @@ namespace Transmitly.Tests.Identity
 
             var client = builder.BuildClient();
 
-            var result = await client.DispatchAsync(PipelineName, [new IdentityReference("test-identity", Guid.NewGuid().ToString())], ContentModel.Create(new { }));
+            var result = await client.DispatchAsync(PipelineName, [new IdentityReference("test-identity", Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
 
             Assert.IsNotNull(result);
             Assert.IsTrue(result.IsSuccessful);

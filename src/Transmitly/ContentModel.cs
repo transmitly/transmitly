@@ -12,43 +12,93 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System.Diagnostics;
+using System.Dynamic;
 
 namespace Transmitly
 {
-	/// <summary>
-	/// Content Model for Dispatching data related to dispatching communications using a <see cref="ICommunicationsClient"/>
-	/// </summary>
-	[DebuggerStepThrough]
-	public class ContentModel : IContentModel
-	{
-		private readonly object _model;
-		private readonly Resource[]? _attachments;
-		private readonly LinkedResource[]? _linkedResource;
+    internal sealed class ContentModel : DynamicObject, IContentModel
+    {
+        private readonly Dictionary<string, object?> _bag = [];
+        private const string TransactionPropertyKey = "trx";
+        private const string PlatformIdentityPropertyKey = "aud";
+        private readonly object? _model;
+        public ContentModel(IContentModel? contentModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+            : this(contentModel?.Model, platformIdentities, contentModel?.Resources, contentModel?.LinkedResources)
+        {
+            _model = contentModel;
+        }
 
-		private ContentModel(object model, Resource[]? attachments, LinkedResource[]? linkedResources)
-		{
-			_model = model;
-			_attachments = attachments;
-			_linkedResource = linkedResources;
-		}
+        public ContentModel(ITransactionModel? transactionModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+            : this(transactionModel?.Model, platformIdentities, transactionModel?.Resources, transactionModel?.LinkedResources)
+        {
+        }
 
-		public object Model => _model;
+        private ContentModel(object? model, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IReadOnlyList<Resource>? resources, IReadOnlyList<LinkedResource>? linkedResources)
+        {
+            Resources = resources ?? [];
+            LinkedResources = linkedResources ?? [];
+            foreach (var identity in platformIdentities)
+            {
+                if (!string.IsNullOrWhiteSpace(identity.Id))
+                    _bag.Add(identity.Id!, identity);
+            }
 
-		public IReadOnlyList<Resource> Resources => _attachments ?? [];
+            _bag.Add(TransactionPropertyKey, model);
+            _bag.Add(PlatformIdentityPropertyKey, platformIdentities.ToList());
 
-		public IReadOnlyList<LinkedResource> LinkedResources => _linkedResource ?? [];
+            if (model == null)
+                return;
 
-		public static IContentModel Create(object model)
-		{
-			return new ContentModel(model, null, null);
-		}
+            foreach (var property in model.GetType().GetProperties())
+            {
+                if (!_bag.ContainsKey(property.Name))
+                    _bag.Add(property.Name, property.GetValue(model));
+            }
+        }
 
-		public static IContentModel Create(object model, params Resource[] resources)
-		{
-			var linkedResources = resources.OfType<LinkedResource>().ToArray();
-			var attachments = resources.Where(x => x is not LinkedResource).ToArray();
-			return new ContentModel(model, attachments, linkedResources);
-		}
-	}
+        public object Model => _model ?? this;
+
+        public IReadOnlyList<Resource> Resources { get; }
+
+        public IReadOnlyList<LinkedResource> LinkedResources { get; }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object? result)
+        {
+            if (_bag.TryGetValue(binder.Name, out var obj))
+            {
+                result = obj;
+                return true;
+            }
+            return base.TryGetMember(binder, out result);
+        }
+
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            return _bag.Keys;
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object? value)
+        {
+            _bag.Add(binder.Name, value);
+            return base.TrySetMember(binder, value);
+        }
+
+        public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
+        {
+            if (TryGetMember(new InternalGetMemberBinder((string)indexes[0], false), out var obj))
+            {
+                result = obj!;
+                return true;
+            }
+            return base.TryGetIndex(binder, indexes, out result!);
+        }
+
+        class InternalGetMemberBinder(string name, bool ignoreCase) : System.Dynamic.GetMemberBinder(name, ignoreCase)
+        {
+            public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject? errorSuggestion)
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
 }

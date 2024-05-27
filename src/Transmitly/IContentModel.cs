@@ -14,11 +14,11 @@
 
 namespace Transmitly
 {
-	public interface IContentModel
-	{
-		object Model { get; }
-		IReadOnlyList<Resource> Resources { get; }
-		IReadOnlyList<LinkedResource> LinkedResources { get; }
-	}
+    public interface IContentModel
+    {
+        object Model { get; }
+        IReadOnlyList<Resource> Resources { get; }
+        IReadOnlyList<LinkedResource> LinkedResources { get; }
+    }
 }
 

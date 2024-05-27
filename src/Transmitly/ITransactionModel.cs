@@ -12,10 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Persona.Configuration
+namespace Transmitly
 {
-    internal sealed class DefaultPersonaFactory(IEnumerable<IPersonaRegistration> personaRegistrations) : BasePersonaFactory(personaRegistrations)
-    {
-        
-    }
+    public interface ITransactionModel
+	{
+		object Model { get; }
+		IReadOnlyList<Resource> Resources { get; }
+		IReadOnlyList<LinkedResource> LinkedResources { get; }
+	}
 }
+

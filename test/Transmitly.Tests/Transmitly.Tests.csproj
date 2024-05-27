@@ -38,7 +38,9 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Transmitly\Transmitly.csproj" />
 	</ItemGroup>
-
+	<ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+		<Reference Include="Microsoft.CSharp" />
+	</ItemGroup>
 	<ItemGroup>
 	  <None Update="FileResource\file-content.txt">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>

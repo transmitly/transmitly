@@ -26,19 +26,19 @@ namespace Transmitly
 		/// </summary>
 		/// <param name="pipelineName">Name of the pipeline.</param>
 		/// <param name="platformIdentities">Potential recipients of communications.</param>
-		/// <param name="contentModel">Model for the communications</param>
+		/// <param name="transactionalModel">Model for the communications</param>
 		/// <param name="allowedChannels">Ids of channels that are allowed to be used with this dispatch.</param>
 		/// <param name="cultureInfo">Culture ISO.</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns>Dispatch results</returns>
-		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IContentModel contentModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default);
-		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, IContentModel contentModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default);
-		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
-		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, object contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
-		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<string> identityAddresses, object contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
-		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
-		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
-        Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
+		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default);
+		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default);
+		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
+		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, object transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
+		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<string> identityAddresses, object transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
+		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
+		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
+        Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default);
 
         void DeliverReport(DeliveryReport report);
 		void DeliverReports(IReadOnlyCollection<DeliveryReport> reports);

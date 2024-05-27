@@ -54,8 +54,8 @@ namespace Transmitly.Tests.Integration
 			})
 			.BuildClient();
 
-			var model = ContentModel.Create(new { Code = "123456" });
-			var result = await client.DispatchAsync(PipelineName, RecipientAddresses, ContentModel.Create(new { Code = "123546" }));
+			var model = TransactionModel.Create(new { Code = "123456" });
+			var result = await client.DispatchAsync(PipelineName, RecipientAddresses, TransactionModel.Create(new { Code = "123546" }));
 
 			Assert.IsNotNull(result);
 			Assert.IsTrue(result.IsSuccessful);
@@ -109,7 +109,7 @@ namespace Transmitly.Tests.Integration
 				})
 				.BuildClient();
 
-			var result = await client.DispatchAsync(PipelineName, RecipientAddresses, ContentModel.Create(new { Code = "123546" }));
+			var result = await client.DispatchAsync(PipelineName, RecipientAddresses, TransactionModel.Create(new { Code = "123546" }));
 
 			Assert.IsNotNull(result);
 			Assert.IsNotNull(result.Results);
