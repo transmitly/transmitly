@@ -12,31 +12,36 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Collections;
 using System.Dynamic;
 
 namespace Transmitly
 {
-    internal sealed class ContentModel : DynamicObject, IContentModel
+    internal sealed class DynamicContentModel : DynamicObject, IDictionary
     {
         private readonly Dictionary<string, object?> _bag = [];
         private const string TransactionPropertyKey = "trx";
         private const string PlatformIdentityPropertyKey = "aud";
-        private readonly object? _model;
-        public ContentModel(IContentModel? contentModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
-            : this(contentModel?.Model, platformIdentities, contentModel?.Resources, contentModel?.LinkedResources)
-        {
-            _model = contentModel;
-        }
 
-        public ContentModel(ITransactionModel? transactionModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
-            : this(transactionModel?.Model, platformIdentities, transactionModel?.Resources, transactionModel?.LinkedResources)
-        {
-        }
 
-        private ContentModel(object? model, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IReadOnlyList<Resource>? resources, IReadOnlyList<LinkedResource>? linkedResources)
+        bool IDictionary.IsFixedSize => true;
+
+        bool IDictionary.IsReadOnly => true;
+
+        ICollection IDictionary.Keys => _bag.Keys;
+
+        ICollection IDictionary.Values => _bag.Values;
+
+        int ICollection.Count => _bag.Count;
+
+        bool ICollection.IsSynchronized => ((ICollection)_bag).IsSynchronized;
+
+        object ICollection.SyncRoot => ((ICollection)_bag).SyncRoot;
+
+        object? IDictionary.this[object key] { get => _bag[Guard.AgainstNullOrWhiteSpace(key.ToString())] ?? throw new ArgumentNullException(nameof(key)); set => _bag[Guard.AgainstNullOrWhiteSpace(key.ToString())] = value; }
+
+        internal DynamicContentModel(object? model, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
         {
-            Resources = resources ?? [];
-            LinkedResources = linkedResources ?? [];
             foreach (var identity in platformIdentities)
             {
                 if (!string.IsNullOrWhiteSpace(identity.Id))
@@ -56,15 +61,20 @@ namespace Transmitly
             }
         }
 
-        public object Model => _model ?? this;
-
-        public IReadOnlyList<Resource> Resources { get; }
-
-        public IReadOnlyList<LinkedResource> LinkedResources { get; }
-
         public override bool TryGetMember(GetMemberBinder binder, out object? result)
         {
             if (_bag.TryGetValue(binder.Name, out var obj))
+            {
+                result = obj;
+                return true;
+            }
+            return base.TryGetMember(binder, out result);
+        }
+
+        public bool TryGetMember(string member, out object? result)
+        {
+            var binder = new InternalGetMemberBinder(member, true);
+            if (TryGetMember(binder, out var obj))
             {
                 result = obj;
                 return true;
@@ -93,6 +103,42 @@ namespace Transmitly
             return base.TryGetIndex(binder, indexes, out result!);
         }
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)_bag).GetEnumerator();
+        }
+
+        void IDictionary.Add(object key, object? value)
+        {
+            _bag.Add(Guard.AgainstNullOrWhiteSpace(key?.ToString()), value);
+        }
+
+        void IDictionary.Clear()
+        {
+            _bag.Clear();
+        }
+
+        bool IDictionary.Contains(object key)
+        {
+            return ((IDictionary)_bag).Contains(key);
+        }
+
+        IDictionaryEnumerator IDictionary.GetEnumerator()
+        {
+            return ((IDictionary)_bag).GetEnumerator();
+        }
+
+        void IDictionary.Remove(object key)
+        {
+            Guard.AgainstNull(key);
+            _bag.Remove(Guard.AgainstNullOrWhiteSpace(key.ToString()));
+        }
+
+        void ICollection.CopyTo(Array array, int index)
+        {
+            ((ICollection)_bag).CopyTo(array,index);
+        }
+
         class InternalGetMemberBinder(string name, bool ignoreCase) : System.Dynamic.GetMemberBinder(name, ignoreCase)
         {
             public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject? errorSuggestion)
@@ -100,5 +146,37 @@ namespace Transmitly
                 throw new NotImplementedException();
             }
         }
+    }
+
+    internal sealed class ContentModel : IContentModel
+    {
+
+        public ContentModel(IContentModel? contentModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+            : this(contentModel?.Model, platformIdentities, contentModel?.Resources, contentModel?.LinkedResources)
+        {
+
+        }
+
+        public ContentModel(ITransactionModel? transactionModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+            : this(transactionModel?.Model, platformIdentities, transactionModel?.Resources, transactionModel?.LinkedResources)
+        {
+
+        }
+
+        private ContentModel(object? model, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IReadOnlyList<Resource>? resources, IReadOnlyList<LinkedResource>? linkedResources)
+        {
+            Resources = resources ?? [];
+            LinkedResources = linkedResources ?? [];
+            Model = new DynamicContentModel(model, platformIdentities);
+        }
+
+
+
+        public object Model { get; }
+
+        public IReadOnlyList<Resource> Resources { get; }
+
+        public IReadOnlyList<LinkedResource> LinkedResources { get; }
+
     }
 }

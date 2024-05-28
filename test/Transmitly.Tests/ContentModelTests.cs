@@ -41,17 +41,18 @@ namespace Transmitly.Tests
 
             IReadOnlyCollection<IPlatformIdentity> identities = [new TestPlatformIdentity1(expectedId)];
 
-            dynamic contentModel = new ContentModel(transModel, identities);
+            IContentModel contentModel = new ContentModel(transModel, identities);
+            dynamic model = contentModel.Model;
             Assert.IsNotNull(contentModel.Model);
-            Assert.AreEqual(expectedCode, contentModel.OtpCode);
-            Assert.AreEqual(expectedCode, contentModel.trx.OtpCode);
-            Assert.IsTrue(contentModel.Level0.Level1.Level1Value);
-            Assert.IsTrue(contentModel.trx.Level0.Level1.Level1Value);
-            Assert.IsNull(contentModel.NullValue);
-            Assert.IsNotNull(contentModel[expectedId]);
-            Assert.AreEqual(expectedId, contentModel[expectedId].Id);
-            Assert.IsNotNull(contentModel.aud[0]);
-            Assert.AreEqual(expectedId, contentModel.aud[0].Id);
+            Assert.AreEqual(expectedCode, model.OtpCode);
+            Assert.AreEqual(expectedCode, model.trx.OtpCode);
+            Assert.IsTrue(model.Level0.Level1.Level1Value);
+            Assert.IsTrue(model.trx.Level0.Level1.Level1Value);
+            Assert.IsNull(model.NullValue);
+            Assert.IsNotNull(model[expectedId]);
+            Assert.AreEqual(expectedId, model[expectedId].Id);
+            Assert.IsNotNull(model.aud[0]);
+            Assert.AreEqual(expectedId, model.aud[0].Id);
         }
 
 
