@@ -14,7 +14,7 @@
 
 namespace Transmitly.Persona.Configuration
 {
-    internal sealed class DefaultPersonaFactory(IEnumerable<IPersonaRegistration> personaRegistrations) : BasePersonaFactory(personaRegistrations)
+    public sealed class DefaultPersonaFactory(IEnumerable<IPersonaRegistration> personaRegistrations) : BasePersonaFactory(personaRegistrations)
     {
         
     }
