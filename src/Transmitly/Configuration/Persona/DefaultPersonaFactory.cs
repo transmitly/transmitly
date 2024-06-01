@@ -12,13 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly.Persona.Configuration
 {
-	public interface IAudienceAddress
-	{
-		string Value { get; set; }
-		string? Display { get; set; }
-		string? Type { get; set; }
-		//int Priority { get; set; }
-	}
+    public sealed class DefaultPersonaFactory(IEnumerable<IPersonaRegistration> personaRegistrations) : BasePersonaFactory(personaRegistrations)
+    {
+        
+    }
 }

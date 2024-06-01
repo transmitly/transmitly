@@ -38,9 +38,9 @@ namespace Transmitly.Channel.Configuration
 		/// <summary>
 		/// Checks if the channel supports the given internet address.
 		/// </summary>
-		/// <param name="audienceAddress">The audience address to check.</param>
+		/// <param name="identityAddress">The identity address to check.</param>
 		/// <returns>True if the channel supports the address; otherwise, false.</returns>
-		bool SupportsAudienceAddress(IAudienceAddress audienceAddress);
+		bool SupportsIdentityAddress(IIdentityAddress identityAddress);
 
 		/// <summary>
 		/// Generates a communication using the specified template engine and communication context.

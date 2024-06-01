@@ -14,47 +14,47 @@
 
 namespace Transmitly.Pipeline.Configuration
 {
-	/// <summary>
-	/// Default factory for pipeline registrations.
-	/// </summary>
-	/// <param name="pipelineRegistrations">The registered pipelines</param>
-	/// <exception cref="ArgumentNullException">If the provided pipeline registrations are null</exception>
-	public sealed class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegistrations) : IPipelineFactory
-	{
-		private readonly List<IPipeline> _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations).ToList();
+    /// <summary>
+    /// Default factory for pipeline registrations.
+    /// </summary>
+    /// <param name="pipelineRegistrations">The registered pipelines.</param>
+    /// <exception cref="ArgumentNullException">If the provided pipeline registrations are null</exception>
+    public sealed class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegistrations) : IPipelineFactory
+    {
+        private readonly List<IPipeline> _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations).ToList();
 
-		///<inheritdoc/>
-		public Task<IReadOnlyCollection<IPipeline>> GetAllAsync()
-		{
-			return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelineRegistrations);
-		}
+        ///<inheritdoc/>
+        public Task<IReadOnlyCollection<IPipeline>> GetAllAsync()
+        {
+            return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelineRegistrations);
+        }
 
-		///<inheritdoc/>
-		public Task<IReadOnlyCollection<IPipeline>> GetByAudienceTypeIdAsync(string audienceTypeIdentifier)
-		{
-			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
-				_pipelineRegistrations
-				.Where(x => x.AudienceTypeIdentifier == audienceTypeIdentifier)
-				.ToList()
-			);
-		}
+        ///<inheritdoc/>
+        public Task<IReadOnlyCollection<IPipeline>> GetByPlatformIdentityTypeAsync(string platformIdentityType)
+        {
+            return Task.FromResult<IReadOnlyCollection<IPipeline>>(
+                _pipelineRegistrations
+                .Where(x => x.PlatformIdentityType == platformIdentityType)
+                .ToList()
+            );
+        }
 
-		///<inheritdoc/>
-		public Task<IPipeline?> GetAsync(string pipelineName)
-		{
-			return Task.FromResult<IPipeline?>(
-				_pipelineRegistrations
-				.Find(x => x.PipelineName == pipelineName)
-			);
-		}
-		///<inheritdoc/>
-		public Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string audienceTypeIdentifier)
-		{
-			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
-				_pipelineRegistrations
-				.Where(x => x.AudienceTypeIdentifier == audienceTypeIdentifier && pipelineName == x.PipelineName)
-				.ToList()
-			);
-		}
-	}
+        ///<inheritdoc/>
+        public Task<IPipeline?> GetAsync(string pipelineName)
+        {
+            return Task.FromResult<IPipeline?>(
+                _pipelineRegistrations
+                .Find(x => x.PipelineName == pipelineName)
+            );
+        }
+        ///<inheritdoc/>
+        public Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string platformIdentityType)
+        {
+            return Task.FromResult<IReadOnlyCollection<IPipeline>>(
+                _pipelineRegistrations
+                .Where(x => x.PlatformIdentityType == platformIdentityType && pipelineName == x.PipelineName)
+                .ToList()
+            );
+        }
+    }
 }

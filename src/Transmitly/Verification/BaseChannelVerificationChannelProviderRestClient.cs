@@ -17,7 +17,7 @@ using System.Net.Http;
 
 namespace Transmitly.Verification
 {
-	public abstract class BaseChannelVerificationChannelProviderRestClient(HttpClient? httpClient) : BaseChannelVerificationChannelProviderClient
+    public abstract class BaseChannelVerificationChannelProviderRestClient(HttpClient? httpClient) : BaseChannelVerificationChannelProviderClient
 	{
 		protected HttpClient HttpClient => GetHttpClient();
 		private HttpClient? _httpClient = httpClient;

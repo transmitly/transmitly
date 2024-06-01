@@ -12,12 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly.Persona.Configuration
 {
-	/// <summary>
-	/// Marker interface for allowing <see cref="Transmitly.Channel.Configuration.IChannel"/>'s to define address types programmatically.
-	/// </summary>
-	public interface IAudienceAddressType
-	{
-	}
+    public interface IPersonaRegistration
+    {
+        string PlatformIdentityType { get; }
+        string Name { get; }
+        Type PersonaType { get; }
+        bool IsMatch(object persona);
+    }
+
+   
 }

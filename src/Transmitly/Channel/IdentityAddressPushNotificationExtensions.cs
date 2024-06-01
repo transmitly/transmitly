@@ -12,21 +12,24 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Audience.Configuration
+namespace Transmitly
 {
 	/// <summary>
-	/// Represents an audience resolver.
+	/// Defines the Push Notification specific identity address types
 	/// </summary>
-	public interface IAudienceResolver
+	public static class IdentityAddressPushNotificationExtensions
 	{
-		/// <summary>
-		/// Gets the identifier for the audience type.
-		/// </summary>
-		string? AudienceTypeIdentifier { get; }
+#pragma warning disable IDE0060 // Remove unused parameter
 
-		/// <summary>
-		/// Gets the audience resolution resolver.
-		/// </summary>
-		AudienceResolverHandler ResolveAsync { get; }
+		public static string Phone(this IIdentityAddressType? identityAddress) => "phone";
+
+		public static string Mobile(this IIdentityAddressType? identityAddress) => "mobile-phone";
+
+		public static string HomePhone(this IIdentityAddressType? identityAddress) => "home-phone";
+
+		public static string Cell(this IIdentityAddressType? identityAddress) => "cell-phone";
+
+#pragma warning restore IDE0060 // Remove unused parameter
+
 	}
 }

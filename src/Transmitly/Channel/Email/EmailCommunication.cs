@@ -16,7 +16,7 @@
 namespace Transmitly.Channel.Email
 {
 	/// <inheritdoc />
-	internal sealed class EmailCommunication(IAudienceAddress from, IExtendedProperties extendedProperties) : IEmail
+	internal sealed class EmailCommunication(IIdentityAddress from, IExtendedProperties extendedProperties) : IEmail
 	{
 		/// <inheritdoc />
 		public string? Subject { get; internal set; }
@@ -34,19 +34,19 @@ namespace Transmitly.Channel.Email
 		public TransportPriority TransportPriority { get; internal set; } = TransportPriority.Normal;
 
 		/// <inheritdoc />
-		public IAudienceAddress From { get; } = Guard.AgainstNull(from);
+		public IIdentityAddress From { get; } = Guard.AgainstNull(from);
 
 		/// <inheritdoc />
-		public IAudienceAddress[]? ReplyTo { get; internal set; } = [from];
+		public IIdentityAddress[]? ReplyTo { get; internal set; } = [from];
 
 		/// <inheritdoc />
-		public IAudienceAddress[]? To { get; internal set; }
+		public IIdentityAddress[]? To { get; internal set; }
 
 		/// <inheritdoc />
-		public IAudienceAddress[]? Cc { get; internal set; }
+		public IIdentityAddress[]? Cc { get; internal set; }
 
 		/// <inheritdoc />
-		public IAudienceAddress[]? Bcc { get; internal set; }
+		public IIdentityAddress[]? Bcc { get; internal set; }
 
 		/// <inheritdoc />
 		public IReadOnlyCollection<IAttachment> Attachments { get; internal set; } = [];

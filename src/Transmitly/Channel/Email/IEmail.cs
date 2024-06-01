@@ -21,11 +21,11 @@ namespace Transmitly
 		string? TextBody { get; }
 		MessagePriority Priority { get; }
 		TransportPriority TransportPriority { get; }
-		IAudienceAddress From { get; }
-		IAudienceAddress[]? ReplyTo { get; }
-		IAudienceAddress[]? To { get; }
-		IAudienceAddress[]? Cc { get; }
-		IAudienceAddress[]? Bcc { get; }
+		IIdentityAddress From { get; }
+		IIdentityAddress[]? ReplyTo { get; }
+		IIdentityAddress[]? To { get; }
+		IIdentityAddress[]? Cc { get; }
+		IIdentityAddress[]? Bcc { get; }
 		IReadOnlyCollection<IAttachment> Attachments { get; }
 		IExtendedProperties ExtendedProperties { get; }
 		/// <summary>

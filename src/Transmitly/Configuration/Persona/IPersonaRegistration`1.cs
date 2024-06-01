@@ -12,13 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Tests
+namespace Transmitly.Persona.Configuration
 {
-	internal sealed record TestAudienceAddress(string Value) : IAudienceAddress
-	{
-		public string Value { get; set; } = Guard.AgainstNullOrWhiteSpace(Value);
-		public string? Type { get; set; }
-		//public int Priority { get; set; }
-		public string? Display { get; set; }
-	}
+    public interface IPersonaRegistration<in TPersona> : IPersonaRegistration
+    {
+        bool IsMatch(TPersona persona);
+    }
 }

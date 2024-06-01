@@ -12,43 +12,33 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System.Diagnostics;
-
 namespace Transmitly
 {
-	/// <summary>
-	/// Content Model for Dispatching data related to dispatching communications using a <see cref="ICommunicationsClient"/>
-	/// </summary>
-	[DebuggerStepThrough]
-	public class ContentModel : IContentModel
-	{
-		private readonly object _model;
-		private readonly Resource[]? _attachments;
-		private readonly LinkedResource[]? _linkedResource;
+    internal sealed class ContentModel : IContentModel
+    {
+        public ContentModel(IContentModel? contentModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+            : this(contentModel?.Model, platformIdentities, contentModel?.Resources, contentModel?.LinkedResources)
+        {
 
-		private ContentModel(object model, Resource[]? attachments, LinkedResource[]? linkedResources)
-		{
-			_model = model;
-			_attachments = attachments;
-			_linkedResource = linkedResources;
-		}
+        }
 
-		public object Model => _model;
+        public ContentModel(ITransactionModel? transactionModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+            : this(transactionModel?.Model, platformIdentities, transactionModel?.Resources, transactionModel?.LinkedResources)
+        {
 
-		public IReadOnlyList<Resource> Resources => _attachments ?? [];
+        }
 
-		public IReadOnlyList<LinkedResource> LinkedResources => _linkedResource ?? [];
+        private ContentModel(object? model, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IReadOnlyList<Resource>? resources, IReadOnlyList<LinkedResource>? linkedResources)
+        {
+            Resources = resources ?? [];
+            LinkedResources = linkedResources ?? [];
+            Model = new DynamicContentModel(model, platformIdentities, resources, linkedResources);
+        }
 
-		public static IContentModel Create(object model)
-		{
-			return new ContentModel(model, null, null);
-		}
+        public object Model { get; }
 
-		public static IContentModel Create(object model, params Resource[] resources)
-		{
-			var linkedResources = resources.OfType<LinkedResource>().ToArray();
-			var attachments = resources.Where(x => x is not LinkedResource).ToArray();
-			return new ContentModel(model, attachments, linkedResources);
-		}
-	}
+        public IReadOnlyList<Resource> Resources { get; }
+
+        public IReadOnlyList<LinkedResource> LinkedResources { get; }
+    }
 }

@@ -15,21 +15,9 @@
 namespace Transmitly
 {
 	/// <summary>
-	/// Defines the Push Notification specific audience address types
+	/// Marker interface for allowing <see cref="Transmitly.Channel.Configuration.IChannel"/>'s to define address types programmatically.
 	/// </summary>
-	public static class AudienceAddressPushNotificationExtensions
+	public interface IIdentityAddressType
 	{
-#pragma warning disable IDE0060 // Remove unused parameter
-
-		public static string Phone(this IAudienceAddressType? audienceAddress) => "phone";
-
-		public static string Mobile(this IAudienceAddressType? audienceAddress) => "mobile-phone";
-
-		public static string HomePhone(this IAudienceAddressType? audienceAddress) => "home-phone";
-
-		public static string Cell(this IAudienceAddressType? audienceAddress) => "cell-phone";
-
-#pragma warning restore IDE0060 // Remove unused parameter
-
 	}
 }

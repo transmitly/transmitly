@@ -12,12 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Audience.Configuration
+namespace Transmitly.PlatformIdentity.Configuration
 {
 	/// <summary>
-	/// Default audience resolvers factory.
+	/// Represents an platform identity resolver.
 	/// </summary>
-	public sealed class DefaultAudienceResolverRegistrationFactory(IEnumerable<IAudienceResolver> audienceResolverRegistrations) : BaseAudienceResolverRegistrationFactory(audienceResolverRegistrations)
+	public interface IPlatformIdentityResolverRegistration
 	{
+		/// <summary>
+		/// Gets the platform identity type.
+		/// </summary>
+		string? PlatformIdentityType { get; }
+
+		/// <summary>
+		/// Gets the platform identity resolver type.
+		/// </summary>
+		Type ResolverType { get; }
 	}
 }

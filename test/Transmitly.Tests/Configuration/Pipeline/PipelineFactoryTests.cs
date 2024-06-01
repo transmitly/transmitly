@@ -12,72 +12,75 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Persona.Configuration;
+
 namespace Transmitly.Pipeline.Configuration.Tests
 {
-	[TestClass]
-	public class PipelineFactoryTests
-	{
+    [TestClass]
+    public class PipelineFactoryTests
+    {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-		private Configuration.DefaultPipelineFactory _pipelineRegistrationStore;
+        private Configuration.DefaultPipelineFactory _pipelineRegistrationStore;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-		[TestInitialize]
-		public void Initialize()
-		{
-			var pipelineRegistrations = new List<IPipeline>();
-			_pipelineRegistrationStore = new Configuration.DefaultPipelineFactory(pipelineRegistrations);
-		}
+        [TestInitialize]
+        public void Initialize()
+        {
+            var pipelineRegistrations = new List<IPipeline>();
+            var personaRegistrations = new List<IPersonaRegistration>();
+            _pipelineRegistrationStore = new Configuration.DefaultPipelineFactory(pipelineRegistrations);
+        }
 
-		[TestMethod]
-		public async Task GetAllAsync_ReturnsAllPipelineRegistrations()
-		{
-			// Arrange
+        [TestMethod]
+        public async Task GetAllAsync_ReturnsAllPipelineRegistrations()
+        {
+            // Arrange
 
-			// Act
-			var result = await _pipelineRegistrationStore.GetAllAsync();
+            // Act
+            var result = await _pipelineRegistrationStore.GetAllAsync();
 
-			// Assert
-			Assert.AreEqual(0, result.Count);
-		}
+            // Assert
+            Assert.AreEqual(0, result.Count);
+        }
 
-		[TestMethod]
-		public async Task GetByAudienceTypeIdAsync_ReturnsMatchingPipelineRegistrations()
-		{
-			// Arrange
-			var audienceTypeIdentifier = "example";
+        [TestMethod]
+        public async Task GetByPlatformIdentityTypeAsync_ReturnsMatchingPipelineRegistrations()
+        {
+            // Arrange
+            var platformIdentityType = "example";
 
-			// Act
-			var result = await _pipelineRegistrationStore.GetByAudienceTypeIdAsync(audienceTypeIdentifier);
+            // Act
+            var result = await _pipelineRegistrationStore.GetByPlatformIdentityTypeAsync(platformIdentityType);
 
-			// Assert
-			Assert.AreEqual(0, result.Count);
-		}
+            // Assert
+            Assert.AreEqual(0, result.Count);
+        }
 
-		[TestMethod]
-		public async Task GetAsync_ReturnsPipelineRegistrationByName()
-		{
-			// Arrange
-			var pipelineName = "example";
+        [TestMethod]
+        public async Task GetAsync_ReturnsPipelineRegistrationByName()
+        {
+            // Arrange
+            var pipelineName = "example";
 
-			// Act
-			var result = await _pipelineRegistrationStore.GetAsync(pipelineName);
+            // Act
+            var result = await _pipelineRegistrationStore.GetAsync(pipelineName);
 
-			// Assert
-			Assert.IsNull(result);
-		}
+            // Assert
+            Assert.IsNull(result);
+        }
 
-		[TestMethod]
-		public async Task GetAsync_ReturnsMatchingPipelineRegistrations()
-		{
-			// Arrange
-			var pipelineName = "example";
-			var audienceTypeIdentifier = "example";
+        [TestMethod]
+        public async Task GetAsync_ReturnsMatchingPipelineRegistrations()
+        {
+            // Arrange
+            var pipelineName = "example";
+            var platformIdentityType = "example";
 
-			// Act
-			var result = await _pipelineRegistrationStore.GetAsync(pipelineName, audienceTypeIdentifier);
+            // Act
+            var result = await _pipelineRegistrationStore.GetAsync(pipelineName, platformIdentityType);
 
-			// Assert
-			Assert.AreEqual(0, result.Count);
-		}
-	}
+            // Assert
+            Assert.AreEqual(0, result.Count);
+        }
+    }
 }

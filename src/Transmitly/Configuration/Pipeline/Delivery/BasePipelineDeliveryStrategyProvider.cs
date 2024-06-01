@@ -18,91 +18,98 @@ using Transmitly.ChannelProvider;
 
 namespace Transmitly.Delivery
 {
-	public abstract class BasePipelineDeliveryStrategyProvider
-	{
-		protected virtual IReadOnlyCollection<DispatchStatus> SuccessfulStatuses { get; } = [DispatchStatus.Delivered, DispatchStatus.Dispatched, DispatchStatus.Pending];
+    public abstract class BasePipelineDeliveryStrategyProvider
+    {
+        protected virtual IReadOnlyCollection<DispatchStatus> SuccessfulStatuses { get; } = [DispatchStatus.Delivered, DispatchStatus.Dispatched, DispatchStatus.Pending];
 
-		public abstract Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken);
+        public abstract Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken);
 
-		protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, CancellationToken cancellationToken)
-		{
-			var internalContext = new DispatchCommunicationContext(context, channel, provider)
-			{
-				RecipientAudiences = FilterRecipientAddresses(channel, context.RecipientAudiences)
-			};
+        protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, CancellationToken cancellationToken)
+        {
+            var filteredRecipients = FilterRecipientAddresses(channel, context.PlatformIdentities);
+            var contentModel = new ContentModel(context.ContentModel, filteredRecipients);
 
-			var communication = await GetChannelCommunicationAsync(channel, internalContext).ConfigureAwait(false);
-			IReadOnlyCollection<IDispatchResult?>? results = null;
-			try
-			{
-				if (!provider.CommunicationType.IsInstanceOfType(communication))
-					return [];
+            var internalContext = new DispatchCommunicationContext(context, channel, provider)
+            {
+                PlatformIdentities = filteredRecipients,
+                ContentModel = contentModel
+            };
 
-				var client = Guard.AgainstNull(await provider.ClientInstance());
-				results = await InvokeCommunicationTypedDispatchAsyncOnClient(provider, internalContext, communication, client, cancellationToken).ConfigureAwait(false);
+            var communication = await GetChannelCommunicationAsync(channel, internalContext).ConfigureAwait(false);
 
-				if (results == null || results.Count == 0)
-					return [];
+            IReadOnlyCollection<IDispatchResult?>? results = null;
+            try
+            {
+                if (!provider.CommunicationType.IsInstanceOfType(communication))
+                    return [];
 
-				return results.Where(r => r != null).Select(r => new DispatchResult(r!, provider.Id, channel.Id)).ToList();
-			}
-			catch (Exception ex)
-			{
-				if (results != null)
-				{
-					var reports = results.Select(r =>
-						new DeliveryReport(
-							DeliveryReport.Event.Error(),
-							internalContext.ChannelId,
-							internalContext.ChannelProviderId,
-							context.PipelineName,
-							r!.ResourceId,
-							r.DispatchStatus,
-							communication,
-							context.ContentModel,
-							r.Exception
-						)
-					).ToList();
-					context.DeliveryReportManager.DispatchReports(reports);
-				}
-				return [new DispatchResult(DispatchStatus.Exception, provider.Id, channel.Id) { Exception = ex }];
-			}
-		}
+                var client = Guard.AgainstNull(await provider.ClientInstance());
+                results = await InvokeCommunicationTypedDispatchAsyncOnClient(provider, internalContext, communication, client, cancellationToken).ConfigureAwait(false);
 
-		protected virtual bool IsPipelineSuccessful(IReadOnlyCollection<IDispatchResult?> allResults)
-		{
-			return allResults
-				.GroupBy(g => g?.ChannelId)
-				.All(a =>
-					a.Any(x => x != null && SuccessfulStatuses.Contains(x.DispatchStatus))
-				);
-		}
+                if (results == null || results.Count == 0)
+                    return [];
 
-		private static async Task<IReadOnlyCollection<IDispatchResult?>> InvokeCommunicationTypedDispatchAsyncOnClient(IChannelProvider provider, IDispatchCommunicationContext internalContext, object communication, IChannelProviderClient client, CancellationToken cancellationToken)
-		{
-			var method = typeof(IChannelProviderClient<>).MakeGenericType(provider.CommunicationType).GetMethod(nameof(IChannelProviderClient.DispatchAsync));
-			Guard.AgainstNull(method);
+                return results.Where(r => r != null).Select(r => new DispatchResult(r!, provider.Id, channel.Id)).ToList();
+            }
+            catch (Exception ex)
+            {
+                if (results != null)
+                {
+                    var reports = results.Select(r =>
+                        new DeliveryReport(
+                            DeliveryReport.Event.Error(),
+                            internalContext.ChannelId,
+                            internalContext.ChannelProviderId,
+                            context.PipelineName,
+                            r!.ResourceId,
+                            r.DispatchStatus,
+                            communication,
+                            contentModel,
+                            r.Exception
+                        )
+                    ).ToList();
+                    context.DeliveryReportManager.DispatchReports(reports);
+                }
+                return [new DispatchResult(DispatchStatus.Exception, provider.Id, channel.Id) { Exception = ex }];
+            }
+        }
 
-			var comm = method.Invoke(client, [communication, internalContext, cancellationToken]);
-			Guard.AgainstNull(comm);
+        protected virtual bool IsPipelineSuccessful(IReadOnlyCollection<IDispatchResult?> allResults)
+        {
+            return allResults
+                .GroupBy(g => g?.ChannelId)
+                .All(a =>
+                    a.Any(x => x != null && SuccessfulStatuses.Contains(x.DispatchStatus))
+                );
+        }
 
-			return await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);
-		}
+        private static async Task<IReadOnlyCollection<IDispatchResult?>> InvokeCommunicationTypedDispatchAsyncOnClient(IChannelProvider provider, IDispatchCommunicationContext internalContext, object communication, IChannelProviderClient client, CancellationToken cancellationToken)
+        {
+            var method = typeof(IChannelProviderClient<>).MakeGenericType(provider.CommunicationType).GetMethod(nameof(IChannelProviderClient.DispatchAsync));
+            Guard.AgainstNull(method);
 
-		private static ReadOnlyCollection<AudienceRecord> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IAudience> audiences)
-		{
-			return audiences.Select(x =>
-			   new AudienceRecord(
-				   x.Addresses.Where(a =>
-						   channel.SupportsAudienceAddress(a) //&& provider.SupportAudienceAddress(a) - this was always true
-					   )
-				   )
-			   ).ToList().AsReadOnly();
-		}
+            var comm = method.Invoke(client, [communication, internalContext, cancellationToken]);
+            Guard.AgainstNull(comm);
 
-		protected virtual async Task<object> GetChannelCommunicationAsync(IChannel channel, IDispatchCommunicationContext context)
-		{
-			return await channel.GenerateCommunicationAsync(context);
-		}
-	}
+            return await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);
+        }
+
+        private static ReadOnlyCollection<PlatformIdentityRecord> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+        {
+            return platformIdentities.Select(x =>
+               new PlatformIdentityRecord(
+                   x.Id,
+                   x.Type,
+                   x.Addresses.Where(a =>
+                           channel.SupportsIdentityAddress(a)
+                       )
+                   )
+               ).ToList().AsReadOnly();
+        }
+
+        protected virtual async Task<object> GetChannelCommunicationAsync(IChannel channel, IDispatchCommunicationContext context)
+        {
+            return await channel.GenerateCommunicationAsync(context);
+        }
+    }
 }

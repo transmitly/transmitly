@@ -15,17 +15,17 @@
 namespace Transmitly.Channel.Email
 {
 	/// <summary>
-	/// Defines the Email specific audience address types
+	/// Defines the Email specific identity address types
 	/// </summary>
-	public static class AudienceAddressPushNotificationExtensions
+	public static class IdentityAddressPushNotificationExtensions
 	{
 #pragma warning disable IDE0060 // Remove unused parameter
 		/// <summary>
 		/// General Email type
 		/// </summary>
-		/// <param name="audienceAddress"></param>
+		/// <param name="identityAddress"></param>
 		/// <returns>Device Token Identifier</returns>
-		public static string Email(this IAudienceAddressType? audienceAddress) => "email";
+		public static string Email(this IIdentityAddressType? identityAddress) => "email";
 
 #pragma warning restore IDE0060 // Remove unused parameter
 	}

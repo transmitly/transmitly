@@ -16,172 +16,211 @@ using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
 using Transmitly.Exceptions;
+using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
+using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
-	public sealed class DefaultCommunicationsClient(
-		IPipelineFactory pipelineRegistrations,
-		IChannelProviderFactory channelProviderRegistrations,
-		ITemplateEngineFactory templateEngineRegistrations,
-		IDeliveryReportReporter deliveryReportHandler
-		//IAudienceResolverRegistrationStore audienceResolvers
-		) :
-		ICommunicationsClient
-	{
-		private readonly IPipelineFactory _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations);
-		private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
-		private readonly ITemplateEngineFactory _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
-		private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
-		//private readonly IAudienceResolverRegistrationStore _audienceResolvers = Guard.AgainstNull(audienceResolvers);
+    public sealed class DefaultCommunicationsClient(
+        IPipelineFactory pipelineRegistrations,
+        IChannelProviderFactory channelProviderRegistrations,
+        ITemplateEngineFactory templateEngineRegistrations,
+        IPersonaFactory personaRegistrations,
+        IPlatformIdentityResolverFactory platformIdentityResolverRegistrations,
+        IDeliveryReportReporter deliveryReportHandler
+        ) :
+        ICommunicationsClient
+    {
+        private readonly IPipelineFactory _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations);
+        private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
+        private readonly ITemplateEngineFactory _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
+        private readonly IPersonaFactory _personaRegistrations = Guard.AgainstNull(personaRegistrations);
+        private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
+        private readonly IPlatformIdentityResolverFactory _platformIdentityResolvers = Guard.AgainstNull(platformIdentityResolverRegistrations);
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudienceAddress> audienceAddresses, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			Guard.AgainstNull(audienceAddresses);
-			//Audience concepts are not available for v1. Eventually this will serve as a way to identify legacy calls to send transactional emails
-			var audience = new AudienceRecord[] {
-				new(audienceAddresses) {
-					Type = "Unknown:" + pipelineName,
-					Id = string.Join(";", audienceAddresses.Select(x => x.Value))
-				}
-			};
-			return await DispatchAsync(pipelineName, audience, contentModel, cultureInfo, cancellationToken).ConfigureAwait(false);
-		}
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        {
+            Guard.AgainstNull(identityAddresses);
+            var platformIdentities = new PlatformIdentityRecord[] {
+                new(null,null,identityAddresses)
+            };
+            return await DispatchAsync(pipelineName, platformIdentities, transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+        }
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string audienceAddress, object contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			Guard.AgainstNullOrWhiteSpace(audienceAddress);
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, object transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        {
+            Guard.AgainstNullOrWhiteSpace(identityAddress);
 
-			return await DispatchAsync(pipelineName, [audienceAddress], contentModel, cultureInfo, cancellationToken).ConfigureAwait(false);
-		}
+            return await DispatchAsync(pipelineName, [identityAddress], transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+        }
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<string> audienceAddresses, object contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			Guard.AgainstNull(audienceAddresses);
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<string> identityAddresses, object transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        {
+            Guard.AgainstNull(identityAddresses);
 
-			return await DispatchAsync(pipelineName, audienceAddresses.Select(x => (IAudienceAddress)new AudienceAddress(x)).ToList(), ContentModel.Create(contentModel), cultureInfo, cancellationToken).ConfigureAwait(false);
-		}
+            return await DispatchAsync(pipelineName, identityAddresses.Select(x => (IIdentityAddress)new IdentityAddress(x)).ToList(), TransactionModel.Create(transactionalModel), cultureInfo, cancellationToken).ConfigureAwait(false);
+        }
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string audienceAddress, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        {
 
-			return await DispatchAsync(pipelineName, new AudienceAddress[] { new(audienceAddress) }, contentModel, cultureInfo, cancellationToken).ConfigureAwait(false);
-		}
+            return await DispatchAsync(pipelineName, new IdentityAddress[] { new(identityAddress) }, transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+        }
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudience> audiences, IContentModel contentModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			return await DispatchAsync(pipelineName, audiences, contentModel, [], cultureInfo, cancellationToken).ConfigureAwait(false);
-		}
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        {
+            return await DispatchAsync(pipelineName, platformIdentities, transactionalModel, [], cultureInfo, cancellationToken).ConfigureAwait(false);
+        }
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudienceAddress> audienceAddresses, IContentModel contentModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			return await DispatchAsync(pipelineName, [audienceAddresses.AsAudience()], contentModel, allowedChannels, cultureInfo, cancellationToken).ConfigureAwait(false);
-		}
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        {
+            return await DispatchAsync(pipelineName, [identityAddresses.AsPlatformIdentity()], transactionalModel, allowedChannels, cultureInfo, cancellationToken).ConfigureAwait(false);
+        }
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IAudience> audiences, IContentModel contentModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			Guard.AgainstNullOrWhiteSpace(pipelineName);
-			Guard.AgainstNull(contentModel);
-			Guard.AgainstNull(audiences);
-			var culture = GuardCulture.AgainstNull(cultureInfo);
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        {
+            Guard.AgainstNullOrWhiteSpace(pipelineName);
+            Guard.AgainstNull(transactionalModel);
+            Guard.AgainstNull(platformIdentities);
 
-			var pipeline = await _pipelineRegistrations.GetAsync(pipelineName).ConfigureAwait(false) ??
-				throw new CommunicationsException($"A communication pipeline named, '{pipelineName}', has not been registered.");
+            var culture = GuardCulture.AgainstNull(cultureInfo);
 
-			var pipelineConfiguration = pipeline.ChannelConfiguration;
+            var pipeline = await _pipelineRegistrations.GetAsync(pipelineName).ConfigureAwait(false) ??
+                throw new CommunicationsException($"A communication pipeline named, '{pipelineName}', has not been registered.");
 
-			var deliveryStrategy = pipeline.ChannelConfiguration.PipelineDeliveryStrategyProvider;
+            var pipelineConfiguration = pipeline.ChannelConfiguration;
 
-			var context = new DispatchCommunicationContext(
-				contentModel,
-				pipelineConfiguration,
-				audiences,
-				_templateEngineRegistrations.Get(),
-				_deliveryReportProvider,
-				culture,
-				pipelineName,
-				pipeline.MessagePriority,
-				pipeline.TransportPriority);
+            if (pipelineConfiguration.PersonaFilters.Count != 0 && !pipelineConfiguration.PersonaFilters.All(pf => _personaRegistrations.AnyMatch(pf, platformIdentities)))
+            {
+                var expected = string.Join(", ", pipelineConfiguration.PersonaFilters);
+                throw new CommunicationsException($"One or more pipeline persona filter criteria were not met. Expected={expected}");
+            }
+
+            var deliveryStrategy = pipeline.ChannelConfiguration.PipelineDeliveryStrategyProvider;
+            var contentModel = new ContentModel(transactionalModel, platformIdentities);
+            var context = new DispatchCommunicationContext(
+                contentModel,
+                pipelineConfiguration,
+                platformIdentities,
+                _templateEngineRegistrations.Get(),
+                _deliveryReportProvider,
+                culture,
+                pipelineName,
+                pipeline.MessagePriority,
+                pipeline.TransportPriority);
 
 
-			var channelProviders = await _channelProviderRegistrations.GetAllAsync().ConfigureAwait(false);
-			var groups = await CreateChannelChannelProviderGroupsAsync(_channelProviderRegistrations, pipelineConfiguration.Channels, channelProviders, allowedChannels, audiences);
-			if (groups.Count == 0)
-				return new DispatchCommunicationResult([], true);
+            var channelProviders = await _channelProviderRegistrations.GetAllAsync().ConfigureAwait(false);
+            var groups = await CreateChannelChannelProviderGroupsAsync(_channelProviderRegistrations, pipelineConfiguration.Channels, channelProviders, allowedChannels, platformIdentities);
+            if (groups.Count == 0)
+                return new DispatchCommunicationResult([], true);
 
-			var result = await deliveryStrategy.DispatchAsync(groups, context, cancellationToken).ConfigureAwait(false);
+            var result = await deliveryStrategy.DispatchAsync(groups, context, cancellationToken).ConfigureAwait(false);
 
-			return result;
-		}
+            return result;
+        }
 
-		private static async Task<IReadOnlyCollection<ChannelChannelProviderGroup>> CreateChannelChannelProviderGroupsAsync(
-			IChannelProviderFactory channelProviderFactory,
-			IReadOnlyCollection<IChannel> configuredChannels,
-			IReadOnlyCollection<IChannelProviderRegistration> allowedChannelProviders,
-			IReadOnlyCollection<string> allowedChannels,
-			IReadOnlyCollection<IAudience> audiences)
-		{
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        {
+            var uniqueTypes = Guard.AgainstNullOrEmpty(identityReferences?.ToList()).Select(s => s.Type).Distinct().ToArray();
 
-			return (await Task.WhenAll(configuredChannels.Select(channel =>
-			{
-				var audienceAddresses = audiences.SelectMany(m => m.Addresses);
-				bool filterClientRegistrations(IChannelProviderClientRegistration clientRegistration)
-				{
-					return clientRegistration
-						.SupportsChannel(channel.Id) &&
-						(
-							clientRegistration.CommunicationType == typeof(object) ||
-							channel.CommunicationType == clientRegistration.CommunicationType
-						) &&
-						audienceAddresses.Any(a => channel.SupportsAudienceAddress(a));
-				}
+            var resolvers = await _platformIdentityResolvers.GetAsync(uniqueTypes).ConfigureAwait(false);
 
-				var channelProviders = allowedChannelProviders.Where(x =>
-							(
-								allowedChannels.Count == 0 ||
-								allowedChannels.Any(a => channel.Id == a)
-							) &&
-							(
-								!channel.AllowedChannelProviderIds.Any() ||
-								channel.AllowedChannelProviderIds.Contains(x.Id)
-							) //&&
-							  //x.ClientRegistrations.Any(filterClients)
-						).SelectMany(providerRegistration =>
-						{
-							return providerRegistration.ClientRegistrations
-							.Where(filterClientRegistrations)
-							.Select(clientRegistration =>
-								new ChannelProviderWrapper(
-									providerRegistration.Id,
-									clientRegistration,
-									async () => await channelProviderFactory.ResolveClientAsync(providerRegistration, clientRegistration)
-								)
-							);
-						})
-						.ToList();
+            List<IPlatformIdentity> results = [];
 
-				return Task.FromResult(new ChannelChannelProviderGroup(
-						channel,
-						channelProviders
-					));
+            foreach (var resolver in resolvers)
+            {
+                var resolverInstance = await _platformIdentityResolvers.ResolveResolver(resolver).ConfigureAwait(false)
+                    ?? throw new CommunicationsException("Unable to get an instance of platform identity resolver");
 
-			})))
-			.Where(x => x.ChannelProviderClients.Count != 0)
-			.ToList();
-		}
+                var filteredByTypeReferences = identityReferences
+                    .Where(x =>
+                        string.IsNullOrEmpty(resolver.PlatformIdentityType) ||
+                        string.Equals(resolver.PlatformIdentityType, x.Type, StringComparison.OrdinalIgnoreCase)
+                    )
+                    .ToList()
+                    .AsReadOnly();
 
-		public void DeliverReport(DeliveryReport report)
-		{
-			Guard.AgainstNull(report);
-			_deliveryReportProvider.DispatchReport(report);
-		}
+                var resolvedIdentities = await resolverInstance.Resolve(filteredByTypeReferences).ConfigureAwait(false);
 
-		public void DeliverReports(IReadOnlyCollection<DeliveryReport> reports)
-		{
-			Guard.AgainstNull(reports);
-			foreach (var report in reports)
-				_deliveryReportProvider.DispatchReport(report);
-		}
-	}
+                if (resolvedIdentities != null)
+                    results.AddRange(resolvedIdentities);
+            }
+
+            return await DispatchAsync(pipelineName, results, transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+        }
+
+        private static async Task<IReadOnlyCollection<ChannelChannelProviderGroup>> CreateChannelChannelProviderGroupsAsync(
+            IChannelProviderFactory channelProviderFactory,
+            IReadOnlyCollection<IChannel> configuredChannels,
+            IReadOnlyCollection<IChannelProviderRegistration> allowedChannelProviders,
+            IReadOnlyCollection<string> allowedChannels,
+            IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+        {
+
+            return (await Task.WhenAll(configuredChannels.Select(channel =>
+            {
+                var identityAddresses = platformIdentities.SelectMany(m => m.Addresses);
+                bool filterClientRegistrations(IChannelProviderClientRegistration clientRegistration)
+                {
+                    return clientRegistration
+                        .SupportsChannel(channel.Id) &&
+                        (
+                            clientRegistration.CommunicationType == typeof(object) ||
+                            channel.CommunicationType == clientRegistration.CommunicationType
+                        ) &&
+                        identityAddresses.Any(a => channel.SupportsIdentityAddress(a));
+                }
+
+                var channelProviders = allowedChannelProviders.Where(x =>
+                            (
+                                allowedChannels.Count == 0 ||
+                                allowedChannels.Any(a => channel.Id == a)
+                            ) &&
+                            (
+                                !channel.AllowedChannelProviderIds.Any() ||
+                                channel.AllowedChannelProviderIds.Contains(x.Id)
+                            ) //&&
+                              //x.ClientRegistrations.Any(filterClients)
+                        ).SelectMany(providerRegistration =>
+                        {
+                            return providerRegistration.ClientRegistrations
+                            .Where(filterClientRegistrations)
+                            .Select(clientRegistration =>
+                                new ChannelProviderWrapper(
+                                    providerRegistration.Id,
+                                    clientRegistration,
+                                    async () => await channelProviderFactory.ResolveClientAsync(providerRegistration, clientRegistration).ConfigureAwait(false)
+                                )
+                            );
+                        })
+                        .ToList();
+
+                return Task.FromResult(new ChannelChannelProviderGroup(
+                        channel,
+                        channelProviders
+                    ));
+
+            })).ConfigureAwait(false))
+            .Where(x => x.ChannelProviderClients.Count != 0)
+            .ToList();
+        }
+
+        public void DeliverReport(DeliveryReport report)
+        {
+            Guard.AgainstNull(report);
+            _deliveryReportProvider.DispatchReport(report);
+        }
+
+        public void DeliverReports(IReadOnlyCollection<DeliveryReport> reports)
+        {
+            Guard.AgainstNull(reports);
+            foreach (var report in reports)
+                _deliveryReportProvider.DispatchReport(report);
+        }
+
+
+    }
 }

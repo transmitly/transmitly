@@ -32,7 +32,7 @@ namespace Transmitly
 		/// <summary>
 		/// The sender address to verify.
 		/// </summary>
-		IAudienceAddress RecipientAddress { get; }
+		IIdentityAddress RecipientAddress { get; }
 		/// <summary>
 		/// Extended extensibility properties.
 		/// </summary>

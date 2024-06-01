@@ -14,17 +14,17 @@
 
 namespace Transmitly
 {
-	public static class AudienceAddressExtensions
-	{
-		public static bool IsType(this IAudienceAddress audienceAddress, string type)
-		{
-			Guard.AgainstNull(audienceAddress);
-			return type.Equals(audienceAddress.Type, StringComparison.OrdinalIgnoreCase);
-		}
+    public static class PlatformIdentityExtensions
 
-		public static T? IfType<T>(this IAudienceAddress audienceAddress, string type, T? value)
-		{
-			return audienceAddress.IsType(type) ? value : default;
-		}
-	}
+    {
+        public static IIdentityAddress AsIdentityAddress(this string address, string? display = null)
+        {
+            return new IdentityAddress(address, display);
+        }
+
+        public static IPlatformIdentity AsPlatformIdentity(this IReadOnlyCollection<IIdentityAddress> identityAddresses)
+        {
+            return new PlatformIdentityRecord(null, null, identityAddresses);
+        }
+    }
 }

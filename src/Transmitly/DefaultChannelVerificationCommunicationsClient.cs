@@ -23,10 +23,10 @@ namespace Transmitly
         private readonly IChannelProviderFactory _channelProviderFactory = Guard.AgainstNull(channelProviderFactory);
         private readonly IChannelVerificationConfiguration _channelVerificationConfiguration = Guard.AgainstNull(channelVerificationConfiguration);
 
-        private ChannelVerificationContext CreateContext(string audienceAddress, string? channelProviderId, string? channelId)
+        private ChannelVerificationContext CreateContext(string identityAddress, string? channelProviderId, string? channelId)
         {
             return new ChannelVerificationContext(
-                audienceAddress.AsAudienceAddress(),
+                identityAddress.AsIdentityAddress(),
                 channelProviderId,
                 channelId,
                 _channelVerificationConfiguration
@@ -47,7 +47,7 @@ namespace Transmitly
                 .AsReadOnly();
         }
 
-        public async Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string audienceAddress, string? channelProviderId, string channelId)
+        public async Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string identityAddress, string? channelProviderId, string channelId)
         {
             var channelProviders = await _channelProviderFactory.GetAllAsync().ConfigureAwait(false);
             var client = channelProviders
@@ -65,15 +65,15 @@ namespace Transmitly
 
             var instance = Guard.AgainstNull(await _channelProviderFactory.ResolveChannelVerificationClientAsync(client));
 
-            return await instance.StartChannelVerificationAsync(CreateContext(audienceAddress, channelProviderId, channelId)).ConfigureAwait(false);
+            return await instance.StartChannelVerificationAsync(CreateContext(identityAddress, channelProviderId, channelId)).ConfigureAwait(false);
         }
 
-        public Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string audienceAddress, string channelId)
+        public Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(string identityAddress, string channelId)
         {
-            return StartChannelVerificationAsync(audienceAddress, null, channelId);
+            return StartChannelVerificationAsync(identityAddress, null, channelId);
         }
 
-        public async Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string audienceAddress, string? channelProviderId, string? channelId, string code, string? token = null)
+        public async Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string identityAddress, string? channelProviderId, string? channelId, string code, string? token = null)
         {
             var channelProviders = await _channelProviderFactory.GetAllAsync().ConfigureAwait(false);
             var client = channelProviders
@@ -91,12 +91,12 @@ namespace Transmitly
 
             var instance = Guard.AgainstNull(await _channelProviderFactory.ResolveChannelVerificationClientAsync(client[0]!).ConfigureAwait(false));
 
-            return await instance.CheckChannelVerificationAsync(CreateContext(audienceAddress, channelProviderId, channelId), code, token).ConfigureAwait(false);
+            return await instance.CheckChannelVerificationAsync(CreateContext(identityAddress, channelProviderId, channelId), code, token).ConfigureAwait(false);
         }
 
-        public Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string audienceAddress, string code, string? token = null)
+        public Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(string identityAddress, string code, string? token = null)
         {
-            return CheckChannelVerificationAsync(audienceAddress, null, null, code, token);
+            return CheckChannelVerificationAsync(identityAddress, null, null, code, token);
         }
     }
 }

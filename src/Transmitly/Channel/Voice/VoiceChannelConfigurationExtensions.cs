@@ -43,7 +43,7 @@ namespace Transmitly
 		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel.</param>
 		/// <param name="fromAddress">Address the communication will appear to be sent from.</param>
 		/// <returns></returns>
-		public static IPipelineChannelConfiguration AddVoice(this IPipelineChannelConfiguration pipelineChannelConfiguration, IAudienceAddress? fromAddress, Action<IVoiceChannel> voiceChannelConfiguration, params string[]? allowedChannelProviders)
+		public static IPipelineChannelConfiguration AddVoice(this IPipelineChannelConfiguration pipelineChannelConfiguration, IIdentityAddress? fromAddress, Action<IVoiceChannel> voiceChannelConfiguration, params string[]? allowedChannelProviders)
 		{
 			Guard.AgainstNull(voiceChannelConfiguration);
 			Guard.AgainstNull(pipelineChannelConfiguration);
@@ -62,7 +62,7 @@ namespace Transmitly
 		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel.</param>
 		/// <param name="fromAddressResolver">Resolves the Address the communication will appear to be sent from.</param>
 		/// <returns></returns>
-		public static IPipelineChannelConfiguration AddVoice(this IPipelineChannelConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IAudienceAddress> fromAddressResolver, Action<IVoiceChannel> voiceChannelConfiguration, params string[]? allowedChannelProviders)
+		public static IPipelineChannelConfiguration AddVoice(this IPipelineChannelConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, Action<IVoiceChannel> voiceChannelConfiguration, params string[]? allowedChannelProviders)
 		{
 			Guard.AgainstNull(voiceChannelConfiguration);
 			Guard.AgainstNull(pipelineChannelConfiguration);

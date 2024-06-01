@@ -19,7 +19,7 @@ namespace Transmitly.Channel.Sms
 	internal class SmsCommunication(IExtendedProperties extendedProperties) : ISms
 	{
 		/// <inheritdoc/>
-		public IAudienceAddress[]? To { get; set; }
+		public IIdentityAddress[]? To { get; set; }
 
 		/// <inheritdoc/>
 		public string? Message { get; set; }
@@ -34,7 +34,7 @@ namespace Transmitly.Channel.Sms
 		public IReadOnlyCollection<IAttachment> Attachments { get; set; } = [];
 
 		/// <inheritdoc/>
-		public IAudienceAddress? From { get; set; }
+		public IIdentityAddress? From { get; set; }
 
 		/// <inheritdoc/>
 		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);

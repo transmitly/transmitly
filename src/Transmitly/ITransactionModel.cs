@@ -14,16 +14,11 @@
 
 namespace Transmitly
 {
-	public static class AudienceExtensions
+    public interface ITransactionModel
 	{
-		public static IAudienceAddress AsAudienceAddress(this string address, string? display = null)
-		{
-			return new AudienceAddress(address, display);
-		}
-
-		public static IAudience AsAudience(this IReadOnlyCollection<IAudienceAddress> audienceAddresses)
-		{
-			return new AudienceRecord(audienceAddresses);
-		}
+		object Model { get; }
+		IReadOnlyList<Resource> Resources { get; }
+		IReadOnlyList<LinkedResource> LinkedResources { get; }
 	}
 }
+

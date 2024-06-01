@@ -12,23 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Tests
+namespace Transmitly
 {
-	[TestClass]
-	public class AudienceAddressTests
-	{
-		[TestMethod]
-		public void AudienceAddressEquality()
-		{
-			var one = new AudienceAddress("test1@transmit.ly", "test");
-			var two = new AudienceAddress("test1@transmit.ly", "Test");
-			var three = new AudienceAddress("test2@transmit.ly", "test");
-			var four = new AudienceAddress("test2@transmit.ly", "Test");
-
-			Assert.IsTrue(one.Equals(one));
-			Assert.IsTrue(one.Equals(two));
-			Assert.IsFalse(one.Equals(three));
-			Assert.IsFalse(one.Equals(four));
-		}
-	}
+    public interface IIdentityReference
+    {
+        string Id { get; }
+        string Type { get; }
+    }
 }

@@ -12,12 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Audience.Configuration
+namespace Transmitly.PlatformIdentity.Configuration
 {
-	/// <summary>
-	/// Resolves an audience object based on an provided audience ID.
-	/// </summary>
-	/// <param name="audienceId">The ID of the audience.</param>
-	/// <returns>The resolved audience or null if not found.</returns>
-	public delegate Task<IAudience?> AudienceResolverHandler(object? audienceId);
+    internal sealed class PlatformIdentityResolverRegistration(Type resolverType, string? platformIdentityType) : IPlatformIdentityResolverRegistration
+    {
+        public string? PlatformIdentityType => platformIdentityType;
+
+        public Type ResolverType => resolverType;
+    }
 }

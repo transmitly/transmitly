@@ -17,51 +17,60 @@ using Transmitly.Delivery;
 
 namespace Transmitly.Pipeline.Configuration
 {
-	///<inheritdoc cref="IPipelineChannelConfiguration"/>
-	internal class DefaultPipelineProviderConfiguration : IPipelineChannelConfiguration
-	{
-		private readonly List<IChannel> _channels = [];
+    ///<inheritdoc cref="IPipelineChannelConfiguration"/>
+    internal class DefaultPipelineProviderConfiguration : IPipelineChannelConfiguration
+    {
+        private readonly List<IChannel> _channels = [];
+        private readonly List<string> _personaFilters = [];
+        /// <inheritdoc />
+        public TransportPriority TransportPriority { get; set; } = TransportPriority.Normal;
 
-		/// <inheritdoc />
-		public TransportPriority TransportPriority { get; set; } = TransportPriority.Normal;
+        /// <inheritdoc />
+        public MessagePriority MessagePriority { get; set; } = MessagePriority.Normal;
 
-		/// <inheritdoc />
-		public MessagePriority MessagePriority { get; set; } = MessagePriority.Normal;
+        /// <inheritdoc />
+        public ICollection<string> BlindCopyIdentityAddresses { get; } = [];
 
-		/// <inheritdoc />
-		public ICollection<string> BlindCopyAudiences { get; } = [];
+        /// <inheritdoc />
+        public ICollection<string> CopyIdentityAddresses { get; } = [];
 
-		/// <inheritdoc />
-		public ICollection<string> CopyAudiences { get; } = [];
+        public IReadOnlyCollection<string> PersonaFilters => _personaFilters.AsReadOnly();
+        /// <inheritdoc />
+        public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
 
-		/// <inheritdoc />
-		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
+        /// <inheritdoc />
+        public IReadOnlyCollection<IChannel> Channels => _channels;
 
-		/// <inheritdoc />
-		public IReadOnlyCollection<IChannel> Channels => _channels;
+        /// <inheritdoc />
+        public void AddChannel(IChannel channel)
+        {
+            _channels.Add(Guard.AgainstNull(channel));
+        }
 
-		/// <inheritdoc />
-		public void AddChannel(IChannel channel)
-		{
-			_channels.Add(Guard.AgainstNull(channel));
-		}
+        /// <inheritdoc />
+        public void BlindCopyIdentityAddress(params string[] platformIdentityType)
+        {
+            Array.ForEach(platformIdentityType, BlindCopyIdentityAddresses.Add);
+        }
 
-		/// <inheritdoc />
-		public void BlindCopyAudience(params string[] audienceType)
-		{
-			Array.ForEach(audienceType, BlindCopyAudiences.Add);
-		}
+        /// <inheritdoc />
+        public void UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider)
+        {
+            PipelineDeliveryStrategyProvider = Guard.AgainstNull(deliveryStrategyProvider);
+        }
 
-		/// <inheritdoc />
-		public void UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider)
-		{
-			PipelineDeliveryStrategyProvider = Guard.AgainstNull(deliveryStrategyProvider);
-		}
+        /// <inheritdoc />
+        public void CopyIdentityAddress(params string[] platformIdentityType)
+        {
+            Array.ForEach(platformIdentityType, CopyIdentityAddresses.Add);
+        }
 
-		/// <inheritdoc />
-		public void CopyAudience(params string[] audienceType)
-		{
-			Array.ForEach(audienceType, CopyAudiences.Add);
-		}
-	}
+        public void AddPersonaFilter(string personaName)
+        {
+            Guard.AgainstNullOrWhiteSpace(personaName);
+
+            if (!_personaFilters.Exists(a => a.Equals(personaName, StringComparison.OrdinalIgnoreCase)))
+                _personaFilters.Add(personaName);
+        }
+    }
 }

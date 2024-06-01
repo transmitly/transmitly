@@ -18,7 +18,7 @@ namespace Transmitly.Channel.Push
 {
 	internal sealed class PushNotificationChannel(IReadOnlyCollection<string>? allowedChannelProviderIds) : IPushNotificationChannel
 	{
-		private static readonly string[] _supportedAddressTypes = [AudienceAddress.Types.DeviceToken(), AudienceAddress.Types.Topic()];
+		private static readonly string[] _supportedAddressTypes = [IdentityAddress.Types.DeviceToken(), IdentityAddress.Types.Topic()];
 
 		public string Id => Transmitly.Id.Channel.PushNotification();
 
@@ -40,14 +40,14 @@ namespace Transmitly.Channel.Push
 			var body = await Body.RenderAsync(communicationContext);
 			var imageUrl = await ImageUrl.RenderAsync(communicationContext);
 
-			var recipients = communicationContext.RecipientAudiences.SelectMany(a => a.Addresses).ToList();
+			var recipients = communicationContext.PlatformIdentities.SelectMany(a => a.Addresses).ToList();
 
 			return new PushNotificationCommunication(recipients, ExtendedProperties, title, body, imageUrl);
 		}
 
-		public bool SupportsAudienceAddress(IAudienceAddress audienceAddress)
+		public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
 		{
-			return _supportedAddressTypes.Contains(audienceAddress.Type);
+			return _supportedAddressTypes.Contains(identityAddress.Type);
 		}
 	}
 }

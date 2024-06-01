@@ -17,7 +17,7 @@ namespace Transmitly.Pipeline.Configuration
 	public interface IPipeline
 	{
 		string PipelineName { get; }
-		string? AudienceTypeIdentifier { get; }
+		string? PlatformIdentityType { get; }
 		string? Category { get; }
 		TransportPriority TransportPriority { get; }
 		MessagePriority MessagePriority { get; }

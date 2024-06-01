@@ -14,90 +14,90 @@
 
 namespace Transmitly.Pipeline.Configuration
 {
-	/// <summary>
-	/// Configuration builder for communication pipelines.
-	/// </summary>
-	public sealed class PipelineConfigurationBuilder
-	{
-		private readonly CommunicationsClientBuilder _communicationsConfiguration;
-		private readonly Action<IPipeline> _addPipeline;
+    /// <summary>
+    /// Configuration builder for communication pipelines.
+    /// </summary>
+    public sealed class PipelineConfigurationBuilder
+    {
+        private readonly CommunicationsClientBuilder _communicationsConfiguration;
+        private readonly Action<IPipeline> _addPipeline;
 
-		/// <summary>
-		/// Creates an instance of <see cref="PipelineConfigurationBuilder"/>.
-		/// </summary>
-		/// <param name="communicationsConfiguration">The configuration builder</param>
-		/// <param name="addPipeline">The action to add a pipeline to the configuration</param>
-		internal PipelineConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IPipeline> addPipeline)
-		{
-			_communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
-			_addPipeline = Guard.AgainstNull(addPipeline);
-		}
+        /// <summary>
+        /// Creates an instance of <see cref="PipelineConfigurationBuilder"/>.
+        /// </summary>
+        /// <param name="communicationsConfiguration">The configuration builder</param>
+        /// <param name="addPipeline">The action to add a pipeline to the configuration</param>
+        internal PipelineConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IPipeline> addPipeline)
+        {
+            _communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
+            _addPipeline = Guard.AgainstNull(addPipeline);
+        }
 
-		/// <summary>
-		/// Adds a pipeline to the communication configuration with the specified name, audience type, category, transport priority, message priority, and options.
-		/// </summary>
-		/// <param name="name">The name of the pipeline</param>
-		/// <param name="category">The category of the pipeline (optional)</param>
-		/// <param name="transportPriority">The transport priority of the pipeline</param>
-		/// <param name="messagePriority">The message priority of the pipeline</param>
-		/// <param name="options">The configuration options for the pipeline</param>
-		/// <returns>The updated communication configuration builder</returns>
-		public CommunicationsClientBuilder Add(string name, /*string? audienceType, */string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineChannelConfiguration> options)
-		{
-			var detailConfig = new DefaultPipelineProviderConfiguration();
-			options(detailConfig);
-			_addPipeline(new PipelineRegistration(detailConfig, name, null,/*audienceType,*/ category, transportPriority, messagePriority));
-			return _communicationsConfiguration;
-		}
+        /// <summary>
+        /// Adds a pipeline to the communication configuration with the specified name, category, transport priority, message priority, and options.
+        /// </summary>
+        /// <param name="name">The name of the pipeline</param>
+        /// <param name="category">The category of the pipeline (optional)</param>
+        /// <param name="transportPriority">The transport priority of the pipeline</param>
+        /// <param name="messagePriority">The message priority of the pipeline</param>
+        /// <param name="options">The configuration options for the pipeline</param>
+        /// <returns>The updated communication configuration builder</returns>
+        public CommunicationsClientBuilder Add(string name, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineChannelConfiguration> options)
+        {
+            var detailConfig = new DefaultPipelineProviderConfiguration();
+            options(detailConfig);
+            _addPipeline(new PipelineRegistration(detailConfig, name, null, category, transportPriority, messagePriority));
+            return _communicationsConfiguration;
+        }
 
-		/// <summary>
-		/// Adds a pipeline to the communication configuration with the specified name, audience type, and category.
-		/// </summary>
-		/// <param name="name">The name of the pipeline</param>
-		/// <param name="category">The category of the pipeline (optional)</param>
-		/// <param name="options">The configuration options for the pipeline</param>
-		/// <returns>The updated communication configuration builder</returns>
-		public CommunicationsClientBuilder Add(string name, /*string audienceType, */string? category, Action<IPipelineChannelConfiguration> options)
-		{
-			return Add(name, /*audienceType, */category, TransportPriority.Normal, MessagePriority.Normal, options);
-		}
+        /// <summary>
+        /// Adds a pipeline to the communication configuration with the specified name, and category.
+        /// </summary>
+        /// <param name="name">The name of the pipeline</param>
+        /// <param name="category">The category of the pipeline (optional)</param>
+        /// <param name="options">The configuration options for the pipeline</param>
+        /// <returns>The updated communication configuration builder</returns>
+        public CommunicationsClientBuilder Add(string name, string? category, Action<IPipelineChannelConfiguration> options)
+        {
+            return Add(name, category, TransportPriority.Normal, MessagePriority.Normal, options);
+        }
 
-		/// <summary>
-		/// Adds a pipeline to the communication configuration with the specified name, audience type, and default category.
-		/// </summary>
-		/// <param name="name">The name of the pipeline</param>
-		/// <param name="options">The configuration options for the pipeline</param>
-		/// <returns>The updated communication configuration builder</returns>
-		public CommunicationsClientBuilder Add(string name, /*string audienceType,*/ Action<IPipelineChannelConfiguration> options)
-		{
-			return Add(name, /*audienceType,*/ null, options);
-		}
+        /// <summary>
+        /// Adds a pipeline to the communication configuration with the specified name, and default category.
+        /// </summary>
+        /// <param name="name">The name of the pipeline</param>
+        /// <param name="options">The configuration options for the pipeline</param>
+        /// <returns>The updated communication configuration builder</returns>
+        public CommunicationsClientBuilder Add(string name, Action<IPipelineChannelConfiguration> options)
+        {
+            return Add(name, null, options);
+        }
 
-		/// <summary>
-		/// Adds a pipeline to the communication configuration with the specified name, audience type, transport priority, message priority, and category.
-		/// </summary>
-		/// <param name="name">The name of the pipeline</param>
-		/// <param name="transportPriority">The transport priority of the pipeline</param>
-		/// <param name="messagePriority">The message priority of the pipeline</param>
-		/// <param name="options">The configuration options for the pipeline</param>
-		/// <returns>The updated communication configuration builder</returns>
-		public CommunicationsClientBuilder Add(string name, /*string? audienceType,*/ TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineChannelConfiguration> options)
-		{
-			return Add(name, null, transportPriority, messagePriority, options);
-		}
+        /// <summary>
+        /// Adds a pipeline to the communication configuration with the specified name, transport priority, message priority, and category.
+        /// </summary>
+        /// <param name="name">The name of the pipeline</param>
+        /// <param name="transportPriority">The transport priority of the pipeline</param>
+        /// <param name="messagePriority">The message priority of the pipeline</param>
+        /// <param name="options">The configuration options for the pipeline</param>
+        /// <returns>The updated communication configuration builder</returns>
+        public CommunicationsClientBuilder Add(string name, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineChannelConfiguration> options)
+        {
+            return Add(name, null, transportPriority, messagePriority, options);
+        }
 
-		/// <summary>
-		/// Adds a pipeline to the configuration by calling the provided module.
-		/// </summary>
-		/// <param name="module"><see cref="PipelineModule"/> to add.</param>
-		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddModule(PipelineModule module)
-		{
-			var config = new DefaultPipelineProviderConfiguration();
-			module.Load(config);
-			_addPipeline(new PipelineRegistration(config, module.Name, null,/*audienceType,*/ module.Category, config.TransportPriority, config.MessagePriority));
-			return _communicationsConfiguration;
-		}
+        /// <summary>
+        /// Adds a pipeline to the configuration by calling the provided module.
+        /// </summary>
+        /// <param name="module"><see cref="PipelineModule"/> to add.</param>
+        /// <returns>The configuration builder.</returns>
+        public CommunicationsClientBuilder AddModule(PipelineModule module)
+        {
+            var config = new DefaultPipelineProviderConfiguration();
+            module.Load(config);
+            _addPipeline(new PipelineRegistration(config, module.Name, null, module.Category, config.TransportPriority, config.MessagePriority));
+            return _communicationsConfiguration;
+        }
 
-	}
+    }
 }

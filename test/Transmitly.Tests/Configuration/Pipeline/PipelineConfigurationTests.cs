@@ -35,15 +35,15 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		}
 
 		[TestMethod]
-		public void BlindCopyAudience_Should_AddAudienceToList()
+		public void BlindCopy_Should_AddIdentityAddressToList()
 		{
 			var configuration = new DefaultPipelineProviderConfiguration();
 
-			configuration.BlindCopyAudience("Audience1", "Audience2");
+			configuration.BlindCopyIdentityAddress("Identity1", "Identity2");
 
-			Assert.AreEqual(2, configuration.BlindCopyAudiences.Count);
-			Assert.IsTrue(configuration.BlindCopyAudiences.Contains("Audience1"));
-			Assert.IsTrue(configuration.BlindCopyAudiences.Contains("Audience2"));
+			Assert.AreEqual(2, configuration.BlindCopyIdentityAddresses.Count);
+			Assert.IsTrue(configuration.BlindCopyIdentityAddresses.Contains("Identity1"));
+			Assert.IsTrue(configuration.BlindCopyIdentityAddresses.Contains("Identity2"));
 		}
 
 		[TestMethod]
@@ -67,15 +67,15 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		}
 
 		[TestMethod]
-		public void CopyAudience_Should_AddAudienceToList()
+		public void Copy_Should_AddIdentityAddressToList()
 		{
 			var configuration = new DefaultPipelineProviderConfiguration();
 
-			configuration.CopyAudience("Audience1", "Audience2");
+			configuration.CopyIdentityAddress("Identity1", "Identity2");
 
-			Assert.AreEqual(2, configuration.CopyAudiences.Count);
-			Assert.IsTrue(configuration.CopyAudiences.Contains("Audience1"));
-			Assert.IsTrue(configuration.CopyAudiences.Contains("Audience2"));
+			Assert.AreEqual(2, configuration.CopyIdentityAddresses.Count);
+			Assert.IsTrue(configuration.CopyIdentityAddresses.Contains("Identity1"));
+			Assert.IsTrue(configuration.CopyIdentityAddresses.Contains("Identity2"));
 		}
 	}
 }

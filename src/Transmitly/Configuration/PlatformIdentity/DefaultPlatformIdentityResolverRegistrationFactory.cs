@@ -12,13 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly.PlatformIdentity.Configuration
 {
-	public interface IAudience
-	{
-		string? Id { get; set; }
-		string? Type { get; set; }
-		IReadOnlyCollection<IAudienceAddress> Addresses { get; set; }
-		IDictionary<string, string> Attributes { get; set; }
-	}
+    /// <summary>
+    /// Default platform identity resolvers factory.
+    /// </summary>
+    public sealed class DefaultPlatformIdentityResolverRegistrationFactory(IEnumerable<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations) : BasePlatformIdentityResolverRegistrationFactory(platformIdentityResolverRegistrations)
+    {
+    }
 }
