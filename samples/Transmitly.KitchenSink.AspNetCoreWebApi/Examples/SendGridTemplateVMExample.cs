@@ -29,7 +29,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						new() { Value = "example@domain.com" },
 					]
 				},
-				Model = new DispatchContentModel()
+				Model = new DispatchTransactionModel()
 			};
 		}
 	}

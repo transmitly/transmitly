@@ -116,7 +116,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					//AddEmail is a channel that is core to the Transmitly library.
 					//AsAudienceAddress() is also a convenience method that helps us create an audience address
 					//Audience addresses can be anything, email, phone, or even a device/app Id for push notifications!
-					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsAudienceAddress("The Transmit.ly group"), email =>
+					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsIdentityAddress("The Transmit.ly group"), email =>
 					{
 						//Transmitly is a bit different. All of our content is supported by templates out of the box.
 						//There are multiple types of templates to get you started. You can even create templates 
@@ -127,7 +127,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					});
 
 					//AddSms is a channel that is core to the Transmitly library.
-					pipeline.AddSms(tlyConfig.DefaultSmsFromAddress.AsAudienceAddress(), sms =>
+					pipeline.AddSms(tlyConfig.DefaultSmsFromAddress.AsIdentityAddress(), sms =>
 					{
 						sms.Message.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
 						//sms.DeliveryReportCallbackUrl = "https://domain.com/communications/channel/provider/update";
@@ -141,7 +141,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					//this is different than MessagePriority. Where MessagePriority indicates the importance to the recipient
 					pipeline.TransportPriority = TransportPriority.High;
 
-					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsAudienceAddress(), email =>
+					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsIdentityAddress(), email =>
 					{
 						email.Subject.AddStringTemplate("Your one time password code");
 						email.HtmlBody.AddStringTemplate("Your code: <strong>{{code}}</strong>");
@@ -168,7 +168,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				})
 				.AddPipeline(PipelineName.AppointmentReminder, pipeline =>
 				{
-					pipeline.AddVoice(tlyConfig.DefaultVoiceFromAddress.AsAudienceAddress(), voice =>
+					pipeline.AddVoice(tlyConfig.DefaultVoiceFromAddress.AsIdentityAddress(), voice =>
 					{
 						voice.Message.AddStringTemplate(
 							"""

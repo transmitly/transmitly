@@ -22,7 +22,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 		public string? PipelineName { get; set; }
 		[Required]
 		public List<DispatchAudience> Recipients { get; set; } = [];
-		public DispatchContentModel ContentModel { get; set; } = new DispatchContentModel();
+		public DispatchTransactionModel TransationModel { get; set; } = new DispatchTransactionModel();
 
 		public string? Culture { get; set; }
 		public List<string> AllowedChannelIds { get; set; } = [];

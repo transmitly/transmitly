@@ -17,23 +17,23 @@ using Transmitly.KitchenSink.AspNetCoreWebApi.Controllers;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
-	public class OtpCodeVMExample : IExamplesProvider<OtpCodeVM>
-	{
-		public OtpCodeVM GetExamples()
-		{
-			return new OtpCodeVM
-			{
-				Code = "12345",
-				CommunicationPreferences = [Id.Channel.Email()],
-				Recipient = new DispatchAudience()
-				{
-					Addresses =
-					[
-						new() { Value = "example@domain.com", Display="Example Display" },
-						new() { Value = "fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", Type=AudienceAddress.Types.DeviceToken() }
-					]
-				}
-			};
-		}
-	}
+    public class OtpCodeVMExample : IExamplesProvider<OtpCodeVM>
+    {
+        public OtpCodeVM GetExamples()
+        {
+            return new OtpCodeVM
+            {
+                Code = "12345",
+                CommunicationPreferences = [Id.Channel.Email()],
+                Recipient = new DispatchAudience()
+                {
+                    Addresses =
+                    [
+                        new() { Value = "example@domain.com", Display="Example Display" },
+                        new() { Value = "fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", Type=IdentityAddress.Types.DeviceToken() }
+                    ]
+                }
+            };
+        }
+    }
 }

@@ -25,7 +25,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			{
 				PipelineName = "first-pipeline",
 				AllowedChannelIds = null,
-				ContentModel = new DispatchContentModel
+				TransationModel = new DispatchTransactionModel
 				{
 					Model = new
 					{
@@ -42,7 +42,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						 Addresses = [
 							new() { Value = "example@domain.com", Display="Example Display" },
 							new() { Value = "+18885551234" },
-							new() { Value = "fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", Type=AudienceAddress.Types.DeviceToken() }
+							new() { Value = "fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", Type=IdentityAddress.Types.DeviceToken() }
 						 ]
 					 }
 				]

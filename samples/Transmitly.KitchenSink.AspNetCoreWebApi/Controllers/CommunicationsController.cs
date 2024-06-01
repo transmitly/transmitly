@@ -41,7 +41,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 			var result = await _communicationsClient.DispatchAsync(
 				PipelineName.OtpCode,
 				[otpCodeVM.Recipient],
-				ContentModel.Create(new { code = otpCodeVM.Code }),
+				TransactionModel.Create(new { code = otpCodeVM.Code }),
 				allowedChannels: allowedChannels);
 
 			return GetActionResult(result);
@@ -56,7 +56,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 			var result = await _communicationsClient.DispatchAsync(
 					Guard.AgainstNullOrWhiteSpace(dispatchVM.PipelineName),
 					dispatchVM.Recipients,
-					dispatchVM.ContentModel,
+					dispatchVM.TransationModel,
 					dispatchVM.AllowedChannelIds,
 					dispatchVM.Culture,
 					cancellationToken
