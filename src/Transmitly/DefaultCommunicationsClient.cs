@@ -122,7 +122,12 @@ namespace Transmitly
             return result;
         }
 
-        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        public Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+        {
+            return DispatchAsync(pipelineName, identityReferences, transactionalModel, [], cultureInfo, cancellationToken);
+        }
+
+        public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedCHannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
         {
             var uniqueTypes = Guard.AgainstNullOrEmpty(identityReferences?.ToList()).Select(s => s.Type).Distinct().ToArray();
 
@@ -149,7 +154,7 @@ namespace Transmitly
                     results.AddRange(resolvedIdentities);
             }
 
-            return await DispatchAsync(pipelineName, results, transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+            return await DispatchAsync(pipelineName, results, transactionalModel, allowedCHannels, cultureInfo, cancellationToken).ConfigureAwait(false);
         }
 
         private static async Task<IReadOnlyCollection<ChannelChannelProviderGroup>> CreateChannelChannelProviderGroupsAsync(
@@ -220,7 +225,5 @@ namespace Transmitly
             foreach (var report in reports)
                 _deliveryReportProvider.DispatchReport(report);
         }
-
-
     }
 }
