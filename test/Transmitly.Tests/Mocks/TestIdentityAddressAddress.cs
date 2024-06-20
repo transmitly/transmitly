@@ -12,13 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+
 namespace Transmitly.Tests
 {
-	internal sealed record TestIdentityAddressAddress(string Value) : IIdentityAddress
-	{
-		public string Value { get; set; } = Guard.AgainstNullOrWhiteSpace(Value);
-		public string? Type { get; set; }
-		//public int Priority { get; set; }
-		public string? Display { get; set; }
-	}
+    internal sealed record TestIdentityAddressAddress(string Value) : IIdentityAddress
+    {
+        public string Value { get; set; } = Guard.AgainstNullOrWhiteSpace(Value);
+        public string? Type { get; set; }
+        public string? Display { get; set; }
+        public IDictionary<string, string?> AddressParts { get; set; } = new Dictionary<string, string?> { { "value", Value }, { "display", null } };
+        public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
+    }
 }
