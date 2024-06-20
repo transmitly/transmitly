@@ -14,11 +14,13 @@
 
 namespace Transmitly
 {
-	public interface IIdentityAddress
-	{
-		string Value { get; set; }
-		string? Display { get; set; }
-		string? Type { get; set; }
-		//int Priority { get; set; }
-	}
+    public interface IIdentityAddress
+    {
+        IDictionary<string, string?> AddressParts { get; set; }
+        IDictionary<string, string?> Attributes { get; set; }
+        string Value { get; set; }
+        string? Display { get; set; }
+        string? Type { get; set; }
+        //int Priority { get; set; }
+    }
 }

@@ -41,6 +41,8 @@ namespace Transmitly.Pipeline.Configuration
         /// <inheritdoc />
         public IReadOnlyCollection<IChannel> Channels => _channels;
 
+        public string? Description { get; set; }
+
         /// <inheritdoc />
         public void AddChannel(IChannel channel)
         {
