@@ -62,6 +62,8 @@ namespace Transmitly.Pipeline.Configuration
         /// <param name="deliveryStrategyProvider">Sending strategy provider</param>
         void UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider);
 
+        string? Description { get; set; }
+
         void AddPersonaFilter(string personaName);
     }
 }
