@@ -45,6 +45,8 @@ dotnet add package Transmitly.ChannelProvider.MailKit
 ### Configure our email
 Now the fun part. In our Startup code we can now define a `pipeline`. Pipelines will give us a lot of flexibility down the road. For now we'll, use one of the MailKit convenient extension methods to keep things simple.
 
+Using Microsoft Dependency Injection? Give the [Transmitly MS DI extension](https://github.com/dotnet/runtime/tree/main/src/libraries/Microsoft.Extensions.DependencyInjection) a go instead of using the builder directly.
+
 ```csharp
 using Transmitly;
 
@@ -59,8 +61,23 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
   options.UserName = "MySMTPUsername";
   options.Password = "MyPassword";
 })
-//We're keeping it simple here, we're going to add a single email named "NewAccountRegisteration"
-.AddEmailMessage("NewAccountRegistration", "noreply@example.com", "Account Created!", "Welcome aboard! Take a look around the <a href=\"https://transmit.ly\">site</a>")
+//Pipelines are the heart of Transmitly. Pipelines allow you to define your communications
+//as a domain action. This allows your domain code to stay agnostic to the details of how you
+//may send out a transactional communication.
+.AddPipeline("WelcomeKit", pipeline =>
+{
+    //AddEmail is a channel that is core to the Transmitly library.
+    //AsIdentityAddress() is also a convenience method that helps us create an audience identity
+    //Identity addresses can be anything, email, phone, or even a device/app Id for push notifications!
+    pipeline.AddEmail("welcome@my.app".AsIdentityAddress("Welcome Committee"), email =>
+    {
+       //Transmitly is a bit different. All of our content is supported by templates out of the box.
+       //There are multiple types of templates to get you started. You can even create templates 
+       //specific to certain cultures! For this example we'll keep things simple and send a static message.
+       email.Subject.AddStringTemplate("Thanks for creating an account!");
+       email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
+       email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
+    });
 //We're done configuring, now we need to create our new communications client
 .BuildClient();
 
@@ -84,7 +101,7 @@ class AccountRegistrationService
     var newAccount = CreateAccount(account);
 
     //Dispatch (Send) our configured email
-    var result = await _communicationsClient.DispatchAsync("NewAccountRegistration", "newAccount@gmail.com", new{});
+    var result = await _communicationsClient.DispatchAsync("WelcomeKit", "newAccount@gmail.com", new{});
 
     if(result.IsSuccessful)
       return newAccount;
