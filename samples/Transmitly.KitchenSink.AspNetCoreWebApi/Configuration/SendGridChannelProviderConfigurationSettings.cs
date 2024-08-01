@@ -11,20 +11,11 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
-using Swashbuckle.AspNetCore.Filters;
-using Transmitly.KitchenSink.AspNetCoreWebApi.Controllers;
 
-namespace Transmitly.KitchenSink.AspNetCoreWebApi
+namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
 {
-    public class SendGridTemplateVMExample : IExamplesProvider<SendGridTemplateVM>
+    public class SendGridChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
     {
-        public SendGridTemplateVM GetExamples()
-        {
-            return new SendGridTemplateVM
-            {
-                Recipient = new DispatchAudience() { Addresses = [new("example@domain.com")] },
-                Model = new DispatchTransactionModel()
-            };
-        }
+        public string? ApiKey { get; set; }
     }
 }

@@ -17,37 +17,37 @@ using Transmitly.KitchenSink.AspNetCoreWebApi.Controllers;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
-	public class DispatchVMExample : IExamplesProvider<DispatchVM>
-	{
-		public DispatchVM GetExamples()
-		{
-			return new DispatchVM
-			{
-				PipelineName = "first-pipeline",
-				AllowedChannelIds = null,
-				TransationModel = new DispatchTransactionModel
-				{
-					Model = new
-					{
-						firstName = "Mit",
-						lastName = "Ly",
-						date = DateTime.UtcNow,
-						amount = 100.11,
-						currency = "$"
-					}
-				},
-				Culture = null,
-				Recipients = [
-					 new(){
-						 Addresses = [
-							new() { Value = "example@domain.com", Display="Example Display" },
-							new() { Value = "+18885551234" },
-							new() { Value = "fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", Type=IdentityAddress.Types.DeviceToken() }
-						 ]
-					 }
-				]
+    public class DispatchVMExample : IExamplesProvider<DispatchVM>
+    {
+        public DispatchVM GetExamples()
+        {
+            return new DispatchVM
+            {
+                PipelineName = "first-pipeline",
+                AllowedChannelIds = null,
+                TransationModel = new DispatchTransactionModel
+                {
+                    Model = new
+                    {
+                        firstName = "Mit",
+                        lastName = "Ly",
+                        date = DateTime.UtcNow,
+                        amount = 100.11,
+                        currency = "$"
+                    }
+                },
+                Culture = null,
+                Recipients = [
+                     new(){
+                         Addresses = [
+                            new("example@domain.com") { Display="Example Display" },
+                            new("+18885551234"),
+                            new("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664") { Type=IdentityAddress.Types.DeviceToken() }
+                         ]
+                     }
+                ]
 
-			};
-		}
-	}
+            };
+        }
+    }
 }

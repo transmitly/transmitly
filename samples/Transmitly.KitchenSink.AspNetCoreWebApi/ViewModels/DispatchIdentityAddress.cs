@@ -12,13 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
-	public class DispatchIdentityAddress : IIdentityAddress
-	{
-		public string Value { get; set; }
-		public string? Display { get; set; }
-		public string? Type { get; set; } = null;
-	}
+    public class DispatchIdentityAddress(string value) : IIdentityAddress
+    {
+        public string Value { get; set; } = value;
+        public string? Display { get; set; }
+        public string? Type { get; set; } = null;
+        public IDictionary<string, string?> AddressParts { get; set; } = new Dictionary<string, string?>();
+        public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
+    }
 }

@@ -29,8 +29,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
                 {
                     Addresses =
                     [
-                        new() { Value = "example@domain.com", Display="Example Display" },
-                        new() { Value = "fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", Type=IdentityAddress.Types.DeviceToken() }
+                        new("example@domain.com") { Display="Example Display" },
+                        new("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664") { Type=IdentityAddress.Types.DeviceToken() }
                     ]
                 }
             };
