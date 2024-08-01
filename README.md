@@ -175,7 +175,7 @@ builder.Services.AddSingleton(communicationsClient);
 ```
 
 ### Next Steps
-_**(coming soon)**_ We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ more value for your entire team. Check out the wiki to learn more about Transmitly's concepts as well as check out our examples to help you get started fast.
+We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ more value for your entire team. [Check out the wiki to learn](https://github.com/transmitly/transmitly/wiki) more about Transmitly's concepts as well as check out our examples to help you get started quickly.
 
 
 <picture>
