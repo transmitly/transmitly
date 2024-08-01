@@ -121,6 +121,58 @@ That's it. But what did we do?
    * No more cluttering up your service constructors with IEmailClient, ISmsClient, etc.
    * This also cleans up having if/else statement littered to manage our user's communication preferences 
 
+
+
+### Changing Channel Providers
+Normally, changing from SMTP with MailKit can be somewhat of an undertaking. With Transmitly it's as easy as adding a your prefered channel provider and configuring. Your channel configuration stays the same. Your domain code stays the same. And things work as you expect.
+
+For the next example we'll start using SendGrid to send our emails. 
+```shell
+dotnet install Transmitly.ChannelProvider.Sendgrid
+```
+
+Next we'll update our configuration. Notice we've removed MailKitSupport and added SendGridSupport. 
+```csharp
+using Transmitly;
+
+//CommunicationsClientBuilder is a fluent way to configure our communication settings and pipline
+ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
+//Transmitly.ChannelProvider.MailKit adds on to the client builder with it's own extensions to make adding setup a breeze
+//.AddMailKitSupport(options =>
+//{
+//  options.Host = "smtp.example.com";
+//  options.Port = 587;
+//  options.UseSsl = true;
+//  options.UserName = "MySMTPUsername";
+//  options.Password = "MyPassword";
+//})
+.AddSendGridSupport(options=>{
+    options.ApiKey = "MySendGridApi";
+})
+//Pipelines are the heart of Transmitly. Pipelines allow you to define your communications
+//as a domain action. This allows your domain code to stay agnostic to the details of how you
+//may send out a transactional communication.
+.AddPipeline("WelcomeKit", pipeline =>
+{
+    //AddEmail is a channel that is core to the Transmitly library.
+    //AsIdentityAddress() is also a convenience method that helps us create an audience identity
+    //Identity addresses can be anything, email, phone, or even a device/app Id for push notifications!
+    pipeline.AddEmail("welcome@my.app".AsIdentityAddress("Welcome Committee"), email =>
+    {
+       //Transmitly is a bit different. All of our content is supported by templates out of the box.
+       //There are multiple types of templates to get you started. You can even create templates 
+       //specific to certain cultures! For this example we'll keep things simple and send a static message.
+       email.Subject.AddStringTemplate("Thanks for creating an account!");
+       email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
+       email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
+    });
+//We're done configuring, now we need to create our new communications client
+.BuildClient();
+
+//In this case, we're using Microsoft.DependencyInjection. We need to register our `ICommunicationsClient` with the service collection
+builder.Services.AddSingleton(communicationsClient);
+```
+
 ### Next Steps
 _**(coming soon)**_ We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ more value for your entire team. Check out the wiki to learn more about Transmitly's concepts as well as check out our examples to help you get started fast.
 
