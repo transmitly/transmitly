@@ -146,7 +146,8 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
 //  options.UserName = "MySMTPUsername";
 //  options.Password = "MyPassword";
 //})
-.AddSendGridSupport(options=>{
+.AddSendGridSupport(options=>
+{
     options.ApiKey = "MySendGridApi";
 })
 //Pipelines are the heart of Transmitly. Pipelines allow you to define your communications
