@@ -3,8 +3,7 @@ on:
   push:
     tags:
     - "v[0-9]+.[0-9]+.[0-9]+"
-env:
-  VERSION: ${{GITHUB_REF_NAME#v}}
+
 jobs:
   windows-build:
     runs-on: windows-latest
@@ -16,14 +15,18 @@ jobs:
         run: |
           git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
           git branch --remote --contains | grep origin/main
+      - name: Set VERSION
+        run: echo "VERSION=${{GITHUB_REF_NAME#v}}" >> $GITHUB_ENV
+      - name: Get VERSION
+        run: echo $VERSION
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
       - name: dotnet
         uses: actions/setup-dotnet@v3
       - name: Build netcore solution
-        run: dotnet build Transmitly.sln --configuration Release -p:AssemblyVersion=$VERSION -p:FileVersion=$VERSION -p:InformationalVersion=$VERSION
+        run: dotnet build Transmitly.sln --configuration Release -p:AssemblyVersion=${{env.VERSION}} -p:FileVersion=${{env.VERSION}} -p:InformationalVersion=${{env.VERSION}}
       - name: Package
-        run: dotnet pack Transmitly.sln --configuration Release --no-build --include-source /p:Version=$VERSION -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+        run: dotnet pack Transmitly.sln --configuration Release --no-build --include-source /p:Version=${{env.VERSION}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
       - name: Publish Nuget
         run: dotnet nuget push .\src\Transmitly\bin\Release\Transmitly.*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
       - name: Add github source
