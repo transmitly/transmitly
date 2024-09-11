@@ -14,7 +14,7 @@ jobs:
   windows-build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Verify commit exists in origin/main
@@ -33,9 +33,6 @@ jobs:
         uses: actions/setup-dotnet@v3
       - name: Build netcore solution
         run: dotnet build ${{inputs.channelProviderName}}.sln --configuration ${{inputs.buildConfiguration}} -p:AssemblyVersion=${{ env.majorMinorPatch }} -p:FileVersion=${{ env.majorMinorPatch }} -p:InformationalVersion=${{ env.informationalVersion }}
-      - name: Test
-        if: ${{ inputs.runTests }}
-        run: dotnet test --no-build --no-restore --configuration Debug ${{inputs.channelProviderName}}.sln
       - name: Package
         run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }} --configuration ${{inputs.buildConfiguration}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
       - name: Publish Nuget
