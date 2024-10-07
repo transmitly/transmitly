@@ -46,7 +46,7 @@ dotnet add package Transmitly.ChannelProvider.MailKit
 ### Configure our email
 Now the fun part. In our Startup code we can now define a `pipeline`. Pipelines will give us a lot of flexibility down the road. For now we'll, use one of the MailKit convenient extension methods to keep things simple.
 
-Using Microsoft Dependency Injection? Give the [Transmitly MS DI extension](https://github.com/dotnet/runtime/tree/main/src/libraries/Microsoft.Extensions.DependencyInjection) a go instead of using the builder directly.
+Using Microsoft Dependency Injection? Give the [Transmitly Microsoft Dependency Injection Library](https://github.com/dotnet/runtime/tree/main/src/libraries/Microsoft.Extensions.DependencyInjection) a go instead of using the builder directly.
 
 ```csharp
 using Transmitly;
