@@ -18,12 +18,33 @@ using Transmitly.ChannelProvider;
 
 namespace Transmitly.Delivery
 {
+    /// <summary>
+    /// Base pipeline delivery strategy provider
+    /// </summary>
     public abstract class BasePipelineDeliveryStrategyProvider
     {
+        /// <summary>
+        /// List of <see cref="DispatchStatus"/> that will evaluate to a successful result.
+        /// </summary>
         protected virtual IReadOnlyCollection<DispatchStatus> SuccessfulStatuses { get; } = [DispatchStatus.Delivered, DispatchStatus.Dispatched, DispatchStatus.Pending];
 
+        /// <summary>
+        /// Dispatches the communications(s) through the provided channel channel provider groups.
+        /// </summary>
+        /// <param name="sendingGroups">Channel/Channel provider groupings.</param>
+        /// <param name="context">Context of the dispatch operation.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Collection of dispatch results.</returns>
         public abstract Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Dispatches the communication(s) through the provided channel and with the provided channel provider.
+        /// </summary>
+        /// <param name="channel">Communication channel.</param>
+        /// <param name="provider">Channel provider used for dispatching.</param>
+        /// <param name="context">Context of the dispatch operation.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Collection of dispatch results.</returns>
         protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, CancellationToken cancellationToken)
         {
             var filteredRecipients = FilterRecipientAddresses(channel, context.PlatformIdentities);
@@ -74,6 +95,11 @@ namespace Transmitly.Delivery
             }
         }
 
+        /// <summary>
+        /// Gets if the pipeline dispatch results are considered successful.
+        /// </summary>
+        /// <param name="allResults">Results to evaluate.</param>
+        /// <returns>Whether the pipeline is considered successful.</returns>
         protected virtual bool IsPipelineSuccessful(IReadOnlyCollection<IDispatchResult?> allResults)
         {
             return allResults
@@ -107,6 +133,12 @@ namespace Transmitly.Delivery
                ).ToList().AsReadOnly();
         }
 
+        /// <summary>
+        /// Gets the communication as rendered by the provided channel.
+        /// </summary>
+        /// <param name="channel">Channel to render the communication with.</param>
+        /// <param name="context">Context of the dispatch operation.</param>
+        /// <returns>Channel communication</returns>
         protected virtual async Task<object> GetChannelCommunicationAsync(IChannel channel, IDispatchCommunicationContext context)
         {
             return await channel.GenerateCommunicationAsync(context);

@@ -19,26 +19,41 @@ namespace Transmitly
 {
 	public static class PipelineDeliveryStrategyConfigurationExtensions
 	{
-		public static void UseFirstMatchPipelineDeliveryStrategy(this IPipelineChannelConfiguration pipelineChannelConfiguration)
+        /// <summary>
+        /// Uses the <see cref="FirstMatchPipelineDeliveryStrategy"/> for the provided pipeline.
+        /// </summary>
+        /// <param name="pipelineChannelConfiguration">The pipeline to configure.</param>
+        public static void UseFirstMatchPipelineDeliveryStrategy(this IPipelineChannelConfiguration pipelineChannelConfiguration)
 		{
 			Guard.AgainstNull(pipelineChannelConfiguration);
 			pipelineChannelConfiguration.UsePipelineDeliveryStrategy(new FirstMatchPipelineDeliveryStrategy());
 		}
-
-		public static void UseAnyMatchPipelineDeliveryStrategy(this IPipelineChannelConfiguration pipelineChannelConfiguration)
+        /// <summary>
+        /// Uses the <see cref="AnyMatchPipelineDeliveryStrategy"/> for the provided pipeline.
+        /// </summary>
+        /// <param name="pipelineChannelConfiguration">The pipeline to configure.</param>
+        public static void UseAnyMatchPipelineDeliveryStrategy(this IPipelineChannelConfiguration pipelineChannelConfiguration)
 		{
 			Guard.AgainstNull(pipelineChannelConfiguration);
 			pipelineChannelConfiguration.UsePipelineDeliveryStrategy(new AnyMatchPipelineDeliveryStrategy());
 		}
 
-		public static void UsePipelineDeliveryStrategy(this IPipelineChannelConfiguration pipelineChannelConfiguration, BasePipelineDeliveryStrategyProvider pipelineDeliveryStrategyProvider)
+        /// <summary>
+        /// Uses the provided <see cref="IPipelineChannelConfiguration"/> delivery strategy provider
+        /// </summary>
+        /// <param name="pipelineChannelConfiguration">The pipeline to configure.</param>
+        /// <param name="pipelineDeliveryStrategyProvider">The delivery strategy provider.</param>
+        public static void UsePipelineDeliveryStrategy(this IPipelineChannelConfiguration pipelineChannelConfiguration, BasePipelineDeliveryStrategyProvider pipelineDeliveryStrategyProvider)
 		{
 			Guard.AgainstNull(pipelineChannelConfiguration);
 			Guard.AgainstNull(pipelineDeliveryStrategyProvider);
 			pipelineChannelConfiguration.UsePipelineDeliveryStrategy(pipelineDeliveryStrategyProvider);
 		}
-
-		public static void UseDefaultPipelineDeliveryStrategy(this IPipelineChannelConfiguration pipelineChannelConfiguration)
+        /// <summary>
+        /// Uses the default strategy provider (<see cref="AnyMatchPipelineDeliveryStrategy"/>)
+        /// </summary>
+        /// <param name="pipelineChannelConfiguration">The pipeline to configure.</param>
+        public static void UseDefaultPipelineDeliveryStrategy(this IPipelineChannelConfiguration pipelineChannelConfiguration)
 		{
 			UseAnyMatchPipelineDeliveryStrategy(pipelineChannelConfiguration);
 		}
