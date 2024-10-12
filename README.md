@@ -82,15 +82,13 @@ class AccountRegistrationService
 
 That's it! You're sending emails like a champ. But you might think that seems like a lot of work compared to a simple IEmail Client. Let's break down what we gained by using Transmitly.
  * Vendor agnostic - We can change channel providers with a simple configuration change
-   * That means when we want to try out Twilio, it's a single change in a single location. :relaxed: 
- * Externalized delivery configuration - The details of our (Email) communications are not cluttering up our code base.
-   * The added benefit is, in the future, we can change it to SendGrid, MailChimp, Infobip or the many other available providers.
- * Externalized message composition - The details of how an email or sms is generated are not scattered throughout your codebase.
-   * In the future we may want to send an SMS and/or push notifications. We can now control that in a single location.
+   * That means when we want to try out SendGrid, Twilio, Infobip or one of the many other services, it's a single change in a single location. :relaxed: 
+ * Delivery configuration - The details of our (Email) communications are not cluttering up our code base.
+ * Message composition - The details of how an email or sms is generated are not scattered throughout your codebase.
+   * In the future we may want to send an SMS and/or push notifications. We can now control that in a single location -- not in our business logic.
  * We can now use a single service/client for all of our communication needs
    * No more cluttering up your service constructors with IEmailClient, ISmsClient, etc.
-   * This also cleans up having if/else statement littered to manage our user's communication preferences
- 
+  
 
 ### Changing Channel Providers
 Want to try out a new service to send out your emails? Twilio? Infobip? With Transmitly it's as easy as adding a your prefered channel provider and a few lines of configuration. In the example below, we'll try out SendGrid.
