@@ -11,8 +11,6 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -51,9 +49,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
                 c.SchemaFilter<SkipExceptionSchemaFilter>();
             });
             builder.Services.AddSwaggerExamplesFromAssemblyOf(typeof(Program));
-
-            //todo: move to AspNetCore.Mvc package
-            builder.Services.AddSingleton<IConfigureOptions<MvcOptions>, ChannelProviderAdaptorModelBinder>();
 
             // The Transmitly.Microsoft.Extensions.DependencyInjection
             // package is used to wire everything up using Microsoft's Dependency injection.
@@ -186,7 +181,10 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
                         //};
                     });
                 });
-            });
+            })
+            //Adds the necessary model binders to handle channel provider specific webhooks
+            //and convert them to delivery reports (Added with package: Transmitly.Microsoft.AspnetCore.Mvc)
+            .AddChannelProviderDeliveryReportModelBinders();
 
             // Check out the Controllers/CommunicationsController.cs for an example of
             // how you can take advantage of everything we've configured here.

@@ -14,6 +14,7 @@
 		<PackageReference Include="Transmitly" Version="0.1.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.MailKit" Version="0.1.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.1.0" />
+		<PackageReference Include="Transmitly.Microsoft.AspnetCore.Mvc" Version="0.1.0-1.90590ba" />
 		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.0" />
 		<PackageReference Include="Transmitly.TemplateEngine.Fluid" Version="0.1.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.1.0" />
