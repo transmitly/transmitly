@@ -12,14 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using EllipticCurve;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.Extensions.Options;
 using System.Globalization;
-using System.Text;
-using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
 

@@ -273,6 +273,9 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
         private static void AddSendGridSupport(CommunicationsClientBuilder tly, TransmitlyConfiguration tlyConfig)
         {
+            // Adding the Transmitly.ChannelProvider.SendGrid package
+            // allows us to add support to our app for Email
+            // through an account with SendGrid. 
             foreach (var sendGridSetting in tlyConfig.ChannelProviders.SendGrid.Where(s => s.IsEnabled))
             {
                 tly.AddSendGridSupport(sendgrid =>
