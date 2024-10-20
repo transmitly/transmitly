@@ -30,7 +30,7 @@ namespace Transmitly.Persona.Configuration
             );
         }
 
-        public virtual bool AnyMatch<TPersona>(string personaName, IReadOnlyCollection<TPersona> personas)
+        public virtual Task<bool> AnyMatch<TPersona>(string personaName, IReadOnlyCollection<TPersona> personas)
             where TPersona : class
         {
             Guard.AgainstNullOrWhiteSpace(personaName);
@@ -40,7 +40,7 @@ namespace Transmitly.Persona.Configuration
                 .Where(x =>
                     x.Name.Equals(personaName, StringComparison.OrdinalIgnoreCase)                    
                 );
-            return regs.Any(r => personas.Any(x => r.IsMatch(x)));
+            return Task.FromResult(regs.Any(r => personas.Any(x => r.IsMatch(x))));
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Transmitly.Channel.Email
 	/// <summary>
 	/// Defines the Email specific identity address types
 	/// </summary>
-	public static class IdentityAddressPushNotificationExtensions
+	public static class IdentityAddressEmailNotificationExtensions
 	{
 #pragma warning disable IDE0060 // Remove unused parameter
 		/// <summary>

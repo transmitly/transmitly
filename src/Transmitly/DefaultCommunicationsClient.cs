@@ -92,7 +92,7 @@ namespace Transmitly
 
             var pipelineConfiguration = pipeline.ChannelConfiguration;
 
-            if (pipelineConfiguration.PersonaFilters.Count != 0 && !pipelineConfiguration.PersonaFilters.All(pf => _personaRegistrations.AnyMatch(pf, platformIdentities)))
+            if (pipelineConfiguration.PersonaFilters.Count != 0 && !await pipelineConfiguration.PersonaFilters.AllAsync(pf => _personaRegistrations.AnyMatch(pf, platformIdentities)))
             {
                 var expected = string.Join(", ", pipelineConfiguration.PersonaFilters);
                 throw new CommunicationsException($"One or more pipeline persona filter criteria were not met. Expected={expected}");

@@ -12,10 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using AutoFixture;
+using Moq;
+using Transmitly.Exceptions;
+using Transmitly.Tests;
+
 namespace Transmitly.Channel.Voice.Tests
 {
     [TestClass]
-    public class VoiceChannelTests
+    public class VoiceChannelTests : BaseUnitTest
     {
         [TestMethod()]
         [DataRow("+14155552671", true)]
@@ -36,6 +41,84 @@ namespace Transmitly.Channel.Voice.Tests
             var sms = new VoiceChannel();
             var result = sms.SupportsIdentityAddress(value.AsIdentityAddress());
             Assert.AreEqual(expected, result, value);
+        }
+
+        [TestMethod]
+        public async Task GenerateCommunicationAsyncShouldGuardAgainstNullContext()
+        {
+            var channel = fixture.Create<VoiceChannel>();
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => channel.GenerateCommunicationAsync(null!));
+        }
+
+        [TestMethod]
+        public async Task GenerateCommunicationAsyncShouldGenerateValidSmsCommunication()
+        {
+            var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+            mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
+            var context = mockContext.Object;
+            var sut = fixture.Create<VoiceChannel>();
+            var body = fixture.Freeze<string>();
+            sut.Message.AddStringTemplate(body);
+
+            var result = await sut.GenerateCommunicationAsync(context);
+
+            Assert.IsInstanceOfType(result, typeof(IVoice));
+            var sms = (IVoice)result;
+            Assert.AreEqual(sut.From, sms.From);
+            Assert.AreEqual(body, sms.Message);
+            Assert.AreEqual(context.TransportPriority, sms.TransportPriority);
+            Assert.AreEqual(sut.DeliveryReportCallbackUrl, sms.DeliveryReportCallbackUrl);
+            Assert.AreEqual(sut.DeliveryReportCallbackUrlResolver, sms.DeliveryReportCallbackUrlResolver);
+            CollectionAssert.AreEquivalent(mockContext.Object.PlatformIdentities.SelectMany(m => m.Addresses).ToArray(), sms.To);
+        }
+
+        [TestMethod]
+        public void ShouldSetProvidedChannelProviderIds()
+        {
+            var list = fixture.Freeze<string[]>();
+            var sut = new VoiceChannel(list);
+            CollectionAssert.AreEquivalent(list, sut.AllowedChannelProviderIds.ToArray());
+        }
+
+        [TestMethod]
+        public void GeneratingCommunicationShouldThrowWithoutMessageTemplate()
+        {
+            var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+            mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
+            var context = mockContext.Object;
+            var sut = fixture.Create<VoiceChannel>();
+            var body = fixture.Freeze<string>();
+
+            Assert.ThrowsExceptionAsync<CommunicationsException>(() => sut.GenerateCommunicationAsync(context));
+        }
+
+        [TestMethod]
+        public void ShouldSetProvidedFromAddress()
+        {
+            var from = fixture.Freeze<IIdentityAddress>();
+            var sut = new VoiceChannel(from);
+            Assert.AreSame(from, sut.From);
+
+            sut = new VoiceChannel(from, fixture.Create<string[]>());
+            Assert.AreSame(from, sut.From);
+        }
+
+        [TestMethod]
+        public async Task ShouldSetProvidedFromAddressResolver()
+        {
+            var from = fixture.Freeze<IIdentityAddress>();
+            var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+            mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
+            var context = mockContext.Object;
+            var body = fixture.Freeze<string>();
+
+
+            var sut = new VoiceChannel((ctx) => from);
+            sut.Message.AddStringTemplate(body);
+            var result = await sut.GenerateCommunicationAsync(context);
+            var sms = (IVoice)result;
+            Assert.AreSame(from, sms.From);
         }
     }
 }

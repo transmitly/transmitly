@@ -1,0 +1,8 @@
+{
+    "stryker-config":
+    {
+        "solution": "Transmitly.sln"    },
+		"ignore-mutations": [
+        "nullcoalescing"
+    ]
+}

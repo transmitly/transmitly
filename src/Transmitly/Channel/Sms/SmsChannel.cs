@@ -19,7 +19,7 @@ using Transmitly.Template.Configuration;
 namespace Transmitly.Channel.Sms
 {
 #if FEATURE_SOURCE_GEN
-	internal sealed partial class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
+    internal sealed partial class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
 #else
     internal sealed class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
 #endif

@@ -14,21 +14,14 @@
 
 using Moq;
 using AutoFixture;
-using AutoFixture.AutoMoq;
 using Transmitly.Exceptions;
+using Transmitly.Tests;
 
 namespace Transmitly.Channel.Sms.Tests
 {
     [TestClass()]
-    public class SmsChannelTests
+    public class SmsChannelTests : BaseUnitTest
     {
-        IFixture _fixture = new Fixture();
-        [TestInitialize]
-        public void Setup()
-        {
-            var config = new AutoMoqCustomization() { ConfigureMembers = true };
-            _fixture = new Fixture().Customize(config);
-        }
 
         [TestMethod()]
         [DataRow("+14155552671", true)]
@@ -55,7 +48,7 @@ namespace Transmitly.Channel.Sms.Tests
         [TestMethod]
         public async Task GenerateCommunicationAsyncShouldGuardAgainstNullContext()
         {
-            var channel = _fixture.Create<SmsChannel>();
+            var channel = fixture.Create<SmsChannel>();
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => channel.GenerateCommunicationAsync(null!));
         }
@@ -63,11 +56,11 @@ namespace Transmitly.Channel.Sms.Tests
         [TestMethod]
         public async Task GenerateCommunicationAsyncShouldGenerateValidSmsCommunication()
         {
-            var mockContext = _fixture.Create<Mock<IDispatchCommunicationContext>>();
+            var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
             mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
             var context = mockContext.Object;
-            var sut = _fixture.Create<SmsChannel>();
-            var body = _fixture.Freeze<string>();
+            var sut = fixture.Create<SmsChannel>();
+            var body = fixture.Freeze<string>();
             sut.Message.AddStringTemplate(body);
 
             var result = await sut.GenerateCommunicationAsync(context);
@@ -85,7 +78,7 @@ namespace Transmitly.Channel.Sms.Tests
         [TestMethod]
         public void ShouldSetProvidedChannelProviderIds()
         {
-            var list = _fixture.Freeze<string[]>();
+            var list = fixture.Freeze<string[]>();
             var sut = new SmsChannel(list);
             CollectionAssert.AreEquivalent(list, sut.AllowedChannelProviderIds.ToArray());
         }
@@ -93,11 +86,11 @@ namespace Transmitly.Channel.Sms.Tests
         [TestMethod]
         public void GeneratingCommunicationShouldThrowWithoutMessageTemplate()
         {
-            var mockContext = _fixture.Create<Mock<IDispatchCommunicationContext>>();
+            var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
             mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
             var context = mockContext.Object;
-            var sut = _fixture.Create<SmsChannel>();
-            var body = _fixture.Freeze<string>();
+            var sut = fixture.Create<SmsChannel>();
+            var body = fixture.Freeze<string>();
 
             Assert.ThrowsExceptionAsync<CommunicationsException>(() => sut.GenerateCommunicationAsync(context));
         }
@@ -105,22 +98,22 @@ namespace Transmitly.Channel.Sms.Tests
         [TestMethod]
         public void ShouldSetProvidedFromAddress()
         {
-            var from = _fixture.Freeze<IIdentityAddress>();
+            var from = fixture.Freeze<IIdentityAddress>();
             var sut = new SmsChannel(from);
             Assert.AreSame(from, sut.From);
 
-            sut = new SmsChannel(from, _fixture.Create<string[]>());
+            sut = new SmsChannel(from, fixture.Create<string[]>());
             Assert.AreSame(from, sut.From);
         }
 
         [TestMethod]
         public async Task ShouldSetProvidedFromAddressResolver()
         {
-            var from = _fixture.Freeze<IIdentityAddress>();
-            var mockContext = _fixture.Create<Mock<IDispatchCommunicationContext>>();
+            var from = fixture.Freeze<IIdentityAddress>();
+            var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
             mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
             var context = mockContext.Object;
-            var body = _fixture.Freeze<string>();
+            var body = fixture.Freeze<string>();
 
 
             var sut = new SmsChannel((ctx) => from);
@@ -133,12 +126,12 @@ namespace Transmitly.Channel.Sms.Tests
         [TestMethod]
         public async Task ContentModelResourceShouldAddSmsAttachment()
         {
-            var from = _fixture.Freeze<IIdentityAddress>();
-            var mockContext = _fixture.Create<Mock<IDispatchCommunicationContext>>();
+            var from = fixture.Freeze<IIdentityAddress>();
+            var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
             var resource = new Resource("res", "ct", new MemoryStream());
             mockContext.Setup(x => x.ContentModel!.Resources).Returns([resource]);
             var context = mockContext.Object;
-            var body = _fixture.Freeze<string>();
+            var body = fixture.Freeze<string>();
             var sut = new SmsChannel();
             sut.Message.AddStringTemplate(body);
 
