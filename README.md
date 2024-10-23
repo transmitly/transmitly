@@ -130,6 +130,44 @@ builder.Services.AddSingleton(communicationsClient);
 
 That's right, we added a new channel provider package. Removed our SMTP/MailKit configuration and added and configured our Send Grid support. Notice that no other code needs to change. Our piplines, channel and more importantly our domain/business logic stays the same. :open_mouth:
 
+### Delivery Reports
+Now that we are dispatching communications, the next questiona along the lines of: how do I log things; how do I store the content; what about status updates from the 3rd party services? All great questions. To start, we'll focus on logging the requests. Our simple example is using the MailKit library. In that case we don't get a lot of visibility into if it was sent. Just that it was dispatched or delivered. Once you move into 3rd party channel providers you start to unlock more fidelity into what is and has happened to your communications. Delivery reports are how you manage these updates in a structured and consistent way across any channel provider or channel. 
+
+```csharp
+using Transmitly;
+
+ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
+.AddSendGridSupport(options=>
+{
+    options.ApiKey = "MySendGridApi";
+})
+.AddDeliveryReportHandler((report) =>
+{
+   logger.LogInformation("[{channelId}:{channelProviderId}:Dispatched] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.ResourceId, JsonSerializer.Serialize(report.ChannelCommunication));
+   return Task.CompletedTask;
+})
+.AddPipeline("WelcomeKit", pipeline =>
+{
+    pipeline.AddEmail("welcome@my.app".AsIdentityAddress("Welcome Committee"), email =>
+    {
+       email.Subject.AddStringTemplate("Thanks for creating an account!");
+       email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
+       email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
+    });
+.BuildClient();
+
+builder.Services.AddSingleton(communicationsClient);
+```
+
+Adding the `AddDeliveryReportHandler` gives us the option of passing in a func that will be executed during different lifecycles of the communicatinos being dispatched. In this case, we're listening to any report for any channel/channel provider. If you'd like a bit more [fine grained control check out the wiki](https://github.com/transmitly/transmitly/wiki/Delivery-Reports#filters) for information on how you can dail in the data you want. Delivery reports are built to give you the most flexability to handle the chnages to communications as part of your communications strategy. With a delivery report you could retry a failed send, notify stakeholders of important messages and more commonly, store the contents of communications being sent.
+
+Note: As mentioened earlier, using 3rd party services usually means you will have asynchronous updates to the status of the communication. In general, most providers will push this information to you in the form of a webhook. Transmitly can help with these webhooks with the Mvc libraries.
+
+Using the Transmitly Mvc libraries you're able to configure all of your channel providers to send to the endpoint you define. Transmitly will manage wrapping the data up and calling your delivery report handlers. [[AspNetCore.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc)] [[AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc)]
+
+
+[See the wiki for more on delivery reports]([wiki/Delivery-Reports](https://github.com/transmitly/transmitly/wiki/Delivery-Reports))
+
 ### Next Steps
 We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ more value for your entire team. [Check out the Kitchen Sink](/samples/Transmitly.KitchenSink.AspNetCoreWebApi) sample to learn more about Transmitly's concepts while we work on improving our [wiki](https://github.com/transmitly/transmitly/wiki).
 
