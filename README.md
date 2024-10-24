@@ -130,6 +130,16 @@ builder.Services.AddSingleton(communicationsClient);
 
 That's right, we added a new channel provider package. Removed our SMTP/MailKit configuration and added and configured our Send Grid support. Notice that no other code needs to change. Our piplines, channel and more importantly our domain/business logic stays the same. :open_mouth:
 
+### Supported Channel Providers
+
+| Channel(s)  | Project | 
+| ------------- | ------------- |
+| Email  | [Transmitly.ChannelProvider.MailKit](https://github.com/transmitly/transmitly-channel-provider-mailkit)  |
+| Email  | [Transmitly.ChannelProvider.SendGrid](https://github.com/transmitly/transmitly-channel-provider-sendgrid)  |
+| Email, Sms, Voice | [Transmitly.ChannelProvider.InfoBip](https://github.com/transmitly/transmitly-channel-provider-infobip)  |
+| Sms, Voice  | [Transmitly.ChannelProvider.Twilio](https://github.com/transmitly/transmitly-channel-provider-twilio)  |
+| Push Notifications  | [Transmitly.ChannelProvider.Firebase](https://github.com/transmitly/transmitly-channel-provider-firebase)  |
+
 ### Delivery Reports
 Now that we are dispatching communications, the next questiona along the lines of: how do I log things; how do I store the content; what about status updates from the 3rd party services? All great questions. To start, we'll focus on logging the requests. Our simple example is using the MailKit library. In that case we don't get a lot of visibility into if it was sent. Just that it was dispatched or delivered. Once you move into 3rd party channel providers you start to unlock more fidelity into what is and has happened to your communications. Delivery reports are how you manage these updates in a structured and consistent way across any channel provider or channel. 
 
@@ -165,27 +175,87 @@ Note: As mentioened earlier, using 3rd party services usually means you will hav
 
 Using the Transmitly Mvc libraries you're able to configure all of your channel providers to send to the endpoint you define. Transmitly will manage wrapping the data up and calling your delivery report handlers. [[AspNetCore.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc)] [[AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc)]
 
-
 [See the wiki for more on delivery reports]([wiki/Delivery-Reports](https://github.com/transmitly/transmitly/wiki/Delivery-Reports))
 
-### Next Steps
-We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ more value for your entire team. [Check out the Kitchen Sink](/samples/Transmitly.KitchenSink.AspNetCoreWebApi) sample to learn more about Transmitly's concepts while we work on improving our [wiki](https://github.com/transmitly/transmitly/wiki).
+### Template Engines
+Templating is not supported out of the box. This is by design to allow you to choose the template engine you prefer, or even futher, integrating a bespoke engine that you'd really like to keep using. As of today, Transmitly has two officially supported template engines; Fluid & Scriban. As with any other feature, it's as simple as adding the template engine to your project. For this example, we'll use Scriban
 
-## Supported Channel Providers
+```bash
+dotnet add Transmitly.TemplateEngines.Scriban
+```
 
-| Channel(s)  | Project | 
-| ------------- | ------------- |
-| Email  | [Transmitly.ChannelProvider.MailKit](https://github.com/transmitly/transmitly-channel-provider-mailkit)  |
-| Email  | [Transmitly.ChannelProvider.SendGrid](https://github.com/transmitly/transmitly-channel-provider-sendgrid)  |
-| Email, Sms, Voice | [Transmitly.ChannelProvider.InfoBip](https://github.com/transmitly/transmitly-channel-provider-infobip)  |
-| Sms, Voice  | [Transmitly.ChannelProvider.Twilio](https://github.com/transmitly/transmitly-channel-provider-twilio)  |
-| Push Notifications  | [Transmitly.ChannelProvider.Firebase](https://github.com/transmitly/transmitly-channel-provider-firebase)  |
+Building upon our example, we can add support by adding the `AddScribanTemplateEngine()`. If you have any Scriban related settings, this is where you can also provide those.
 
-## Supported Template Engines
+Along with adding the template engine, we'll want to update date our email template to actually do some templating
+
+```csharp
+```csharp
+using Transmitly;
+
+ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
+.AddSendGridSupport(options=>
+{
+    options.ApiKey = "MySendGridApi";
+})
+.AddScribanTemplateEngine()
+.AddDeliveryReportHandler((report) =>
+{
+   logger.LogInformation("[{channelId}:{channelProviderId}:Dispatched] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.ResourceId, JsonSerializer.Serialize(report.ChannelCommunication));
+   return Task.CompletedTask;
+})
+.AddPipeline("WelcomeKit", pipeline =>
+{
+    pipeline.AddEmail("welcome@my.app".AsIdentityAddress("Welcome Committee"), email =>
+    {
+       email.Subject.AddStringTemplate("Thanks for creating an account, {{firstName}}!");
+       email.HtmlBody.AddStringTemplate("{{firstName}}, check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
+       email.TextBody.AddStringTemplate("{{firstName}}, check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
+    });
+.BuildClient();
+
+builder.Services.AddSingleton(communicationsClient);
+```
+and we'll also update our Dispatch call to provide a transactional model for the template engine to use.
+
+```csharp
+class AccountRegistrationService
+{
+  private readonly ICommunicationsClient _communicationsClient;
+  public AccountRegistrationService(ICommunicationsClient communicationsClient)
+  {
+    _communicationsClient = communicationsClient;
+  }
+
+  public async Task<Account> RegisterNewAccount(AccountVM account)
+  {
+    //Validate and create the Account
+    var newAccount = CreateAccount(account);
+
+    //Dispatch (Send) our configured email
+    var result = await _communicationsClient.DispatchAsync("WelcomeKit", "newAccount@gmail.com", new { firstName = newAccount.FirstName });
+
+    if(result.IsSuccessful)
+      return newAccount;
+
+    throw Exception("Error sending communication!");
+  }
+}
+```
+
+Another fairly advanced feature takin' care of in a strongly typed and extensible way. In this example, we decided to only add the `firstName` to our model. If we wanted to be even more future proof to template changes, we could have returned the `Account` object or preferably create and used a `Platform Identity Resolver`. Either way, no matter if you are starting from scratch or working around an existing communications strategy, there's an approach that will work for you.
+
+### Supported Template Engines
 | Project |
 | ------------- |
 | [Transmitly.TemplateEngine.Fluid](https://github.com/transmitly/transmitly-template-engine-fluid)  |
 | [Transmitly.TemplateEngine.Scriban](https://github.com/transmitly/transmitly-template-engine-scriban)  |
+
+
+### Next Steps
+We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ more value for your entire team. [Check out the Kitchen Sink](/samples/Transmitly.KitchenSink.AspNetCoreWebApi) sample to learn more about Transmitly's concepts while we work on improving our [wiki](https://github.com/transmitly/transmitly/wiki).
+
+
+
 
 ## Supported Dependency Injection Containers
 |Container |  Project |
