@@ -184,11 +184,8 @@ Templating is not supported out of the box. This is by design to allow you to ch
 dotnet add Transmitly.TemplateEngines.Scriban
 ```
 
-Building upon our example, we can add support by adding the `AddScribanTemplateEngine()`. If you have any Scriban related settings, this is where you can also provide those.
+Building upon our example, we can add support by adding the `AddScribanTemplateEngine()`. Along with adding the template engine, we'll want to update date our email template to actually do some templating
 
-Along with adding the template engine, we'll want to update date our email template to actually do some templating
-
-```csharp
 ```csharp
 using Transmitly;
 
