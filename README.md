@@ -6,7 +6,7 @@ Want to jump right into the code? Take a look at the ["Kitchen Sink" Sample Proj
 
 
 ### Quick Start
-Let's start off where most developers start, sending an email via an SMTP server.
+Let's begin where most developers start, sending an email via an SMTP server.
 In Transmitly, an Email is what we refer to as a `Channel`. A `channel` is the medium of which your communication will be dispatched. Out of the box, Transmitly supports: `Email`, `SMS`, `Voice`, and `Push`. 
 
 ### Add the Transmitly Nuget package to your project
@@ -128,7 +128,7 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
 builder.Services.AddSingleton(communicationsClient);
 ```
 
-That's right, we added a new channel provider package. Removed our SMTP/MailKit configuration and added and configured our Send Grid support. Notice that no other code needs to change. Our piplines, channel and more importantly our domain/business logic stays the same. :open_mouth:
+That's right, we added a new channel provider package. Removed our SMTP/MailKit configuration and added and configured our Send Grid support. You don't need to change any other code. Our piplines, channel and more importantly our domain/business logic stays the same. :open_mouth:
 
 ### Supported Channel Providers
 
