@@ -7,7 +7,7 @@ Want to jump right into the code? Take a look at the ["Kitchen Sink" Sample Proj
 
 ### Quick Start
 Let's begin where most developers start, sending an email via an SMTP server.
-In Transmitly, an Email is what we refer to as a `Channel`. A `channel` is the medium of which your communication will be dispatched. Out of the box, Transmitly supports: `Email`, `SMS`, `Voice`, and `Push`. 
+In Transmitly, an Email is a `Channel`. A `channel` is the medium of which your communication will be dispatched. Out of the box, Transmitly supports `Email`, `SMS`, `Voice`, and `Push`. 
 
 ### Add the Transmitly Nuget package to your project
 ```shell
@@ -17,7 +17,7 @@ dotnet add package Transmitly
 ### Choosing a channel provider
 As mentioned above, we're going to dispatch our Email using an SMTP server. To make this happen in transmitly, you'll add the [MailKit Channel Provider library](https://github.com/transmitly/transmitly-channel-provider-mailkit) to your project.
 
-`Channel Providers` handle the details of how your `channel` communication will be delivered. You can think of a `Channel Provider` as a service like Twilio, Infobip, Firebase or in this case, an SMTP server.
+`Channel Providers` manage the delivery of your `channel` communication. You can think of a `Channel Provider` as a service like Twilio, Infobip, Firebase or in this case, an SMTP server.
 
 ```shell
 dotnet add package Transmitly.ChannelProvider.MailKit
@@ -239,7 +239,7 @@ class AccountRegistrationService
 }
 ```
 
-Another fairly advanced feature takin' care of in a strongly typed and extensible way. In this example, we decided to only add the `firstName` to our model. If we wanted to be even more future proof to template changes, we could have returned the `Account` object or preferably create and used a `Platform Identity Resolver`. Either way, no matter if you are starting from scratch or working around an existing communications strategy, there's an approach that will work for you.
+That's another fairly advanced feature handled in a strongly typed and extensible way. In this example, we only added the `firstName` to our model. If we wanted to be even more future proof to template changes, we could have returned the `Account` object or preferably create and used a `Platform Identity Resolver`. Whether you are starting from scratch or working around an existing communications strategy, there's an approach that will work for you.
 
 ### Supported Template Engines
 | Project |
