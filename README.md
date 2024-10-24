@@ -171,7 +171,7 @@ builder.Services.AddSingleton(communicationsClient);
 
 Adding the `AddDeliveryReportHandler` gives us the option of passing in a func that will be executed during different lifecycles of the communicatinos being dispatched. In this case, we're listening to any report for any channel/channel provider. If you'd like a bit more [fine grained control check out the wiki](https://github.com/transmitly/transmitly/wiki/Delivery-Reports#filters) for information on how you can dail in the data you want. Delivery reports are built to give you the most flexability to handle the chnages to communications as part of your communications strategy. With a delivery report you could retry a failed send, notify stakeholders of important messages and more commonly, store the contents of communications being sent.
 
-Note: As mentioened earlier, using 3rd party services usually means you will have asynchronous updates to the status of the communication. In general, most providers will push this information to you in the form of a webhook. Transmitly can help with these webhooks with the Mvc libraries.
+Note: As mentioned earlier, using 3rd party services usually means you will have asynchronous updates to the status of the communication. In general, most providers will push this information to you in the form of a webhook. Transmitly can help with these webhooks with the Mvc libraries.
 
 Using the Transmitly Mvc libraries you're able to configure all of your channel providers to send to the endpoint you define. Transmitly will manage wrapping the data up and calling your delivery report handlers. [[AspNetCore.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc)] [[AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc)]
 
@@ -251,10 +251,7 @@ Another fairly advanced feature takin' care of in a strongly typed and extensibl
 ### Next Steps
 We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ more value for your entire team. [Check out the Kitchen Sink](/samples/Transmitly.KitchenSink.AspNetCoreWebApi) sample to learn more about Transmitly's concepts while we work on improving our [wiki](https://github.com/transmitly/transmitly/wiki).
 
-
-
-
-## Supported Dependency Injection Containers
+### Supported Dependency Injection Containers
 |Container |  Project |
 | -------- | -------- |
 | Microsoft.Microsoft.Extensions.DependencyInjection | [Transmitly.Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)  |
