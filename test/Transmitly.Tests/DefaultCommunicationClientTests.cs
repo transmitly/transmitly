@@ -20,11 +20,11 @@ using Transmitly.Tests.Integration;
 using Transmitly.Delivery;
 using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Persona.Configuration;
-
+using AutoFixture;
 namespace Transmitly.Tests
 {
     [TestClass]
-    public class DefaultCommunicationClientTests
+    public class DefaultCommunicationClientTests:BaseUnitTest
     {
 
 
@@ -201,6 +201,24 @@ namespace Transmitly.Tests
 #pragma warning disable S2589 // Boolean expressions should not be gratuitous
             Assert.AreEqual(Id.Channel.Voice(), result.Results?.Skip(1)?.First()?.ChannelId);
 #pragma warning restore S2589 // Boolean expressions should not be gratuitous
+        }
+
+        [TestMethod()]
+        public async Task ShouldThrowIfNullIdentityAddressCollection()
+        {
+            var sut = fixture.Create<DefaultCommunicationsClient>();
+            
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                sut.DispatchAsync("test", (IReadOnlyCollection<IIdentityAddress>)null!, null!, null!, CancellationToken.None)
+            );
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                sut.DispatchAsync("test", (string)null!, (object)null!, null, CancellationToken.None)
+            );
+
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                sut.DispatchAsync("test", (string)null!, (object)null!, null, CancellationToken.None)
+            );
         }
     }
 }
