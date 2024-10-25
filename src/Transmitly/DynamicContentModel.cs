@@ -203,7 +203,7 @@ namespace Transmitly
             return _bag.GetEnumerator();
         }
 
-        class InternalGetMemberBinder(string name, bool ignoreCase) : System.Dynamic.GetMemberBinder(name, ignoreCase)
+        class InternalGetMemberBinder(string name, bool ignoreCase) : GetMemberBinder(name, ignoreCase)
         {
             public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject? errorSuggestion)
             {

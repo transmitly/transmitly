@@ -19,10 +19,17 @@ namespace Transmitly
     {
         public static async Task<bool> AllAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> predicate)
         {
+
+#if NET6_0_OR_GREATER
+            ArgumentNullException.ThrowIfNull(nameof(source));
+            ArgumentNullException.ThrowIfNull(nameof(predicate));
+#else
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+#endif
+
             foreach (var item in source)
             {
                 var result = await predicate(item);
@@ -35,10 +42,16 @@ namespace Transmitly
         // This is for synchronous predicates with an async source.
         public static async Task<bool> AllAsync<TSource>(this IEnumerable<Task<TSource>> source, Func<TSource, bool> predicate)
         {
+#if NET6_0_OR_GREATER
+            ArgumentNullException.ThrowIfNull(nameof(source));
+            ArgumentNullException.ThrowIfNull(nameof(predicate));
+#else
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+#endif
+
             foreach (var item in source)
             {
                 var awaitedItem = await item;

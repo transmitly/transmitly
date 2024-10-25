@@ -156,7 +156,7 @@ namespace Transmitly
 
 		T IExtendedProperties.GetValue<T>(string propertyKey, T defaultValue)
 		{
-			return ((IExtendedProperties)this).GetValue<T>(string.Empty, propertyKey, defaultValue);
+			return ((IExtendedProperties)this).GetValue(string.Empty, propertyKey, defaultValue);
 		}
 
 		object? IExtendedProperties.GetValue(string propertyKey)
@@ -166,7 +166,7 @@ namespace Transmitly
 
 		bool IExtendedProperties.TryGetValue<T>(string propertyKey, out T? value) where T : default
 		{
-			return ((IExtendedProperties)this).TryGetValue<T>(string.Empty, propertyKey, out value);
+			return ((IExtendedProperties)this).TryGetValue(string.Empty, propertyKey, out value);
 		}
 
 		void IExtendedProperties.AddOrUpdate(string propertyKey, object? value)

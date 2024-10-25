@@ -27,19 +27,19 @@ namespace Transmitly
     {
         private const string ValueKey = "value";
         private const string DisplayKey = "display";
-        
+
         /// <param name="addressParts"></param>
         /// <param name="attributes"></param>        
-        /// <param name="type">Optional type for this address. See: <see cref="Transmitly.Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.</param>
+        /// <param name="type">Optional type for this address. See: <see cref="Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.</param>
         public IdentityAddress(IDictionary<string, string?> addressParts, IDictionary<string, string?> attributes, string? type = null)
         {
             AddressParts = Guard.AgainstNull(addressParts);
             Attributes = Guard.AgainstNull(attributes);
 
             if(!AddressParts.TryGetValue(ValueKey, out var value))
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one 
+#pragma warning disable S3928,CA2208 // Parameter names used into ArgumentException constructors should match an existing one 
                 throw new ArgumentNullException(ValueKey);
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one 
+#pragma warning restore S3928,CA2208 // Parameter names used into ArgumentException constructors should match an existing one 
             Value = value!;
             
             Type = type;
@@ -51,7 +51,7 @@ namespace Transmitly
         }
 
         /// <summary>
-        /// Types of identity addresses defined by channels. See: <see cref="Transmitly.Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.
+        /// Types of identity addresses defined by channels. See: <see cref="Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.
         /// </summary>
         public readonly static IIdentityAddressType? Types;
 
@@ -93,7 +93,7 @@ namespace Transmitly
         }
 
         /// <summary>
-        /// Gets or sets the type of identity address. See: <see cref="Transmitly.Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.
+        /// Gets or sets the type of identity address. See: <see cref="Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.
         /// </summary>
         public string? Type { get; set; }
 

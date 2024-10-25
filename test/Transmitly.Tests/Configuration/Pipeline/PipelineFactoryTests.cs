@@ -20,15 +20,14 @@ namespace Transmitly.Pipeline.Configuration.Tests
     public class PipelineFactoryTests
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        private Configuration.DefaultPipelineFactory _pipelineRegistrationStore;
+        private DefaultPipelineFactory _pipelineRegistrationStore;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         [TestInitialize]
         public void Initialize()
         {
             var pipelineRegistrations = new List<IPipeline>();
-            var personaRegistrations = new List<IPersonaRegistration>();
-            _pipelineRegistrationStore = new Configuration.DefaultPipelineFactory(pipelineRegistrations);
+            _pipelineRegistrationStore = new DefaultPipelineFactory(pipelineRegistrations);
         }
 
         [TestMethod]

@@ -61,7 +61,7 @@ namespace Transmitly.ChannelProvider.Configuration
 		public ChannelProviderRegistrationBuilder AddChannelVerificationClient(Type clientType, bool isRequired, params string[] supportedChannelIds)
 		{
 			if (!typeof(IChannelVerificationChannelProviderClient).IsAssignableFrom(clientType))
-				throw new Transmitly.Exceptions.CommunicationsException("Provided type must implement " + nameof(IChannelVerificationChannelProviderClient));
+				throw new Exceptions.CommunicationsException("Provided type must implement " + nameof(IChannelVerificationChannelProviderClient));
 
 			var registration = Activator.CreateInstance(typeof(ChannelVerificationClientRegistration<>).MakeGenericType(clientType), isRequired, supportedChannelIds) as IChannelVerificationClientRegistration;
 			_channelVerificationClientRegistrations.Add(Guard.AgainstNull(registration));

@@ -41,7 +41,7 @@ namespace Transmitly.Tests
 
             IReadOnlyCollection<IPlatformIdentity> identities = [new TestPlatformIdentity1(expectedId)];
 
-            IContentModel contentModel = new ContentModel(transModel, identities);
+            ContentModel contentModel = new(transModel, identities);
             dynamic model = contentModel.Model;
             Assert.IsNotNull(contentModel.Model);
             Assert.AreEqual(expectedCode, model.OtpCode);
