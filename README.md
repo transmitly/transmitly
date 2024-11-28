@@ -261,6 +261,6 @@ We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ 
   <img alt="an open-source project sponsored by CiLabs of Code Impressions, LLC" src="https://github.com/transmitly/transmitly/assets/3877248/34239edd-234d-4bee-9352-49d781716364" width="500" align="right">
 </picture> 
 
----------------------------------------------------
+----------------------------------------------------
 
 _Copyright &copy; Code Impressions, LLC - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html)._
