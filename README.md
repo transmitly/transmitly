@@ -15,12 +15,12 @@ dotnet add package Transmitly
 ```
 
 ### Choosing a channel provider
-As mentioned above, we're going to dispatch our Email using an SMTP server. To make this happen in transmitly, you'll add the [MailKit Channel Provider library](https://github.com/transmitly/transmitly-channel-provider-mailkit) to your project.
+As mentioned above, we're going to dispatch our Email using an SMTP server. To make this happen in transmitly, you'll add the [SMTP Channel Provider library](https://github.com/transmitly/transmitly-channel-provider-smtp) to your project.
 
 `Channel Providers` manage the delivery of your `channel` communication. You can think of a `Channel Provider` as a service like Twilio, Infobip, Firebase or in this case, an SMTP server.
 
 ```shell
-dotnet add package Transmitly.ChannelProvider.MailKit
+dotnet add package Transmitly.ChannelProvider.Smtp
 ```
 
 ### Setup a Pipeline
@@ -31,11 +31,10 @@ In other words, you typically start an application by sending a welcome email to
 using Transmitly;
 
 ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
-.AddMailKitSupport(options =>
+.AddSmtpSupport(options =>
 {
   options.Host = "smtp.example.com";
   options.Port = 587;
-  options.UseSsl = true;
   options.UserName = "MySMTPUsername";
   options.Password = "MyPassword";
 })
@@ -98,16 +97,15 @@ For the next example we'll start using SendGrid to send our emails.
 dotnet install Transmitly.ChannelProvider.Sendgrid
 ```
 
-Next we'll update our configuration. Notice we've removed MailKitSupport and added SendGridSupport. 
+Next we'll update our configuration. Notice we've removed SmtpSupport and added SendGridSupport. 
 ```csharp
 using Transmitly;
 
 ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
-//.AddMailKitSupport(options =>
+//.AddSmtpSupport(options =>
 //{
 //  options.Host = "smtp.example.com";
 //  options.Port = 587;
-//  options.UseSsl = true;
 //  options.UserName = "MySMTPUsername";
 //  options.Password = "MyPassword";
 //})
@@ -128,20 +126,20 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
 builder.Services.AddSingleton(communicationsClient);
 ```
 
-That's right, we added a new channel provider package. Removed our SMTP/MailKit configuration and added and configured our Send Grid support. You don't need to change any other code. Our piplines, channel and more importantly our domain/business logic stays the same. :open_mouth:
+That's right, we added a new channel provider package. Removed our SMTP configuration and added and configured our Send Grid support. You don't need to change any other code. Our piplines, channel and more importantly our domain/business logic stays the same. :open_mouth:
 
 ### Supported Channel Providers
 
 | Channel(s)  | Project | 
 | ------------- | ------------- |
-| Email  | [Transmitly.ChannelProvider.MailKit](https://github.com/transmitly/transmitly-channel-provider-mailkit)  |
+| Email  | [Transmitly.ChannelProvider.Smtp](https://github.com/transmitly/transmitly-channel-provider-smtp)  |
 | Email  | [Transmitly.ChannelProvider.SendGrid](https://github.com/transmitly/transmitly-channel-provider-sendgrid)  |
 | Email, Sms, Voice | [Transmitly.ChannelProvider.InfoBip](https://github.com/transmitly/transmitly-channel-provider-infobip)  |
 | Sms, Voice  | [Transmitly.ChannelProvider.Twilio](https://github.com/transmitly/transmitly-channel-provider-twilio)  |
 | Push Notifications  | [Transmitly.ChannelProvider.Firebase](https://github.com/transmitly/transmitly-channel-provider-firebase)  |
 
 ### Delivery Reports
-Now that we are dispatching communications, the next questiona along the lines of: how do I log things; how do I store the content; what about status updates from the 3rd party services? All great questions. To start, we'll focus on logging the requests. Our simple example is using the MailKit library. In that case we don't get a lot of visibility into if it was sent. Just that it was dispatched or delivered. Once you move into 3rd party channel providers you start to unlock more fidelity into what is and has happened to your communications. Delivery reports are how you manage these updates in a structured and consistent way across any channel provider or channel. 
+Now that we are dispatching communications, the next questiona along the lines of: how do I log things; how do I store the content; what about status updates from the 3rd party services? All great questions. To start, we'll focus on logging the requests. Our simple example is using the SMTP library. In that case we don't get a lot of visibility into if it was sent. Just that it was dispatched or delivered. Once you move into 3rd party channel providers you start to unlock more fidelity into what is and has happened to your communications. Delivery reports are how you manage these updates in a structured and consistent way across any channel provider or channel. 
 
 ```csharp
 using Transmitly;
