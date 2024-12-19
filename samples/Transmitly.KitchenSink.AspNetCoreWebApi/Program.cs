@@ -57,7 +57,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
             builder.Services.AddTransmitly(tly =>
             {
                 // Configure channel providers loaded from appsettings.json
-                AddMailKitSupport(tly, tlyConfig);//Email
+                AddSmtpSupport(tly, tlyConfig);//Email
                 AddTwilioSupport(tly, tlyConfig);//Email/SMS
                 AddInfobipSupport(tly, tlyConfig);//Email/Sms/Voice
                 AddFirebaseSupport(tly, tlyConfig);//Push
@@ -152,7 +152,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
                         // handle this communication. In this case, we might want to use our secure
                         // smtp server to send out our OTP codes. Another use-case would be using a schremsII
                         // smtp server to comply with GDRP rules.
-                    });//}, Id.ChannelProvider.MailKit("secure-server"));
+                    });//}, Id.ChannelProvider.Smtp("secure-server"));
 
                     pipeline.AddPushNotification(push =>
                     {
@@ -251,20 +251,20 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
             }
         }
 
-        private static void AddMailKitSupport(CommunicationsClientBuilder tly, TransmitlyConfiguration tlyConfig)
+        private static void AddSmtpSupport(CommunicationsClientBuilder tly, TransmitlyConfiguration tlyConfig)
         {
             foreach (var smtpSetting in tlyConfig.ChannelProviders.Smtp.Where(s => s.IsEnabled))
             {
-                // Adding the Transmitly.ChannelProvider.MailKit package
+                // Adding the Transmitly.ChannelProvider.Smtp package
                 // allows us to add support to our app for Email via SMTP
-                // through the MailKit library. 
-                tly.AddMailKitSupport(mailkit =>
+                // with the MailKit library. 
+                tly.AddSmtpSupport(smtp =>
                 {
-                    mailkit.Host = smtpSetting.Host;
-                    mailkit.UseSsl = smtpSetting.UseSsl;
-                    mailkit.Port = smtpSetting.Port;
-                    mailkit.UserName = smtpSetting.Username;
-                    mailkit.Password = smtpSetting.Password;
+                    smtp.Host = smtpSetting.Host;
+                    smtp.SocketOptions = ChannelProvider.Smtp.Configuration.SecureSocketOptions.Auto;
+                    smtp.Port = smtpSetting.Port;
+                    smtp.UserName = smtpSetting.Username;
+                    smtp.Password = smtpSetting.Password;
                 }, smtpSetting.Id);
             }
         }

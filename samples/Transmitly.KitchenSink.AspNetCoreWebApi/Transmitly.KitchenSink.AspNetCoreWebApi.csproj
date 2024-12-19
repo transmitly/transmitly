@@ -12,7 +12,7 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.1" />
 		<PackageReference Include="Transmitly" Version="0.1.0" />
-		<PackageReference Include="Transmitly.ChannelProvider.MailKit" Version="0.1.0" />
+		<PackageReference Include="Transmitly.ChannelProvider.Smtp"  Version="0.1.0-6.e59e2a0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.1.0" />
 		<PackageReference Include="Transmitly.Microsoft.AspnetCore.Mvc" Version="0.1.0-1.90590ba" />
 		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.0" />
