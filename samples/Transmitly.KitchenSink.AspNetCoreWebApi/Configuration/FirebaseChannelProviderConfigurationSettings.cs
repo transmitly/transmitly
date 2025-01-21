@@ -18,6 +18,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
 {
 	public class FirebaseChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
 	{
-		public AppOptions Options { get; set; } = new AppOptions();
+		public FirebaseOptions Options { get; set; } = new FirebaseOptions();
 	}
 }
