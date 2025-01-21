@@ -1,7 +1,0 @@
-{
-  "Twilio": {
-    "AccountSid": "Your Twilio Account SID",
-    "AuthToken": "Your Twilio Auth Token",
-    "VerificationSid": "Your Verify Service SID"
-  }
-}
