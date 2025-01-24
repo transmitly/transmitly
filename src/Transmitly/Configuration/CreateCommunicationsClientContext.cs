@@ -17,7 +17,6 @@ using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 using Transmitly.Delivery;
-using Transmitly.Verification.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Persona.Configuration;
 
@@ -29,8 +28,7 @@ namespace Transmitly
         IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
         IReadOnlyCollection<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations,
         IReadOnlyCollection<IPersonaRegistration> personaRegistrations,
-        IDeliveryReportReporter deliveryReportProvider,
-        IChannelVerificationConfiguration? channelVerificationConfiguration
+        IDeliveryReportReporter deliveryReportProvider
     ) : ICreateCommunicationsClientContext
     {
         public IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; } = channelProviders;
@@ -44,7 +42,5 @@ namespace Transmitly
         public IReadOnlyCollection<IPersonaRegistration> Personas { get; } = personaRegistrations;
 
         public IDeliveryReportReporter DeliveryReportProvider { get; } = deliveryReportProvider;
-
-        public IChannelVerificationConfiguration? ChannelVerificationConfiguration { get; } = channelVerificationConfiguration;
     }
 }

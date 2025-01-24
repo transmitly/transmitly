@@ -13,34 +13,31 @@
 //  limitations under the License.
 
 using Transmitly.Delivery;
-using Transmitly.Verification;
 
 namespace Transmitly.ChannelProvider.Configuration
 {
 	public sealed class ChannelProviderRegistrationBuilder
 	{
 		private readonly ChannelProviderConfigurationBuilder _communicationsClientBuilder;
-		private readonly List<IChannelProviderClientRegistration> _channelProviderClientRegistrations = [];
+		private readonly List<IChannelProviderDispatcherRegistration> _channelProviderDispatcherRegistrations = [];
 		private readonly List<IDeliveryReportRequestAdaptorRegistration> _channelProviderDeliveryReportRequestAdaptorRegistrations = [];
-		private readonly List<IChannelVerificationClientRegistration> _channelVerificationClientRegistrations = [];
 
-		internal IReadOnlyCollection<IChannelVerificationClientRegistration> ChannelVerificationClientRegistrations => _channelVerificationClientRegistrations.AsReadOnly();
 		internal IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRegistrationAdaptorRegistrations => _channelProviderDeliveryReportRequestAdaptorRegistrations.AsReadOnly();
-		internal IReadOnlyCollection<IChannelProviderClientRegistration> ClientRegistration => _channelProviderClientRegistrations.AsReadOnly();
+		internal IReadOnlyCollection<IChannelProviderDispatcherRegistration> DispatcherRegistration => _channelProviderDispatcherRegistrations.AsReadOnly();
 		internal string ProviderId { get; }
 		internal object? Configuration { get; }
 
-		internal ChannelProviderRegistrationBuilder(ChannelProviderConfigurationBuilder communicationsClientBuilder, string providerId, object? configuration)
+		internal ChannelProviderRegistrationBuilder(ChannelProviderConfigurationBuilder builder, string providerId, object? configuration)
 		{
-			_communicationsClientBuilder = communicationsClientBuilder;
+			_communicationsClientBuilder = builder;
 			ProviderId = providerId;
 			Configuration = configuration;
 		}
 
-		public ChannelProviderRegistrationBuilder AddClient<TClient, TCommunication>(params string[] supportedChannelIds)
-			where TClient : IChannelProviderClient<TCommunication>
+		public ChannelProviderRegistrationBuilder AddDispatcher<TDispatcher, TCommunication>(params string[] supportedChannelIds)
+			where TDispatcher : IChannelProviderDispatcher<TCommunication>
 		{
-			_channelProviderClientRegistrations.Add(new ChannelProviderClientRegistration<TClient, TCommunication>(supportedChannelIds));
+			_channelProviderDispatcherRegistrations.Add(new ChannelProviderDispatcherRegistration<TDispatcher, TCommunication>(supportedChannelIds));
 			return this;
 		}
 
@@ -51,31 +48,9 @@ namespace Transmitly.ChannelProvider.Configuration
 			return this;
 		}
 
-		public ChannelProviderRegistrationBuilder AddChannelVerificationClient<TClient>(object? configuration = null, params string[] supportedChannelIds)
-			where TClient : IChannelVerificationChannelProviderClient
-		{
-			_channelVerificationClientRegistrations.Add(new ChannelVerificationClientRegistration<TClient>(configuration, supportedChannelIds));
-			return this;
-		}
-
-		public ChannelProviderRegistrationBuilder AddChannelVerificationClient(Type clientType, bool isRequired, params string[] supportedChannelIds)
-		{
-			if (!typeof(IChannelVerificationChannelProviderClient).IsAssignableFrom(clientType))
-				throw new Exceptions.CommunicationsException("Provided type must implement " + nameof(IChannelVerificationChannelProviderClient));
-
-			var registration = Activator.CreateInstance(typeof(ChannelVerificationClientRegistration<>).MakeGenericType(clientType), isRequired, supportedChannelIds) as IChannelVerificationClientRegistration;
-			_channelVerificationClientRegistrations.Add(Guard.AgainstNull(registration));
-			return this;
-		}
-
-		public ChannelProviderRegistrationBuilder AddChannelVerificationClient(Type clientType, params string[] supportedChannelIds)
-		{
-			return AddChannelVerificationClient(clientType, false, supportedChannelIds);
-		}
-
 		public void Register()
 		{
-			_communicationsClientBuilder.Add(ProviderId, _channelProviderClientRegistrations, _channelVerificationClientRegistrations, _channelProviderDeliveryReportRequestAdaptorRegistrations, Configuration);
+			_communicationsClientBuilder.Add(ProviderId, _channelProviderDispatcherRegistrations, _channelProviderDeliveryReportRequestAdaptorRegistrations, Configuration);
 		}
 	}
 }

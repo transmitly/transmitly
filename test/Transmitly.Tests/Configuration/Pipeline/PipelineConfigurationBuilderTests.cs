@@ -60,7 +60,7 @@ namespace Transmitly.Pipeline.Configuration.Tests
 				config.TransportPriority = TransportPriority.Lowest;
 			}).Verifiable();
 
-			var builder = new CommunicationsClientBuilder().ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, object>("test-channel-provider");
+			var builder = new CommunicationsClientBuilder().ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, object>("test-channel-provider");
 			var result = builder.AddPipelineModule(module.Object);
 			Assert.IsNotNull(result);
 			Assert.AreSame(builder, result);

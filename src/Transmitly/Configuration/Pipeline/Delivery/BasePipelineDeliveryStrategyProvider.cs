@@ -64,8 +64,8 @@ namespace Transmitly.Delivery
                 if (!provider.CommunicationType.IsInstanceOfType(communication))
                     return [];
 
-                var client = Guard.AgainstNull(await provider.ClientInstance());
-                results = await InvokeCommunicationTypedDispatchAsyncOnClient(provider, internalContext, communication, client, cancellationToken).ConfigureAwait(false);
+                var client = Guard.AgainstNull(await provider.DispatcherInstance());
+                results = await InvokeCommunicationTypedDispatchAsyncOnDispatcher(provider, internalContext, communication, client, cancellationToken).ConfigureAwait(false);
 
                 if (results == null || results.Count == 0)
                     return [];
@@ -109,17 +109,32 @@ namespace Transmitly.Delivery
                 );
         }
 
-        private static async Task<IReadOnlyCollection<IDispatchResult?>> InvokeCommunicationTypedDispatchAsyncOnClient(IChannelProvider provider, IDispatchCommunicationContext internalContext, object communication, IChannelProviderClient client, CancellationToken cancellationToken)
+        /// <summary>
+        /// Executes the DispatchAsync for the matching communication type of the channel provider dispatcher.
+        /// </summary>
+        /// <param name="provider">Channel provider.</param>
+        /// <param name="internalContext">Internal dispatch context.</param>
+        /// <param name="communication">The communication to dispatch.</param>
+        /// <param name="dispatcher">The channel provider dispatcher.</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <returns>Collection of dispatch results.</returns>
+        private static async Task<IReadOnlyCollection<IDispatchResult?>> InvokeCommunicationTypedDispatchAsyncOnDispatcher(IChannelProvider provider, IDispatchCommunicationContext internalContext, object communication, IChannelProviderDispatcher dispatcher, CancellationToken cancellationToken)
         {
-            var method = typeof(IChannelProviderClient<>).MakeGenericType(provider.CommunicationType).GetMethod(nameof(IChannelProviderClient.DispatchAsync));
+            var method = typeof(IChannelProviderDispatcher<>).MakeGenericType(provider.CommunicationType).GetMethod(nameof(IChannelProviderDispatcher.DispatchAsync));
             Guard.AgainstNull(method);
 
-            var comm = method.Invoke(client, [communication, internalContext, cancellationToken]);
+            var comm = method.Invoke(dispatcher, [communication, internalContext, cancellationToken]);
             Guard.AgainstNull(comm);
 
             return await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Filters the available platform identities to those supported by the provided channel.
+        /// </summary>
+        /// <param name="channel">The channel to use for filtering.</param>
+        /// <param name="platformIdentities">Collection of identities to filter.</param>
+        /// <returns>Filtered collection of <see cref="PlatformIdentityRecord"/>.</returns>
         private static ReadOnlyCollection<PlatformIdentityRecord> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
         {
             return platformIdentities.Select(x =>

@@ -28,14 +28,14 @@ namespace Transmitly.Tests
 			configuration.BuildClient();
 			Assert.ThrowsException<InvalidOperationException>(() => configuration.BuildClient());
 		}
-		class Test1 : IChannelProviderClient<object>
+		class Test1 : IChannelProviderDispatcher<object>
 		{
 			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 			{
 				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);
 			}
 		}
-		class Test2 : IChannelProviderClient<UnitTestCommunication>
+		class Test2 : IChannelProviderDispatcher<UnitTestCommunication>
 		{
 			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(UnitTestCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 			{
@@ -48,13 +48,13 @@ namespace Transmitly.Tests
 			}
 		}
 		[TestMethod]
-		public async Task ChannelProviderShouldBeAbleToRegisterMultipleChannelProviderClientsWithSameProviderId()
+		public async Task ChannelProviderShouldBeAbleToRegisterMultipleChannelProviderDispatcherssWithSameProviderId()
 		{
 
 			string ExpectedSendResultMessage = nameof(Test2);
 			const string expectedId = "test";
-			var providerObject = new Mock<IChannelProviderClient<object>>();
-			var providerUnitTest = new Mock<IChannelProviderClient<UnitTestCommunication>>();
+			var providerObject = new Mock<IChannelProviderDispatcher<object>>();
+			var providerUnitTest = new Mock<IChannelProviderDispatcher<UnitTestCommunication>>();
 
 
 			var client = new CommunicationsClientBuilder()
@@ -79,8 +79,8 @@ namespace Transmitly.Tests
 		public async Task PipelineShouldBeSuccessfulIfNoChannelProviderSupportedAndNoDispatchErrors()
 		{
 			const string expectedId = "test";
-			var providerObject = new Mock<IChannelProviderClient<object>>();
-			var providerUnitTest = new Mock<IChannelProviderClient<UnitTestCommunication>>();
+			var providerObject = new Mock<IChannelProviderDispatcher<object>>();
+			var providerUnitTest = new Mock<IChannelProviderDispatcher<UnitTestCommunication>>();
 
 
 			var client = new CommunicationsClientBuilder()
@@ -104,11 +104,11 @@ namespace Transmitly.Tests
 		public async Task PipelineShouldFailIfNoChannelProviderSupportedAndNoDispatchErrors()
 		{
 			const string expectedId = "test";
-			var providerObject = new Mock<IChannelProviderClient<object>>();
-			var providerUnitTest = new Mock<IChannelProviderClient<UnitTestCommunication>>();
+			var providerObject = new Mock<IChannelProviderDispatcher<object>>();
+			var providerUnitTest = new Mock<IChannelProviderDispatcher<UnitTestCommunication>>();
 
 			var client = new CommunicationsClientBuilder()
-				.ChannelProvider.Add<FailChannelProviderClient, object>(expectedId)
+				.ChannelProvider.Add<FailChannelProviderDispatcher, object>(expectedId)
 				.AddPipeline("test", options =>
 				{
 					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("unit-test"));
@@ -125,12 +125,12 @@ namespace Transmitly.Tests
 		public async Task PipelineShouldFallbackToNextChannelProviderSupportedByDefault()
 		{
 			const string expectedId = "test";
-			var providerObject = new Mock<IChannelProviderClient<object>>();
-			var providerUnitTest = new Mock<IChannelProviderClient<UnitTestCommunication>>();
+			var providerObject = new Mock<IChannelProviderDispatcher<object>>();
+			var providerUnitTest = new Mock<IChannelProviderDispatcher<UnitTestCommunication>>();
 
 			var client = new CommunicationsClientBuilder()
-				.ChannelProvider.Add<FailChannelProviderClient, object>(expectedId)
-				.ChannelProvider.Add<SuccessChannelProviderClient, object>("test-2")
+				.ChannelProvider.Add<FailChannelProviderDispatcher, object>(expectedId)
+				.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("test-2")
 				.AddPipeline("test", options =>
 				{
 					options.AddChannel(new UnitTestChannel("unit-test-address").HandlesAddressStartsWith("unit-test"));

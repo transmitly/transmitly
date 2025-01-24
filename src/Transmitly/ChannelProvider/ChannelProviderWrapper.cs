@@ -16,15 +16,15 @@ using Transmitly.ChannelProvider.Configuration;
 
 namespace Transmitly
 {
-	sealed class ChannelProviderWrapper(string channelProviderId, IChannelProviderClientRegistration channelProviderClientRegistration, Func<Task<IChannelProviderClient?>> clientInstance) : IChannelProvider
+	sealed class ChannelProviderWrapper(string channelProviderId, IChannelProviderDispatcherRegistration channelProviderDispatcherRegistration, Func<Task<IChannelProviderDispatcher?>> dispatcherFactoryInstance) : IChannelProvider
 	{
 		public string Id => Guard.AgainstNullOrWhiteSpace(channelProviderId);
 
-		public Func<Task<IChannelProviderClient?>> ClientInstance => Guard.AgainstNull(clientInstance);
+		public Func<Task<IChannelProviderDispatcher?>> DispatcherInstance => Guard.AgainstNull(dispatcherFactoryInstance);
 
-		public Type CommunicationType => channelProviderClientRegistration.CommunicationType;
+		public Type CommunicationType => channelProviderDispatcherRegistration.CommunicationType;
 
 		public bool SupportsChannel(string channel) =>
-			channelProviderClientRegistration.SupportsChannel(channel);
+			channelProviderDispatcherRegistration.SupportsChannel(channel);
 	}
 }

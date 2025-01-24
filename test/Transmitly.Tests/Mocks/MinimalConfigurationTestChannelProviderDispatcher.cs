@@ -14,15 +14,18 @@
 
 using Transmitly.ChannelProvider;
 
-namespace Transmitly.Channel.Configuration
+namespace Transmitly.Tests
 {
-	internal sealed class DefaultChannelProviderClientAdaptor<TCommunication>(IChannelProviderClient<TCommunication> client) : IChannelProviderClient
+	internal sealed class MinimalConfigurationTestChannelProviderDispatcher : IChannelProviderDispatcher<object>
 	{
-		private readonly IChannelProviderClient<TCommunication> _client = Guard.AgainstNull(client);
+		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
 
 		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 		{
-			return _client.DispatchAsync((TCommunication)communication, communicationContext, cancellationToken);
+			var result = new DispatchResult(DispatchStatus.Dispatched, communication.GetType().Name);
+			//result.Messages.Add(ExpectedMessage ?? "Not Set");
+			//_options.OnCommunicationSent(true);
+			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
 		}
 	}
 }

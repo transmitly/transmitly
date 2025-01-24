@@ -16,7 +16,7 @@ using Transmitly.Delivery;
 
 namespace Transmitly.ChannelProvider
 {
-	public abstract class ChannelProviderClient<TCommunication> : IChannelProviderClient<TCommunication>
+	public abstract class ChannelProviderDispatcher<TCommunication> : IChannelProviderDispatcher<TCommunication>
 	{
 		public virtual Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken) =>
 			DispatchAsync((TCommunication)communication, communicationContext, cancellationToken);
