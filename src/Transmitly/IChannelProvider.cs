@@ -20,6 +20,6 @@ namespace Transmitly
 		string Id { get; }
 		bool SupportsChannel(string channel);
 		Type CommunicationType{get; }
-		Func<Task<IChannelProviderClient?>> ClientInstance { get; }
+		Func<Task<IChannelProviderDispatcher?>> DispatcherInstance { get; }
 	}
 }

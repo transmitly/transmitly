@@ -13,7 +13,6 @@
 //  limitations under the License.
 
 using Transmitly.Delivery;
-using Transmitly.Verification;
 
 namespace Transmitly.ChannelProvider.Configuration
 {
@@ -34,7 +33,7 @@ namespace Transmitly.ChannelProvider.Configuration
 			return Task.FromResult(Registrations);
 		}
 
-		public abstract Task<IChannelProviderClient?> ResolveClientAsync(IChannelProviderRegistration channelProvider, IChannelProviderClientRegistration channelProviderClientRegistration);
+		public abstract Task<IChannelProviderDispatcher?> ResolveDispatcherAsync(IChannelProviderRegistration channelProvider, IChannelProviderDispatcherRegistration channelProviderDispatcherRegistration);
 
 		///<inheritdoc/>
 		public abstract Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor);
@@ -45,7 +44,5 @@ namespace Transmitly.ChannelProvider.Configuration
 			var adaptors = _registrations.SelectMany(m => m.DeliveryReportRequestAdaptorRegistrations).ToList().AsReadOnly();
 			return Task.FromResult((IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>)adaptors);
 		}
-
-		public abstract Task<IChannelVerificationChannelProviderClient?> ResolveChannelVerificationClientAsync(IChannelVerificationClientRegistration channelVerificationClientRegistration);
 	}
 }

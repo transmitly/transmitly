@@ -18,12 +18,12 @@ namespace Transmitly.ChannelProvider
 {
 	public sealed class ChannelChannelProviderGroup
 	{
-		internal ChannelChannelProviderGroup(IChannel channel, IReadOnlyCollection<IChannelProvider> channelProviderClients)
+		internal ChannelChannelProviderGroup(IChannel channel, IReadOnlyCollection<IChannelProvider> channelProviderDispatchers)
 		{
 			Channel = Guard.AgainstNull(channel);
-			ChannelProviderClients = Guard.AgainstNull(channelProviderClients);
+			ChannelProviderDispatchers = Guard.AgainstNull(channelProviderDispatchers);
 		}
 		public IChannel Channel { get; }
-		public IReadOnlyCollection<IChannelProvider> ChannelProviderClients { get; }
+		public IReadOnlyCollection<IChannelProvider> ChannelProviderDispatchers { get; }
 	}
 }

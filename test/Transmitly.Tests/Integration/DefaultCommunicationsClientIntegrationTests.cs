@@ -33,7 +33,7 @@ namespace Transmitly.Tests.Integration
 
 
 			var client = new CommunicationsClientBuilder()
-			.ChannelProvider.Add<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>(
+			.ChannelProvider.Add<OptionalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>(
 				ChannelProviderId,
 				ChannelId, ChannelId + "-2"
 			 ).
@@ -75,11 +75,10 @@ namespace Transmitly.Tests.Integration
 			const string PipelineName = "unit-test-pipeline";
 			const string PlatformIdentityType = "unit-test-platform-identity-type-0";
 			const string ChannelProviderId = "unit-test-channel-provider";
-			//const string ExpectedMessage = "Sent Mock Message!";
 			const string ChannelId = "unit-test-channel";
 			IReadOnlyCollection<IIdentityAddress> RecipientAddresses = new IdentityAddress[] { new("unit-test-address-recipient") };
 			string[] SupportedChannels = [ChannelId];
-			//MinimalConfigurationTestChannelProviderClient.ExpectedMessage = ExpectedMessage;
+			
 
 			var client = new CommunicationsClientBuilder()
 				//Channel Provider = Provides the services for a particular channel or channels
@@ -87,7 +86,7 @@ namespace Transmitly.Tests.Integration
 				//   - SendGrid - Email, SMS
 				//   - Twilio - Voice
 				//   - FortuneCookie - Print
-				.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, UnitTestCommunication>(
+				.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>(
 					ChannelProviderId,
 					ChannelId)
 

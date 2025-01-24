@@ -33,7 +33,7 @@ namespace Transmitly.Tests.Identity
             const string PlatformIdentityType = "test-identity";
 
             var builder = new CommunicationsClientBuilder()
-                    .ChannelProvider.Add<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>(
+                    .ChannelProvider.Add<OptionalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>(
                     ChannelProviderId,
                     ChannelId, ChannelId
                  ).

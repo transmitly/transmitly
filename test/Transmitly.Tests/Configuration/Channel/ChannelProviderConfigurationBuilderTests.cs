@@ -45,10 +45,10 @@ namespace Transmitly.Channel.Configuration.Tests
 		[DataRow(null)]
 		public void AddShouldGuardEmptyOrWhitespaceChannelProviderId(string value)
 		{
-			var client = new Mock<IChannelProviderClient<object>>();
+			var dispatcher = new Mock<IChannelProviderDispatcher<object>>();
 			var builder = new CommunicationsClientBuilder();
 			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, fail_addConfirm);
-			Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add(value, client.Object.GetType(), typeof(object)));
+			Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add(value, dispatcher.Object.GetType(), typeof(object)));
 		}
 
 		[TestMethod]
@@ -70,10 +70,10 @@ namespace Transmitly.Channel.Configuration.Tests
 				Assert.IsNotNull(provider);
 				Assert.AreEqual(expectedId, provider.Id);
 			}
-			var client = new Mock<IChannelProviderClient<object>>();
+			var dispatcher = new Mock<IChannelProviderDispatcher<object>>();
 			var builder = new CommunicationsClientBuilder();
 			var providerBuilder = new ChannelProviderConfigurationBuilder(builder, addConfirm);
-			providerBuilder.Add(expectedId, client.Object.GetType(), typeof(object), null);
+			providerBuilder.Add(expectedId, dispatcher.Object.GetType(), typeof(object), null);
 		}
 	}
 }

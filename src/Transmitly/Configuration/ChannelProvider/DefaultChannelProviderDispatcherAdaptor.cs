@@ -12,18 +12,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.ChannelProvider;
 
-namespace Transmitly.ChannelProvider.Configuration
+namespace Transmitly.Channel.Configuration
 {
-	public interface IChannelProviderClientRegistration
+	internal sealed class DefaultChannelProviderDispatcherAdaptor<TCommunication>(IChannelProviderDispatcher<TCommunication> dispatcher) : IChannelProviderDispatcher
 	{
-		Type ClientType { get; }
-		Type CommunicationType { get; }
-		/// <summary>
-		/// Checks if the channel provider client supports the specified channel.
-		/// </summary>
-		/// <param name="channel">The channel to check.</param>
-		/// <returns>True if the channel is supported, otherwise false.</returns>
-		bool SupportsChannel(string channel);
+		private readonly IChannelProviderDispatcher<TCommunication> _dispatcher = Guard.AgainstNull(dispatcher);
+
+		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+		{
+			return _dispatcher.DispatchAsync((TCommunication)communication, communicationContext, cancellationToken);
+		}
 	}
 }

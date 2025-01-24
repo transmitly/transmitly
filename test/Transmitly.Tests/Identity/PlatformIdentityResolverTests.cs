@@ -29,7 +29,7 @@ namespace Transmitly.Tests.Identity
             const string ChannelId = "unit-test-channel";
 
             var builder = new CommunicationsClientBuilder()
-                .ChannelProvider.Add<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>(
+                .ChannelProvider.Add<OptionalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>(
                 ChannelProviderId,
                 ChannelId, ChannelId
              ).

@@ -12,22 +12,18 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider.Configuration
+using Transmitly.ChannelProvider;
+
+namespace Transmitly.Tests.Mocks
 {
-	internal class ChannelProviderClientRegistration<TClient, TCommunication>(params string[]? supportedChannelIds) : IChannelProviderClientRegistration
-		where TClient : IChannelProviderClient<TCommunication>
+	internal sealed class SuccessChannelProviderDispatcher : IChannelProviderDispatcher<object>
 	{
-		public Type ClientType => typeof(TClient);
+		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
 
-		public Type CommunicationType => typeof(TCommunication);
-
-		readonly string[] _supportedChannelIds = supportedChannelIds ?? [];
-
-		public bool SupportsChannel(string channel)
+		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 		{
-			if (_supportedChannelIds.Length == 0)
-				return true;
-			return Array.Exists(_supportedChannelIds, x => x.Equals(channel, StringComparison.InvariantCultureIgnoreCase));
+			var result = new DispatchResult(DispatchStatus.Dispatched);
+			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
 		}
 	}
 }

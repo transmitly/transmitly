@@ -168,13 +168,13 @@ namespace Transmitly
             return (await Task.WhenAll(configuredChannels.Select(channel =>
             {
                 var identityAddresses = platformIdentities.SelectMany(m => m.Addresses);
-                bool filterClientRegistrations(IChannelProviderClientRegistration clientRegistration)
+                bool filterDispatcherRegistrations(IChannelProviderDispatcherRegistration dispatcherRegistration)
                 {
-                    return clientRegistration
+                    return dispatcherRegistration
                         .SupportsChannel(channel.Id) &&
                         (
-                            clientRegistration.CommunicationType == typeof(object) ||
-                            channel.CommunicationType == clientRegistration.CommunicationType
+                            dispatcherRegistration.CommunicationType == typeof(object) ||
+                            channel.CommunicationType == dispatcherRegistration.CommunicationType
                         ) &&
                         identityAddresses.Any(a => channel.SupportsIdentityAddress(a));
                 }
@@ -187,17 +187,16 @@ namespace Transmitly
                             (
                                 !channel.AllowedChannelProviderIds.Any() ||
                                 channel.AllowedChannelProviderIds.Contains(x.Id)
-                            ) //&&
-                              //x.ClientRegistrations.Any(filterClients)
+                            ) 
                         ).SelectMany(providerRegistration =>
                         {
-                            return providerRegistration.ClientRegistrations
-                            .Where(filterClientRegistrations)
-                            .Select(clientRegistration =>
+                            return providerRegistration.DispatcherRegistrations
+                            .Where(filterDispatcherRegistrations)
+                            .Select(dispatcherRegistration =>
                                 new ChannelProviderWrapper(
                                     providerRegistration.Id,
-                                    clientRegistration,
-                                    async () => await channelProviderFactory.ResolveClientAsync(providerRegistration, clientRegistration).ConfigureAwait(false)
+                                    dispatcherRegistration,
+                                    async () => await channelProviderFactory.ResolveDispatcherAsync(providerRegistration, dispatcherRegistration).ConfigureAwait(false)
                                 )
                             );
                         })
@@ -209,7 +208,7 @@ namespace Transmitly
                     ));
 
             })).ConfigureAwait(false))
-            .Where(x => x.ChannelProviderClients.Count != 0)
+            .Where(x => x.ChannelProviderDispatchers.Count != 0)
             .ToList();
         }
 

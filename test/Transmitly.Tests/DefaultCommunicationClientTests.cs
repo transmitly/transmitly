@@ -47,8 +47,8 @@ namespace Transmitly.Tests
             const string ChannelProvider1 = "channel-provider-1";
             const string ChannelId = "unit-test-channel";
             var client = new CommunicationsClientBuilder()
-                    .ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, object>(ChannelProvider0, "unit-test-channel")
-                    .ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, object>(ChannelProvider1, "unit-test-channel")
+                    .ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, object>(ChannelProvider0, "unit-test-channel")
+                    .ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, object>(ChannelProvider1, "unit-test-channel")
                     .AddPipeline("test-pipeline", options =>
                     {
                         options.AddChannel(new UnitTestChannel("c0-from", ChannelId, ChannelProvider0));
@@ -84,13 +84,13 @@ namespace Transmitly.Tests
         }
 
         [TestMethod]
-        public async Task ShouldDispatchUsingCorrectChannelProviderClient()
+        public async Task ShouldDispatchUsingCorrectChannelProviderDispatcher()
         {
             var tly = new CommunicationsClientBuilder();
 
-            tly.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, ISms>("test-channel-provider");
-            tly.ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, IEmail>("test-channel-provider");
-            tly.ChannelProvider.Add<OptionalConfigurationTestChannelProviderClient, UnitTestCommunication>("test-channel-provider");
+            tly.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, ISms>("test-channel-provider");
+            tly.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IEmail>("test-channel-provider");
+            tly.ChannelProvider.Add<OptionalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>("test-channel-provider");
 
             tly.AddPipeline("test-pipeline", options =>
             {
@@ -117,8 +117,8 @@ namespace Transmitly.Tests
             var model = TransactionModel.Create(new { });
 
             var tly = new CommunicationsClientBuilder()
-                .ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, ISms>("sms-provider")
-                .ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, IVoice>("voice-provider")
+                .ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, ISms>("sms-provider")
+                .ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
                 .AddPipeline(PipelineName, options =>
                 {
                     options.AddSms(sms =>
@@ -162,8 +162,8 @@ namespace Transmitly.Tests
             var model = TransactionModel.Create(new { });
 
             var tly = new CommunicationsClientBuilder()
-                .ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, ISms>("sms-provider")
-                .ChannelProvider.Add<MinimalConfigurationTestChannelProviderClient, IVoice>("voice-provider")
+                .ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, ISms>("sms-provider")
+                .ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
                 .AddPipeline(PipelineName, options =>
                 {
                     options.AddSms(sms =>

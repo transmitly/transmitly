@@ -16,7 +16,7 @@ using Transmitly.ChannelProvider;
 
 namespace Transmitly.Tests.Integration
 {
-	internal sealed class OptionalConfigurationTestChannelProviderClient : IChannelProviderClient<UnitTestCommunication>
+	internal sealed class OptionalConfigurationTestChannelProviderDispatcher : IChannelProviderDispatcher<UnitTestCommunication>
 	{
 		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
 

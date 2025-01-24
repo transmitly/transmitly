@@ -21,7 +21,6 @@ using Transmitly.Delivery.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Template.Configuration;
-using Transmitly.Verification.Configuration;
 
 namespace Transmitly
 {
@@ -48,7 +47,6 @@ namespace Transmitly
             PlatformIdentityResolver = new(this, ar => _platformIdentityResolvers.Add(ar));
             TemplateEngine = new(this, te => _templateEngines.Add(te));
             DeliveryReport = new(this);
-            ChannelVerification = new(this);
             Persona = new(this, pf => _personaRegistrations.Add(pf));
         }
 
@@ -76,11 +74,6 @@ namespace Transmitly
         /// Gets the delivery report configuration builder.
         /// </summary>
         public DeliveryReportConfigurationBuilder DeliveryReport { get; }
-
-        /// <summary>
-        /// Gets the sender verification configuration builder.
-        /// </summary>
-        public ChannelVerificationConfigurationBuilder ChannelVerification { get; }
 
         /// <summary>
         /// Gets the persona configuration builder.
@@ -190,11 +183,6 @@ namespace Transmitly
             return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
         }
 
-        public CommunicationsClientBuilder AddChannelVerificationSupport(Action<IChannelVerificationConfiguration> configure)
-        {
-            return ChannelVerification.Configure(configure);
-        }
-
         /// <summary>
         /// Adds a platform identity resolver to the configuration.
         /// </summary>
@@ -233,8 +221,7 @@ namespace Transmitly
                     _templateEngines,
                     _platformIdentityResolvers,
                     _personaRegistrations,
-                    deliveryReportProvider,
-                    ChannelVerification.Configuration
+                    deliveryReportProvider
                 )
             );
 

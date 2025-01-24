@@ -12,12 +12,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Verification
+using Transmitly.ChannelProvider;
+
+namespace Transmitly.Tests.Mocks
 {
-    public interface IChannelVerificationStatusResult
-    {
-        bool? IsVerified { get; }
-        string? ChannelId { get; }
-        string? ChannelProviderId { get; }
-    }
+	internal sealed class NullChannelProviderDispatcher : IChannelProviderDispatcher
+	{
+		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
+
+		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+		{
+			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);
+		}
+	}
 }

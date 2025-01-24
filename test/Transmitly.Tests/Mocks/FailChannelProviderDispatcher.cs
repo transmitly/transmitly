@@ -12,11 +12,18 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Verification
+using Transmitly.ChannelProvider;
+
+namespace Transmitly.Tests.Mocks
 {
-    public abstract class BaseChannelVerificationChannelProviderClient : IChannelVerificationChannelProviderClient
+	internal sealed class FailChannelProviderDispatcher : IChannelProviderDispatcher<object>
 	{
-		public abstract Task<IChannelVerificationValidationResult> CheckChannelVerificationAsync(IChannelVerificationContext channelVerificationContext, string code, string? token = null);
-		public abstract Task<IReadOnlyCollection<IStartChannelVerificationResult>> StartChannelVerificationAsync(IChannelVerificationContext channelVerificationContext);
+		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
+
+		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+		{
+			var result = new DispatchResult(DispatchStatus.Exception);
+			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
+		}
 	}
 }
