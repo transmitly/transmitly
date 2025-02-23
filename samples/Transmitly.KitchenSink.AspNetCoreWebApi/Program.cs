@@ -146,7 +146,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
                         // We can use the extended properties provided by the SendGrid channel provider.
                         // This way we ensure that if the SendGrid channel provider is used for this channel, we'll use the template id.
                         // if we happen to fallback or even remove SendGrid, we can gracefully fallback to our content defined above. Neat!
-                        //email.SendGrid().TemplateId = "d-89ae21e8ebed491380ed580f30e0b052";
+                        email.SendGrid().TemplateId = "d-89ae21e8ebed491380ed580f30e0b052";
 
                         // While not required, we can specify channel providers that are allowed to 
                         // handle this communication. In this case, we might want to use our secure
