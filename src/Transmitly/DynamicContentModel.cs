@@ -68,7 +68,7 @@ namespace Transmitly
 
             _bag.Add(TransactionPropertyKey, model);
 
-            foreach (var property in model.GetType().GetProperties())
+            foreach (var property in model.GetType().GetProperties().Where(p => p?.GetIndexParameters()?.Length == 0))
             {
                 if (!_bag.ContainsKey(property.Name))
                     _bag.Add(property.Name, property.GetValue(model));

@@ -12,6 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Tests.Mocks;
+
 namespace Transmitly.Tests
 {
     [TestClass]
@@ -55,6 +57,14 @@ namespace Transmitly.Tests
             Assert.AreEqual(expectedId, model.aud[0].Id);
         }
 
-
+        [TestMethod]
+        public void DynamicContentModel_ShouldExcludeIndexProperties()
+        {
+            dynamic obj = new DynamicContentModel(new ObjWithIndexer(), [], null, null);
+            Assert.IsNotNull(obj);
+            Assert.AreEqual(1, obj.Id);
+            var dictionary = (IDictionary<string, object?>)obj;
+            Assert.AreEqual(5, dictionary.Keys.Count);
+        }
     }
 }
