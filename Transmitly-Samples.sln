@@ -5,6 +5,18 @@ VisualStudioVersion = 17.9.34518.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transmitly.KitchenSink.AspNetCoreWebApi", "samples\Transmitly.KitchenSink.AspNetCoreWebApi\Transmitly.KitchenSink.AspNetCoreWebApi.csproj", "{306F996F-9366-4F62-8DB0-7B03ED6C21AE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservices", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Notifications.Client", "samples\Microservices\Tandely.Notifications.Client\Tandely.Notifications.Client.csproj", "{199BB63E-7224-3E06-A981-62DC7E7BA2C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Customers.Service", "samples\Microservices\Tandely.Customers.Service\Tandely.Customers.Service.csproj", "{A7624DF5-C66C-466B-020E-D92C179D37D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.IntegrationEvents", "samples\Microservices\Tandely.IntegrationEvents\Tandely.IntegrationEvents.csproj", "{1095E6DC-0E5E-AFFF-8177-EF47F7AB723D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Notifications.Service", "samples\Microservices\Tandely.Notifications.Service\Tandely.Notifications.Service.csproj", "{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Order.Service", "samples\Microservices\Tandely.Orders.Service\Tandely.Order.Service.csproj", "{6705DCA4-3285-DB39-629C-FBECA4B2868E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +27,36 @@ Global
 		{306F996F-9366-4F62-8DB0-7B03ED6C21AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{306F996F-9366-4F62-8DB0-7B03ED6C21AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{306F996F-9366-4F62-8DB0-7B03ED6C21AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{199BB63E-7224-3E06-A981-62DC7E7BA2C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{199BB63E-7224-3E06-A981-62DC7E7BA2C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{199BB63E-7224-3E06-A981-62DC7E7BA2C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{199BB63E-7224-3E06-A981-62DC7E7BA2C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7624DF5-C66C-466B-020E-D92C179D37D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7624DF5-C66C-466B-020E-D92C179D37D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7624DF5-C66C-466B-020E-D92C179D37D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7624DF5-C66C-466B-020E-D92C179D37D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1095E6DC-0E5E-AFFF-8177-EF47F7AB723D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1095E6DC-0E5E-AFFF-8177-EF47F7AB723D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1095E6DC-0E5E-AFFF-8177-EF47F7AB723D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1095E6DC-0E5E-AFFF-8177-EF47F7AB723D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{199BB63E-7224-3E06-A981-62DC7E7BA2C6} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{A7624DF5-C66C-466B-020E-D92C179D37D0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{1095E6DC-0E5E-AFFF-8177-EF47F7AB723D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6705DCA4-3285-DB39-629C-FBECA4B2868E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32A408DA-90D2-4E27-AB02-0383E852816B}
