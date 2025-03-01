@@ -35,7 +35,7 @@ namespace Transmitly.PlatformIdentity.Configuration
             );
         }
 
-        public Task<IPlatformIdentityResolver?> ResolveResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration)
+        public virtual Task<IPlatformIdentityResolver?> ResolveResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration)
         {
             Guard.AgainstNull(platformIdentityResolverRegistration);
 
