@@ -18,11 +18,11 @@ namespace Tandely.Notifications.Client
 {
     public static class NotificationClientTransmitlyExtensions
     {
-        public static CommunicationsClientBuilder UseTandelyNotificationsClient(this CommunicationsClientBuilder builder, Action<TandelyNotificationsOptions> options)
+        public static CommunicationsClientBuilder UseTandelyNotifications(this CommunicationsClientBuilder builder, Action<NotificationsOptions> options)
         {
-            var opts = new TandelyNotificationsOptions();
+            var opts = new NotificationsOptions();
             options(opts);
-            builder.RegisterClientFactory(new TandelyNotificationsClientFactory(opts));
+            builder.RegisterClientFactory(new NotificationsClientFactory(opts));
             return builder;
         }
     }

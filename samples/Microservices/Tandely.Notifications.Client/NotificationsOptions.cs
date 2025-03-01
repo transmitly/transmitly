@@ -12,16 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly;
-
 namespace Tandely.Notifications.Client
 {
-    public sealed class TandelyPlatformIdentity : IPlatformIdentity, IIdentityReference
+    public sealed class NotificationsOptions
     {
-        public string? Id { get; set; }
-        public string? Type { get; set; }
-        public string[] Personas { get; set; } = [];
-        public List<TandelyIdentityAddress> Addresses { get; set; } = [];
-        IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get => Addresses; set => throw new NotImplementedException(); }
+        public Uri? BasePath { get; set; }
+        public string? ApiKey { get; set; }
     }
 }

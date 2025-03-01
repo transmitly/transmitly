@@ -18,16 +18,10 @@ namespace Tandely.Customers.Service.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CustomersController : ControllerBase
+    public class CustomersController(CustomerRepository customerRepository, ILogger<CustomersController> logger) : ControllerBase
     {
-        private readonly CustomerRepository _customerRepository;
-        private readonly ILogger<CustomersController> _logger;
-
-        public CustomersController(CustomerRepository customerRepository, ILogger<CustomersController> logger)
-        {
-            _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
+        private readonly CustomerRepository _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
+        private readonly ILogger<CustomersController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         [HttpGet("all")]
         public IEnumerable<Customer> AlLCustomers()

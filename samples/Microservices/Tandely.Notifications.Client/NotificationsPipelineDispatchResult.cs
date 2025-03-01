@@ -14,7 +14,7 @@
 
 namespace Tandely.Notifications.Client
 {
-    public class PipelineDispatchResult
+    public class NotificationsPipelineDispatchResult
     {
 
         /// <summary>

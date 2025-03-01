@@ -12,16 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly;
-
 namespace Tandely.Notifications.Client
 {
-    public class TandelyIdentityAddress : IIdentityAddress
+    public class DispatchNotificationResult
     {
-        public string? Type { get; set; }
-        public string Value { get; set; }
-        public IDictionary<string, string?> AddressParts { get; set; } = new Dictionary<string, string?>();
-        public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
-        public string? Display { get; set; }
+        public ICollection<NotificationsPipelineDispatchResult> Dispatches { get; set; } = [];
+        public bool IsSuccessful { get; set; }
+        public ValidationResult[] Errors { get; set; } = [];
     }
 }

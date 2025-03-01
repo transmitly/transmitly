@@ -12,19 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly;
+
 namespace Tandely.Notifications.Client
 {
-    public class ValidationResultDto
+    internal sealed class NotificationsDispatchResult : IDispatchResult
     {
-        public ValidationResultDto()
-        {
-        }
-        public ValidationResultDto(string errorMessage, string[] memberNames = null)
-        {
-            ErrorMessage = errorMessage;
-            MemberNames = memberNames ?? [];
-        }
-        public string ErrorMessage { get; set; }
-        public string[] MemberNames { get; set; }
+        public string? ResourceId { get; set; }
+
+        public DispatchStatus DispatchStatus { get; set; }
+
+        public string? ChannelProviderId { get; internal set; }
+
+        public string? ChannelId { get; internal set; }
+
+        public Exception? Exception { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace Tandely.Customers.Service.Controllers
 {
     public sealed class CustomerRepository
     {
-        private readonly Dictionary<string, Customer> _identities = new();
+        private readonly Dictionary<string, Customer> _identities = [];
 
         public CustomerRepository()
         {

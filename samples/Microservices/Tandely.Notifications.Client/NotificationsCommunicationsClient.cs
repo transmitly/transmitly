@@ -15,40 +15,33 @@
 using System.Text.Json;
 using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
-using Tandely.IntegrationEvents;
 using Transmitly.Persona.Configuration;
-using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
 using Transmitly;
 
 namespace Tandely.Notifications.Client
 {
-    public sealed class TandelyNotificationsCommunicationsClient : ICommunicationsClient
+    public sealed class NotificationsCommunicationsClient : ICommunicationsClient
     {
-        static HttpClient? _httpClient;
-
+        readonly static Lazy<HttpClient> _httpClient = new(() => CreateHttpClient(_options));
+        static NotificationsOptions? _options;
         readonly DefaultCommunicationsClient _defaultClient;
         readonly IReadOnlyCollection<IPersonaRegistration>? _pipelinePersonas;
         readonly static object _lock = new();
-        internal TandelyNotificationsCommunicationsClient(DefaultCommunicationsClient defaultClient, ICreateCommunicationsClientContext context, IPlatformIdentityResolverFactory platformIdentityResolverFactory, TandelyNotificationsOptions options)
+        internal NotificationsCommunicationsClient(DefaultCommunicationsClient defaultClient, ICreateCommunicationsClientContext context, IPlatformIdentityResolverFactory platformIdentityResolverFactory, NotificationsOptions options)
         {
-            _pipelinePersonas = context.Personas;
-            _defaultClient = defaultClient;
-
-            if (_httpClient == null)
-                ConfigureHttpClient(options);
+            _pipelinePersonas = Guard.AgainstNull(context.Personas);
+            _defaultClient = Guard.AgainstNull(defaultClient);
+            _options = Guard.AgainstNull(options);
         }
 
-        private static void ConfigureHttpClient(TandelyNotificationsOptions options)
+        private static HttpClient CreateHttpClient(NotificationsOptions? options)
         {
-            lock (_lock)
-            {
-                if (_httpClient == null)
-                {
-                    _httpClient = new HttpClient() { BaseAddress = options.BasePath };
-                    _httpClient.DefaultRequestHeaders.Add("x-tandely-api-key", options.ApiKey);
-                }
-            }
+            Guard.AgainstNull(options);
+
+            var client = new HttpClient { BaseAddress = options.BasePath };
+            client.DefaultRequestHeaders.Add("x-tandely-api-key", options.ApiKey);
+            return client;
         }
 
         public void DeliverReport(DeliveryReport report)
@@ -68,20 +61,20 @@ namespace Tandely.Notifications.Client
                 var personFilters = _pipelinePersonas?.Select(x => x.Name);
                 var dispatchCorrelationId = Guid.NewGuid().ToString("N");
 
-                var payload = JsonSerializer.Serialize(new DispatchTandelyNotification
+                var payload = JsonSerializer.Serialize(new DispatchNotificationModel
                 {
                     AllowedChannels = allowedChannels,
                     CommunicationId = pipelineName,
                     PersonFilters = personFilters ?? [],
                     ExternalInstanceReferenceId = dispatchCorrelationId,
-                    TransactionalModel = new TandelyTransactionalModel(transactionalModel),
+                    TransactionalModel = new NotificationsTransactionalModel(transactionalModel),
 
-                    PlatformIdentities = [.. platformIdentities.Select(pid => new TandelyPlatformIdentity
+                    PlatformIdentities = [.. platformIdentities.Select(pid => new NotificationsPlatformIdentity
                     {
                         Id = pid.Id,
                         Type = pid.Type,
                         Personas = [.. getIdentityPersonas(pid).Select(x => x.Name)],
-                        Addresses = [.. pid.Addresses.Select(a => new TandelyIdentityAddress
+                        Addresses = [.. pid.Addresses.Select(a => new NotificationsIdentityAddress
                         {
                             Type = a.Type,
                             Value = a.Value
@@ -89,13 +82,13 @@ namespace Tandely.Notifications.Client
                     })]
                 });
 
-                var apiCallResult = await _httpClient!.PostAsync($"notifications/dispatch", new StringContent(payload, System.Text.Encoding.UTF8, "application/json"), cancellationToken);
+                var apiCallResult = await _httpClient.Value.PostAsync($"notifications/dispatch", new StringContent(payload, System.Text.Encoding.UTF8, "application/json"), cancellationToken);
 
-                var apiResult = JsonSerializer.Deserialize<SendCommunicationResult>(await apiCallResult.Content.ReadAsStringAsync(cancellationToken));
+                var apiResult = JsonSerializer.Deserialize<DispatchNotificationResult?>(await apiCallResult.Content.ReadAsStringAsync(cancellationToken));
 
                 if (apiCallResult.IsSuccessStatusCode)
                 {
-                    return new DispatchCommunicationResult([new TandelyNotificationsDispatchResult
+                    return new DispatchCommunicationResult([new NotificationsDispatchResult
                         {
                             DispatchStatus = DispatchStatus.Dispatched,
                             ResourceId = dispatchCorrelationId,
@@ -106,19 +99,19 @@ namespace Tandely.Notifications.Client
                 }
                 else
                 {
-                    return new DispatchCommunicationResult([new TandelyNotificationsDispatchResult
+                    return new DispatchCommunicationResult([new NotificationsDispatchResult
                         {
                             DispatchStatus = DispatchStatus.Undeliverable,
                             ResourceId = dispatchCorrelationId,
                             ChannelId = "Tandely.Notifications",
-                            Exception = new Exception(string.Join(", ", apiResult.Errors.Select(x => x.ErrorMessage))),
+                            Exception = new Exception(string.Join(", ", apiResult?.Errors.Select(x => x.ErrorMessage)??[])),
                             ChannelProviderId = "Tandely.Notifications"
                         }], false);
                 }
             }
             catch (Exception ex)
             {
-                return new DispatchCommunicationResult([new TandelyNotificationsDispatchResult
+                return new DispatchCommunicationResult([new NotificationsDispatchResult
                     {
                         DispatchStatus = DispatchStatus.Exception,
                         ResourceId = null,

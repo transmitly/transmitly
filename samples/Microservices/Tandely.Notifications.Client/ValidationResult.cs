@@ -12,14 +12,19 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly;
-
-namespace Tandely.Notifications.Service
+namespace Tandely.Notifications.Client
 {
-    public class PlatformIdentity : IPlatformIdentity
+    public class ValidationResult
     {
-        public string? Id { get;set; }
-        public string? Type { get;set;}
-        IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get;set;}=[];
+        public ValidationResult()
+        {
+        }
+        public ValidationResult(string errorMessage, string[] memberNames = null)
+        {
+            ErrorMessage = errorMessage;
+            MemberNames = memberNames ?? [];
+        }
+        public string ErrorMessage { get; set; }
+        public string[] MemberNames { get; set; }
     }
 }

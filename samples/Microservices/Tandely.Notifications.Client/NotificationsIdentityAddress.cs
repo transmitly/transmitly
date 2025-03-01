@@ -16,16 +16,12 @@ using Transmitly;
 
 namespace Tandely.Notifications.Client
 {
-    internal sealed class TandelyNotificationsDispatchResult : IDispatchResult
+    public class NotificationsIdentityAddress : IIdentityAddress
     {
-        public string? ResourceId { get; set; }
-
-        public DispatchStatus DispatchStatus { get; set; }
-
-        public string? ChannelProviderId { get; internal set; }
-
-        public string? ChannelId { get; internal set; }
-
-        public Exception? Exception { get; set; }
+        public string? Type { get; set; }
+        public string Value { get; set; }
+        public IDictionary<string, string?> AddressParts { get; set; } = new Dictionary<string, string?>();
+        public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
+        public string? Display { get; set; }
     }
 }

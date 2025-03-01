@@ -17,13 +17,13 @@ using Transmitly;
 
 namespace Tandely.Notifications.Client
 {
-    public sealed class TandelyTransactionalModel : ITransactionModel
+    public sealed class NotificationsTransactionalModel : ITransactionModel
     {
-        public TandelyTransactionalModel()
+        public NotificationsTransactionalModel()
         {
             
         }
-        public TandelyTransactionalModel(ITransactionModel transactionModel)
+        public NotificationsTransactionalModel(ITransactionModel transactionModel)
         {
             if (transactionModel == null)
                 return;

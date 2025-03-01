@@ -33,7 +33,7 @@ namespace Tandely.Orders.Service
 
             var clientBuilder = new CommunicationsClientBuilder();
 
-            clientBuilder.UseTandelyNotificationsClient(options =>
+            clientBuilder.UseTandelyNotifications(options =>
             {
                 options.BasePath = new Uri("https://localhost:7133/");
                 options.ApiKey = "orders-svc-demo";

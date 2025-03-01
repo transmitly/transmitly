@@ -21,9 +21,9 @@ using Transmitly.Template.Configuration;
 
 namespace Tandely.Notifications.Client
 {
-    sealed class TandelyNotificationsClientFactory(TandelyNotificationsOptions options) : ICommunicationClientFactory
+    sealed class NotificationsClientFactory(NotificationsOptions options) : ICommunicationClientFactory
     {
-        private readonly TandelyNotificationsOptions _options = Guard.AgainstNull(options);
+        private readonly NotificationsOptions _options = Guard.AgainstNull(options);
 
         public ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
         {
@@ -46,7 +46,7 @@ namespace Tandely.Notifications.Client
                 context.DeliveryReportProvider
             );
 
-            return new TandelyNotificationsCommunicationsClient(defaultClient, context, platformIdentityResolverRegistrations, _options);
+            return new NotificationsCommunicationsClient(defaultClient, context, platformIdentityResolverRegistrations, _options);
         }
     }
 }
