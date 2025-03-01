@@ -12,18 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly;
-
-namespace Tandely.Notifications.Client
+namespace Tandely.IntegrationEvents
 {
-    public static class NotificationClientTransmitlyExtensions
+    public static class ShippingIntegrationEvent
     {
-        public static CommunicationsClientBuilder UseTandelyNotificationsClient(this CommunicationsClientBuilder builder, Action<TandelyNotificationsOptions> options)
-        {
-            var opts = new TandelyNotificationsOptions();
-            options(opts);
-            builder.RegisterClientFactory(new TandelyNotificationsClientFactory(opts));
-            return builder;
-        }
+        public const string OrderShipped = "order-shipped";
     }
 }

@@ -32,10 +32,11 @@ namespace Tandely.Orders.Service
             builder.Services.AddSwaggerGen();
 
             var clientBuilder = new CommunicationsClientBuilder();
-            clientBuilder.UseTandelyNotifications(options =>
+
+            clientBuilder.UseTandelyNotificationsClient(options =>
             {
                 options.BasePath = new Uri("https://localhost:7133/");
-                options.ApiKey = "service1-demo";
+                options.ApiKey = "orders-svc-demo";
             });
 
             var client = clientBuilder.BuildClient();

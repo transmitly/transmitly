@@ -14,16 +14,12 @@
 
 using Transmitly;
 
-namespace Tandely.Notifications.Client
+namespace Tandely.Notifications.Service
 {
-    public static class NotificationClientTransmitlyExtensions
+    public class PlatformIdentity : IPlatformIdentity
     {
-        public static CommunicationsClientBuilder UseTandelyNotificationsClient(this CommunicationsClientBuilder builder, Action<TandelyNotificationsOptions> options)
-        {
-            var opts = new TandelyNotificationsOptions();
-            options(opts);
-            builder.RegisterClientFactory(new TandelyNotificationsClientFactory(opts));
-            return builder;
-        }
+        public string? Id { get;set; }
+        public string? Type { get;set;}
+        IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get;set;}=[];
     }
 }

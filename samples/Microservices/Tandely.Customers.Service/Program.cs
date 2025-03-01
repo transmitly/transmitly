@@ -12,7 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Tandely.Notifications.Client;
+using System.Reflection;
+using Tandely.Customers.Service.Controllers;
 
 namespace Tandely.Customers.Service
 {
@@ -27,16 +28,17 @@ namespace Tandely.Customers.Service
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
-            builder.Services.AddTransmitly(tly =>
-               tly.UseTandelyNotifications(options =>
-               {
-                   options.BasePath = new Uri("https://localhost:7133/");
-                   options.ApiKey = "service2-demo";
-               })
-           );
+                // Enable annotations (optional)
+                options.EnableAnnotations();
+            });
 
+            builder.Services.AddSingleton<CustomerRepository>();
+            builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -49,7 +51,6 @@ namespace Tandely.Customers.Service
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

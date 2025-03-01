@@ -12,19 +12,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Bogus;
-
-namespace Tandely.Notifications.Service
+namespace Tandely.Customers.Service.Controllers
 {
-    public class UserFaker : Faker<User>
+    public class Customer
     {
-        public UserFaker()
-        {
-            RuleFor(u => u.Id, f => f.Random.Guid());
-            RuleFor(u => u.EmailAddress, f => f.Person.Email);
-            RuleFor(u => u.FirstName, f => f.Person.FirstName);
-            RuleFor(u => u.LastName, f => f.Person.LastName);
-            RuleFor(u => u.MobilePhone, f => f.Phone.PhoneNumber("+1888#######"));
-        }
+        public Guid Id { get; set; }
+        public string? EmailAddress { get; set; }
+        public string? MobilePhone { get; set; }
+        public string? DeviceToken { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public int LoyaltyPoints { get; set; }
+        public string? ChannelPreference { get; set; }
     }
 }

@@ -21,26 +21,21 @@ using Transmitly.Template.Configuration;
 
 namespace Tandely.Notifications.Client
 {
-    sealed class TandelyNotificationsClientFactory : ICommunicationClientFactory
+    sealed class TandelyNotificationsClientFactory(TandelyNotificationsOptions options) : ICommunicationClientFactory
     {
-        private readonly TandelyNotificationsOptions _options;
+        private readonly TandelyNotificationsOptions _options = Guard.AgainstNull(options);
 
-        public TandelyNotificationsClientFactory(TandelyNotificationsOptions options)
-        {
-            _options = options ?? throw new ArgumentNullException(nameof(options));
-        }
         public ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
         {
-            DefaultPipelineFactory pipelineRegistrations = new DefaultPipelineFactory(context.Pipelines);
+            DefaultPipelineFactory pipelineRegistrations = new(context.Pipelines);
 
-            DefaultChannelProviderFactory channelProviderRegistrations = new DefaultChannelProviderFactory(context.ChannelProviders);
+            DefaultChannelProviderFactory channelProviderRegistrations = new(context.ChannelProviders);
 
-            DefaultTemplateEngineFactory templateEngineRegistrations = new DefaultTemplateEngineFactory(context.TemplateEngines);
+            DefaultTemplateEngineFactory templateEngineRegistrations = new(context.TemplateEngines);
 
-            DefaultPersonaFactory personaRegistrations = new DefaultPersonaFactory(context.Personas);
+            DefaultPersonaFactory personaRegistrations = new(context.Personas);
 
-            DefaultPlatformIdentityResolverRegistrationFactory platformIdentityResolverRegistrations = new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers);
-
+            DefaultPlatformIdentityResolverRegistrationFactory platformIdentityResolverRegistrations = new(context.PlatformIdentityResolvers);
 
             var defaultClient = new DefaultCommunicationsClient(
                 pipelineRegistrations,

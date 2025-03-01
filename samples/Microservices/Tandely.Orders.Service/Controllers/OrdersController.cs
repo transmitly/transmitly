@@ -20,24 +20,15 @@ namespace Tandely.Orders.Service.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OrdersController : ControllerBase
+    public class OrdersController(ICommunicationsClient communicationsClient, ILogger<OrdersController> logger) : ControllerBase
     {
-        private readonly ICommunicationsClient _communicationsClient;
-        private readonly ILogger<OrdersController> _logger;
-
-        public OrdersController(ICommunicationsClient communicationsClient, ILogger<OrdersController> logger)
-        {
-            _communicationsClient = communicationsClient;
-            _logger = logger;
-        }
-
-        [HttpPost("create", Name = "ConfirmOrder")]
+        [HttpPost("create", Name = "CreateOrder")]
         public async Task<IActionResult> CreateOrderAsync(CreateOrderViewModel model)
         {
             if (model == null)
                 return BadRequest();
 
-            var result = await _communicationsClient.DispatchAsync(OrdersIntegrationEvent.OrderConfirmation, model.Customers, TransactionModel.Create(new
+            var result = await communicationsClient.DispatchAsync(OrdersIntegrationEvent.OrderConfirmation, model.Customers, TransactionModel.Create(new
             {
                 Order = new
                 {
@@ -49,6 +40,7 @@ namespace Tandely.Orders.Service.Controllers
 
             if (result.IsSuccessful)
                 return Ok(result.Results?.Select(r => r?.ResourceId));
+
             return BadRequest(result);
         }
     }

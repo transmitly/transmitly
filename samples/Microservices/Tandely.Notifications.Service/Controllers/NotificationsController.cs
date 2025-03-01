@@ -20,32 +20,25 @@ namespace Tandely.Notifications.Service.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CommunicationsController : ControllerBase
+    public class NotificationsController(ICommunicationsClient communicationsClient, ILogger<NotificationsController> logger) : ControllerBase
     {
-        private readonly ICommunicationsClient _communicationsClient;
-        private readonly ILogger<CommunicationsController> _logger;
-
-        public CommunicationsController(ICommunicationsClient communicationsClient, ILogger<CommunicationsController> logger)
+        [HttpPost("dispatch", Name = "DispatchNotification")]
+        public async Task<IActionResult> DispatchAsync(DispatchTandelyNotification notification, CancellationToken cancellationToken)
         {
-            _communicationsClient = communicationsClient;
-            _logger = logger;
-        }
-
-        [HttpPost(Name = "DispatchExampleCommunication")]
-        public async Task<IActionResult> DispatchAsync(DispatchTandelyNotification dispatchObj, CancellationToken cancellationToken)
-        {
-            if (dispatchObj == null || string.IsNullOrWhiteSpace(dispatchObj.CommunicationId) || dispatchObj.TransactionalModel == null)
+            if (notification == null || string.IsNullOrWhiteSpace(notification.CommunicationId) || notification.TransactionalModel == null)
             {
                 return BadRequest();
             }
 
-            var result = await _communicationsClient.DispatchAsync(
-                dispatchObj.CommunicationId,
-                dispatchObj.PlatformIdentities.Cast<IIdentityReference>().ToList(),
-                dispatchObj.TransactionalModel,
+            logger.LogInformation("Dispatching notification '{CommunicationId}' to {PlatformIdentities}", notification.CommunicationId, notification.PlatformIdentities);
+
+            var result = await communicationsClient.DispatchAsync(
+                notification.CommunicationId,
+                notification.PlatformIdentities.Cast<IIdentityReference>().ToList(),
+                notification.TransactionalModel,
                 cancellationToken: cancellationToken
             );
-
+            logger.LogInformation("Dispatched notification '{CommunicationId}' to {PlatformIdentities} with result {Result}", notification.CommunicationId, notification.PlatformIdentities, result);
             if (result.IsSuccessful)
             {
                 return Ok(result);

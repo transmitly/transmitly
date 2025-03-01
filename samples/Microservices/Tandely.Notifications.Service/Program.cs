@@ -14,6 +14,9 @@
 
 using Transmitly;
 using Tandely.IntegrationEvents;
+using Transmitly.PlatformIdentity.Configuration;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http.Json;
 
 namespace Tandely.Notifications.Service
 {
@@ -24,23 +27,34 @@ namespace Tandely.Notifications.Service
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
+            builder.Services.Configure<JsonOptions>(options =>
+            {
+                options.SerializerOptions.PropertyNameCaseInsensitive = true;
+                options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddSingleton<PlatformIdentityRepository>();
+
+            builder.Services.AddHttpClient<CustomerRepository>(c =>
+            {
+                c.BaseAddress = new Uri("https://localhost:7084/");
+                c.DefaultRequestHeaders.Add("x-tandely-api-key", "notifications-svc-demo");
+            });
+
             builder.Services.AddTransmitly(tly =>
             {
                 tly
-                .AddPlatformIdentityResolver<PlatformIdentityRepository>()
+                .AddPlatformIdentityResolver<CustomerRepository>()
                 .AddSmtpSupport(smtp =>
                 {
-                    smtp.Host = "smtp.google.com";
+                    smtp.Host = "smtp.domain.com";
                     smtp.UserName = "test";
                     smtp.Password = "test";
                 });
-                tly.AddPipeline(CustomersIntegrationEvent.WelcomeKit, pipeline =>
+
+                tly.AddPipeline(ShippingIntegrationEvent.OrderShipped, pipeline =>
                 {
                     pipeline.AddEmail("from@domain.com".AsIdentityAddress(), email =>
                     {
@@ -56,9 +70,13 @@ namespace Tandely.Notifications.Service
                         email.Subject.AddStringTemplate("Testing subject!");
                         email.HtmlBody.AddStringTemplate("Testing body!");
                     });
+
+                    pipeline.AddSms("88812345678".AsIdentityAddress(), sms =>
+                    {
+                        sms.Message.AddStringTemplate("Hey VIP! Testing message!");
+                    });
                 });
             });
-
 
             var app = builder.Build();
 

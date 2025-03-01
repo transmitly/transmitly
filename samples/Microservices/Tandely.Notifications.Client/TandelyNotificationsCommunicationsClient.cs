@@ -23,23 +23,32 @@ using Transmitly;
 
 namespace Tandely.Notifications.Client
 {
-    sealed class TandelyNotificationsCommunicationsClient : ICommunicationsClient
+    public sealed class TandelyNotificationsCommunicationsClient : ICommunicationsClient
     {
+        static HttpClient? _httpClient;
+
         readonly DefaultCommunicationsClient _defaultClient;
-        readonly TandelyNotificationsOptions _options;
-        static HttpClient _httpClient = new HttpClient();
         readonly IReadOnlyCollection<IPersonaRegistration>? _pipelinePersonas;
-
-        public TandelyNotificationsCommunicationsClient()
-        {
-
-        }
-
-        public TandelyNotificationsCommunicationsClient(DefaultCommunicationsClient defaultClient, ICreateCommunicationsClientContext context, IPlatformIdentityResolverFactory platformIdentityResolverFactory, TandelyNotificationsOptions options)
+        readonly static object _lock = new();
+        internal TandelyNotificationsCommunicationsClient(DefaultCommunicationsClient defaultClient, ICreateCommunicationsClientContext context, IPlatformIdentityResolverFactory platformIdentityResolverFactory, TandelyNotificationsOptions options)
         {
             _pipelinePersonas = context.Personas;
-            _options = options;
             _defaultClient = defaultClient;
+
+            if (_httpClient == null)
+                ConfigureHttpClient(options);
+        }
+
+        private static void ConfigureHttpClient(TandelyNotificationsOptions options)
+        {
+            lock (_lock)
+            {
+                if (_httpClient == null)
+                {
+                    _httpClient = new HttpClient() { BaseAddress = options.BasePath };
+                    _httpClient.DefaultRequestHeaders.Add("x-tandely-api-key", options.ApiKey);
+                }
+            }
         }
 
         public void DeliverReport(DeliveryReport report)
@@ -67,22 +76,22 @@ namespace Tandely.Notifications.Client
                     ExternalInstanceReferenceId = dispatchCorrelationId,
                     TransactionalModel = new TandelyTransactionalModel(transactionalModel),
 
-                    PlatformIdentities = platformIdentities.Select(pid => new TandelyPlatformIdentity
+                    PlatformIdentities = [.. platformIdentities.Select(pid => new TandelyPlatformIdentity
                     {
                         Id = pid.Id,
                         Type = pid.Type,
-                        Personas = getIdentityPersonas(pid).Select(x => x.Name).ToArray(),
-                        Addresses = pid.Addresses.Select(a => new TandelyIdentityAddress
+                        Personas = [.. getIdentityPersonas(pid).Select(x => x.Name)],
+                        Addresses = [.. pid.Addresses.Select(a => new TandelyIdentityAddress
                         {
                             Type = a.Type,
                             Value = a.Value
-                        }).ToList()
-                    }).ToList()
+                        })]
+                    })]
                 });
 
-                var apiCallResult = await _httpClient.PostAsync($"{_options.BasePath}Communications/", new StringContent(payload, System.Text.Encoding.UTF8, "application/json"), cancellationToken);
+                var apiCallResult = await _httpClient!.PostAsync($"notifications/dispatch", new StringContent(payload, System.Text.Encoding.UTF8, "application/json"), cancellationToken);
 
-                var apiResult = JsonSerializer.Deserialize<SendCommunicationResult>(await apiCallResult.Content.ReadAsStringAsync());
+                var apiResult = JsonSerializer.Deserialize<SendCommunicationResult>(await apiCallResult.Content.ReadAsStringAsync(cancellationToken));
 
                 if (apiCallResult.IsSuccessStatusCode)
                 {
@@ -166,5 +175,4 @@ namespace Tandely.Notifications.Client
             return await DispatchAsync(pipelineName, identityReferences.Select(x => new PlatformIdentityRecord(x.Id, x.Type, [])).ToList(), transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
         }
     }
-
 }

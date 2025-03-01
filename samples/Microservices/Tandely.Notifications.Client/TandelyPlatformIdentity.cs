@@ -12,10 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Tandely.IntegrationEvents
+using Transmitly;
+
+namespace Tandely.Notifications.Client
 {
-    public static class CustomersIntegrationEvent
+    public sealed class TandelyPlatformIdentity : IPlatformIdentity, IIdentityReference
     {
-        public const string WelcomeKit = "welcome-kit";
+        public string? Id { get; set; }
+        public string? Type { get; set; }
+        public string[] Personas { get; set; } = [];
+        public List<TandelyIdentityAddress> Addresses { get; set; } = [];
+        IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get => Addresses; set => throw new NotImplementedException(); }
     }
 }

@@ -15,17 +15,8 @@
 using System.Text.Json;
 using Transmitly;
 
-namespace Tandely.IntegrationEvents
+namespace Tandely.Notifications.Service
 {
-    public sealed class DispatchTandelyNotification
-    {
-        public IReadOnlyCollection<string> AllowedChannels { get; set; } = [];
-        public string? CommunicationId { get; set; }
-        public IEnumerable<string> PersonFilters { get; set; } = [];
-        public string? ExternalInstanceReferenceId { get; set; }
-        public TandelyTransactionalModel? TransactionalModel { get; set; }
-        public List<TandelyPlatformIdentity> PlatformIdentities { get; set; } = [];
-    }
     public sealed class TandelyTransactionalModel : ITransactionModel
     {
         public TandelyTransactionalModel()
@@ -59,23 +50,5 @@ namespace Tandely.IntegrationEvents
         public IReadOnlyList<Resource>? Resources { get; set; } = null;
 
         public IReadOnlyList<LinkedResource>? LinkedResources { get; set; } = null;
-    }
-
-
-    public sealed class TandelyPlatformIdentity : IPlatformIdentity, IIdentityReference
-    {
-        public string? Id { get; set; }
-        public string? Type { get; set; }
-        public string[] Personas { get; set; } = [];
-        public List<TandelyIdentityAddress> Addresses { get; set; } = [];
-        IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get => Addresses; set => throw new NotImplementedException(); }
-    }
-    public class TandelyIdentityAddress : IIdentityAddress
-    {
-        public string? Type { get; set; }
-        public string Value { get; set; }
-        public IDictionary<string, string?> AddressParts { get; set; } = new Dictionary<string, string?>();
-        public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
-        public string? Display { get; set; }
     }
 }

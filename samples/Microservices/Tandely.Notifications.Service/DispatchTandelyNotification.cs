@@ -12,18 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly;
-
-namespace Tandely.Notifications.Client
+namespace Tandely.Notifications.Service
 {
-    public static class NotificationClientTransmitlyExtensions
+    public sealed class DispatchTandelyNotification
     {
-        public static CommunicationsClientBuilder UseTandelyNotificationsClient(this CommunicationsClientBuilder builder, Action<TandelyNotificationsOptions> options)
-        {
-            var opts = new TandelyNotificationsOptions();
-            options(opts);
-            builder.RegisterClientFactory(new TandelyNotificationsClientFactory(opts));
-            return builder;
-        }
+        public IReadOnlyCollection<string> AllowedChannels { get; set; } = [];
+        public string? CommunicationId { get; set; }
+        public IEnumerable<string> PersonFilters { get; set; } = [];
+        public string? ExternalInstanceReferenceId { get; set; }
+        public TandelyTransactionalModel? TransactionalModel { get; set; }
+        public List<TandelyPlatformIdentity> PlatformIdentities { get; set; } = [];
     }
 }

@@ -11,19 +11,17 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
+
 using Transmitly;
 
 namespace Tandely.Notifications.Service
 {
-    public class User : IPlatformIdentity
+    public class TandelyIdentityAddress : IIdentityAddress
     {
-        public Guid Id { get; set; }
-        public string EmailAddress { get; set; }
-        public string MobilePhone { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        string? IPlatformIdentity.Id { get => Id.ToString(); set => throw new NotImplementedException(); }
-        string? IPlatformIdentity.Type { get => "User"; set => throw new NotImplementedException(); }
-        IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get => [EmailAddress?.AsIdentityAddress(FirstName), MobilePhone?.AsIdentityAddress()]; set => throw new NotImplementedException(); }
+        public string? Type { get; set; }
+        public string Value { get; set; }
+        public IDictionary<string, string?> AddressParts { get; set; } = new Dictionary<string, string?>();
+        public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
+        public string? Display { get; set; }
     }
 }

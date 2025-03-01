@@ -12,24 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Microsoft.AspNetCore.Mvc;
-
-namespace Tandely.Notifications.Service.Controllers
+namespace Tandely.Notifications.Client
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class DataController : ControllerBase
+    public sealed class DispatchTandelyNotification
     {
-        private readonly PlatformIdentityRepository _platformIdentityRepository;
-
-        public DataController(PlatformIdentityRepository platformIdentityRepository)
-        {
-            _platformIdentityRepository = platformIdentityRepository;
-        }
-        [HttpGet("users", Name = "DataGetCustomers")]
-        public IActionResult GetCustomers()
-        {
-            return Ok(_platformIdentityRepository.GetAllUsers());
-        }
+        public IReadOnlyCollection<string> AllowedChannels { get; set; } = [];
+        public string? CommunicationId { get; set; }
+        public IEnumerable<string> PersonFilters { get; set; } = [];
+        public string? ExternalInstanceReferenceId { get; set; }
+        public TandelyTransactionalModel? TransactionalModel { get; set; }
+        public List<TandelyPlatformIdentity> PlatformIdentities { get; set; } = [];
     }
 }

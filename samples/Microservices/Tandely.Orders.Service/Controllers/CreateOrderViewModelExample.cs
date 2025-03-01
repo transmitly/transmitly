@@ -27,8 +27,8 @@ namespace Tandely.Orders.Service.Controllers
                 Date = DateTime.UtcNow,
                 Total = 100.21,
                 Customers = new List<IdentityReference> {
-                    new IdentityReference("Customer", "ca63e630-415f-4821-1f8f-fbe9db201f70"),
-                    new IdentityReference("Customer", "d6699faf-aa59-fe2d-d802-a3637e8d9055")
+                    new IdentityReference("Customer", "f96390f7-7175-3847-1df6-43a0eb5f7b60"),
+                    new IdentityReference("Customer", "a884133a-6b54-0968-dfae-d054cf14f374")
                 }
             };
         }

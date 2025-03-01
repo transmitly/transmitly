@@ -1,4 +1,4 @@
-// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -12,16 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Tandely.Customers.Service
+using Transmitly;
+
+namespace Tandely.Notifications.Client
 {
-    public class WeatherForecast
+    public class TandelyIdentityAddress : IIdentityAddress
     {
-        public DateOnly Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-
-        public string? Summary { get; set; }
+        public string? Type { get; set; }
+        public string Value { get; set; }
+        public IDictionary<string, string?> AddressParts { get; set; } = new Dictionary<string, string?>();
+        public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
+        public string? Display { get; set; }
     }
 }
