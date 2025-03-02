@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Dynamic;
 using Transmitly.Tests.Mocks;
 
 namespace Transmitly.Tests
@@ -19,8 +20,6 @@ namespace Transmitly.Tests
     [TestClass]
     public class ContentModelTests
     {
-
-
         [TestMethod]
         public void ContentModelShouldWrapProvidedModelAndRecipients()
         {
@@ -65,6 +64,34 @@ namespace Transmitly.Tests
             Assert.AreEqual(1, obj.Id);
             var dictionary = (IDictionary<string, object?>)obj;
             Assert.AreEqual(5, dictionary.Keys.Count);
+        }
+
+        [TestMethod]
+        public void DynamicContentModel_ShouldHandleExpandoObject()
+        {
+            const string expectedCode = "123456";
+            dynamic contentModel = new ExpandoObject();
+            contentModel.Root = new
+            {
+                OtpCode = expectedCode,
+                BrandName = "Unit Test",
+                NullValue = (object?)null,
+                Level0 = new
+                {
+                    Level1 = new
+                    {
+                        Level1Value = true
+                    }
+                }
+            };
+
+            dynamic model = new DynamicContentModel((object)contentModel, [], null, null);
+            Assert.IsNotNull(model.Root);
+            Assert.AreEqual(expectedCode, model.Root.OtpCode);
+            Assert.AreEqual(expectedCode, model.trx.Root.OtpCode);
+            Assert.IsTrue(model.Root.Level0.Level1.Level1Value);
+            Assert.IsTrue(model.trx.Root.Level0.Level1.Level1Value);
+            Assert.IsNull(model.Root.NullValue);
         }
     }
 }

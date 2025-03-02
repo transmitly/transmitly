@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using System.Collections;
+using System.ComponentModel;
 using System.Dynamic;
 
 namespace Transmitly
@@ -68,10 +69,29 @@ namespace Transmitly
 
             _bag.Add(TransactionPropertyKey, model);
 
-            foreach (var property in model.GetType().GetProperties().Where(p => p?.GetIndexParameters()?.Length == 0))
+            if (model is IDictionary<string, object?> expandoObj)
             {
-                if (!_bag.ContainsKey(property.Name))
-                    _bag.Add(property.Name, property.GetValue(model));
+                foreach (var kvp in expandoObj)
+                {
+                    if (!_bag.ContainsKey(kvp.Key))
+                        _bag.Add(kvp.Key, kvp.Value);
+                }
+            }
+            else if (model is ICustomTypeDescriptor custom)
+            {
+                foreach (PropertyDescriptor prop in custom.GetProperties())
+                {
+                    if (!_bag.ContainsKey(prop.Name))
+                        _bag.Add(prop.Name, prop.GetValue(model));
+                }
+            }
+            else
+            {
+                foreach (var property in model.GetType().GetProperties().Where(p => p?.GetIndexParameters()?.Length == 0))
+                {
+                    if (!_bag.ContainsKey(property.Name))
+                        _bag.Add(property.Name, property.GetValue(model));
+                }
             }
         }
 
