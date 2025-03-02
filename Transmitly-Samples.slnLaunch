@@ -11,7 +11,7 @@
         "Action": "Start"
       },
       {
-        "Path": "samples\\Microservices\\Tandely.Orders.Service\\Tandely.Order.Service.csproj",
+        "Path": "samples\\Microservices\\Tandely.Orders.Service\\Tandely.Orders.Service.csproj",
         "Action": "Start"
       }
     ]

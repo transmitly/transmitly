@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.IntegrationEvents",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Notifications.Service", "samples\Microservices\Tandely.Notifications.Service\Tandely.Notifications.Service.csproj", "{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Order.Service", "samples\Microservices\Tandely.Orders.Service\Tandely.Order.Service.csproj", "{6705DCA4-3285-DB39-629C-FBECA4B2868E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitly.ChannelProvider.Logger", "samples\Transmitly.ChannelProvider.Logger\Transmitly.ChannelProvider.Logger.csproj", "{60FB5C1B-C12B-5573-8056-DF0F92EFA751}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Orders.Service", "samples\Microservices\Tandely.Orders.Service\Tandely.Orders.Service.csproj", "{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,14 +45,14 @@ Global
 		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Release|Any CPU.Build.0 = Release|Any CPU
+		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,7 +62,7 @@ Global
 		{A7624DF5-C66C-466B-020E-D92C179D37D0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{1095E6DC-0E5E-AFFF-8177-EF47F7AB723D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{6705DCA4-3285-DB39-629C-FBECA4B2868E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32A408DA-90D2-4E27-AB02-0383E852816B}
