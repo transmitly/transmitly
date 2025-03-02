@@ -12,24 +12,22 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Swashbuckle.AspNetCore.Filters;
-using Transmitly;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace Tandely.Orders.Service.Controllers
+namespace Tandely.Notifications.Service
 {
-    public class CreateOrderViewModelExample : IExamplesProvider<CreateOrderViewModel>
+    //Source = https://stackoverflow.com/a/76797018
+    public sealed class JsonExceptionConverter : JsonConverter<Exception>
     {
-        public CreateOrderViewModel GetExamples()
+        public override Exception Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return new CreateOrderViewModel
-            {
-                Id = Guid.NewGuid().ToString(),
-                Date = DateTime.UtcNow,
-                Total = 100.21,
-                Customers = new List<IdentityReference> {
-                    new IdentityReference("Customer", "f96390f7-7175-3847-1df6-43a0eb5f7b60")
-                }
-            };
+            throw new NotImplementedException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, Exception value, JsonSerializerOptions options)
+        {
+            writer.WriteRawValue(JsonSerializer.Serialize(new LimitedExceptionDetail(value)));
         }
     }
 }

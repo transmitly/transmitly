@@ -33,7 +33,7 @@ namespace Tandely.Customers.Service.Controllers
         /// <summary>
         /// Get a customer by Id
         /// </summary>
-        /// <param name="id" example="ca63e630-415f-4821-1f8f-fbe9db201f70">Id of the customer</param>
+        /// <param name="id" example="57eea4ca-3713-7441-7208-a2baded5c466">Id of the customer</param>
         /// <returns>Customer; otherwise null</returns>
         [HttpGet("{id}")]
         public Customer? GetCustomer(Guid id)

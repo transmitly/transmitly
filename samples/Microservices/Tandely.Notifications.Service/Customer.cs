@@ -24,7 +24,9 @@ namespace Tandely.Notifications.Service
         public string? EmailAddress { get; set; }
         public string? MobilePhone { get; set; }
         public string? DeviceToken { get; set; }
-        public string? Name { get; set; }
+        public string? Name { get => $"{FirstName} {LastName}"; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public int LoyaltyPoints { get; set; }
         public string? ChannelPreference { get; set; }
 

@@ -12,24 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Swashbuckle.AspNetCore.Filters;
-using Transmitly;
+using Transmitly.ChannelProvider.Debugging;
 
-namespace Tandely.Orders.Service.Controllers
+namespace Transmitly
 {
-    public class CreateOrderViewModelExample : IExamplesProvider<CreateOrderViewModel>
+    public static class LoggingChannelProviderExtensions
     {
-        public CreateOrderViewModel GetExamples()
+        public static CommunicationsClientBuilder AddDispatchLoggingSupport(this CommunicationsClientBuilder builder)
         {
-            return new CreateOrderViewModel
-            {
-                Id = Guid.NewGuid().ToString(),
-                Date = DateTime.UtcNow,
-                Total = 100.21,
-                Customers = new List<IdentityReference> {
-                    new IdentityReference("Customer", "f96390f7-7175-3847-1df6-43a0eb5f7b60")
-                }
-            };
+            builder.ChannelProvider.Add<LoggingDispatcher>("Transmitly.Logger");
+            return builder;
         }
     }
 }

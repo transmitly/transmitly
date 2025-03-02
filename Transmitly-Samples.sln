@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Notifications.Servi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Order.Service", "samples\Microservices\Tandely.Orders.Service\Tandely.Order.Service.csproj", "{6705DCA4-3285-DB39-629C-FBECA4B2868E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitly.ChannelProvider.Logger", "samples\Transmitly.ChannelProvider.Logger\Transmitly.ChannelProvider.Logger.csproj", "{60FB5C1B-C12B-5573-8056-DF0F92EFA751}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6705DCA4-3285-DB39-629C-FBECA4B2868E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,11 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly;
-using Tandely.IntegrationEvents;
-using Transmitly.PlatformIdentity.Configuration;
-using System.Text.Json;
 using Microsoft.AspNetCore.Http.Json;
+using System.Text.Json;
+using Tandely.IntegrationEvents;
+using Transmitly;
+using Transmitly.ChannelProvider.Debugging;
 
 namespace Tandely.Notifications.Service
 {
@@ -27,47 +27,56 @@ namespace Tandely.Notifications.Service
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.Converters.Add(new JsonExceptionConverter());
+            });
             builder.Services.Configure<JsonOptions>(options =>
             {
                 options.SerializerOptions.PropertyNameCaseInsensitive = true;
                 options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.SerializerOptions.Converters.Add(new JsonExceptionConverter());
             });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            var customerServiceUrl = Guard.AgainstNullOrWhiteSpace(builder.Configuration.GetValue<string>("CustomerService:Url"));
+            var apiKey = builder.Configuration.GetValue<string?>("CustomerService:ApiKey");
             builder.Services.AddHttpClient<CustomerRepository>(c =>
             {
-                c.BaseAddress = new Uri("https://localhost:7084/");
-                c.DefaultRequestHeaders.Add("x-tandely-api-key", "notifications-svc-demo");
+                c.BaseAddress = new Uri(customerServiceUrl);
+                c.DefaultRequestHeaders.Add("x-tandely-api-key", apiKey);
             });
 
             builder.Services.AddTransmitly(tly =>
             {
                 tly
                 .AddPlatformIdentityResolver<CustomerRepository>()
+                .AddScribanTemplateEngine()
+                .AddDispatchLoggingSupport()
                 .AddSmtpSupport(smtp =>
                 {
-                    smtp.Host = "smtp.domain.com";
+                    smtp.Host = "smtp.example.com";
                     smtp.UserName = "test";
                     smtp.Password = "test";
-                });
+                })
 
-                tly.AddPipeline(ShippingIntegrationEvent.OrderShipped, pipeline =>
+                .AddPipeline(ShippingIntegrationEvent.OrderShipped, pipeline =>
                 {
                     pipeline.AddEmail("from@domain.com".AsIdentityAddress(), email =>
                     {
-                        email.Subject.AddStringTemplate("Testing subject!");
-                        email.HtmlBody.AddStringTemplate("Testing body!");
+                        email.Subject.AddStringTemplate("Order #{trx.orderNumber} has shipped!");
+                        email.HtmlBody.AddStringTemplate("Hey {aud.DisplayName}, good news! Your order has shipped!");
                     });
-                });
-
-                tly.AddPipeline(OrdersIntegrationEvent.OrderConfirmation, pipeline =>
+                })
+                .AddPipeline(OrdersIntegrationEvent.OrderConfirmation, pipeline =>
                 {
                     pipeline.AddEmail("from@domain.com".AsIdentityAddress(), email =>
                     {
-                        email.Subject.AddStringTemplate("Testing subject!");
+                        email.Subject.AddStringTemplate("Thank you for your order, #{Order.Id}!");
                         email.HtmlBody.AddStringTemplate("Testing body!");
                     });
 

@@ -9,14 +9,18 @@
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="35.6.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-		<PackageReference Include="Transmitly" Version="0.1.0-233.51f361b" />
+		<PackageReference Include="Transmitly" Version="0.1.0-234.7212baf" />
 		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.1.0-7.baf325e" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
 		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.1-5.9d072d4" />
+		<PackageReference Include="Transmitly.TemplateEngine.Scriban" Version="0.1.1-2.cfff5a7" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Transmitly.ChannelProvider.Logger\Transmitly.ChannelProvider.Logger.csproj" />
 	  <ProjectReference Include="..\Tandely.IntegrationEvents\Tandely.IntegrationEvents.csproj" />
 	</ItemGroup>
+
+	
 </Project>

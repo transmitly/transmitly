@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Dynamic;
 using System.Text.Json;
 using Transmitly;
 
@@ -21,7 +22,7 @@ namespace Tandely.Notifications.Service
     {
         public TandelyTransactionalModel()
         {
-            
+
         }
         public TandelyTransactionalModel(ITransactionModel transactionModel)
         {
@@ -35,16 +36,40 @@ namespace Tandely.Notifications.Service
 
         public object Model
         {
-            get => _model; 
+            get => _model;
             set
             {
                 if (value is JsonElement)
-                    _model = JsonSerializer.Deserialize<System.Dynamic.ExpandoObject>(JsonSerializer.Serialize(value)) ?? new System.Dynamic.ExpandoObject();
+                    _model = ConvertJsonElement((JsonElement)value) ?? new ExpandoObject();
                 else
                     _model = value;
 
             }
-           
+        }
+
+        private object? ConvertJsonElement(JsonElement jsonElement)
+        {
+            return jsonElement.ValueKind switch
+            {
+                JsonValueKind.Object => ConvertJsonObject(jsonElement),
+                JsonValueKind.Array => jsonElement.EnumerateArray().Select(ConvertJsonElement).ToList(),
+                JsonValueKind.String => jsonElement.GetString(),
+                JsonValueKind.Number => jsonElement.TryGetInt64(out long l) ? (object)l : jsonElement.GetDecimal(),
+                JsonValueKind.True => true,
+                JsonValueKind.False => false,
+                JsonValueKind.Null => null,
+                _ => jsonElement.GetRawText(),
+            };
+        }
+
+        private object ConvertJsonObject(JsonElement jsonElement)
+        {
+            IDictionary<string, object?> expando = new System.Dynamic.ExpandoObject();
+            foreach (var property in jsonElement.EnumerateObject())
+            {
+                expando[property.Name] = ConvertJsonElement(property.Value);
+            }
+            return expando;
         }
 
         public IReadOnlyList<Resource>? Resources { get; set; } = null;
