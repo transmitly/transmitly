@@ -12,7 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Tandely.Customers.Service.Controllers
+namespace Tandely.Customers.Service
 {
     public class Customer
     {

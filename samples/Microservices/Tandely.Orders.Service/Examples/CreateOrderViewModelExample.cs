@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Bogus;
 using Swashbuckle.AspNetCore.Filters;
 using Transmitly;
 
@@ -23,7 +24,7 @@ namespace Tandely.Orders.Service.Controllers
         {
             return new CreateOrderViewModel
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = new Randomizer().Number(100000, 999999).ToString(),
                 Date = DateTime.UtcNow,
                 Total = 100.21,
                 Customers = new List<IdentityReference> {

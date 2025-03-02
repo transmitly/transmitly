@@ -18,9 +18,17 @@ namespace Transmitly
 {
     public static class LoggingChannelProviderExtensions
     {
-        public static CommunicationsClientBuilder AddDispatchLoggingSupport(this CommunicationsClientBuilder builder)
+        public static CommunicationsClientBuilder AddDispatchLoggingSupport(this CommunicationsClientBuilder builder, Action<LoggingOptions>? options = null)
         {
-            builder.ChannelProvider.Add<LoggingDispatcher>("Transmitly.Logger");
+            if (options == null)
+            {
+                options = _ => { };
+            }
+            
+            var opts = new LoggingOptions();
+            options(opts);
+
+            builder.ChannelProvider.Add<LoggingDispatcher, object>("Transmitly.Logger", opts);
             return builder;
         }
     }

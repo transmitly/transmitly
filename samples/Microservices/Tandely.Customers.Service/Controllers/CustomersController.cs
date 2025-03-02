@@ -27,6 +27,7 @@ namespace Tandely.Customers.Service.Controllers
         public IEnumerable<Customer> AlLCustomers()
         {
             _logger.LogDebug("Get All Customers");
+            
             return _customerRepository.GetAllUsers();
         }
 
@@ -39,6 +40,7 @@ namespace Tandely.Customers.Service.Controllers
         public Customer? GetCustomer(Guid id)
         {
             _logger.LogDebug("Get Customer");
+
             return _customerRepository.GetCustomer(id);
         }
     }

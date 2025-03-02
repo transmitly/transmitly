@@ -13,8 +13,9 @@
 //  limitations under the License.
 
 using Bogus;
+using Tandely.Customers.Service.Controllers;
 
-namespace Tandely.Customers.Service.Controllers
+namespace Tandely.Customers.Service
 {
     public sealed class CustomerRepository
     {

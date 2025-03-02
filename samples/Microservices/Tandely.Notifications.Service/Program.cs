@@ -45,6 +45,7 @@ namespace Tandely.Notifications.Service
 
             var customerServiceUrl = Guard.AgainstNullOrWhiteSpace(builder.Configuration.GetValue<string>("CustomerService:Url"));
             var apiKey = builder.Configuration.GetValue<string?>("CustomerService:ApiKey");
+            
             builder.Services.AddHttpClient<CustomerRepository>(c =>
             {
                 c.BaseAddress = new Uri(customerServiceUrl);
@@ -55,7 +56,7 @@ namespace Tandely.Notifications.Service
             {
                 tly
                 .AddPlatformIdentityResolver<CustomerRepository>()
-                .AddScribanTemplateEngine()
+                .AddFluidTemplateEngine()
                 .AddDispatchLoggingSupport()
                 .AddSmtpSupport(smtp =>
                 {
@@ -76,8 +77,8 @@ namespace Tandely.Notifications.Service
                 {
                     pipeline.AddEmail("from@domain.com".AsIdentityAddress(), email =>
                     {
-                        email.Subject.AddStringTemplate("Thank you for your order, #{Order.Id}!");
-                        email.HtmlBody.AddStringTemplate("Testing body!");
+                        email.Subject.AddStringTemplate("Thank you for your order, #{{Order.Id}}!");
+                        email.HtmlBody.AddStringTemplate("Your total is {{Order.Total}}!");
                     });
 
                     pipeline.AddSms("88812345678".AsIdentityAddress(), sms =>

@@ -14,7 +14,7 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
 		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.1-5.9d072d4" />
-		<PackageReference Include="Transmitly.TemplateEngine.Scriban" Version="0.1.1-2.cfff5a7" />
+		<PackageReference Include="Transmitly.TemplateEngine.Fluid" Version="0.1.1-2.7e63090" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -30,15 +30,22 @@ namespace Tandely.Notifications.Service.Controllers
                 return BadRequest();
             }
 
-            logger.LogInformation("Dispatching notification '{CommunicationId}' to {PlatformIdentities}", notification.CommunicationId, notification.PlatformIdentities);
+            logger.LogDebug("Dispatching notification '{CommunicationId}' to {PlatformIdentities}", notification.CommunicationId, notification.PlatformIdentities);
 
             var result = await communicationsClient.DispatchAsync(
                 notification.CommunicationId,
                 notification.PlatformIdentities.Cast<IIdentityReference>().ToList(),
                 notification.TransactionalModel,
-                cancellationToken: cancellationToken
+                cancellationToken: cancellationToken,
+                allowedChannels: []
             );
-            logger.LogInformation("Dispatched notification '{CommunicationId}' to {PlatformIdentities} with result {Result}", notification.CommunicationId, notification.PlatformIdentities, result);
+
+            var resultStatuses = string.Join(",", result.Results.Select(x => x!.DispatchStatus));
+
+            if (!resultStatuses.Any())
+                resultStatuses = "No notifications dispatched";
+
+            logger.LogInformation("Dispatched notification '{CommunicationId}' to {PlatformIdentities} with result(s) {resultStatus}", notification.CommunicationId, notification.PlatformIdentities, resultStatuses);
             if (result.IsSuccessful)
             {
                 return Ok(result);

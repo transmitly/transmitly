@@ -17,11 +17,10 @@ using System.Text.Json;
 
 namespace Transmitly.ChannelProvider.Debugging
 {
-    class LoggingDispatcher(ILogger<LoggingDispatcher> logger) : IChannelProviderDispatcher<object>
+    class LoggingDispatcher(LoggingOptions options, ILogger<LoggingDispatcher> logger) : IChannelProviderDispatcher<object>
     {
         private static readonly JsonSerializerOptions _serializerOptions;
         private readonly ILogger<LoggingDispatcher> _logger = Guard.AgainstNull(logger);
-
         static LoggingDispatcher()
         {
             _serializerOptions = new JsonSerializerOptions { WriteIndented = true };
@@ -29,7 +28,7 @@ namespace Transmitly.ChannelProvider.Debugging
 
         public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Dispatching to Channel: '{ChannelId}' Content: {Content}.", communicationContext.ChannelId, JsonSerializer.Serialize(communication, _serializerOptions));
+            _logger.Log(options.LogLevel, "Dispatching to Channel: '{ChannelId}' Content: {Content}.", communicationContext.ChannelId, JsonSerializer.Serialize(communication, _serializerOptions));
             return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);
         }
     }

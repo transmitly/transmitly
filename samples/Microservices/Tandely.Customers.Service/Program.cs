@@ -13,7 +13,6 @@
 //  limitations under the License.
 
 using System.Reflection;
-using Tandely.Customers.Service.Controllers;
 
 namespace Tandely.Customers.Service
 {

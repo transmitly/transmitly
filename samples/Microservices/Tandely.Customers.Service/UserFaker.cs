@@ -14,7 +14,7 @@
 
 using Bogus;
 
-namespace Tandely.Customers.Service.Controllers
+namespace Tandely.Customers.Service
 {
     public class UserFaker : Faker<Customer>
     {
