@@ -19,5 +19,7 @@ namespace Transmitly
     public sealed class LoggingOptions
     {
         public LogLevel LogLevel { get; set; } = LogLevel.Information;
+        public bool ReturnDispatchResult { get; set; } = false;
+        public Func<object, IDispatchCommunicationContext, Task<IReadOnlyCollection<IDispatchResult?>>>? DispatchResolverHandler { get; set; }
     }
 }

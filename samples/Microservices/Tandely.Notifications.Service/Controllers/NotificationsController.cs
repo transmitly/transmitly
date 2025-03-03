@@ -14,7 +14,6 @@
 
 using Transmitly;
 using Microsoft.AspNetCore.Mvc;
-using Tandely.IntegrationEvents;
 
 namespace Tandely.Notifications.Service.Controllers
 {
@@ -36,8 +35,7 @@ namespace Tandely.Notifications.Service.Controllers
                 notification.CommunicationId,
                 notification.PlatformIdentities.Cast<IIdentityReference>().ToList(),
                 notification.TransactionalModel,
-                cancellationToken: cancellationToken,
-                allowedChannels: []
+                cancellationToken: cancellationToken
             );
 
             var resultStatuses = string.Join(",", result.Results.Select(x => x!.DispatchStatus));

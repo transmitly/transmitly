@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Http.Json;
 using System.Text.Json;
 using Tandely.IntegrationEvents;
 using Transmitly;
-using Transmitly.ChannelProvider.Debugging;
 
 namespace Tandely.Notifications.Service
 {
@@ -25,7 +24,6 @@ namespace Tandely.Notifications.Service
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
             // Add services to the container.
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
@@ -45,7 +43,7 @@ namespace Tandely.Notifications.Service
 
             var customerServiceUrl = Guard.AgainstNullOrWhiteSpace(builder.Configuration.GetValue<string>("CustomerService:Url"));
             var apiKey = builder.Configuration.GetValue<string?>("CustomerService:ApiKey");
-            
+
             builder.Services.AddHttpClient<CustomerRepository>(c =>
             {
                 c.BaseAddress = new Uri(customerServiceUrl);
@@ -57,33 +55,39 @@ namespace Tandely.Notifications.Service
                 tly
                 .AddPlatformIdentityResolver<CustomerRepository>()
                 .AddFluidTemplateEngine()
-                .AddDispatchLoggingSupport()
-                .AddSmtpSupport(smtp =>
+                .AddDispatchLoggingSupport(options =>
                 {
-                    smtp.Host = "smtp.example.com";
-                    smtp.UserName = "test";
-                    smtp.Password = "test";
+                    options.ReturnDispatchResult = true;
                 })
-
                 .AddPipeline(ShippingIntegrationEvent.OrderShipped, pipeline =>
                 {
-                    pipeline.AddEmail("from@domain.com".AsIdentityAddress(), email =>
+                    pipeline.AddSms("+18881234567".AsIdentityAddress(), sms =>
                     {
-                        email.Subject.AddStringTemplate("Order #{trx.orderNumber} has shipped!");
-                        email.HtmlBody.AddStringTemplate("Hey {aud.DisplayName}, good news! Your order has shipped!");
+                        sms.Message.AddStringTemplate("Your Tandely order, #{{OrderId}} has shipped with {{Carrier}}! You can track it <a href=\"https://shipping.example.com/?track={{TrackingNumber}}\">here</a>");
                     });
+
+                    pipeline.AddPushNotification(push =>
+                    {
+                        push.Title.AddStringTemplate("Order shipped!");
+                        push.Body.AddStringTemplate("Your Tandely order, #{{OrderId}} has shipped with {{Carrier}}! ");
+                    });
+
+                    pipeline.AddEmail("from@example.com".AsIdentityAddress(), email =>
+                    {
+                        email.Subject.AddStringTemplate("Tandely order, {{OrderId}}, shipped!");
+                        email.HtmlBody.AddStringTemplate("Your Tandely order, #{{OrderId}} has shipped with {{Carrier}}! You can track it <a href=\"https://shipping.example.com/?track={{TrackingNumber}}\">here</a>");
+                        email.TextBody.AddStringTemplate("Your Tandely order, #{{OrderId}} has shipped with {{Carrier}}! You can track it at https://shipping.example.com/?track={{TrackingNumber}}");
+                    });
+
+                    pipeline.UseFirstMatchPipelineDeliveryStrategy();
+
                 })
                 .AddPipeline(OrdersIntegrationEvent.OrderConfirmation, pipeline =>
                 {
-                    pipeline.AddEmail("from@domain.com".AsIdentityAddress(), email =>
+                    pipeline.AddEmail("from@example.com".AsIdentityAddress(), email =>
                     {
                         email.Subject.AddStringTemplate("Thank you for your order, #{{Order.Id}}!");
-                        email.HtmlBody.AddStringTemplate("Your total is {{Order.Total}}!");
-                    });
-
-                    pipeline.AddSms("88812345678".AsIdentityAddress(), sms =>
-                    {
-                        sms.Message.AddStringTemplate("Hey VIP! Testing message!");
+                        email.HtmlBody.AddStringTemplate("Your total is ${{Order.Total}}!");
                     });
                 });
             });

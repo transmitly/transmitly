@@ -12,23 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Bogus;
-using Swashbuckle.AspNetCore.Filters;
 using Transmitly;
 
-namespace Tandely.Orders.Service.Controllers
+namespace Tandely.Shipping.Service.Controllers
 {
-    public class CreateOrderViewModelExample : IExamplesProvider<CreateOrderViewModel>
+    public class ShipOrderViewModel
     {
-        public CreateOrderViewModel GetExamples()
-        {
-            return new CreateOrderViewModel
-            {
-                Id = new Randomizer().Number(100000, 999999).ToString(),
-                Date = DateTime.UtcNow,
-                Total = 100.21,
-                Customers = [new IdentityReference("Customer", "f96390f7-7175-3847-1df6-43a0eb5f7b60")]
-            };
-        }
+        public string? OrderId { get; set; }
+        public string? TrackingNumber { get; set; }
+        public string? Carrier { get; set; }
+        public IdentityReference? Customer { get; set; }
     }
 }

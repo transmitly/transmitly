@@ -13,7 +13,6 @@
 //  limitations under the License.
 
 using Bogus;
-using Tandely.Customers.Service.Controllers;
 
 namespace Tandely.Customers.Service
 {
@@ -24,7 +23,7 @@ namespace Tandely.Customers.Service
         public CustomerRepository()
         {
             Randomizer.Seed = new Random(12345670);
-            var faker = new UserFaker();
+            var faker = new CustomerFaker();
 
             for (var i = 0; i < 10; i++)
             {

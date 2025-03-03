@@ -12,8 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using FirebaseAdmin;
-
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
 {
 	public class FirebaseChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings

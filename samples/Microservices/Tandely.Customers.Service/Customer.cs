@@ -23,6 +23,6 @@ namespace Tandely.Customers.Service
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public int LoyaltyPoints { get; set; }
-        public string? ChannelPreference { get; set; }
+        //public string? ChannelPreference { get; set; }
     }
 }

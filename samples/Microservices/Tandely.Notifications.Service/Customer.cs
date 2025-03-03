@@ -28,7 +28,7 @@ namespace Tandely.Notifications.Service
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public int LoyaltyPoints { get; set; }
-        public string? ChannelPreference { get; set; }
+        //public string? ChannelPreference { get; set; }
 
         string? IPlatformIdentity.Id { get => Id.ToString(); set => throw new NotSupportedException(); }
         string? IPlatformIdentity.Type { get => nameof(Customer); set => throw new NotSupportedException(); }
@@ -38,7 +38,7 @@ namespace Tandely.Notifications.Service
             {
                 var result = new List<IIdentityAddress>();
                 if (!string.IsNullOrWhiteSpace(MobilePhone))
-                    result.Add(new IdentityAddress(MobilePhone, type: IdentityAddress.Types.Cell()));
+                    result.Add(new IdentityAddress(MobilePhone));
                 if (!string.IsNullOrWhiteSpace(EmailAddress))
                     result.Add(new IdentityAddress(EmailAddress, Name));
                 if (!string.IsNullOrWhiteSpace(DeviceToken))

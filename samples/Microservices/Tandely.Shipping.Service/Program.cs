@@ -16,7 +16,7 @@ using Swashbuckle.AspNetCore.Filters;
 using Tandely.Notifications.Client;
 using Transmitly;
 
-namespace Tandely.Orders.Service
+namespace Tandely.Shipping.Service
 {
     public class Program
     {

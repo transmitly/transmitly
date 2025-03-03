@@ -26,10 +26,14 @@ namespace Transmitly.ChannelProvider.Debugging
             _serializerOptions = new JsonSerializerOptions { WriteIndented = true };
         }
 
-        public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
         {
             _logger.Log(options.LogLevel, "Dispatching to Channel: '{ChannelId}' Content: {Content}.", communicationContext.ChannelId, JsonSerializer.Serialize(communication, _serializerOptions));
-            return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);
+            if (!options.ReturnDispatchResult)
+                return [];
+            else if (options.DispatchResolverHandler == null)
+                return [new DispatchResult(DispatchStatus.Dispatched, Guid.NewGuid().ToString())];
+            return await options.DispatchResolverHandler(communication, communicationContext).ConfigureAwait(false);
         }
     }
 }

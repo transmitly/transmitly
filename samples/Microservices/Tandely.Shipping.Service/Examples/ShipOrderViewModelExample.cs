@@ -16,18 +16,20 @@ using Bogus;
 using Swashbuckle.AspNetCore.Filters;
 using Transmitly;
 
-namespace Tandely.Orders.Service.Controllers
+namespace Tandely.Shipping.Service.Controllers
 {
-    public class CreateOrderViewModelExample : IExamplesProvider<CreateOrderViewModel>
+    public class ShipOrderViewModelExample : IExamplesProvider<ShipOrderViewModel>
     {
-        public CreateOrderViewModel GetExamples()
+        readonly Randomizer _random = new Randomizer(12345670);
+
+        public ShipOrderViewModel GetExamples()
         {
-            return new CreateOrderViewModel
+            return new ShipOrderViewModel
             {
-                Id = new Randomizer().Number(100000, 999999).ToString(),
-                Date = DateTime.UtcNow,
-                Total = 100.21,
-                Customers = [new IdentityReference("Customer", "f96390f7-7175-3847-1df6-43a0eb5f7b60")]
+                OrderId = _random.Number(100000, 999999).ToString(),
+                TrackingNumber = _random.AlphaNumeric(25),
+                Customer = new IdentityReference("Customer", "f1ae5bd5-c18d-a9eb-bae5-8aba36d2d1eb"),
+                Carrier = new Faker().PickRandomParam(["UPS", "FedEx", "USPS" ])
             };
         }
     }
