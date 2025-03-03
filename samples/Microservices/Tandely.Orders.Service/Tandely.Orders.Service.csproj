@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Bogus" Version="35.6.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" />
+		<PackageReference Include="Transmitly" Version="0.1.0-234.7212baf" />
+		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.1-5.9d072d4" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Tandely.IntegrationEvents\Tandely.IntegrationEvents.csproj" />
+	  <ProjectReference Include="..\Tandely.Notifications.Client\Tandely.Notifications.Client.csproj" />
+	</ItemGroup>
+
+</Project>

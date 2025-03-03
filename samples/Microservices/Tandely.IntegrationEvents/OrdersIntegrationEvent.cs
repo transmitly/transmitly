@@ -12,10 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
+namespace Tandely.IntegrationEvents
 {
-	public class FirebaseChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
-	{
-		public FirebaseOptions Options { get; set; } = new FirebaseOptions();
-	}
+    public static class OrdersIntegrationEvent
+    {
+        public const string OrderConfirmation = "order-confirmation";
+    }
 }

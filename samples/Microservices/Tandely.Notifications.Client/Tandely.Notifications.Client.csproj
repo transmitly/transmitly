@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Transmitly" Version="0.1.0-234.7212baf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tandely.IntegrationEvents\Tandely.IntegrationEvents.csproj" />
+  </ItemGroup>
+
+</Project>

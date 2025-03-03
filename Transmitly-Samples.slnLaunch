@@ -1,0 +1,32 @@
+[
+  {
+    "Name": "Microservices Example",
+    "Projects": [
+      {
+        "Path": "samples\\Microservices\\Tandely.Customers.Service\\Tandely.Customers.Service.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "samples\\Microservices\\Tandely.Notifications.Service\\Tandely.Notifications.Service.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "samples\\Microservices\\Tandely.Orders.Service\\Tandely.Orders.Service.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "samples\\Microservices\\Tandely.Shipping.Service\\Tandely.Shipping.Service.csproj",
+        "Action": "Start"
+      }
+    ]
+  },
+  {
+    "Name": "Kitchen Sink Example",
+    "Projects": [
+      {
+        "Path": "samples\\Transmitly.KitchenSink.AspNetCoreWebApi\\Transmitly.KitchenSink.AspNetCoreWebApi.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

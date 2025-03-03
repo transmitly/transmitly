@@ -12,10 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
+namespace Tandely.Notifications.Client
 {
-	public class FirebaseChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
-	{
-		public FirebaseOptions Options { get; set; } = new FirebaseOptions();
-	}
+    public sealed class DispatchNotificationModel
+    {
+        public IReadOnlyCollection<string> AllowedChannels { get; set; } = [];
+        public string? CommunicationId { get; set; }
+        public IEnumerable<string> PersonFilters { get; set; } = [];
+        public string? ExternalInstanceReferenceId { get; set; }
+        public NotificationsTransactionalModel? TransactionalModel { get; set; }
+        public List<NotificationsPlatformIdentity> PlatformIdentities { get; set; } = [];
+    }
 }

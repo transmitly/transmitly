@@ -12,10 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
+using Microsoft.Extensions.Logging;
+
+namespace Transmitly
 {
-	public class FirebaseChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
-	{
-		public FirebaseOptions Options { get; set; } = new FirebaseOptions();
-	}
+    public sealed class LoggingOptions
+    {
+        public LogLevel LogLevel { get; set; } = LogLevel.Information;
+        public bool SimulateDispatchResult { get; set; } = false;
+        public Func<object, IDispatchCommunicationContext, Task<IReadOnlyCollection<IDispatchResult?>>>? SimulateDispatchResultHandler { get; set; }
+    }
 }

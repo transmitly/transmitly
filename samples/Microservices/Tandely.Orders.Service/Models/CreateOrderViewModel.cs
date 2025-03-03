@@ -12,10 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
+using Transmitly;
+
+namespace Tandely.Orders.Service.Controllers
 {
-	public class FirebaseChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
-	{
-		public FirebaseOptions Options { get; set; } = new FirebaseOptions();
-	}
+    public class CreateOrderViewModel
+    {
+        public string Id { get; set; }
+        public DateTime Date { get; set; }
+        public double Total { get; set; }
+        public List<IdentityReference> Customers { get; set; } = [];
+    }
 }
