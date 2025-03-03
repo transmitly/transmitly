@@ -64,7 +64,7 @@ namespace Tandely.Notifications.Service
                     pipeline
                     .AddSms("+18881234567".AsIdentityAddress(), sms =>
                     {
-                        sms.Message.AddStringTemplate("Your Tandely order, #{{OrderId}} has shipped with {{Carrier}}! You can track it <a href=\"https://shipping.example.com/?track={{TrackingNumber}}\">here</a>");
+                        sms.Message.AddStringTemplate("Tandely order, #{{OrderId}} has shipped with {{Carrier}}! You can track it <a href=\"https://shipping.example.com/?track={{TrackingNumber}}\">here</a>");
                     })
                     .AddPushNotification(push =>
                     {

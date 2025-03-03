@@ -12,7 +12,7 @@
 		<PackageReference Include="Bogus" Version="35.6.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.3.1" />
-		<PackageReference Include="Transmitly" Version="0.1.0-234.7212baf" />
+		<PackageReference Include="Transmitly" Version="0.1.0-237.43aee1a" />
 	</ItemGroup>
 
 	
