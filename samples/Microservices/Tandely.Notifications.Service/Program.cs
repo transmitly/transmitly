@@ -53,38 +53,36 @@ namespace Tandely.Notifications.Service
             builder.Services.AddTransmitly(tly =>
             {
                 tly
-                .AddPlatformIdentityResolver<CustomerRepository>()
+                .AddPlatformIdentityResolver<CustomerRepository>("Customer")
                 .AddFluidTemplateEngine()
                 .AddDispatchLoggingSupport(options =>
                 {
-                    options.ReturnDispatchResult = true;
+                    options.SimulateDispatchResult = true;
                 })
                 .AddPipeline(ShippingIntegrationEvent.OrderShipped, pipeline =>
                 {
-                    pipeline.AddSms("+18881234567".AsIdentityAddress(), sms =>
+                    pipeline
+                    .AddSms("+18881234567".AsIdentityAddress(), sms =>
                     {
                         sms.Message.AddStringTemplate("Your Tandely order, #{{OrderId}} has shipped with {{Carrier}}! You can track it <a href=\"https://shipping.example.com/?track={{TrackingNumber}}\">here</a>");
-                    });
-
-                    pipeline.AddPushNotification(push =>
+                    })
+                    .AddPushNotification(push =>
                     {
                         push.Title.AddStringTemplate("Order shipped!");
                         push.Body.AddStringTemplate("Your Tandely order, #{{OrderId}} has shipped with {{Carrier}}! ");
-                    });
-
-                    pipeline.AddEmail("from@example.com".AsIdentityAddress(), email =>
+                    })
+                    .AddEmail("from@example.com".AsIdentityAddress(), email =>
                     {
                         email.Subject.AddStringTemplate("Tandely order, {{OrderId}}, shipped!");
                         email.HtmlBody.AddStringTemplate("Your Tandely order, #{{OrderId}} has shipped with {{Carrier}}! You can track it <a href=\"https://shipping.example.com/?track={{TrackingNumber}}\">here</a>");
                         email.TextBody.AddStringTemplate("Your Tandely order, #{{OrderId}} has shipped with {{Carrier}}! You can track it at https://shipping.example.com/?track={{TrackingNumber}}");
-                    });
-
-                    pipeline.UseFirstMatchPipelineDeliveryStrategy();
-
+                    })
+                    .UseFirstMatchPipelineDeliveryStrategy();
                 })
                 .AddPipeline(OrdersIntegrationEvent.OrderConfirmation, pipeline =>
                 {
-                    pipeline.AddEmail("from@example.com".AsIdentityAddress(), email =>
+                    pipeline
+                    .AddEmail("from@example.com".AsIdentityAddress(), email =>
                     {
                         email.Subject.AddStringTemplate("Thank you for your order, #{{Order.Id}}!");
                         email.HtmlBody.AddStringTemplate("Your total is ${{Order.Total}}!");
@@ -104,7 +102,6 @@ namespace Tandely.Notifications.Service
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

@@ -29,11 +29,11 @@ namespace Transmitly.ChannelProvider.Debugging
         public async Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
         {
             _logger.Log(options.LogLevel, "Dispatching to Channel: '{ChannelId}' Content: {Content}.", communicationContext.ChannelId, JsonSerializer.Serialize(communication, _serializerOptions));
-            if (!options.ReturnDispatchResult)
+            if (!options.SimulateDispatchResult)
                 return [];
-            else if (options.DispatchResolverHandler == null)
+            else if (options.SimulateDispatchResultHandler == null)
                 return [new DispatchResult(DispatchStatus.Dispatched, Guid.NewGuid().ToString())];
-            return await options.DispatchResolverHandler(communication, communicationContext).ConfigureAwait(false);
+            return await options.SimulateDispatchResultHandler(communication, communicationContext).ConfigureAwait(false);
         }
     }
 }
