@@ -21,32 +21,32 @@ using Transmitly.Template.Configuration;
 
 namespace Tandely.Notifications.Client
 {
-    sealed class NotificationsClientFactory(NotificationsOptions options) : ICommunicationClientFactory
-    {
-        private readonly NotificationsOptions _options = Guard.AgainstNull(options);
+	sealed class NotificationsClientFactory(NotificationsOptions options) : ICommunicationClientFactory
+	{
+		private readonly NotificationsOptions _options = Guard.AgainstNull(options);
 
-        public ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
-        {
-            DefaultPipelineFactory pipelineRegistrations = new(context.Pipelines);
+		public ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
+		{
+			DefaultPipelineFactory pipelineRegistrations = new(context.Pipelines);
 
-            DefaultChannelProviderFactory channelProviderRegistrations = new(context.ChannelProviders);
+			DefaultChannelProviderFactory channelProviderRegistrations = new(context.ChannelProviders);
 
-            DefaultTemplateEngineFactory templateEngineRegistrations = new(context.TemplateEngines);
+			DefaultTemplateEngineFactory templateEngineRegistrations = new(context.TemplateEngines);
 
-            DefaultPersonaFactory personaRegistrations = new(context.Personas);
+			DefaultPersonaFactory personaRegistrations = new(context.Personas);
 
-            DefaultPlatformIdentityResolverRegistrationFactory platformIdentityResolverRegistrations = new(context.PlatformIdentityResolvers);
+			DefaultPlatformIdentityResolverRegistrationFactory platformIdentityResolverRegistrations = new(context.PlatformIdentityResolvers);
 
-            var defaultClient = new DefaultCommunicationsClient(
-                pipelineRegistrations,
-                channelProviderRegistrations,
-                templateEngineRegistrations,
-                personaRegistrations,
-                platformIdentityResolverRegistrations,
-                context.DeliveryReportProvider
-            );
+			var defaultClient = new DefaultCommunicationsClient(
+				pipelineRegistrations,
+				channelProviderRegistrations,
+				templateEngineRegistrations,
+				personaRegistrations,
+				platformIdentityResolverRegistrations,
+				context.DeliveryReportProvider
+			);
 
-            return new NotificationsCommunicationsClient(defaultClient, context, platformIdentityResolverRegistrations, _options);
-        }
-    }
+			return new NotificationsCommunicationsClient(defaultClient, context, platformIdentityResolverRegistrations, _options);
+		}
+	}
 }

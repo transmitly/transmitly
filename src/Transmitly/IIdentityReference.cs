@@ -14,9 +14,9 @@
 
 namespace Transmitly
 {
-    public interface IIdentityReference
-    {
-        string Id { get; }
-        string Type { get; }
-    }
+	public interface IIdentityReference
+	{
+		string Id { get; }
+		string Type { get; }
+	}
 }

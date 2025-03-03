@@ -14,7 +14,7 @@
 
 namespace Transmitly.Channel.Configuration
 {
-    public interface IChannel<T> : IChannel
+	public interface IChannel<T> : IChannel
 	{
 		new Task<T> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
 	}

@@ -16,32 +16,32 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Tandely.Customers.Service.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class CustomersController(CustomerRepository customerRepository, ILogger<CustomersController> logger) : ControllerBase
-    {
-        private readonly CustomerRepository _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
-        private readonly ILogger<CustomersController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+	[ApiController]
+	[Route("[controller]")]
+	public class CustomersController(CustomerRepository customerRepository, ILogger<CustomersController> logger) : ControllerBase
+	{
+		private readonly CustomerRepository _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
+		private readonly ILogger<CustomersController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        [HttpGet("all")]
-        public IEnumerable<Customer> AlLCustomers()
-        {
-            _logger.LogDebug("Get All Customers");
-            
-            return _customerRepository.GetAllUsers();
-        }
+		[HttpGet("all")]
+		public IEnumerable<Customer> AlLCustomers()
+		{
+			_logger.LogDebug("Get All Customers");
 
-        /// <summary>
-        /// Get a customer by Id
-        /// </summary>
-        /// <param name="id" example="57eea4ca-3713-7441-7208-a2baded5c466">Id of the customer</param>
-        /// <returns>Customer; otherwise null</returns>
-        [HttpGet("{id}")]
-        public Customer? GetCustomer(Guid id)
-        {
-            _logger.LogDebug("Get Customer");
+			return _customerRepository.GetAllUsers();
+		}
 
-            return _customerRepository.GetCustomer(id);
-        }
-    }
+		/// <summary>
+		/// Get a customer by Id
+		/// </summary>
+		/// <param name="id" example="57eea4ca-3713-7441-7208-a2baded5c466">Id of the customer</param>
+		/// <returns>Customer; otherwise null</returns>
+		[HttpGet("{id}")]
+		public Customer? GetCustomer(Guid id)
+		{
+			_logger.LogDebug("Get Customer");
+
+			return _customerRepository.GetCustomer(id);
+		}
+	}
 }

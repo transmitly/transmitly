@@ -16,21 +16,21 @@ using Transmitly.PlatformIdentity.Configuration;
 
 namespace Transmitly.Tests
 {
-    internal sealed class TestPlatformIdentityRepository : IPlatformIdentityResolver
-    {
-        private static bool _isFirst = true;
-        public Task<IReadOnlyCollection<IPlatformIdentity>?> Resolve(IReadOnlyCollection<IIdentityReference> identityReferences)
-        {
-            var results = new List<IPlatformIdentity>();
-            foreach (var refs in identityReferences)
-            {
-                if (Guid.TryParse(refs.Id, out var parsedId))
-                {
-                    results.Add(new TestPlatformIdentity1(parsedId) { IsPersona = _isFirst, Addresses = new List<IdentityAddress>() { new("unit-test-address") } });
-                    _isFirst = false;
-                }
-            }
-            return Task.FromResult<IReadOnlyCollection<IPlatformIdentity>?>(results.AsReadOnly());
-        }
-    }
+	internal sealed class TestPlatformIdentityRepository : IPlatformIdentityResolver
+	{
+		private static bool _isFirst = true;
+		public Task<IReadOnlyCollection<IPlatformIdentity>?> Resolve(IReadOnlyCollection<IIdentityReference> identityReferences)
+		{
+			var results = new List<IPlatformIdentity>();
+			foreach (var refs in identityReferences)
+			{
+				if (Guid.TryParse(refs.Id, out var parsedId))
+				{
+					results.Add(new TestPlatformIdentity1(parsedId) { IsPersona = _isFirst, Addresses = new List<IdentityAddress>() { new("unit-test-address") } });
+					_isFirst = false;
+				}
+			}
+			return Task.FromResult<IReadOnlyCollection<IPlatformIdentity>?>(results.AsReadOnly());
+		}
+	}
 }

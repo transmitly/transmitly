@@ -16,10 +16,10 @@ using Transmitly;
 
 namespace Tandely.Notifications.Service
 {
-    public class PlatformIdentity : IPlatformIdentity
-    {
-        public string? Id { get;set; }
-        public string? Type { get;set;}
-        IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get;set;}=[];
-    }
+	public class PlatformIdentity : IPlatformIdentity
+	{
+		public string? Id { get; set; }
+		public string? Type { get; set; }
+		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get; set; } = [];
+	}
 }

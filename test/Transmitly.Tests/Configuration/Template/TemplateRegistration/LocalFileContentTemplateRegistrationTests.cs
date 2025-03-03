@@ -44,16 +44,16 @@ namespace Transmitly.Template.Configuration.Tests
 			Assert.IsNull(await template.GetContentAsync(context.Object));
 		}
 
-//#if !NETFRAMEWORK //todo: look into why this isn't working for NETFramework
-//		[TestMethod()]
-//		[DeploymentItem(@"FileResource/file-content.txt")]
-//		[DeploymentItem(@"FileResource\file-content.txt")]
-//		public async Task ShouldReturnFileResourceContent()
-//		{
-//			var template = new LocalFileContentTemplateRegistration($"FileResource{Path.DirectorySeparatorChar}file-content.txt");
-//			var context = new Mock<IDispatchCommunicationContext>();
-//			Assert.AreEqual("OK", await template.GetContentAsync(context.Object));
-//		}
-//#endif
+		//#if !NETFRAMEWORK //todo: look into why this isn't working for NETFramework
+		//		[TestMethod()]
+		//		[DeploymentItem(@"FileResource/file-content.txt")]
+		//		[DeploymentItem(@"FileResource\file-content.txt")]
+		//		public async Task ShouldReturnFileResourceContent()
+		//		{
+		//			var template = new LocalFileContentTemplateRegistration($"FileResource{Path.DirectorySeparatorChar}file-content.txt");
+		//			var context = new Mock<IDispatchCommunicationContext>();
+		//			Assert.AreEqual("OK", await template.GetContentAsync(context.Object));
+		//		}
+		//#endif
 	}
 }

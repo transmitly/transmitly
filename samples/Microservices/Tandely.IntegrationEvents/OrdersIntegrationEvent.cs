@@ -14,8 +14,8 @@
 
 namespace Tandely.IntegrationEvents
 {
-    public static class OrdersIntegrationEvent
-    {
-        public const string OrderConfirmation = "order-confirmation";
-    }
+	public static class OrdersIntegrationEvent
+	{
+		public const string OrderConfirmation = "order-confirmation";
+	}
 }

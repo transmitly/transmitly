@@ -14,33 +14,33 @@
 
 namespace Transmitly.Tests
 {
-    [TestClass()]
-    public class IdentityAddressExtensionsTests
-    {
-        [TestMethod()]
-        public void ShouldThrowIfAddressIsnNull()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => ((IIdentityAddress?)null!).IsType("fail"));
-        }
+	[TestClass()]
+	public class IdentityAddressExtensionsTests
+	{
+		[TestMethod()]
+		public void ShouldThrowIfAddressIsnNull()
+		{
+			Assert.ThrowsException<ArgumentNullException>(() => ((IIdentityAddress?)null!).IsType("fail"));
+		}
 
-        [TestMethod()]
-        public void MatchShouldBeCaseInsensitive()
-        {
-            var expectedType = "unit-test";
-            var sut = new IdentityAddress("test", type: expectedType);
-            Assert.IsTrue(sut.IsType(expectedType));
-            Assert.IsTrue(sut.IsType(expectedType.ToUpper()));
-            Assert.IsTrue(sut.IsType(expectedType.ToLower()));
-        }
+		[TestMethod()]
+		public void MatchShouldBeCaseInsensitive()
+		{
+			var expectedType = "unit-test";
+			var sut = new IdentityAddress("test", type: expectedType);
+			Assert.IsTrue(sut.IsType(expectedType));
+			Assert.IsTrue(sut.IsType(expectedType.ToUpper()));
+			Assert.IsTrue(sut.IsType(expectedType.ToLower()));
+		}
 
-        [TestMethod]
-        public void ShouldReturnDefaultValue()
-        {
-            var expectedType = "unit-test";
-            var expectedValue = "pass";
-            var sut = new IdentityAddress("test", type: expectedType);
-            Assert.AreEqual(expectedValue, sut.IfType(expectedType, expectedValue));
-            Assert.AreNotEqual("anything-else", sut.IfType(expectedType, expectedValue));
-        }
-    }
+		[TestMethod]
+		public void ShouldReturnDefaultValue()
+		{
+			var expectedType = "unit-test";
+			var expectedValue = "pass";
+			var sut = new IdentityAddress("test", type: expectedType);
+			Assert.AreEqual(expectedValue, sut.IfType(expectedType, expectedValue));
+			Assert.AreNotEqual("anything-else", sut.IfType(expectedType, expectedValue));
+		}
+	}
 }

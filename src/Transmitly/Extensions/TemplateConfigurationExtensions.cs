@@ -19,10 +19,10 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
-    /// <summary>
-    /// Template configuration related extensions.
-    /// </summary>
-    public static class TemplateConfigurationExtensions
+	/// <summary>
+	/// Template configuration related extensions.
+	/// </summary>
+	public static class TemplateConfigurationExtensions
 	{
 		/// <summary>
 		/// Renders the template configuration with the registered template engine.

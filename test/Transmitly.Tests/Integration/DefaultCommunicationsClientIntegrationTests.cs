@@ -78,7 +78,7 @@ namespace Transmitly.Tests.Integration
 			const string ChannelId = "unit-test-channel";
 			IReadOnlyCollection<IIdentityAddress> RecipientAddresses = new IdentityAddress[] { new("unit-test-address-recipient") };
 			string[] SupportedChannels = [ChannelId];
-			
+
 
 			var client = new CommunicationsClientBuilder()
 				//Channel Provider = Provides the services for a particular channel or channels

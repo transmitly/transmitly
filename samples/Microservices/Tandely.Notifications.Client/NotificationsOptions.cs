@@ -14,9 +14,9 @@
 
 namespace Tandely.Notifications.Client
 {
-    public sealed class NotificationsOptions
-    {
-        public Uri? BasePath { get; set; }
-        public string? ApiKey { get; set; }
-    }
+	public sealed class NotificationsOptions
+	{
+		public Uri? BasePath { get; set; }
+		public string? ApiKey { get; set; }
+	}
 }

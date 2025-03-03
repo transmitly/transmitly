@@ -32,7 +32,7 @@ namespace Transmitly
 		/// <returns></returns>
 		public static string Voice(this Channels channel, string channelId = "")
 		{
-			return Guard.AgainstNull(channel).GetId(VoiceId,channelId);
+			return Guard.AgainstNull(channel).GetId(VoiceId, channelId);
 		}
 
 		/// <summary>

@@ -16,48 +16,48 @@ using Transmitly.Tests.Integration;
 
 namespace Transmitly.Tests.Identity
 {
-    [TestClass]
-    public class PipelinePersonaTests
-    {
+	[TestClass]
+	public class PipelinePersonaTests
+	{
 
 
-        [TestMethod]
-        public async Task PipelineShouldOnlyFireForMatchingPersonas()
-        {
-            const string FromAddress = "unit-test-address-from";
-            const string PipelineName = "unit-test-pipeline";
-            const string ChannelProviderId = "unit-test-channel-provider";
-            const string ExpectedMessage = "Your OTP Code: {{Code}}";
-            const string ChannelId = "unit-test-channel";
-            const string ExpectedPersona = "Unit Test Persona";
-            const string PlatformIdentityType = "test-identity";
+		[TestMethod]
+		public async Task PipelineShouldOnlyFireForMatchingPersonas()
+		{
+			const string FromAddress = "unit-test-address-from";
+			const string PipelineName = "unit-test-pipeline";
+			const string ChannelProviderId = "unit-test-channel-provider";
+			const string ExpectedMessage = "Your OTP Code: {{Code}}";
+			const string ChannelId = "unit-test-channel";
+			const string ExpectedPersona = "Unit Test Persona";
+			const string PlatformIdentityType = "test-identity";
 
-            var builder = new CommunicationsClientBuilder()
-                    .ChannelProvider.Add<OptionalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>(
-                    ChannelProviderId,
-                    ChannelId, ChannelId
-                 ).
-                AddPipeline(PipelineName, options =>
-                {
-                    var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
-                    channel.Subject.AddStringTemplate(ExpectedMessage);
-                    options.AddChannel(channel);
-                    options.AddPersonaFilter(ExpectedPersona);
-                })
-                .AddPersona<TestPlatformIdentity1>(ExpectedPersona, PlatformIdentityType, x => x.IsPersona)
-                .AddPersona<TestPlatformIdentity1>("OtherPersona", PlatformIdentityType, x => !x.IsPersona)
-                .AddPlatformIdentityResolver<TestPlatformIdentityRepository>();
+			var builder = new CommunicationsClientBuilder()
+					.ChannelProvider.Add<OptionalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>(
+					ChannelProviderId,
+					ChannelId, ChannelId
+				 ).
+				AddPipeline(PipelineName, options =>
+				{
+					var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
+					channel.Subject.AddStringTemplate(ExpectedMessage);
+					options.AddChannel(channel);
+					options.AddPersonaFilter(ExpectedPersona);
+				})
+				.AddPersona<TestPlatformIdentity1>(ExpectedPersona, PlatformIdentityType, x => x.IsPersona)
+				.AddPersona<TestPlatformIdentity1>("OtherPersona", PlatformIdentityType, x => !x.IsPersona)
+				.AddPlatformIdentityResolver<TestPlatformIdentityRepository>();
 
-            var client = builder.BuildClient();
+			var client = builder.BuildClient();
 
-            var result = await client.DispatchAsync(PipelineName, [new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString()), new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
+			var result = await client.DispatchAsync(PipelineName, [new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString()), new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
 
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.IsSuccessful);
-            Assert.IsNotNull(result.Results);
-            Assert.AreEqual(1, result.Results.Count);
-            var singleResult = result.Results.First();
-            Assert.AreEqual(DispatchStatus.Dispatched, singleResult?.DispatchStatus);
-        }
-    }
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.IsNotNull(result.Results);
+			Assert.AreEqual(1, result.Results.Count);
+			var singleResult = result.Results.First();
+			Assert.AreEqual(DispatchStatus.Dispatched, singleResult?.DispatchStatus);
+		}
+	}
 }

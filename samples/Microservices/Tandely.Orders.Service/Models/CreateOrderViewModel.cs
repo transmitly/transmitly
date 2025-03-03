@@ -16,11 +16,11 @@ using Transmitly;
 
 namespace Tandely.Orders.Service.Controllers
 {
-    public class CreateOrderViewModel
-    {
-        public string Id { get; set; }
-        public DateTime Date { get; set; }
-        public double Total { get; set; }
-        public List<IdentityReference> Customers { get; set; } = [];
-    }
+	public class CreateOrderViewModel
+	{
+		public string Id { get; set; }
+		public DateTime Date { get; set; }
+		public double Total { get; set; }
+		public List<IdentityReference> Customers { get; set; } = [];
+	}
 }

@@ -30,7 +30,7 @@ namespace Transmitly.Delivery.Configuration
 			return _communicationsClientBuilder;
 		}
 
-		public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)	
+		public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
 		{
 			_observerRegistrations.Add(new DeliveryReportMonitor(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames));
 			return _communicationsClientBuilder;

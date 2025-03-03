@@ -14,33 +14,33 @@
 
 namespace Transmitly.Persona.Configuration
 {
-    public abstract class BasePersonaFactory(IEnumerable<IPersonaRegistration> personaRegistrations) : IPersonaFactory
-    {
-        private readonly List<IPersonaRegistration> _personaRegistrations = personaRegistrations.ToList();
+	public abstract class BasePersonaFactory(IEnumerable<IPersonaRegistration> personaRegistrations) : IPersonaFactory
+	{
+		private readonly List<IPersonaRegistration> _personaRegistrations = personaRegistrations.ToList();
 
-        public Task<IReadOnlyCollection<IPersonaRegistration>> GetAllAsync()
-        {
-            return Task.FromResult<IReadOnlyCollection<IPersonaRegistration>>(_personaRegistrations.AsReadOnly());
-        }
+		public Task<IReadOnlyCollection<IPersonaRegistration>> GetAllAsync()
+		{
+			return Task.FromResult<IReadOnlyCollection<IPersonaRegistration>>(_personaRegistrations.AsReadOnly());
+		}
 
-        public Task<IPersonaRegistration?> GetAsync(string personaName)
-        {
-            return Task.FromResult<IPersonaRegistration?>(
-                _personaRegistrations.Find(f => f.Name.Equals(personaName, StringComparison.OrdinalIgnoreCase))
-            );
-        }
+		public Task<IPersonaRegistration?> GetAsync(string personaName)
+		{
+			return Task.FromResult<IPersonaRegistration?>(
+				_personaRegistrations.Find(f => f.Name.Equals(personaName, StringComparison.OrdinalIgnoreCase))
+			);
+		}
 
-        public virtual Task<bool> AnyMatch<TPersona>(string personaName, IReadOnlyCollection<TPersona> personas)
-            where TPersona : class
-        {
-            Guard.AgainstNullOrWhiteSpace(personaName);
-            Guard.AgainstNull(personas);
+		public virtual Task<bool> AnyMatch<TPersona>(string personaName, IReadOnlyCollection<TPersona> personas)
+			where TPersona : class
+		{
+			Guard.AgainstNullOrWhiteSpace(personaName);
+			Guard.AgainstNull(personas);
 
-            var regs = _personaRegistrations
-                .Where(x =>
-                    x.Name.Equals(personaName, StringComparison.OrdinalIgnoreCase)                    
-                );
-            return Task.FromResult(regs.Any(r => personas.Any(x => r.IsMatch(x))));
-        }
-    }
+			var regs = _personaRegistrations
+				.Where(x =>
+					x.Name.Equals(personaName, StringComparison.OrdinalIgnoreCase)
+				);
+			return Task.FromResult(regs.Any(r => personas.Any(x => r.IsMatch(x))));
+		}
+	}
 }

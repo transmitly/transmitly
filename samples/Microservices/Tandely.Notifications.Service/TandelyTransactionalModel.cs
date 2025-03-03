@@ -18,62 +18,62 @@ using Transmitly;
 
 namespace Tandely.Notifications.Service
 {
-    public sealed class TandelyTransactionalModel : ITransactionModel
-    {
-        public TandelyTransactionalModel()
-        {
+	public sealed class TandelyTransactionalModel : ITransactionModel
+	{
+		public TandelyTransactionalModel()
+		{
 
-        }
-        public TandelyTransactionalModel(ITransactionModel transactionModel)
-        {
-            if (transactionModel == null)
-                return;
-            Model = transactionModel.Model;
-            Resources = transactionModel.Resources;
-            LinkedResources = transactionModel.LinkedResources;
-        }
-        private object _model = new { };
+		}
+		public TandelyTransactionalModel(ITransactionModel transactionModel)
+		{
+			if (transactionModel == null)
+				return;
+			Model = transactionModel.Model;
+			Resources = transactionModel.Resources;
+			LinkedResources = transactionModel.LinkedResources;
+		}
+		private object _model = new { };
 
-        public object Model
-        {
-            get => _model;
-            set
-            {
-                if (value is JsonElement)
-                    _model = ConvertJsonElement((JsonElement)value) ?? new ExpandoObject();
-                else
-                    _model = value;
+		public object Model
+		{
+			get => _model;
+			set
+			{
+				if (value is JsonElement)
+					_model = ConvertJsonElement((JsonElement)value) ?? new ExpandoObject();
+				else
+					_model = value;
 
-            }
-        }
+			}
+		}
 
-        private object? ConvertJsonElement(JsonElement jsonElement)
-        {
-            return jsonElement.ValueKind switch
-            {
-                JsonValueKind.Object => ConvertJsonObject(jsonElement),
-                JsonValueKind.Array => jsonElement.EnumerateArray().Select(ConvertJsonElement).ToList(),
-                JsonValueKind.String => jsonElement.GetString(),
-                JsonValueKind.Number => jsonElement.TryGetInt64(out long l) ? (object)l : jsonElement.GetDecimal(),
-                JsonValueKind.True => true,
-                JsonValueKind.False => false,
-                JsonValueKind.Null => null,
-                _ => jsonElement.GetRawText(),
-            };
-        }
+		private object? ConvertJsonElement(JsonElement jsonElement)
+		{
+			return jsonElement.ValueKind switch
+			{
+				JsonValueKind.Object => ConvertJsonObject(jsonElement),
+				JsonValueKind.Array => jsonElement.EnumerateArray().Select(ConvertJsonElement).ToList(),
+				JsonValueKind.String => jsonElement.GetString(),
+				JsonValueKind.Number => jsonElement.TryGetInt64(out long l) ? (object)l : jsonElement.GetDecimal(),
+				JsonValueKind.True => true,
+				JsonValueKind.False => false,
+				JsonValueKind.Null => null,
+				_ => jsonElement.GetRawText(),
+			};
+		}
 
-        private object ConvertJsonObject(JsonElement jsonElement)
-        {
-            IDictionary<string, object?> expando = new System.Dynamic.ExpandoObject();
-            foreach (var property in jsonElement.EnumerateObject())
-            {
-                expando[property.Name] = ConvertJsonElement(property.Value);
-            }
-            return expando;
-        }
+		private object ConvertJsonObject(JsonElement jsonElement)
+		{
+			IDictionary<string, object?> expando = new System.Dynamic.ExpandoObject();
+			foreach (var property in jsonElement.EnumerateObject())
+			{
+				expando[property.Name] = ConvertJsonElement(property.Value);
+			}
+			return expando;
+		}
 
-        public IReadOnlyList<Resource>? Resources { get; set; } = null;
+		public IReadOnlyList<Resource>? Resources { get; set; } = null;
 
-        public IReadOnlyList<LinkedResource>? LinkedResources { get; set; } = null;
-    }
+		public IReadOnlyList<LinkedResource>? LinkedResources { get; set; } = null;
+	}
 }

@@ -16,15 +16,15 @@ using Transmitly.KitchenSink.AspNetCoreWebApi.Controllers;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
-    public class SendGridTemplateVMExample : IExamplesProvider<SendGridTemplateVM>
-    {
-        public SendGridTemplateVM GetExamples()
-        {
-            return new SendGridTemplateVM
-            {
-                Recipient = new DispatchAudience() { Addresses = [new("example@domain.com")] },
-                Model = new DispatchTransactionModel()
-            };
-        }
-    }
+	public class SendGridTemplateVMExample : IExamplesProvider<SendGridTemplateVM>
+	{
+		public SendGridTemplateVM GetExamples()
+		{
+			return new SendGridTemplateVM
+			{
+				Recipient = new DispatchAudience() { Addresses = [new("example@domain.com")] },
+				Model = new DispatchTransactionModel()
+			};
+		}
+	}
 }

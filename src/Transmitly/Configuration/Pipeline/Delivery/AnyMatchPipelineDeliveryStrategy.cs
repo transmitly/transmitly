@@ -49,7 +49,7 @@ namespace Transmitly.Delivery
 					}
 				}
 			}
-			
+
 			return new DispatchCommunicationResult(results.AsReadOnly(), IsPipelineSuccessful(results));
 		}
 	}

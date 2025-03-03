@@ -24,7 +24,8 @@ namespace Transmitly.Pipeline.Configuration
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelines);
 		}
 		///<inheritdoc/>
-		public virtual Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string platformIdentityType){
+		public virtual Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string platformIdentityType)
+		{
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
 				_pipelines
 				.Where(x => x.PlatformIdentityType == platformIdentityType && pipelineName == x.PipelineName)
@@ -32,7 +33,8 @@ namespace Transmitly.Pipeline.Configuration
 			);
 		}
 		///<inheritdoc/>
-		public virtual Task<IPipeline?> GetAsync(string pipelineName){
+		public virtual Task<IPipeline?> GetAsync(string pipelineName)
+		{
 			return Task.FromResult<IPipeline?>(
 				_pipelines
 				.Find(x => x.PipelineName == pipelineName)

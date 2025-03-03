@@ -16,18 +16,18 @@ using System.Linq.Expressions;
 
 namespace Transmitly.Persona.Configuration
 {
-    internal sealed class PersonaRegistration<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> predicate) : IPersonaRegistration<TPersona>
-        where TPersona : class
-    {
-        private readonly Func<TPersona, bool> _compiledExpression = Guard.AgainstNull(predicate).Compile();
+	internal sealed class PersonaRegistration<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> predicate) : IPersonaRegistration<TPersona>
+		where TPersona : class
+	{
+		private readonly Func<TPersona, bool> _compiledExpression = Guard.AgainstNull(predicate).Compile();
 
-        public string Name { get; } = Guard.AgainstNullOrWhiteSpace(name);
-        public string PlatformIdentityType { get; } = Guard.AgainstNullOrWhiteSpace(platformIdentityType);
+		public string Name { get; } = Guard.AgainstNullOrWhiteSpace(name);
+		public string PlatformIdentityType { get; } = Guard.AgainstNullOrWhiteSpace(platformIdentityType);
 
-        public Type PersonaType => typeof(TPersona);
+		public Type PersonaType => typeof(TPersona);
 
-        public bool IsMatch(TPersona persona) => _compiledExpression(persona);
+		public bool IsMatch(TPersona persona) => _compiledExpression(persona);
 
-        public bool IsMatch(object persona) => IsMatch((TPersona)persona);
-    }
+		public bool IsMatch(object persona) => IsMatch((TPersona)persona);
+	}
 }

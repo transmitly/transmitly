@@ -14,7 +14,7 @@
 
 namespace Transmitly
 {
-    public interface ITransactionModel
+	public interface ITransactionModel
 	{
 		object Model { get; }
 		IReadOnlyList<Resource> Resources { get; }

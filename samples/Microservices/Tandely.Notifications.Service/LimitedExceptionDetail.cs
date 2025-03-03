@@ -14,29 +14,29 @@
 
 namespace Tandely.Notifications.Service
 {
-    //Source = https://stackoverflow.com/a/72968664
-    sealed class LimitedExceptionDetail
-    {
-        public LimitedExceptionDetail() { }
+	//Source = https://stackoverflow.com/a/72968664
+	sealed class LimitedExceptionDetail
+	{
+		public LimitedExceptionDetail() { }
 
-        internal LimitedExceptionDetail(Exception exception)
-        {
-            Type = exception.GetType().FullName;
-            Message = exception.Message;
-            Source = exception.Source;
+		internal LimitedExceptionDetail(Exception exception)
+		{
+			Type = exception.GetType().FullName;
+			Message = exception.Message;
+			Source = exception.Source;
 #if DEBUG
-            StackTrace = exception.StackTrace;
-            if (exception.InnerException is not null)
-            {
-                InnerException = new LimitedExceptionDetail(exception.InnerException);
-            }
+			StackTrace = exception.StackTrace;
+			if (exception.InnerException is not null)
+			{
+				InnerException = new LimitedExceptionDetail(exception.InnerException);
+			}
 #endif
-        }
+		}
 
-        public string? Type { get; set; }
-        public string? Message { get; set; }
-        public string? Source { get; set; }
-        public string? StackTrace { get; set; }
-        public LimitedExceptionDetail? InnerException { get; set; }
-    }
+		public string? Type { get; set; }
+		public string? Message { get; set; }
+		public string? Source { get; set; }
+		public string? StackTrace { get; set; }
+		public LimitedExceptionDetail? InnerException { get; set; }
+	}
 }

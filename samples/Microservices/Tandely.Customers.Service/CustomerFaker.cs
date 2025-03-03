@@ -16,34 +16,34 @@ using Bogus;
 
 namespace Tandely.Customers.Service
 {
-    public class CustomerFaker : Faker<Customer>
-    {
-        public CustomerFaker()
-        {
-            RuleFor(u => u.Id, f => f.Random.Guid());
-            RuleFor(u => u.EmailAddress, f => $"{f.Person.FirstName}{f.Person.LastName[0]}@example.com".ToLowerInvariant());
-            RuleFor(u => u.FirstName, f => f.Person.FirstName);
-            RuleFor(u => u.LastName, f => f.Person.LastName);
-            RuleFor(u => u.MobilePhone, f => f.Random.Bool(0.5f) ? null : f.Phone.PhoneNumber("+1888#######"));
-            RuleFor(u => u.DeviceToken, f => f.Random.Bool(0.75f) ? null : $"{f.Random.AlphaNumeric(11)}:APA91b{f.Random.AlphaNumeric(134)}");
-            RuleFor(u => u.LoyaltyPoints, f => f.Random.Number(0, 1000));
-            //RuleFor(u => u.ChannelPreference, (f, u) =>
-            //{
-            //    var availableChannels = new List<string>();
+	public class CustomerFaker : Faker<Customer>
+	{
+		public CustomerFaker()
+		{
+			RuleFor(u => u.Id, f => f.Random.Guid());
+			RuleFor(u => u.EmailAddress, f => $"{f.Person.FirstName}{f.Person.LastName[0]}@example.com".ToLowerInvariant());
+			RuleFor(u => u.FirstName, f => f.Person.FirstName);
+			RuleFor(u => u.LastName, f => f.Person.LastName);
+			RuleFor(u => u.MobilePhone, f => f.Random.Bool(0.5f) ? null : f.Phone.PhoneNumber("+1888#######"));
+			RuleFor(u => u.DeviceToken, f => f.Random.Bool(0.75f) ? null : $"{f.Random.AlphaNumeric(11)}:APA91b{f.Random.AlphaNumeric(134)}");
+			RuleFor(u => u.LoyaltyPoints, f => f.Random.Number(0, 1000));
+			//RuleFor(u => u.ChannelPreference, (f, u) =>
+			//{
+			//    var availableChannels = new List<string>();
 
-            //    if (!string.IsNullOrEmpty(u.EmailAddress))
-            //        availableChannels.Add("Email");
+			//    if (!string.IsNullOrEmpty(u.EmailAddress))
+			//        availableChannels.Add("Email");
 
-            //    if (!string.IsNullOrEmpty(u.MobilePhone))
-            //        availableChannels.Add("SMS");
+			//    if (!string.IsNullOrEmpty(u.MobilePhone))
+			//        availableChannels.Add("SMS");
 
-            //    if (!string.IsNullOrEmpty(u.DeviceToken))
-            //        availableChannels.Add("Push");
+			//    if (!string.IsNullOrEmpty(u.DeviceToken))
+			//        availableChannels.Add("Push");
 
-            //    return availableChannels.Count > 0
-            //        ? f.PickRandom(availableChannels)  // Pick a valid option
-            //        : "Email"; // Default to Email if nothing is available
-            //});
-        }
-    }
+			//    return availableChannels.Count > 0
+			//        ? f.PickRandom(availableChannels)  // Pick a valid option
+			//        : "Email"; // Default to Email if nothing is available
+			//});
+		}
+	}
 }

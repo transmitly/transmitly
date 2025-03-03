@@ -14,32 +14,32 @@
 
 namespace Tandely.Notifications.Client
 {
-    public class NotificationsPipelineDispatchResult
-    {
+	public class NotificationsPipelineDispatchResult
+	{
 
-        /// <summary>
-        /// The name of the pipeline, if resolution has completed by the time this result is returned.
-        /// </summary>
-        public string PipelineName { get; set; }
+		/// <summary>
+		/// The name of the pipeline, if resolution has completed by the time this result is returned.
+		/// </summary>
+		public string PipelineName { get; set; }
 
-        /// <summary>
-        /// The ID of the pipeline instance, if resolution and instantiation has completed by the time this result is returned.
-        /// </summary>
-        public Guid? PipelineInstanceId { get; set; }
+		/// <summary>
+		/// The ID of the pipeline instance, if resolution and instantiation has completed by the time this result is returned.
+		/// </summary>
+		public Guid? PipelineInstanceId { get; set; }
 
-        /// <summary>
-        /// A reference identifier you want to track the originating send command to
-        /// </summary>
-        public string? ExternalInstanceReferenceId { get; set; }
+		/// <summary>
+		/// A reference identifier you want to track the originating send command to
+		/// </summary>
+		public string? ExternalInstanceReferenceId { get; set; }
 
-        /// <summary>
-        /// The status of the pipeline instance.
-        /// </summary>
-        public PipelineInstanceStatus PipelineStatus { get; set; }
+		/// <summary>
+		/// The status of the pipeline instance.
+		/// </summary>
+		public PipelineInstanceStatus PipelineStatus { get; set; }
 
-        /// <summary>
-        /// The pipeline resolution associated with the originating communication request or signal.
-        /// </summary>
-        public PipelineResolutionResult ResolutionStatus { get; set; }
-    }
+		/// <summary>
+		/// The pipeline resolution associated with the originating communication request or signal.
+		/// </summary>
+		public PipelineResolutionResult ResolutionStatus { get; set; }
+	}
 }

@@ -14,29 +14,29 @@
 
 namespace Transmitly.PlatformIdentity.Configuration
 {
-    public interface IPlatformIdentityResolver
-    {
-        Task<IReadOnlyCollection<IPlatformIdentity>?> Resolve(IReadOnlyCollection<IIdentityReference> identityReferences);
-    }
+	public interface IPlatformIdentityResolver
+	{
+		Task<IReadOnlyCollection<IPlatformIdentity>?> Resolve(IReadOnlyCollection<IIdentityReference> identityReferences);
+	}
 
-    /// <summary>
-    /// Represents a store for registering platform identity resolvers.
-    /// </summary>
-    public interface IPlatformIdentityResolverFactory
-    {
-        /// <summary>
-        /// Gets all the registered platform identity resolvers.
-        /// </summary>
-        /// <returns>A read-only list of platform identity resolvers.</returns>
-        Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAllAsync();
+	/// <summary>
+	/// Represents a store for registering platform identity resolvers.
+	/// </summary>
+	public interface IPlatformIdentityResolverFactory
+	{
+		/// <summary>
+		/// Gets all the registered platform identity resolvers.
+		/// </summary>
+		/// <returns>A read-only list of platform identity resolvers.</returns>
+		Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAllAsync();
 
-        /// <summary>
-        /// Gets the platform identity resolvers based on the specified platform identity type.
-        /// </summary>
-        /// <param name="platformIdentityTypes">The platformIdentityType.</param>
-        /// <returns>A read-only list of platform identity resolvers.</returns>
-        Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAsync(params string[] platformIdentityTypes);
+		/// <summary>
+		/// Gets the platform identity resolvers based on the specified platform identity type.
+		/// </summary>
+		/// <param name="platformIdentityTypes">The platformIdentityType.</param>
+		/// <returns>A read-only list of platform identity resolvers.</returns>
+		Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAsync(params string[] platformIdentityTypes);
 
-        Task<IPlatformIdentityResolver?> ResolveResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration);
-    }
+		Task<IPlatformIdentityResolver?> ResolveResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration);
+	}
 }

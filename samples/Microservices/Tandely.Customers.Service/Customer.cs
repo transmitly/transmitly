@@ -14,15 +14,15 @@
 
 namespace Tandely.Customers.Service
 {
-    public class Customer
-    {
-        public Guid Id { get; set; }
-        public string? EmailAddress { get; set; }
-        public string? MobilePhone { get; set; }
-        public string? DeviceToken { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public int LoyaltyPoints { get; set; }
-        //public string? ChannelPreference { get; set; }
-    }
+	public class Customer
+	{
+		public Guid Id { get; set; }
+		public string? EmailAddress { get; set; }
+		public string? MobilePhone { get; set; }
+		public string? DeviceToken { get; set; }
+		public string? FirstName { get; set; }
+		public string? LastName { get; set; }
+		public int LoyaltyPoints { get; set; }
+		//public string? ChannelPreference { get; set; }
+	}
 }

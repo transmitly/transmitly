@@ -18,17 +18,17 @@ using Transmitly;
 
 namespace Tandely.Orders.Service.Controllers
 {
-    public class CreateOrderViewModelExample : IExamplesProvider<CreateOrderViewModel>
-    {
-        public CreateOrderViewModel GetExamples()
-        {
-            return new CreateOrderViewModel
-            {
-                Id = new Randomizer().Number(100000, 999999).ToString(),
-                Date = DateTime.UtcNow,
-                Total = 100.21,
-                Customers = [new IdentityReference("Customer", "f96390f7-7175-3847-1df6-43a0eb5f7b60")]
-            };
-        }
-    }
+	public class CreateOrderViewModelExample : IExamplesProvider<CreateOrderViewModel>
+	{
+		public CreateOrderViewModel GetExamples()
+		{
+			return new CreateOrderViewModel
+			{
+				Id = new Randomizer().Number(100000, 999999).ToString(),
+				Date = DateTime.UtcNow,
+				Total = 100.21,
+				Customers = [new IdentityReference("Customer", "f96390f7-7175-3847-1df6-43a0eb5f7b60")]
+			};
+		}
+	}
 }

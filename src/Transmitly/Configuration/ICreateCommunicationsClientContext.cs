@@ -21,13 +21,13 @@ using Transmitly.Persona.Configuration;
 
 namespace Transmitly
 {
-    public interface ICreateCommunicationsClientContext
-    {
-        IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; }
-        IReadOnlyCollection<IPipeline> Pipelines { get; }
-        IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
-        IDeliveryReportReporter DeliveryReportProvider { get; }
-        IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; }
-        IReadOnlyCollection<IPersonaRegistration> Personas { get; }
-    }
+	public interface ICreateCommunicationsClientContext
+	{
+		IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; }
+		IReadOnlyCollection<IPipeline> Pipelines { get; }
+		IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
+		IDeliveryReportReporter DeliveryReportProvider { get; }
+		IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; }
+		IReadOnlyCollection<IPersonaRegistration> Personas { get; }
+	}
 }

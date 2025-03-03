@@ -16,70 +16,70 @@ using Transmitly.Persona.Configuration;
 
 namespace Transmitly.Pipeline.Configuration.Tests
 {
-    [TestClass]
-    public class PipelineFactoryTests
-    {
+	[TestClass]
+	public class PipelineFactoryTests
+	{
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        private DefaultPipelineFactory _pipelineRegistrationStore;
+		private DefaultPipelineFactory _pipelineRegistrationStore;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-        [TestInitialize]
-        public void Initialize()
-        {
-            var pipelineRegistrations = new List<IPipeline>();
-            _pipelineRegistrationStore = new DefaultPipelineFactory(pipelineRegistrations);
-        }
+		[TestInitialize]
+		public void Initialize()
+		{
+			var pipelineRegistrations = new List<IPipeline>();
+			_pipelineRegistrationStore = new DefaultPipelineFactory(pipelineRegistrations);
+		}
 
-        [TestMethod]
-        public async Task GetAllAsync_ReturnsAllPipelineRegistrations()
-        {
-            // Arrange
+		[TestMethod]
+		public async Task GetAllAsync_ReturnsAllPipelineRegistrations()
+		{
+			// Arrange
 
-            // Act
-            var result = await _pipelineRegistrationStore.GetAllAsync();
+			// Act
+			var result = await _pipelineRegistrationStore.GetAllAsync();
 
-            // Assert
-            Assert.AreEqual(0, result.Count);
-        }
+			// Assert
+			Assert.AreEqual(0, result.Count);
+		}
 
-        [TestMethod]
-        public async Task GetByPlatformIdentityTypeAsync_ReturnsMatchingPipelineRegistrations()
-        {
-            // Arrange
-            var platformIdentityType = "example";
+		[TestMethod]
+		public async Task GetByPlatformIdentityTypeAsync_ReturnsMatchingPipelineRegistrations()
+		{
+			// Arrange
+			var platformIdentityType = "example";
 
-            // Act
-            var result = await _pipelineRegistrationStore.GetByPlatformIdentityTypeAsync(platformIdentityType);
+			// Act
+			var result = await _pipelineRegistrationStore.GetByPlatformIdentityTypeAsync(platformIdentityType);
 
-            // Assert
-            Assert.AreEqual(0, result.Count);
-        }
+			// Assert
+			Assert.AreEqual(0, result.Count);
+		}
 
-        [TestMethod]
-        public async Task GetAsync_ReturnsPipelineRegistrationByName()
-        {
-            // Arrange
-            var pipelineName = "example";
+		[TestMethod]
+		public async Task GetAsync_ReturnsPipelineRegistrationByName()
+		{
+			// Arrange
+			var pipelineName = "example";
 
-            // Act
-            var result = await _pipelineRegistrationStore.GetAsync(pipelineName);
+			// Act
+			var result = await _pipelineRegistrationStore.GetAsync(pipelineName);
 
-            // Assert
-            Assert.IsNull(result);
-        }
+			// Assert
+			Assert.IsNull(result);
+		}
 
-        [TestMethod]
-        public async Task GetAsync_ReturnsMatchingPipelineRegistrations()
-        {
-            // Arrange
-            var pipelineName = "example";
-            var platformIdentityType = "example";
+		[TestMethod]
+		public async Task GetAsync_ReturnsMatchingPipelineRegistrations()
+		{
+			// Arrange
+			var pipelineName = "example";
+			var platformIdentityType = "example";
 
-            // Act
-            var result = await _pipelineRegistrationStore.GetAsync(pipelineName, platformIdentityType);
+			// Act
+			var result = await _pipelineRegistrationStore.GetAsync(pipelineName, platformIdentityType);
 
-            // Assert
-            Assert.AreEqual(0, result.Count);
-        }
-    }
+			// Assert
+			Assert.AreEqual(0, result.Count);
+		}
+	}
 }

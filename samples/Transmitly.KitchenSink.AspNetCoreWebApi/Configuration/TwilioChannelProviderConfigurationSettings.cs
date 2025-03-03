@@ -15,8 +15,8 @@
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
 {
 	public class TwilioChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
-    {
-        public string? AuthToken { get; set; }
-        public string? AccountSid { get; set; }
-    }
+	{
+		public string? AuthToken { get; set; }
+		public string? AccountSid { get; set; }
+	}
 }

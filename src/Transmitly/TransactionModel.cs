@@ -16,10 +16,10 @@ using System.Diagnostics;
 
 namespace Transmitly
 {
-    /// <summary>
-    /// Transactional Model for Dispatching data related to dispatching communications using a <see cref="ICommunicationsClient"/>
-    /// </summary>
-    [DebuggerStepThrough]
+	/// <summary>
+	/// Transactional Model for Dispatching data related to dispatching communications using a <see cref="ICommunicationsClient"/>
+	/// </summary>
+	[DebuggerStepThrough]
 	public class TransactionModel : ITransactionModel
 	{
 		private readonly object _model;

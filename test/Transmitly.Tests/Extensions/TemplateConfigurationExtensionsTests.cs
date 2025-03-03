@@ -18,22 +18,22 @@ using Transmitly.Exceptions;
 
 namespace Transmitly.Tests
 {
-    [TestClass()]
-    public class TemplateConfigurationExtensionsTests : BaseUnitTest
-    {
-        [TestMethod()]
-        public void ShouldThrowIfCultureSpecificConfigurationIsRequired()
-        {
-            var config = fixture.Create<IContentTemplateConfiguration>();
-            Assert.ThrowsException<CommunicationsException>(() => TemplateConfigurationExtensions.GetTemplateRegistration(config, System.Globalization.CultureInfo.GetCultureInfo("en-es"), true));
-        }
+	[TestClass()]
+	public class TemplateConfigurationExtensionsTests : BaseUnitTest
+	{
+		[TestMethod()]
+		public void ShouldThrowIfCultureSpecificConfigurationIsRequired()
+		{
+			var config = fixture.Create<IContentTemplateConfiguration>();
+			Assert.ThrowsException<CommunicationsException>(() => TemplateConfigurationExtensions.GetTemplateRegistration(config, System.Globalization.CultureInfo.GetCultureInfo("en-es"), true));
+		}
 
-        [TestMethod]
-        public void ShouldThrowIfTemplateConfigIsNull()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddStringTemplate(null!, string.Empty));
-            Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddEmbeddedResourceTemplate(null!, string.Empty));
-            Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddTemplateResolver(null!, (ctx) => Task.FromResult<string?>(string.Empty)));
-        }
-    }
+		[TestMethod]
+		public void ShouldThrowIfTemplateConfigIsNull()
+		{
+			Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddStringTemplate(null!, string.Empty));
+			Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddEmbeddedResourceTemplate(null!, string.Empty));
+			Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddTemplateResolver(null!, (ctx) => Task.FromResult<string?>(string.Empty)));
+		}
+	}
 }

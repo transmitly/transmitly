@@ -14,10 +14,10 @@
 
 namespace Transmitly.PlatformIdentity.Configuration
 {
-    internal sealed class PlatformIdentityResolverRegistration(Type resolverType, string? platformIdentityType) : IPlatformIdentityResolverRegistration
-    {
-        public string? PlatformIdentityType => platformIdentityType;
+	internal sealed class PlatformIdentityResolverRegistration(Type resolverType, string? platformIdentityType) : IPlatformIdentityResolverRegistration
+	{
+		public string? PlatformIdentityType => platformIdentityType;
 
-        public Type ResolverType => resolverType;
-    }
+		public Type ResolverType => resolverType;
+	}
 }

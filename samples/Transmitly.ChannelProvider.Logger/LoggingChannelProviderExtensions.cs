@@ -16,20 +16,20 @@ using Transmitly.ChannelProvider.Debugging;
 
 namespace Transmitly
 {
-    public static class LoggingChannelProviderExtensions
-    {
-        public static CommunicationsClientBuilder AddDispatchLoggingSupport(this CommunicationsClientBuilder builder, Action<LoggingOptions>? options = null)
-        {
-            if (options == null)
-            {
-                options = _ => { };
-            }
-            
-            var opts = new LoggingOptions();
-            options(opts);
+	public static class LoggingChannelProviderExtensions
+	{
+		public static CommunicationsClientBuilder AddDispatchLoggingSupport(this CommunicationsClientBuilder builder, Action<LoggingOptions>? options = null)
+		{
+			if (options == null)
+			{
+				options = _ => { };
+			}
 
-            builder.ChannelProvider.Add<LoggingDispatcher, object>("Transmitly.Logger", opts);
-            return builder;
-        }
-    }
+			var opts = new LoggingOptions();
+			options(opts);
+
+			builder.ChannelProvider.Add<LoggingDispatcher, object>("Transmitly.Logger", opts);
+			return builder;
+		}
+	}
 }

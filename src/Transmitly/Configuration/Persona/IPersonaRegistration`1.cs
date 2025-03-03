@@ -14,8 +14,8 @@
 
 namespace Transmitly.Persona.Configuration
 {
-    public interface IPersonaRegistration<in TPersona> : IPersonaRegistration
-    {
-        bool IsMatch(TPersona persona);
-    }
+	public interface IPersonaRegistration<in TPersona> : IPersonaRegistration
+	{
+		bool IsMatch(TPersona persona);
+	}
 }

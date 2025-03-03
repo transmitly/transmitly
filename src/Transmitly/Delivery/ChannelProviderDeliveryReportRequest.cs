@@ -14,8 +14,8 @@
 
 namespace Transmitly.Delivery
 {
-    public sealed class ChannelProviderDeliveryReportRequest(IReadOnlyCollection<DeliveryReport> deliveryReports)
-    {
-        public IReadOnlyCollection<DeliveryReport> DeliveryReports { get; } = Guard.AgainstNull(deliveryReports);
-    }
+	public sealed class ChannelProviderDeliveryReportRequest(IReadOnlyCollection<DeliveryReport> deliveryReports)
+	{
+		public IReadOnlyCollection<DeliveryReport> DeliveryReports { get; } = Guard.AgainstNull(deliveryReports);
+	}
 }

@@ -22,25 +22,25 @@ using Transmitly.Persona.Configuration;
 
 namespace Transmitly
 {
-    internal sealed class CreateCommunicationsClientContext(
-        IReadOnlyCollection<IChannelProviderRegistration> channelProviders,
-        IReadOnlyCollection<IPipeline> pipelines,
-        IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
-        IReadOnlyCollection<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations,
-        IReadOnlyCollection<IPersonaRegistration> personaRegistrations,
-        IDeliveryReportReporter deliveryReportProvider
-    ) : ICreateCommunicationsClientContext
-    {
-        public IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; } = channelProviders;
+	internal sealed class CreateCommunicationsClientContext(
+		IReadOnlyCollection<IChannelProviderRegistration> channelProviders,
+		IReadOnlyCollection<IPipeline> pipelines,
+		IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
+		IReadOnlyCollection<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations,
+		IReadOnlyCollection<IPersonaRegistration> personaRegistrations,
+		IDeliveryReportReporter deliveryReportProvider
+	) : ICreateCommunicationsClientContext
+	{
+		public IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; } = channelProviders;
 
-        public IReadOnlyCollection<IPipeline> Pipelines { get; } = pipelines;
+		public IReadOnlyCollection<IPipeline> Pipelines { get; } = pipelines;
 
-        public IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; } = templateEngines;
+		public IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; } = templateEngines;
 
-        public IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; } = platformIdentityResolverRegistrations;
+		public IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; } = platformIdentityResolverRegistrations;
 
-        public IReadOnlyCollection<IPersonaRegistration> Personas { get; } = personaRegistrations;
+		public IReadOnlyCollection<IPersonaRegistration> Personas { get; } = personaRegistrations;
 
-        public IDeliveryReportReporter DeliveryReportProvider { get; } = deliveryReportProvider;
-    }
+		public IDeliveryReportReporter DeliveryReportProvider { get; } = deliveryReportProvider;
+	}
 }

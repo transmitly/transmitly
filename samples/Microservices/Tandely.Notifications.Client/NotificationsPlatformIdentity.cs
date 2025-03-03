@@ -16,12 +16,12 @@ using Transmitly;
 
 namespace Tandely.Notifications.Client
 {
-    public sealed class NotificationsPlatformIdentity : IPlatformIdentity, IIdentityReference
-    {
-        public string? Id { get; set; }
-        public string? Type { get; set; }
-        public string[] Personas { get; set; } = [];
-        public List<NotificationsIdentityAddress> Addresses { get; set; } = [];
-        IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get => Addresses; set => throw new NotImplementedException(); }
-    }
+	public sealed class NotificationsPlatformIdentity : IPlatformIdentity, IIdentityReference
+	{
+		public string? Id { get; set; }
+		public string? Type { get; set; }
+		public string[] Personas { get; set; } = [];
+		public List<NotificationsIdentityAddress> Addresses { get; set; } = [];
+		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get => Addresses; set => throw new NotImplementedException(); }
+	}
 }

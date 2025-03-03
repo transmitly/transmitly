@@ -14,8 +14,8 @@
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
 {
-    public class SendGridChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
-    {
-        public string? ApiKey { get; set; }
-    }
+	public class SendGridChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
+	{
+		public string? ApiKey { get; set; }
+	}
 }

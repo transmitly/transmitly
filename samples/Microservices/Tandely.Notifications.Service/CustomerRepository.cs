@@ -20,25 +20,25 @@ using Transmitly.PlatformIdentity.Configuration;
 
 namespace Tandely.Notifications.Service
 {
-    public sealed class CustomerRepository(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : IPlatformIdentityResolver
-    {
-        private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+	public sealed class CustomerRepository(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : IPlatformIdentityResolver
+	{
+		private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
-        public async Task<IReadOnlyCollection<IPlatformIdentity>?> Resolve(IReadOnlyCollection<IIdentityReference> identityReferences)
-        {
-            var tasks = identityReferences.Select(async identityReference =>
-            {
-                var response = await _httpClient.GetAsync($"customers/{identityReference.Id}");
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStreamAsync();
-                    var customer = await JsonSerializer.DeserializeAsync<Customer>(content, jsonOptions.Value.SerializerOptions);
-                    return customer;
-                }
-                return null;
-            });
-            await Task.WhenAll(tasks);
-            return tasks.Select(x => x.Result).Where(x => x != null).Cast<IPlatformIdentity>().ToList().AsReadOnly();
-        }
-    }
+		public async Task<IReadOnlyCollection<IPlatformIdentity>?> Resolve(IReadOnlyCollection<IIdentityReference> identityReferences)
+		{
+			var tasks = identityReferences.Select(async identityReference =>
+			{
+				var response = await _httpClient.GetAsync($"customers/{identityReference.Id}");
+				if (response.IsSuccessStatusCode)
+				{
+					var content = await response.Content.ReadAsStreamAsync();
+					var customer = await JsonSerializer.DeserializeAsync<Customer>(content, jsonOptions.Value.SerializerOptions);
+					return customer;
+				}
+				return null;
+			});
+			await Task.WhenAll(tasks);
+			return tasks.Select(x => x.Result).Where(x => x != null).Cast<IPlatformIdentity>().ToList().AsReadOnly();
+		}
+	}
 }

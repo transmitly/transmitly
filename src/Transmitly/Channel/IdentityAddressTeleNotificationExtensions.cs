@@ -14,22 +14,22 @@
 
 namespace Transmitly.Channel
 {
-    /// <summary>
-    /// Defines the Push Notification specific identity address types
-    /// </summary>
-    public static class IdentityAddressTeleNotificationExtensions
-    {
+	/// <summary>
+	/// Defines the Push Notification specific identity address types
+	/// </summary>
+	public static class IdentityAddressTeleNotificationExtensions
+	{
 #pragma warning disable IDE0060 // Remove unused parameter
 
-        public static string Phone(this IIdentityAddressType? identityAddress) => "phone";
+		public static string Phone(this IIdentityAddressType? identityAddress) => "phone";
 
-        public static string Mobile(this IIdentityAddressType? identityAddress) => "mobile-phone";
+		public static string Mobile(this IIdentityAddressType? identityAddress) => "mobile-phone";
 
-        public static string HomePhone(this IIdentityAddressType? identityAddress) => "home-phone";
+		public static string HomePhone(this IIdentityAddressType? identityAddress) => "home-phone";
 
-        public static string Cell(this IIdentityAddressType? identityAddress) => "cell-phone";
+		public static string Cell(this IIdentityAddressType? identityAddress) => "cell-phone";
 
 #pragma warning restore IDE0060 // Remove unused parameter
 
-    }
+	}
 }

@@ -14,12 +14,12 @@
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
 {
-    public class ChannelProviderConfiguration
-    {
-        public List<SmtpChannelProviderConfigurationSettings> Smtp { get; set; } = [];
-        public List<InfobipChannelProviderConfigurationSettings> Infobip { get; set; } = [];
-        public List<TwilioChannelProviderConfigurationSettings> Twilio { get; set; } = [];
-        public List<FirebaseChannelProviderConfigurationSettings> Firebase { get; set; } = [];
-        public List<SendGridChannelProviderConfigurationSettings> SendGrid { get; set; } = [];
-    }
+	public class ChannelProviderConfiguration
+	{
+		public List<SmtpChannelProviderConfigurationSettings> Smtp { get; set; } = [];
+		public List<InfobipChannelProviderConfigurationSettings> Infobip { get; set; } = [];
+		public List<TwilioChannelProviderConfigurationSettings> Twilio { get; set; } = [];
+		public List<FirebaseChannelProviderConfigurationSettings> Firebase { get; set; } = [];
+		public List<SendGridChannelProviderConfigurationSettings> SendGrid { get; set; } = [];
+	}
 }

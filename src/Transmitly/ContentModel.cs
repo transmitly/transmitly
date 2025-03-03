@@ -14,31 +14,31 @@
 
 namespace Transmitly
 {
-    internal sealed class ContentModel : IContentModel
-    {
-        public ContentModel(IContentModel? contentModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
-            : this(contentModel?.Model, platformIdentities, contentModel?.Resources, contentModel?.LinkedResources)
-        {
+	internal sealed class ContentModel : IContentModel
+	{
+		public ContentModel(IContentModel? contentModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+			: this(contentModel?.Model, platformIdentities, contentModel?.Resources, contentModel?.LinkedResources)
+		{
 
-        }
+		}
 
-        public ContentModel(ITransactionModel? transactionModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
-            : this(transactionModel?.Model, platformIdentities, transactionModel?.Resources, transactionModel?.LinkedResources)
-        {
+		public ContentModel(ITransactionModel? transactionModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+			: this(transactionModel?.Model, platformIdentities, transactionModel?.Resources, transactionModel?.LinkedResources)
+		{
 
-        }
+		}
 
-        private ContentModel(object? model, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IReadOnlyList<Resource>? resources, IReadOnlyList<LinkedResource>? linkedResources)
-        {
-            Resources = resources ?? [];
-            LinkedResources = linkedResources ?? [];
-            Model = new DynamicContentModel(model, platformIdentities, resources, linkedResources);
-        }
+		private ContentModel(object? model, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IReadOnlyList<Resource>? resources, IReadOnlyList<LinkedResource>? linkedResources)
+		{
+			Resources = resources ?? [];
+			LinkedResources = linkedResources ?? [];
+			Model = new DynamicContentModel(model, platformIdentities, resources, linkedResources);
+		}
 
-        public object Model { get; }
+		public object Model { get; }
 
-        public IReadOnlyList<Resource> Resources { get; }
+		public IReadOnlyList<Resource> Resources { get; }
 
-        public IReadOnlyList<LinkedResource> LinkedResources { get; }
-    }
+		public IReadOnlyList<LinkedResource> LinkedResources { get; }
+	}
 }

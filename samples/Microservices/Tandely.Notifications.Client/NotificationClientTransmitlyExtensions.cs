@@ -16,14 +16,14 @@ using Transmitly;
 
 namespace Tandely.Notifications.Client
 {
-    public static class NotificationClientTransmitlyExtensions
-    {
-        public static CommunicationsClientBuilder UseTandelyNotifications(this CommunicationsClientBuilder builder, Action<NotificationsOptions> options)
-        {
-            var opts = new NotificationsOptions();
-            options(opts);
-            builder.RegisterClientFactory(new NotificationsClientFactory(opts));
-            return builder;
-        }
-    }
+	public static class NotificationClientTransmitlyExtensions
+	{
+		public static CommunicationsClientBuilder UseTandelyNotifications(this CommunicationsClientBuilder builder, Action<NotificationsOptions> options)
+		{
+			var opts = new NotificationsOptions();
+			options(opts);
+			builder.RegisterClientFactory(new NotificationsClientFactory(opts));
+			return builder;
+		}
+	}
 }

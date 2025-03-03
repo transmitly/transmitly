@@ -25,7 +25,7 @@ namespace Transmitly.Tests.Integration
 			if (communication.Subject == "Skip me!")
 				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);//ie, I don't handle this kind of message.
 			var result = new DispatchResult(DispatchStatus.Dispatched);
-			
+
 			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
 		}
 

@@ -14,13 +14,13 @@
 
 namespace Tandely.Notifications.Service
 {
-    public sealed class DispatchTandelyNotification
-    {
-        public IReadOnlyCollection<string> AllowedChannels { get; set; } = [];
-        public string? CommunicationId { get; set; }
-        public IEnumerable<string> PersonFilters { get; set; } = [];
-        public string? ExternalInstanceReferenceId { get; set; }
-        public TandelyTransactionalModel? TransactionalModel { get; set; }
-        public List<TandelyPlatformIdentity> PlatformIdentities { get; set; } = [];
-    }
+	public sealed class DispatchTandelyNotification
+	{
+		public IReadOnlyCollection<string> AllowedChannels { get; set; } = [];
+		public string? CommunicationId { get; set; }
+		public IEnumerable<string> PersonFilters { get; set; } = [];
+		public string? ExternalInstanceReferenceId { get; set; }
+		public TandelyTransactionalModel? TransactionalModel { get; set; }
+		public List<TandelyPlatformIdentity> PlatformIdentities { get; set; } = [];
+	}
 }

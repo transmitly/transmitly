@@ -14,10 +14,10 @@
 
 namespace Tandely.Notifications.Client
 {
-    public class DispatchNotificationResult
-    {
-        public ICollection<NotificationsPipelineDispatchResult> Dispatches { get; set; } = [];
-        public bool IsSuccessful { get; set; }
-        public ValidationResult[] Errors { get; set; } = [];
-    }
+	public class DispatchNotificationResult
+	{
+		public ICollection<NotificationsPipelineDispatchResult> Dispatches { get; set; } = [];
+		public bool IsSuccessful { get; set; }
+		public ValidationResult[] Errors { get; set; } = [];
+	}
 }

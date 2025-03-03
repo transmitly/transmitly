@@ -18,59 +18,59 @@ using Transmitly;
 
 namespace Tandely.Shipping.Service
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+			// Add services to the container.
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+			builder.Services.AddControllers();
+			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+			builder.Services.AddEndpointsApiExplorer();
+			builder.Services.AddSwaggerGen();
 
-            var notificationsServiceUrl = Guard.AgainstNullOrWhiteSpace(builder.Configuration.GetValue<string>("NotificationsService:Url"));
-            var apiKey = builder.Configuration.GetValue<string?>("NotificationsService:ApiKey");
+			var notificationsServiceUrl = Guard.AgainstNullOrWhiteSpace(builder.Configuration.GetValue<string>("NotificationsService:Url"));
+			var apiKey = builder.Configuration.GetValue<string?>("NotificationsService:ApiKey");
 
-            var clientBuilder = new CommunicationsClientBuilder();
+			var clientBuilder = new CommunicationsClientBuilder();
 
-            clientBuilder.UseTandelyNotifications(options =>
-            {
-                options.BasePath = new Uri(notificationsServiceUrl);
-                options.ApiKey = apiKey;
-            });
+			clientBuilder.UseTandelyNotifications(options =>
+			{
+				options.BasePath = new Uri(notificationsServiceUrl);
+				options.ApiKey = apiKey;
+			});
 
-            var client = clientBuilder.BuildClient();
+			var client = clientBuilder.BuildClient();
 
-            builder.Services.AddSingleton(client);
+			builder.Services.AddSingleton(client);
 
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.ExampleFilters();
-                c.SupportNonNullableReferenceTypes();
-                c.SchemaFilter<SkipExceptionSchemaFilter>();
-            });
-            builder.Services.AddSwaggerExamplesFromAssemblyOf(typeof(Program));
+			builder.Services.AddSwaggerGen(c =>
+			{
+				c.ExampleFilters();
+				c.SupportNonNullableReferenceTypes();
+				c.SchemaFilter<SkipExceptionSchemaFilter>();
+			});
+			builder.Services.AddSwaggerExamplesFromAssemblyOf(typeof(Program));
 
-            var app = builder.Build();
+			var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+			// Configure the HTTP request pipeline.
+			if (app.Environment.IsDevelopment())
+			{
+				app.UseSwagger();
+				app.UseSwaggerUI();
+			}
 
-            app.UseHttpsRedirection();
+			app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+			app.UseAuthorization();
 
 
-            app.MapControllers();
+			app.MapControllers();
 
-            app.Run();
-        }
-    }
+			app.Run();
+		}
+	}
 }

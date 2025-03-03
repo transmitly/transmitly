@@ -14,17 +14,17 @@
 
 namespace Tandely.Notifications.Client
 {
-    public class ValidationResult
-    {
-        public ValidationResult()
-        {
-        }
-        public ValidationResult(string errorMessage, string[] memberNames = null)
-        {
-            ErrorMessage = errorMessage;
-            MemberNames = memberNames ?? [];
-        }
-        public string ErrorMessage { get; set; }
-        public string[] MemberNames { get; set; }
-    }
+	public class ValidationResult
+	{
+		public ValidationResult()
+		{
+		}
+		public ValidationResult(string errorMessage, string[] memberNames = null)
+		{
+			ErrorMessage = errorMessage;
+			MemberNames = memberNames ?? [];
+		}
+		public string ErrorMessage { get; set; }
+		public string[] MemberNames { get; set; }
+	}
 }

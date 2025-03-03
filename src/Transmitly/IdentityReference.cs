@@ -14,15 +14,15 @@
 
 namespace Transmitly
 {
-    public sealed record IdentityReference : IIdentityReference
-    {
-        public IdentityReference(string type, string id)
-        {
-            Id = Guard.AgainstNullOrWhiteSpace(id);
-            Type = Guard.AgainstNullOrWhiteSpace(type);
-        }
+	public sealed record IdentityReference : IIdentityReference
+	{
+		public IdentityReference(string type, string id)
+		{
+			Id = Guard.AgainstNullOrWhiteSpace(id);
+			Type = Guard.AgainstNullOrWhiteSpace(type);
+		}
 
-        public string Id { get; init; }
-        public string Type { get; init; }
-    }
+		public string Id { get; init; }
+		public string Type { get; init; }
+	}
 }

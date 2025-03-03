@@ -17,81 +17,81 @@ using Transmitly.Tests.Mocks;
 
 namespace Transmitly.Tests
 {
-    [TestClass]
-    public class ContentModelTests
-    {
-        [TestMethod]
-        public void ContentModelShouldWrapProvidedModelAndRecipients()
-        {
-            var expectedId = Guid.NewGuid().ToString("N");
-            const string expectedCode = "123456";
-            object? x = null;
-            ITransactionModel transModel = TransactionModel.Create(new
-            {
-                OtpCode = expectedCode,
-                BrandName = "Unit Test",
-                NullValue = x,
-                Level0 = new
-                {
-                    Level1 = new
-                    {
-                        Level1Value = true
-                    }
-                }
-            });
+	[TestClass]
+	public class ContentModelTests
+	{
+		[TestMethod]
+		public void ContentModelShouldWrapProvidedModelAndRecipients()
+		{
+			var expectedId = Guid.NewGuid().ToString("N");
+			const string expectedCode = "123456";
+			object? x = null;
+			ITransactionModel transModel = TransactionModel.Create(new
+			{
+				OtpCode = expectedCode,
+				BrandName = "Unit Test",
+				NullValue = x,
+				Level0 = new
+				{
+					Level1 = new
+					{
+						Level1Value = true
+					}
+				}
+			});
 
-            IReadOnlyCollection<IPlatformIdentity> identities = [new TestPlatformIdentity1(expectedId)];
+			IReadOnlyCollection<IPlatformIdentity> identities = [new TestPlatformIdentity1(expectedId)];
 
-            ContentModel contentModel = new(transModel, identities);
-            dynamic model = contentModel.Model;
-            Assert.IsNotNull(contentModel.Model);
-            Assert.AreEqual(expectedCode, model.OtpCode);
-            Assert.AreEqual(expectedCode, model.trx.OtpCode);
-            Assert.IsTrue(model.Level0.Level1.Level1Value);
-            Assert.IsTrue(model.trx.Level0.Level1.Level1Value);
-            Assert.IsNull(model.NullValue);
-            Assert.IsNotNull(model[expectedId]);
-            Assert.AreEqual(expectedId, model[expectedId].Id);
-            Assert.IsNotNull(model.aud[0]);
-            Assert.AreEqual(expectedId, model.aud[0].Id);
-        }
+			ContentModel contentModel = new(transModel, identities);
+			dynamic model = contentModel.Model;
+			Assert.IsNotNull(contentModel.Model);
+			Assert.AreEqual(expectedCode, model.OtpCode);
+			Assert.AreEqual(expectedCode, model.trx.OtpCode);
+			Assert.IsTrue(model.Level0.Level1.Level1Value);
+			Assert.IsTrue(model.trx.Level0.Level1.Level1Value);
+			Assert.IsNull(model.NullValue);
+			Assert.IsNotNull(model[expectedId]);
+			Assert.AreEqual(expectedId, model[expectedId].Id);
+			Assert.IsNotNull(model.aud[0]);
+			Assert.AreEqual(expectedId, model.aud[0].Id);
+		}
 
-        [TestMethod]
-        public void DynamicContentModel_ShouldExcludeIndexProperties()
-        {
-            dynamic obj = new DynamicContentModel(new ObjWithIndexer(), [], null, null);
-            Assert.IsNotNull(obj);
-            Assert.AreEqual(1, obj.Id);
-            var dictionary = (IDictionary<string, object?>)obj;
-            Assert.AreEqual(5, dictionary.Keys.Count);
-        }
+		[TestMethod]
+		public void DynamicContentModel_ShouldExcludeIndexProperties()
+		{
+			dynamic obj = new DynamicContentModel(new ObjWithIndexer(), [], null, null);
+			Assert.IsNotNull(obj);
+			Assert.AreEqual(1, obj.Id);
+			var dictionary = (IDictionary<string, object?>)obj;
+			Assert.AreEqual(5, dictionary.Keys.Count);
+		}
 
-        [TestMethod]
-        public void DynamicContentModel_ShouldHandleExpandoObject()
-        {
-            const string expectedCode = "123456";
-            dynamic contentModel = new ExpandoObject();
-            contentModel.Root = new
-            {
-                OtpCode = expectedCode,
-                BrandName = "Unit Test",
-                NullValue = (object?)null,
-                Level0 = new
-                {
-                    Level1 = new
-                    {
-                        Level1Value = true
-                    }
-                }
-            };
+		[TestMethod]
+		public void DynamicContentModel_ShouldHandleExpandoObject()
+		{
+			const string expectedCode = "123456";
+			dynamic contentModel = new ExpandoObject();
+			contentModel.Root = new
+			{
+				OtpCode = expectedCode,
+				BrandName = "Unit Test",
+				NullValue = (object?)null,
+				Level0 = new
+				{
+					Level1 = new
+					{
+						Level1Value = true
+					}
+				}
+			};
 
-            dynamic model = new DynamicContentModel((object)contentModel, [], null, null);
-            Assert.IsNotNull(model.Root);
-            Assert.AreEqual(expectedCode, model.Root.OtpCode);
-            Assert.AreEqual(expectedCode, model.trx.Root.OtpCode);
-            Assert.IsTrue(model.Root.Level0.Level1.Level1Value);
-            Assert.IsTrue(model.trx.Root.Level0.Level1.Level1Value);
-            Assert.IsNull(model.Root.NullValue);
-        }
-    }
+			dynamic model = new DynamicContentModel((object)contentModel, [], null, null);
+			Assert.IsNotNull(model.Root);
+			Assert.AreEqual(expectedCode, model.Root.OtpCode);
+			Assert.AreEqual(expectedCode, model.trx.Root.OtpCode);
+			Assert.IsTrue(model.Root.Level0.Level1.Level1Value);
+			Assert.IsTrue(model.trx.Root.Level0.Level1.Level1Value);
+			Assert.IsNull(model.Root.NullValue);
+		}
+	}
 }

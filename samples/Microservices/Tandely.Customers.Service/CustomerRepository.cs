@@ -16,30 +16,30 @@ using Bogus;
 
 namespace Tandely.Customers.Service
 {
-    public sealed class CustomerRepository
-    {
-        private readonly Dictionary<string, Customer> _identities = [];
+	public sealed class CustomerRepository
+	{
+		private readonly Dictionary<string, Customer> _identities = [];
 
-        public CustomerRepository()
-        {
-            Randomizer.Seed = new Random(12345670);
-            var faker = new CustomerFaker();
+		public CustomerRepository()
+		{
+			Randomizer.Seed = new Random(12345670);
+			var faker = new CustomerFaker();
 
-            for (var i = 0; i < 10; i++)
-            {
-                var user = faker.Generate();
-                _identities.Add(user.Id.ToString(), user);
-            }
-        }
+			for (var i = 0; i < 10; i++)
+			{
+				var user = faker.Generate();
+				_identities.Add(user.Id.ToString(), user);
+			}
+		}
 
-        internal IReadOnlyCollection<Customer> GetAllUsers()
-        {
-            return _identities.Values.Cast<Customer>().ToList();
-        }
+		internal IReadOnlyCollection<Customer> GetAllUsers()
+		{
+			return _identities.Values.Cast<Customer>().ToList();
+		}
 
-        internal Customer? GetCustomer(Guid id)
-        {
-            return _identities.TryGetValue(id.ToString(), out var user) ? user : null;
-        }
-    }
+		internal Customer? GetCustomer(Guid id)
+		{
+			return _identities.TryGetValue(id.ToString(), out var user) ? user : null;
+		}
+	}
 }

@@ -14,9 +14,9 @@
 
 namespace Transmitly.Tests.Mocks
 {
-    class ObjWithIndexer
-    {
-        public int Id { get; set; } = 1;
-        public int this[int index] => index;
-    }
+	class ObjWithIndexer
+	{
+		public int Id { get; set; } = 1;
+		public int this[int index] => index;
+	}
 }

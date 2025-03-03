@@ -16,42 +16,42 @@ using Transmitly.Tests.Integration;
 
 namespace Transmitly.Tests.Identity
 {
-    [TestClass]
-    public class PlatformIdentityResolverTests
-    {
-        [TestMethod]
-        public async Task MyTestMethod()
-        {
-            const string FromAddress = "unit-test-address-from";
-            const string PipelineName = "unit-test-pipeline";
-            const string ChannelProviderId = "unit-test-channel-provider";
-            const string ExpectedMessage = "Your OTP Code: {{Code}}";
-            const string ChannelId = "unit-test-channel";
+	[TestClass]
+	public class PlatformIdentityResolverTests
+	{
+		[TestMethod]
+		public async Task MyTestMethod()
+		{
+			const string FromAddress = "unit-test-address-from";
+			const string PipelineName = "unit-test-pipeline";
+			const string ChannelProviderId = "unit-test-channel-provider";
+			const string ExpectedMessage = "Your OTP Code: {{Code}}";
+			const string ChannelId = "unit-test-channel";
 
-            var builder = new CommunicationsClientBuilder()
-                .ChannelProvider.Add<OptionalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>(
-                ChannelProviderId,
-                ChannelId, ChannelId
-             ).
-            AddPipeline(PipelineName, options =>
-            {
-                var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
-                channel.Subject.AddStringTemplate(ExpectedMessage);
-                options.AddChannel(channel);
+			var builder = new CommunicationsClientBuilder()
+				.ChannelProvider.Add<OptionalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>(
+				ChannelProviderId,
+				ChannelId, ChannelId
+			 ).
+			AddPipeline(PipelineName, options =>
+			{
+				var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
+				channel.Subject.AddStringTemplate(ExpectedMessage);
+				options.AddChannel(channel);
 
-            }).
-             AddPlatformIdentityResolver<TestPlatformIdentityRepository>();
+			}).
+			 AddPlatformIdentityResolver<TestPlatformIdentityRepository>();
 
-            var client = builder.BuildClient();
+			var client = builder.BuildClient();
 
-            var result = await client.DispatchAsync(PipelineName, [new IdentityReference("test-identity", Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
+			var result = await client.DispatchAsync(PipelineName, [new IdentityReference("test-identity", Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
 
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.IsSuccessful);
-            Assert.IsNotNull(result.Results);
-            Assert.AreEqual(1, result.Results.Count);
-            var singleResult = result.Results.First();
-            Assert.AreEqual(DispatchStatus.Dispatched, singleResult?.DispatchStatus);
-        }
-    }
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.IsNotNull(result.Results);
+			Assert.AreEqual(1, result.Results.Count);
+			var singleResult = result.Results.First();
+			Assert.AreEqual(DispatchStatus.Dispatched, singleResult?.DispatchStatus);
+		}
+	}
 }

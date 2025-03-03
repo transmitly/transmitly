@@ -14,10 +14,10 @@
 
 namespace Transmitly
 {
-    public interface IPlatformIdentity
-    {
-        string? Id { get; set; }
-        string? Type { get; set; }
-        IReadOnlyCollection<IIdentityAddress> Addresses { get; set; }
-    }
+	public interface IPlatformIdentity
+	{
+		string? Id { get; set; }
+		string? Type { get; set; }
+		IReadOnlyCollection<IIdentityAddress> Addresses { get; set; }
+	}
 }

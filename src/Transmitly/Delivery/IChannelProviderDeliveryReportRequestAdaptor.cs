@@ -14,7 +14,7 @@
 
 namespace Transmitly.Delivery
 {
-    public interface IChannelProviderDeliveryReportRequestAdaptor
+	public interface IChannelProviderDeliveryReportRequestAdaptor
 	{
 		Task<IReadOnlyCollection<DeliveryReport>?> AdaptAsync(IRequestAdaptorContext adaptorContext);
 	}

@@ -17,17 +17,17 @@ using System.Text.Json.Serialization;
 
 namespace Tandely.Notifications.Service
 {
-    //Source = https://stackoverflow.com/a/76797018
-    public sealed class JsonExceptionConverter : JsonConverter<Exception>
-    {
-        public override Exception Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            throw new NotImplementedException();
-        }
+	//Source = https://stackoverflow.com/a/76797018
+	public sealed class JsonExceptionConverter : JsonConverter<Exception>
+	{
+		public override Exception Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void Write(Utf8JsonWriter writer, Exception value, JsonSerializerOptions options)
-        {
-            writer.WriteRawValue(JsonSerializer.Serialize(new LimitedExceptionDetail(value)));
-        }
-    }
+		public override void Write(Utf8JsonWriter writer, Exception value, JsonSerializerOptions options)
+		{
+			writer.WriteRawValue(JsonSerializer.Serialize(new LimitedExceptionDetail(value)));
+		}
+	}
 }

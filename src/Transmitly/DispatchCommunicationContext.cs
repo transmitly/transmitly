@@ -19,48 +19,48 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly.Channel.Configuration
 {
-    ///<inheritdoc cref="IDispatchCommunicationContext"/>
-    internal class DispatchCommunicationContext(
-        IContentModel? contentModel,
-        IPipelineChannelConfiguration channelConfiguration,
-        IReadOnlyCollection<IPlatformIdentity> recipients,
-        ITemplateEngine templateEngine,
-        IDeliveryReportReporter deliveryReportManager,
-        CultureInfo cultureInfo,
-        string pipelineName,
-        MessagePriority messagePriority = MessagePriority.Normal,
-        TransportPriority transportPriority = TransportPriority.Normal,
-        string? ChannelId = null, string? ChannelProviderId = null) : IDispatchCommunicationContext
-    {
-        public DispatchCommunicationContext(IDispatchCommunicationContext context, IChannel channel, IChannelProvider channelProvider)
-            : this(context.ContentModel, context.ChannelConfiguration, context.PlatformIdentities, context.TemplateEngine, context.DeliveryReportManager,
-                  context.CultureInfo, context.PipelineName, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
-        {
+	///<inheritdoc cref="IDispatchCommunicationContext"/>
+	internal class DispatchCommunicationContext(
+		IContentModel? contentModel,
+		IPipelineChannelConfiguration channelConfiguration,
+		IReadOnlyCollection<IPlatformIdentity> recipients,
+		ITemplateEngine templateEngine,
+		IDeliveryReportReporter deliveryReportManager,
+		CultureInfo cultureInfo,
+		string pipelineName,
+		MessagePriority messagePriority = MessagePriority.Normal,
+		TransportPriority transportPriority = TransportPriority.Normal,
+		string? ChannelId = null, string? ChannelProviderId = null) : IDispatchCommunicationContext
+	{
+		public DispatchCommunicationContext(IDispatchCommunicationContext context, IChannel channel, IChannelProvider channelProvider)
+			: this(context.ContentModel, context.ChannelConfiguration, context.PlatformIdentities, context.TemplateEngine, context.DeliveryReportManager,
+				  context.CultureInfo, context.PipelineName, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
+		{
 
-        }
+		}
 
-        public ITemplateEngine TemplateEngine { get; } = Guard.AgainstNull(templateEngine);
+		public ITemplateEngine TemplateEngine { get; } = Guard.AgainstNull(templateEngine);
 
-        public CultureInfo CultureInfo { get; set; } = GuardCulture.AgainstNull(cultureInfo);
+		public CultureInfo CultureInfo { get; set; } = GuardCulture.AgainstNull(cultureInfo);
 
-        public IReadOnlyCollection<IPlatformIdentity> PlatformIdentities { get; set; } = Guard.AgainstNull(recipients);
+		public IReadOnlyCollection<IPlatformIdentity> PlatformIdentities { get; set; } = Guard.AgainstNull(recipients);
 
-        public TransportPriority TransportPriority { get; set; } = transportPriority;
+		public TransportPriority TransportPriority { get; set; } = transportPriority;
 
-        public MessagePriority MessagePriority { get; set; } = messagePriority;
+		public MessagePriority MessagePriority { get; set; } = messagePriority;
 
-        public string? ChannelId { get; set; } = ChannelId;
+		public string? ChannelId { get; set; } = ChannelId;
 
-        public string? ChannelProviderId { get; set; } = ChannelProviderId;
+		public string? ChannelProviderId { get; set; } = ChannelProviderId;
 
-        public IPipelineChannelConfiguration ChannelConfiguration { get; } = Guard.AgainstNull(channelConfiguration);
+		public IPipelineChannelConfiguration ChannelConfiguration { get; } = Guard.AgainstNull(channelConfiguration);
 
-        public ICollection<IDispatchResult> DispatchResults { get; } = [];
+		public ICollection<IDispatchResult> DispatchResults { get; } = [];
 
-        public IDeliveryReportReporter DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
+		public IDeliveryReportReporter DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
 
-        public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);
+		public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);
 
-        public IContentModel? ContentModel { get; set; } = Guard.AgainstNull(contentModel);
-    }
+		public IContentModel? ContentModel { get; set; } = Guard.AgainstNull(contentModel);
+	}
 }

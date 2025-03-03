@@ -20,7 +20,7 @@ namespace Transmitly.Template.Configuration
 	{
 		private readonly string _path;
 		private readonly bool _exists;
-		
+
 		public CultureInfo CultureInfo { get; }
 
 		public LocalFileContentTemplateRegistration(string path, bool throwIfNotFound = true, string? cultureInfo = null)
@@ -44,7 +44,7 @@ namespace Transmitly.Template.Configuration
 #else
 		public Task<string?> GetContentAsync(IDispatchCommunicationContext context)
 		{
-			if(!_exists)
+			if (!_exists)
 				return Task.FromResult<string?>(null);
 			return Task.FromResult<string?>(File.ReadAllText(_path));
 		}

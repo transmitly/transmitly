@@ -14,10 +14,10 @@
 
 namespace Transmitly.Persona.Configuration
 {
-    public interface IPersonaFactory
-    {
-        Task<bool> AnyMatch<TPersona>(string personaName, IReadOnlyCollection<TPersona> personas) where TPersona : class;
-        Task<IReadOnlyCollection<IPersonaRegistration>> GetAllAsync();
-        Task<IPersonaRegistration?> GetAsync(string personaName);
-    }
+	public interface IPersonaFactory
+	{
+		Task<bool> AnyMatch<TPersona>(string personaName, IReadOnlyCollection<TPersona> personas) where TPersona : class;
+		Task<IReadOnlyCollection<IPersonaRegistration>> GetAllAsync();
+		Task<IPersonaRegistration?> GetAsync(string personaName);
+	}
 }

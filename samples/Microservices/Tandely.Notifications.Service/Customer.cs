@@ -18,34 +18,34 @@ using Transmitly.Channel.Push;
 
 namespace Tandely.Notifications.Service
 {
-    sealed class Customer : IPlatformIdentity
-    {
-        public Guid Id { get; set; }
-        public string? EmailAddress { get; set; }
-        public string? MobilePhone { get; set; }
-        public string? DeviceToken { get; set; }
-        public string? Name { get => $"{FirstName} {LastName}"; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public int LoyaltyPoints { get; set; }
-        //public string? ChannelPreference { get; set; }
+	sealed class Customer : IPlatformIdentity
+	{
+		public Guid Id { get; set; }
+		public string? EmailAddress { get; set; }
+		public string? MobilePhone { get; set; }
+		public string? DeviceToken { get; set; }
+		public string? Name { get => $"{FirstName} {LastName}"; }
+		public string? FirstName { get; set; }
+		public string? LastName { get; set; }
+		public int LoyaltyPoints { get; set; }
+		//public string? ChannelPreference { get; set; }
 
-        string? IPlatformIdentity.Id { get => Id.ToString(); set => throw new NotSupportedException(); }
-        string? IPlatformIdentity.Type { get => nameof(Customer); set => throw new NotSupportedException(); }
-        IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses
-        {
-            get
-            {
-                var result = new List<IIdentityAddress>();
-                if (!string.IsNullOrWhiteSpace(MobilePhone))
-                    result.Add(new IdentityAddress(MobilePhone));
-                if (!string.IsNullOrWhiteSpace(EmailAddress))
-                    result.Add(new IdentityAddress(EmailAddress, Name));
-                if (!string.IsNullOrWhiteSpace(DeviceToken))
-                    result.Add(new IdentityAddress(DeviceToken, type: IdentityAddress.Types.DeviceToken()));
-                return result;
-            }
-            set => throw new NotSupportedException();
-        }
-    }
+		string? IPlatformIdentity.Id { get => Id.ToString(); set => throw new NotSupportedException(); }
+		string? IPlatformIdentity.Type { get => nameof(Customer); set => throw new NotSupportedException(); }
+		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses
+		{
+			get
+			{
+				var result = new List<IIdentityAddress>();
+				if (!string.IsNullOrWhiteSpace(MobilePhone))
+					result.Add(new IdentityAddress(MobilePhone));
+				if (!string.IsNullOrWhiteSpace(EmailAddress))
+					result.Add(new IdentityAddress(EmailAddress, Name));
+				if (!string.IsNullOrWhiteSpace(DeviceToken))
+					result.Add(new IdentityAddress(DeviceToken, type: IdentityAddress.Types.DeviceToken()));
+				return result;
+			}
+			set => throw new NotSupportedException();
+		}
+	}
 }

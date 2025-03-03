@@ -18,31 +18,31 @@ using Transmitly;
 
 namespace Tandely.Shipping.Service.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ShippingController(ICommunicationsClient communicationsClient, ILogger<ShippingController> logger) : ControllerBase
-    {
-        [HttpPost("ship", Name = "ShipOrder")]
-        public async Task<IActionResult> CreateOrderAsync(ShipOrderViewModel model)
-        {
-            if (model == null)
-                return BadRequest();
+	[ApiController]
+	[Route("[controller]")]
+	public class ShippingController(ICommunicationsClient communicationsClient, ILogger<ShippingController> logger) : ControllerBase
+	{
+		[HttpPost("ship", Name = "ShipOrder")]
+		public async Task<IActionResult> CreateOrderAsync(ShipOrderViewModel model)
+		{
+			if (model == null)
+				return BadRequest();
 
-            logger.LogDebug("Dispatching ship order {orderId}", model.OrderId);
+			logger.LogDebug("Dispatching ship order {orderId}", model.OrderId);
 
-            var result = await communicationsClient.DispatchAsync(ShippingIntegrationEvent.OrderShipped, [model.Customer], TransactionModel.Create(new
-            {
-                model.OrderId,
-                model.TrackingNumber,
-                model.Carrier
-            }));
+			var result = await communicationsClient.DispatchAsync(ShippingIntegrationEvent.OrderShipped, [model.Customer], TransactionModel.Create(new
+			{
+				model.OrderId,
+				model.TrackingNumber,
+				model.Carrier
+			}));
 
-            logger.LogDebug("{success} Dispatched order confirmation for order {orderId}", result.IsSuccessful ? "Successfully" : "Unsuccessfully", model.OrderId);
+			logger.LogDebug("{success} Dispatched order confirmation for order {orderId}", result.IsSuccessful ? "Successfully" : "Unsuccessfully", model.OrderId);
 
-            if (result.IsSuccessful)
-                return Ok(result.Results?.Select(r => r?.ResourceId));
+			if (result.IsSuccessful)
+				return Ok(result.Results?.Select(r => r?.ResourceId));
 
-            return BadRequest(result);
-        }
-    }
+			return BadRequest(result);
+		}
+	}
 }

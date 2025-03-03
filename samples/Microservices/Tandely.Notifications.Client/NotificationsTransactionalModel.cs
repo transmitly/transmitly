@@ -17,38 +17,38 @@ using Transmitly;
 
 namespace Tandely.Notifications.Client
 {
-    public sealed class NotificationsTransactionalModel : ITransactionModel
-    {
-        public NotificationsTransactionalModel()
-        {
-            
-        }
-        public NotificationsTransactionalModel(ITransactionModel transactionModel)
-        {
-            if (transactionModel == null)
-                return;
-            Model = transactionModel.Model;
-            Resources = transactionModel.Resources;
-            LinkedResources = transactionModel.LinkedResources;
-        }
-        private object _model = new { };
+	public sealed class NotificationsTransactionalModel : ITransactionModel
+	{
+		public NotificationsTransactionalModel()
+		{
 
-        public object Model
-        {
-            get => _model; 
-            set
-            {
-                if (value is JsonElement)
-                    _model = JsonSerializer.Deserialize<System.Dynamic.ExpandoObject>(JsonSerializer.Serialize(value)) ?? new System.Dynamic.ExpandoObject();
-                else
-                    _model = value;
+		}
+		public NotificationsTransactionalModel(ITransactionModel transactionModel)
+		{
+			if (transactionModel == null)
+				return;
+			Model = transactionModel.Model;
+			Resources = transactionModel.Resources;
+			LinkedResources = transactionModel.LinkedResources;
+		}
+		private object _model = new { };
 
-            }
-           
-        }
+		public object Model
+		{
+			get => _model;
+			set
+			{
+				if (value is JsonElement)
+					_model = JsonSerializer.Deserialize<System.Dynamic.ExpandoObject>(JsonSerializer.Serialize(value)) ?? new System.Dynamic.ExpandoObject();
+				else
+					_model = value;
 
-        public IReadOnlyList<Resource>? Resources { get; set; } = null;
+			}
 
-        public IReadOnlyList<LinkedResource>? LinkedResources { get; set; } = null;
-    }
+		}
+
+		public IReadOnlyList<Resource>? Resources { get; set; } = null;
+
+		public IReadOnlyList<LinkedResource>? LinkedResources { get; set; } = null;
+	}
 }

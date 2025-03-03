@@ -17,23 +17,23 @@ using System.Text.Json;
 
 namespace Transmitly.ChannelProvider.Debugging
 {
-    class LoggingDispatcher(LoggingOptions options, ILogger<LoggingDispatcher> logger) : IChannelProviderDispatcher<object>
-    {
-        private static readonly JsonSerializerOptions _serializerOptions;
-        private readonly ILogger<LoggingDispatcher> _logger = Guard.AgainstNull(logger);
-        static LoggingDispatcher()
-        {
-            _serializerOptions = new JsonSerializerOptions { WriteIndented = true };
-        }
+	class LoggingDispatcher(LoggingOptions options, ILogger<LoggingDispatcher> logger) : IChannelProviderDispatcher<object>
+	{
+		private static readonly JsonSerializerOptions _serializerOptions;
+		private readonly ILogger<LoggingDispatcher> _logger = Guard.AgainstNull(logger);
+		static LoggingDispatcher()
+		{
+			_serializerOptions = new JsonSerializerOptions { WriteIndented = true };
+		}
 
-        public async Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
-        {
-            _logger.Log(options.LogLevel, "Dispatching to Channel: '{ChannelId}' Content: {Content}.", communicationContext.ChannelId, JsonSerializer.Serialize(communication, _serializerOptions));
-            if (!options.SimulateDispatchResult)
-                return [];
-            else if (options.SimulateDispatchResultHandler == null)
-                return [new DispatchResult(DispatchStatus.Dispatched, Guid.NewGuid().ToString())];
-            return await options.SimulateDispatchResultHandler(communication, communicationContext).ConfigureAwait(false);
-        }
-    }
+		public async Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+		{
+			_logger.Log(options.LogLevel, "Dispatching to Channel: '{ChannelId}' Content: {Content}.", communicationContext.ChannelId, JsonSerializer.Serialize(communication, _serializerOptions));
+			if (!options.SimulateDispatchResult)
+				return [];
+			else if (options.SimulateDispatchResultHandler == null)
+				return [new DispatchResult(DispatchStatus.Dispatched, Guid.NewGuid().ToString())];
+			return await options.SimulateDispatchResultHandler(communication, communicationContext).ConfigureAwait(false);
+		}
+	}
 }

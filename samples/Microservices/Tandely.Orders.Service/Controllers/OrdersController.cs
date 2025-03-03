@@ -18,34 +18,34 @@ using Transmitly;
 
 namespace Tandely.Orders.Service.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class OrdersController(ICommunicationsClient communicationsClient, ILogger<OrdersController> logger) : ControllerBase
-    {
-        [HttpPost("create", Name = "CreateOrder")]
-        public async Task<IActionResult> CreateOrderAsync(CreateOrderViewModel model)
-        {
-            if (model == null)
-                return BadRequest();
+	[ApiController]
+	[Route("[controller]")]
+	public class OrdersController(ICommunicationsClient communicationsClient, ILogger<OrdersController> logger) : ControllerBase
+	{
+		[HttpPost("create", Name = "CreateOrder")]
+		public async Task<IActionResult> CreateOrderAsync(CreateOrderViewModel model)
+		{
+			if (model == null)
+				return BadRequest();
 
-            logger.LogDebug("Dispatching order confirmation for order {orderId}", model.Id);
-            
-            var result = await communicationsClient.DispatchAsync(OrdersIntegrationEvent.OrderConfirmation, model.Customers, TransactionModel.Create(new
-            {
-                Order = new
-                {
-                    model.Id,
-                    model.Date,
-                    model.Total
-                }
-            }));
-            
-            logger.LogDebug("{success} Dispatched order confirmation for order {orderId}", result.IsSuccessful ? "Successfully": "Unsuccessfully",  model.Id);
+			logger.LogDebug("Dispatching order confirmation for order {orderId}", model.Id);
 
-            if (result.IsSuccessful)
-                return Ok(result.Results?.Select(r => r?.ResourceId));
+			var result = await communicationsClient.DispatchAsync(OrdersIntegrationEvent.OrderConfirmation, model.Customers, TransactionModel.Create(new
+			{
+				Order = new
+				{
+					model.Id,
+					model.Date,
+					model.Total
+				}
+			}));
 
-            return BadRequest(result);
-        }
-    }
+			logger.LogDebug("{success} Dispatched order confirmation for order {orderId}", result.IsSuccessful ? "Successfully" : "Unsuccessfully", model.Id);
+
+			if (result.IsSuccessful)
+				return Ok(result.Results?.Select(r => r?.ResourceId));
+
+			return BadRequest(result);
+		}
+	}
 }

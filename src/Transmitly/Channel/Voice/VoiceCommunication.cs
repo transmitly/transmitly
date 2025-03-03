@@ -23,22 +23,22 @@ namespace Transmitly.Channel.Voice
 
 		///<inheritdoc/>
 		public IIdentityAddress[]? To { get; set; }
-		
+
 		///<inheritdoc/>
 		public IVoiceType? VoiceType { get; set; }
-		
+
 		///<inheritdoc/>
 		public string Message { get; set; } = Guard.AgainstNullOrWhiteSpace(message);
-		
+
 		///<inheritdoc/>
 		public TransportPriority TransportPriority { get; set; }
-		
+
 		///<inheritdoc/>
 		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
-		
+
 		///<inheritdoc/>
 		public MachineDetection MachineDetection { get; set; }
-		
+
 		///<inheritdoc/>
 		public string? DeliveryReportCallbackUrl { get; set; }
 

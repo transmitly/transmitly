@@ -14,21 +14,21 @@
 
 namespace Transmitly.Tests
 {
-    [TestClass()]
-    public class IdentityAddressNotificationExtensionsTests : BaseUnitTest
-    {
-        [TestMethod()]
-        public void CoreIdentityAddressValuesHaveNotChanged()
-        {
-            Assert.AreEqual("email", Channel.Email.IdentityAddressEmailNotificationExtensions.Email(null));
+	[TestClass()]
+	public class IdentityAddressNotificationExtensionsTests : BaseUnitTest
+	{
+		[TestMethod()]
+		public void CoreIdentityAddressValuesHaveNotChanged()
+		{
+			Assert.AreEqual("email", Channel.Email.IdentityAddressEmailNotificationExtensions.Email(null));
 
-            Assert.AreEqual("cell-phone", Channel.IdentityAddressTeleNotificationExtensions.Cell(null));
-            Assert.AreEqual("home-phone", Channel.IdentityAddressTeleNotificationExtensions.HomePhone(null));
-            Assert.AreEqual("phone", Channel.IdentityAddressTeleNotificationExtensions.Phone(null));
-            Assert.AreEqual("mobile-phone", Channel.IdentityAddressTeleNotificationExtensions.Mobile(null));
+			Assert.AreEqual("cell-phone", Channel.IdentityAddressTeleNotificationExtensions.Cell(null));
+			Assert.AreEqual("home-phone", Channel.IdentityAddressTeleNotificationExtensions.HomePhone(null));
+			Assert.AreEqual("phone", Channel.IdentityAddressTeleNotificationExtensions.Phone(null));
+			Assert.AreEqual("mobile-phone", Channel.IdentityAddressTeleNotificationExtensions.Mobile(null));
 
-            Assert.AreEqual("device-token", Channel.Push.IdentityAddressPushNotificationExtensions.DeviceToken(null));
-            Assert.AreEqual("push-topic", Channel.Push.IdentityAddressPushNotificationExtensions.Topic(null));
-        }
-    }
+			Assert.AreEqual("device-token", Channel.Push.IdentityAddressPushNotificationExtensions.DeviceToken(null));
+			Assert.AreEqual("push-topic", Channel.Push.IdentityAddressPushNotificationExtensions.Topic(null));
+		}
+	}
 }

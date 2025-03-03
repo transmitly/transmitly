@@ -14,13 +14,13 @@
 
 namespace Transmitly.Persona.Configuration
 {
-    public interface IPersonaRegistration
-    {
-        string PlatformIdentityType { get; }
-        string Name { get; }
-        Type PersonaType { get; }
-        bool IsMatch(object persona);
-    }
+	public interface IPersonaRegistration
+	{
+		string PlatformIdentityType { get; }
+		string Name { get; }
+		Type PersonaType { get; }
+		bool IsMatch(object persona);
+	}
 
-   
+
 }

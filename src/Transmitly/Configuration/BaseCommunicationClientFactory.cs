@@ -20,18 +20,18 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
-    public abstract class BaseCommunicationClientFactory : ICommunicationClientFactory
-    {
-        public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
-        {
-            return new DefaultCommunicationsClient(
-                new DefaultPipelineFactory(context.Pipelines),
-                new DefaultChannelProviderFactory(context.ChannelProviders),
-                new DefaultTemplateEngineFactory(context.TemplateEngines),
-                new DefaultPersonaFactory(context.Personas),
-                new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers),
-                context.DeliveryReportProvider
-            );
-        }
-    }
+	public abstract class BaseCommunicationClientFactory : ICommunicationClientFactory
+	{
+		public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
+		{
+			return new DefaultCommunicationsClient(
+				new DefaultPipelineFactory(context.Pipelines),
+				new DefaultChannelProviderFactory(context.ChannelProviders),
+				new DefaultTemplateEngineFactory(context.TemplateEngines),
+				new DefaultPersonaFactory(context.Personas),
+				new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers),
+				context.DeliveryReportProvider
+			);
+		}
+	}
 }

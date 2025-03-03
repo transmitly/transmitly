@@ -14,44 +14,44 @@
 
 namespace Tandely.Notifications.Client
 {
-    /// <summary>
-    /// The status of a communication pipeline instance
-    /// </summary>
-    public enum PipelineInstanceStatus
-    {
-        /// <summary>
-        /// The orignating command has yet to be processed for pipeline resolution
-        /// </summary>
-        PendingResolution,
-        /// <summary>
-        /// In the process of initiating the pipeline instance
-        /// </summary>
-        Initiating,
-        /// <summary>
-        /// Indicates the pipeline is accumulating additional conditional
-        /// trigger data requirements before continuing forward in the pipeline.
-        /// </summary>
-        AccumulatingTriggerData,
-        /// <summary>
-        /// Indicates the pipeline has been triggered and is ready to begin dispatching.
-        /// </summary>
-        TriggeredForDispatch,
-        /// <summary>
-        /// Indicates the pipeline is configured to compose a set number of communication samples
-        /// which require manual review before continuing with the pipeline dispatching process.
-        /// </summary>
-        DispatchPendingSampleReview,
-        /// <summary>
-        /// Indicates the pipeline is in the process of dispatching the communication.
-        /// </summary>
-        Dispatching,
-        /// <summary>
-        /// Indicates the pipeline has successfully dispatched the communication.
-        /// </summary>
-        Dispatched,
-        /// <summary>
-        /// Indicates the pipeline has failed to dispatch the communication.
-        /// </summary>
-        Failed
-    }
+	/// <summary>
+	/// The status of a communication pipeline instance
+	/// </summary>
+	public enum PipelineInstanceStatus
+	{
+		/// <summary>
+		/// The orignating command has yet to be processed for pipeline resolution
+		/// </summary>
+		PendingResolution,
+		/// <summary>
+		/// In the process of initiating the pipeline instance
+		/// </summary>
+		Initiating,
+		/// <summary>
+		/// Indicates the pipeline is accumulating additional conditional
+		/// trigger data requirements before continuing forward in the pipeline.
+		/// </summary>
+		AccumulatingTriggerData,
+		/// <summary>
+		/// Indicates the pipeline has been triggered and is ready to begin dispatching.
+		/// </summary>
+		TriggeredForDispatch,
+		/// <summary>
+		/// Indicates the pipeline is configured to compose a set number of communication samples
+		/// which require manual review before continuing with the pipeline dispatching process.
+		/// </summary>
+		DispatchPendingSampleReview,
+		/// <summary>
+		/// Indicates the pipeline is in the process of dispatching the communication.
+		/// </summary>
+		Dispatching,
+		/// <summary>
+		/// Indicates the pipeline has successfully dispatched the communication.
+		/// </summary>
+		Dispatched,
+		/// <summary>
+		/// Indicates the pipeline has failed to dispatch the communication.
+		/// </summary>
+		Failed
+	}
 }

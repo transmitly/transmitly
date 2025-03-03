@@ -16,11 +16,11 @@ using Transmitly;
 
 namespace Tandely.Shipping.Service.Controllers
 {
-    public class ShipOrderViewModel
-    {
-        public string? OrderId { get; set; }
-        public string? TrackingNumber { get; set; }
-        public string? Carrier { get; set; }
-        public IdentityReference? Customer { get; set; }
-    }
+	public class ShipOrderViewModel
+	{
+		public string? OrderId { get; set; }
+		public string? TrackingNumber { get; set; }
+		public string? Carrier { get; set; }
+		public IdentityReference? Customer { get; set; }
+	}
 }
