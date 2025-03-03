@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitly.ChannelProvider.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Orders.Service", "samples\Microservices\Tandely.Orders.Service\Tandely.Orders.Service.csproj", "{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Shipping.Service", "samples\Microservices\Tandely.Shipping.Service\Tandely.Shipping.Service.csproj", "{EB1A3706-1A78-D7E0-A143-742B7BEC4D1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB1A3706-1A78-D7E0-A143-742B7BEC4D1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB1A3706-1A78-D7E0-A143-742B7BEC4D1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB1A3706-1A78-D7E0-A143-742B7BEC4D1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB1A3706-1A78-D7E0-A143-742B7BEC4D1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{1095E6DC-0E5E-AFFF-8177-EF47F7AB723D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{EB1A3706-1A78-D7E0-A143-742B7BEC4D1C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32A408DA-90D2-4E27-AB02-0383E852816B}

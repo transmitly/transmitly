@@ -13,6 +13,10 @@
       {
         "Path": "samples\\Microservices\\Tandely.Orders.Service\\Tandely.Orders.Service.csproj",
         "Action": "Start"
+      },
+      {
+        "Path": "samples\\Microservices\\Tandely.Shipping.Service\\Tandely.Shipping.Service.csproj",
+        "Action": "Start"
       }
     ]
   },
