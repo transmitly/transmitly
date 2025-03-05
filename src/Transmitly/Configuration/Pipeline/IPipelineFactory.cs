@@ -26,26 +26,11 @@ namespace Transmitly.Pipeline.Configuration
 		Task<IReadOnlyCollection<IPipeline>> GetAllAsync();
 
 		/// <summary>
-		/// Retrieves pipelines by platform identity type asynchronously.
-		/// </summary>
-		/// <param name="platformIdentityType">The platform identity type.</param>
-		/// <returns>A read-only list of pipelines.</returns>
-		Task<IReadOnlyCollection<IPipeline>> GetByPlatformIdentityTypeAsync(string platformIdentityType);
-
-		/// <summary>
-		/// Retrieves pipelines by pipeline name and platform identity type asynchronously.
-		/// </summary>
-		/// <param name="pipelineName">The pipeline name.</param>
-		/// <param name="platformIdentityType">The platform identity type.</param>
-		/// <returns>A read-only list of pipelines.</returns>
-		Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string platformIdentityType);
-
-		/// <summary>
 		/// Retrieves a pipeline by pipeline name asynchronously.
 		/// </summary>
 		/// <param name="pipelineName">The pipeline name.</param>
 		/// <returns>The pipeline, or null if not found.</returns>
-		Task<IPipeline?> GetAsync(string pipelineName);
+		Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName);
 	}
 
 }

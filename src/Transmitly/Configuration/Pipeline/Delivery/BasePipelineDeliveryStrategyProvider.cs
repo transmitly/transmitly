@@ -12,7 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System.Collections.ObjectModel;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 
@@ -48,16 +47,32 @@ namespace Transmitly.Delivery
 		protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, CancellationToken cancellationToken)
 		{
 			var filteredRecipients = FilterRecipientAddresses(channel, context.PlatformIdentities);
-			var contentModel = new ContentModel(context.ContentModel, filteredRecipients);
-
-			var internalContext = new DispatchCommunicationContext(context, channel, provider)
+			var allResults = new List<IDispatchResult?>();
+			foreach (var recipient in filteredRecipients)
 			{
-				PlatformIdentities = filteredRecipients,
-				ContentModel = contentModel
-			};
+				var contentModel = new ContentModel(context.ContentModel, filteredRecipients);
 
-			var communication = await GetChannelCommunicationAsync(channel, internalContext).ConfigureAwait(false);
+				var internalContext = new DispatchCommunicationContext(context, channel, provider)
+				{
+					PlatformIdentities = [recipient],
+					ContentModel = contentModel
+				};
 
+				var communication = await GetChannelCommunicationAsync(channel, internalContext).ConfigureAwait(false);
+
+				var dispatchResult = await DispatchCommunicationInternal(channel, provider, context, contentModel, internalContext, communication, cancellationToken).ConfigureAwait(false);
+
+				allResults.AddRange(dispatchResult);
+			}
+
+			if (allResults.Count == 0 || allResults.All(r => r == null))
+				return [];
+
+			return allResults;
+		}
+
+		private static async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationInternal(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, ContentModel contentModel, DispatchCommunicationContext internalContext, object communication, CancellationToken cancellationToken)
+		{
 			IReadOnlyCollection<IDispatchResult?>? results = null;
 			try
 			{
@@ -135,7 +150,7 @@ namespace Transmitly.Delivery
 		/// <param name="channel">The channel to use for filtering.</param>
 		/// <param name="platformIdentities">Collection of identities to filter.</param>
 		/// <returns>Filtered collection of <see cref="PlatformIdentityRecord"/>.</returns>
-		private static ReadOnlyCollection<PlatformIdentityRecord> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+		protected virtual IReadOnlyCollection<PlatformIdentityRecord> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
 		{
 			return platformIdentities.Select(x =>
 			   new PlatformIdentityRecord(

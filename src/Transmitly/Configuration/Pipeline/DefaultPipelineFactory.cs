@@ -12,6 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Collections.ObjectModel;
+
 namespace Transmitly.Pipeline.Configuration
 {
 	/// <summary>
@@ -21,39 +23,18 @@ namespace Transmitly.Pipeline.Configuration
 	/// <exception cref="ArgumentNullException">If the provided pipeline registrations are null</exception>
 	public sealed class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegistrations) : IPipelineFactory
 	{
-		private readonly List<IPipeline> _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations).ToList();
+		private readonly ReadOnlyCollection<IPipeline> _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations).ToList().AsReadOnly();
 
-		///<inheritdoc/>
 		public Task<IReadOnlyCollection<IPipeline>> GetAllAsync()
 		{
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelineRegistrations);
 		}
 
-		///<inheritdoc/>
-		public Task<IReadOnlyCollection<IPipeline>> GetByPlatformIdentityTypeAsync(string platformIdentityType)
+		public Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName)
 		{
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
 				_pipelineRegistrations
-				.Where(x => x.PlatformIdentityType == platformIdentityType)
-				.ToList()
-			);
-		}
-
-		///<inheritdoc/>
-		public Task<IPipeline?> GetAsync(string pipelineName)
-		{
-			return Task.FromResult<IPipeline?>(
-				_pipelineRegistrations
-				.Find(x => x.PipelineName == pipelineName)
-			);
-		}
-		///<inheritdoc/>
-		public Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string platformIdentityType)
-		{
-			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
-				_pipelineRegistrations
-				.Where(x => x.PlatformIdentityType == platformIdentityType && pipelineName == x.PipelineName)
-				.ToList()
+				.Where(x => x.PipelineName == pipelineName).ToList().AsReadOnly()
 			);
 		}
 	}

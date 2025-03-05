@@ -14,32 +14,34 @@
 
 namespace Transmitly.Tests
 {
-	internal sealed record TestPlatformIdentity1 : IPlatformIdentity
-	{
-		public const string DefaultPlatformIdentityType = "test-identity-type";
+    internal sealed record TestPlatformIdentity1 : IPlatformIdentity
+    {
+        public const string DefaultPlatformIdentityType = "test-identity-type";
 
-		public TestPlatformIdentity1(string? id, string platformIdentityAddressType = DefaultPlatformIdentityType)
-		{
-			Id = id ?? Guid.Empty.ToString();
-			Type = Guard.AgainstNullOrWhiteSpace(platformIdentityAddressType);
-		}
-
-
-		public TestPlatformIdentity1() : this(Guid.NewGuid(), DefaultPlatformIdentityType)
-		{
-
-		}
+        public TestPlatformIdentity1(string? id, string platformIdentityAddressType = DefaultPlatformIdentityType, IEnumerable<string>? channelPreferences = null)
+        {
+            Id = id ?? Guid.Empty.ToString();
+            Type = Guard.AgainstNullOrWhiteSpace(platformIdentityAddressType);
+            ChannelPreferences = [.. channelPreferences ?? []];
+        }
 
 
-		public TestPlatformIdentity1(Guid? id, string platformIdentityType = DefaultPlatformIdentityType) : this(id?.ToString(), platformIdentityType)
-		{
+        public TestPlatformIdentity1() : this(Guid.NewGuid(), DefaultPlatformIdentityType)
+        {
 
-		}
+        }
 
-		public IReadOnlyCollection<IIdentityAddress> Addresses { get; set; } = new List<IIdentityAddress>();
-		public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
-		public string? Id { get; set; }
-		public string? Type { get; set; }
-		public bool IsPersona { get; set; }
-	}
+
+        public TestPlatformIdentity1(Guid? id, string platformIdentityType = DefaultPlatformIdentityType) : this(id?.ToString(), platformIdentityType, null)
+        {
+
+        }
+
+        public IReadOnlyCollection<IIdentityAddress> Addresses { get; set; } = new List<IIdentityAddress>();
+        public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
+        public string? Id { get; set; }
+        public string? Type { get; set; }
+        public bool IsPersona { get; set; }
+        public IReadOnlyCollection<string> ChannelPreferences { get; set; }
+    }
 }

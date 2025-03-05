@@ -12,22 +12,26 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Collections.ObjectModel;
+
 namespace Transmitly
 {
 	public sealed class PlatformIdentityRecord : IPlatformIdentity
 	{
-		private List<IIdentityAddress> _addresses;
+		private ReadOnlyCollection<IIdentityAddress> _addresses;
 
-		public PlatformIdentityRecord(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses)
+		public PlatformIdentityRecord(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses, IEnumerable<string>? channelPreferences = null)
 		{
 			Id = id;
 			Type = type;
 			Guard.AgainstNull(identityAddresses);
-			_addresses = new List<IIdentityAddress>(identityAddresses);
+			_addresses = new ReadOnlyCollection<IIdentityAddress>([.. identityAddresses]);
+			ChannelPreferences = new ReadOnlyCollection<string>([.. channelPreferences ?? []]);
 		}
 
 		public string? Id { get; set; }
 		public string? Type { get; set; }
-		public IReadOnlyCollection<IIdentityAddress> Addresses { get => _addresses; set => _addresses = new List<IIdentityAddress>(value); }
+		public IReadOnlyCollection<IIdentityAddress> Addresses { get => _addresses; set => _addresses = new ReadOnlyCollection<IIdentityAddress>([.. value]); }
+		public IReadOnlyCollection<string> ChannelPreferences { get; set; } = new ReadOnlyCollection<string>([]);
 	}
 }

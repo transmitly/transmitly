@@ -52,8 +52,8 @@ namespace Transmitly.Tests
 			Assert.IsNull(model.NullValue);
 			Assert.IsNotNull(model[expectedId]);
 			Assert.AreEqual(expectedId, model[expectedId].Id);
-			Assert.IsNotNull(model.aud[0]);
-			Assert.AreEqual(expectedId, model.aud[0].Id);
+			Assert.IsNotNull(model.aud);
+			Assert.AreEqual(expectedId, model.aud.Id);
 		}
 
 		[TestMethod]
@@ -63,7 +63,7 @@ namespace Transmitly.Tests
 			Assert.IsNotNull(obj);
 			Assert.AreEqual(1, obj.Id);
 			var dictionary = (IDictionary<string, object?>)obj;
-			Assert.AreEqual(5, dictionary.Keys.Count);
+			Assert.AreEqual(4, dictionary.Keys.Count);
 		}
 
 		[TestMethod]
@@ -92,6 +92,13 @@ namespace Transmitly.Tests
 			Assert.IsTrue(model.Root.Level0.Level1.Level1Value);
 			Assert.IsTrue(model.trx.Root.Level0.Level1.Level1Value);
 			Assert.IsNull(model.Root.NullValue);
+		}
+
+		//see hack comment in DynamicContentModel for reasoning
+		[TestMethod]
+		public void DynamicContentModel_PreventMoreThanOnePlatformIdentity()
+		{
+			Assert.ThrowsException<NotSupportedException>(() => new DynamicContentModel(new ObjWithIndexer(), [new TestPlatformIdentity1("123"), new TestPlatformIdentity1("234")], null, null));
 		}
 	}
 }

@@ -12,8 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Persona.Configuration;
-
 namespace Transmitly.Pipeline.Configuration.Tests
 {
 	[TestClass]
@@ -43,19 +41,6 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		}
 
 		[TestMethod]
-		public async Task GetByPlatformIdentityTypeAsync_ReturnsMatchingPipelineRegistrations()
-		{
-			// Arrange
-			var platformIdentityType = "example";
-
-			// Act
-			var result = await _pipelineRegistrationStore.GetByPlatformIdentityTypeAsync(platformIdentityType);
-
-			// Assert
-			Assert.AreEqual(0, result.Count);
-		}
-
-		[TestMethod]
 		public async Task GetAsync_ReturnsPipelineRegistrationByName()
 		{
 			// Arrange
@@ -65,20 +50,7 @@ namespace Transmitly.Pipeline.Configuration.Tests
 			var result = await _pipelineRegistrationStore.GetAsync(pipelineName);
 
 			// Assert
-			Assert.IsNull(result);
-		}
-
-		[TestMethod]
-		public async Task GetAsync_ReturnsMatchingPipelineRegistrations()
-		{
-			// Arrange
-			var pipelineName = "example";
-			var platformIdentityType = "example";
-
-			// Act
-			var result = await _pipelineRegistrationStore.GetAsync(pipelineName, platformIdentityType);
-
-			// Assert
+			Assert.IsNotNull(result);
 			Assert.AreEqual(0, result.Count);
 		}
 	}
