@@ -36,8 +36,16 @@ namespace Tandely.Orders.Service.Controllers
 				{
 					model.Id,
 					model.Date,
-					model.Total
-				}
+					Total = "$" + model.Total,
+
+				},
+				action_url = "https://tandelyshop.example.com/orders/" + model.Id,
+				invoice_details = new[]{new {
+						description= "Tandely Shirt",
+						amount = "$"+model.Total
+					}
+				},
+				support_url = "https://tandelyshop.example.com/support"
 			}));
 
 			logger.LogDebug("{success} Dispatched order confirmation for order {orderId}", result.IsSuccessful ? "Successfully" : "Unsuccessfully", model.Id);

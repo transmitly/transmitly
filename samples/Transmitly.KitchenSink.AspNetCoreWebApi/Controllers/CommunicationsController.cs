@@ -37,12 +37,12 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 		public async Task<IActionResult> DispatchOtp(OtpCodeVM otpCodeVM)
 		{
 			//If our recipient does not have any preference, we'll send it to any matching recipient address
-			var allowedChannels = otpCodeVM.CommunicationPreferences ?? [];
+			var preferredChannels = otpCodeVM.CommunicationPreferences ?? [];
 			var result = await _communicationsClient.DispatchAsync(
 				PipelineName.OtpCode,
 				[otpCodeVM.Recipient],
 				TransactionModel.Create(new { code = otpCodeVM.Code }),
-				allowedChannels: allowedChannels);
+				channelPreferences: preferredChannels);
 
 			return GetActionResult(result);
 

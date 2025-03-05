@@ -22,6 +22,8 @@ namespace Tandely.Notifications.Client
 		public string? Type { get; set; }
 		public string[] Personas { get; set; } = [];
 		public List<NotificationsIdentityAddress> Addresses { get; set; } = [];
-		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get => Addresses; set => throw new NotImplementedException(); }
+		public IReadOnlyCollection<string> ChannelPreferences { get; set; } = [];
+
+		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get => Addresses; }
 	}
 }

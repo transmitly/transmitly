@@ -20,6 +20,7 @@ namespace Tandely.Notifications.Service
 	{
 		public string? Id { get; set; }
 		public string? Type { get; set; }
-		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get; set; } = [];
+		public IReadOnlyCollection<string> ChannelPreferences { get; set; } = [];
+		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get; } = [];
 	}
 }

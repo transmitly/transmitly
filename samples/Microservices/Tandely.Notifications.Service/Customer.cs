@@ -13,7 +13,6 @@
 //  limitations under the License.
 
 using Transmitly;
-using Transmitly.Channel;
 using Transmitly.Channel.Push;
 
 namespace Tandely.Notifications.Service
@@ -28,10 +27,11 @@ namespace Tandely.Notifications.Service
 		public string? FirstName { get; set; }
 		public string? LastName { get; set; }
 		public int LoyaltyPoints { get; set; }
-		//public string? ChannelPreference { get; set; }
+		public IReadOnlyCollection<string> ChannelPreferences { get; set; } = [];
 
-		string? IPlatformIdentity.Id { get => Id.ToString(); set => throw new NotSupportedException(); }
-		string? IPlatformIdentity.Type { get => nameof(Customer); set => throw new NotSupportedException(); }
+
+		string? IPlatformIdentity.Id { get => Id.ToString();  }
+		string? IPlatformIdentity.Type { get => nameof(Customer); }
 		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses
 		{
 			get
@@ -45,7 +45,6 @@ namespace Tandely.Notifications.Service
 					result.Add(new IdentityAddress(DeviceToken, type: IdentityAddress.Types.DeviceToken()));
 				return result;
 			}
-			set => throw new NotSupportedException();
 		}
 	}
 }

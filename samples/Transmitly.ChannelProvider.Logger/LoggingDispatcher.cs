@@ -14,6 +14,7 @@
 
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using Transmitly.Delivery;
 
 namespace Transmitly.ChannelProvider.Debugging
 {
@@ -29,11 +30,47 @@ namespace Transmitly.ChannelProvider.Debugging
 		public async Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 		{
 			_logger.Log(options.LogLevel, "Dispatching to Channel: '{ChannelId}' Content: {Content}.", communicationContext.ChannelId, JsonSerializer.Serialize(communication, _serializerOptions));
+
 			if (!options.SimulateDispatchResult)
+			{
+
 				return [];
+			}
 			else if (options.SimulateDispatchResultHandler == null)
+			{
+				communicationContext.DeliveryReportManager.DispatchReport(
+					new DeliveryReport(
+						DeliveryReport.Event.Dispatched(),
+						communicationContext.ChannelId,
+						communicationContext.ChannelProviderId,
+						communicationContext.PipelineName,
+						Guid.NewGuid().ToString(),
+						DispatchStatus.Dispatched,
+						communication,
+						communicationContext.ContentModel,
+						null
+					)
+				);
 				return [new DispatchResult(DispatchStatus.Dispatched, Guid.NewGuid().ToString())];
-			return await options.SimulateDispatchResultHandler(communication, communicationContext).ConfigureAwait(false);
+			}
+
+			var result = await options.SimulateDispatchResultHandler(communication, communicationContext).ConfigureAwait(false);
+			
+			foreach (var r in result?.Where(x => x != null) ?? [])
+				communicationContext.DeliveryReportManager.DispatchReport(
+						new DeliveryReport(
+							DeliveryReport.Event.Dispatched(),
+							r!.ChannelId,
+							r.ChannelProviderId,
+							communicationContext.PipelineName,
+							r.ResourceId,
+							r.DispatchStatus,
+							communication,
+							communicationContext.ContentModel,
+							r.Exception
+						)
+					);
+			return result ?? [];
 		}
 	}
 }
