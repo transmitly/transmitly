@@ -93,7 +93,17 @@ namespace Tandely.Notifications.Service
 					.AddEmail("from@example.com".AsIdentityAddress(), email =>
 					{
 						email.Subject.AddStringTemplate("Thank you for your order, {{aud.FirstName}}");
-						email.HtmlBody.AddStringTemplate("Your total for your order, #{{Order.Id}} is <strong>${{Order.Total}}</strong> which brings you to <strong>{{aud.LoyaltyPoints}}</strong> loyalty points!");
+						email.HtmlBody.AddTemplateResolver(async ctx=>{
+							
+							var result = await new HttpClient().GetStringAsync("https://raw.githubusercontent.com/transmitly/transmitly/0289de19f3f97cfb85fe6e18b5e8c4d54c8ed4a9/samples/templates/liquid/invoice.html");
+							if(string.IsNullOrWhiteSpace(result))
+								return "Your total for your order, #{{Order.Id}} is <strong>${{Order.Total}}</strong> which brings you to <strong>{{aud.LoyaltyPoints}}</strong> loyalty points!";
+							return result;
+
+
+
+						});
+						//email.HtmlBody.AddStringTemplate("Your total for your order, #{{Order.Id}} is <strong>${{Order.Total}}</strong> which brings you to <strong>{{aud.LoyaltyPoints}}</strong> loyalty points!");
 					});
 				});
 			});
