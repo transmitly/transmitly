@@ -19,7 +19,7 @@ namespace Transmitly
 	public sealed class PlatformIdentityRecord : IPlatformIdentity
 	{
 		private ReadOnlyCollection<IIdentityAddress> _addresses;
-
+		
 		public PlatformIdentityRecord(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses, IEnumerable<string>? channelPreferences = null)
 		{
 			Id = id;
@@ -28,7 +28,7 @@ namespace Transmitly
 			_addresses = new ReadOnlyCollection<IIdentityAddress>([.. identityAddresses]);
 			ChannelPreferences = new ReadOnlyCollection<string>([.. channelPreferences ?? []]);
 		}
-
+		
 		public string? Id { get; set; }
 		public string? Type { get; set; }
 		public IReadOnlyCollection<IIdentityAddress> Addresses { get => _addresses; set => _addresses = new ReadOnlyCollection<IIdentityAddress>([.. value]); }

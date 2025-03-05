@@ -41,7 +41,7 @@ namespace Transmitly
 		private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
 		private readonly IPlatformIdentityResolverFactory _platformIdentityResolvers = Guard.AgainstNull(platformIdentityResolverRegistrations);
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			Guard.AgainstNullOrWhiteSpace(pipelineName);
 			Guard.AgainstNull(transactionalModel);
@@ -57,9 +57,8 @@ namespace Transmitly
 
 			foreach (var pipeline in matchingPipelines)
 			{
-
 				var pipelineConfiguration = pipeline.ChannelConfiguration;
-				platformIdentities = await TryFilterPlatformIdentyPersonas(platformIdentities, pipelineConfiguration);
+				platformIdentities = await TryFilterPlatformIdentityPersonas(platformIdentities, pipelineConfiguration);
 
 				var deliveryStrategy = pipeline.ChannelConfiguration.PipelineDeliveryStrategyProvider;
 				var contentModel = new ContentModel(transactionalModel, platformIdentities);
@@ -76,7 +75,7 @@ namespace Transmitly
 
 
 				var channelProviders = await _channelProviderRegistrations.GetAllAsync().ConfigureAwait(false);
-				var groups = await CreateChannelChannelProviderGroupsAsync(_channelProviderRegistrations, pipelineConfiguration.Channels, channelProviders, allowedChannels, platformIdentities);
+				var groups = await CreateChannelChannelProviderGroupsAsync(_channelProviderRegistrations, pipelineConfiguration.Channels, channelProviders, channelPreferences, platformIdentities);
 				if (groups.Count == 0)
 				{
 					allResults.Add(new DispatchCommunicationResult([], true));
@@ -93,7 +92,7 @@ namespace Transmitly
 			return new DispatchCommunicationResult(allDispatchResults, allDispatchSuccessful);
 		}
 
-		private async Task<IReadOnlyCollection<IPlatformIdentity>> TryFilterPlatformIdentyPersonas(IReadOnlyCollection<IPlatformIdentity> platformIdentities, IPipelineChannelConfiguration pipelineConfiguration)
+		private async Task<IReadOnlyCollection<IPlatformIdentity>> TryFilterPlatformIdentityPersonas(IReadOnlyCollection<IPlatformIdentity> platformIdentities, IPipelineChannelConfiguration pipelineConfiguration)
 		{
 			if (pipelineConfiguration.PersonaFilters.Count == 0)
 			{
@@ -213,9 +212,9 @@ namespace Transmitly
 			return await DispatchAsync(pipelineName, platformIdentities, transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
 		}
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
-			return await DispatchAsync(pipelineName, [identityAddresses.AsPlatformIdentity()], transactionalModel, allowedChannels, cultureInfo, cancellationToken).ConfigureAwait(false);
+			return await DispatchAsync(pipelineName, [identityAddresses.AsPlatformIdentity()], transactionalModel, channelPreferences, cultureInfo, cancellationToken).ConfigureAwait(false);
 		}
 
 		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
@@ -223,7 +222,7 @@ namespace Transmitly
 			return await DispatchAsync(pipelineName, identityReferences, transactionalModel, [], cultureInfo, cancellationToken).ConfigureAwait(false);
 		}
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedCHannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			var uniqueTypes = Guard.AgainstNullOrEmpty(identityReferences?.ToList()).Select(s => s.Type).Distinct().ToArray();
 
@@ -250,7 +249,7 @@ namespace Transmitly
 					results.AddRange(resolvedIdentities);
 			}
 
-			return await DispatchAsync(pipelineName, results, transactionalModel, allowedCHannels, cultureInfo, cancellationToken).ConfigureAwait(false);
+			return await DispatchAsync(pipelineName, results, transactionalModel, channelPreferences, cultureInfo, cancellationToken).ConfigureAwait(false);
 		}
 
 		public void DeliverReport(DeliveryReport report)

@@ -12,6 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Dynamic;
+using System.Reflection;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 
@@ -66,7 +68,7 @@ namespace Transmitly.Delivery
 			}
 
 			if (allResults.Count == 0 || allResults.All(r => r == null))
-				return [];
+				return Array.Empty<IDispatchResult?>();
 
 			return allResults;
 		}
@@ -150,17 +152,34 @@ namespace Transmitly.Delivery
 		/// <param name="channel">The channel to use for filtering.</param>
 		/// <param name="platformIdentities">Collection of identities to filter.</param>
 		/// <returns>Filtered collection of <see cref="PlatformIdentityRecord"/>.</returns>
-		protected virtual IReadOnlyCollection<PlatformIdentityRecord> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+		protected virtual IReadOnlyCollection<IPlatformIdentity> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
 		{
 			return platformIdentities.Select(x =>
-			   new PlatformIdentityRecord(
-				   x.Id,
-				   x.Type,
-				   x.Addresses.Where(a =>
-						   channel.SupportsIdentityAddress(a)
-					   )
-				   )
-			   ).ToList().AsReadOnly();
+				FilterPlatformIdentityAddresses(x, x.Addresses.Where(a => channel.SupportsIdentityAddress(a)))
+			).ToList().AsReadOnly();
+		}
+
+		/// <summary>
+		/// Since the platform Identity does not allow updating the addresses we need to wrap the provided 
+		/// platform identity so we don't lose the underlying properties.
+		/// </summary>
+		/// <param name="source">Source Platform Identity.</param>
+		/// <param name="filteredAddresses">Collection of address that have been filtered.</param>
+		/// <returns>Wrapped platform identity</returns>
+		private static WrappedPlatformIdentity FilterPlatformIdentityAddresses(IPlatformIdentity source, IEnumerable<IIdentityAddress> filteredAddresses)
+		{
+			var expando = new ExpandoObject();
+			var dict = (IDictionary<string, object>)expando!;
+
+			foreach (var prop in source.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+			{
+				var value = prop.GetValue(source);
+				dict[prop.Name] = value!;
+			}
+
+			dict[nameof(IPlatformIdentity.Addresses)] = filteredAddresses.ToList().AsReadOnly();
+
+			return new WrappedPlatformIdentity(expando);
 		}
 
 		/// <summary>
@@ -173,5 +192,7 @@ namespace Transmitly.Delivery
 		{
 			return await channel.GenerateCommunicationAsync(context);
 		}
+
+		
 	}
 }
