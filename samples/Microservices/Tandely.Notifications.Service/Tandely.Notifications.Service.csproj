@@ -7,6 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="templates\order-shipped\email\default.html" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Bogus" Version="35.6.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="Transmitly" Version="0.1.0-241.adfd754" />
