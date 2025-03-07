@@ -1,6 +1,11 @@
 ## Kitchen Sink
 Aims to use as many features of Transmitly as possible. 
 
+<div align="center">
+<img src="https://github.com/user-attachments/assets/91261a97-cfac-46af-b2c3-c2b977a73107" width="400" height="300"/>
+</div>
+
+
 Take a look at the [appsettings.json]() for configuration options. If you change nothing, all communications will be logged to the console of the app.
 
 ### Features
