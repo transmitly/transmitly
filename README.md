@@ -2,7 +2,7 @@
 Transmitly is a powerful and vendor-agnostic communication library designed to simplify and enhance the process of sending transactional messages across various platforms. With its easy-to-use API, developers can seamlessly integrate email, SMS, and other messaging services into their applications, ensuring reliable and efficient delivery of critical notifications. Built for flexibility and scalability, Transmitly supports multiple communication channels, allowing you to focus on building great applications while it handles the complexity of message transmission.
 
 ## Kitchen Sink
-Want to jump right into the code? Take a look at the ["Kitchen Sink" Sample Project](/samples/Transmitly.KitchenSink.AspNetCoreWebApi). The kitchen sink is all about showing off the features of how Transmitly can help you with your communications strategy.
+Want to jump right into the code? Take a look at the [various sample projects](https://github.com/transmitly/transmitly/tree/main/samples).
 
 
 ### Quick Start
