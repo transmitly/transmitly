@@ -2,7 +2,7 @@
 
 This directory contains sample code that demonstrates how to use Transmitly with various channels and channel providers.
 
-## Kitchen Sink
+## [Kitchen Sink](https://github.com/transmitly/transmitly/tree/main/samples/Transmitly.KitchenSink.AspNetCoreWebApi)
 Aims to use as many features of Transmitly as possible. 
 
 Take a look at the [appsettings.json]() for configuration options. If you change nothing, all communications will be logged to the console of the app.
@@ -32,7 +32,7 @@ Take a look at the [appsettings.json]() for configuration options. If you change
 * twilio/messageNeeded - When exposed publicly can be used with Twilio to provide message content for Voice messages.
   *	Requires [uncommenting code](https://github.com/transmitly/transmitly/blob/694ce5bc2a8ce261a3a52be2518d06835179d2eb/samples/Transmitly.KitchenSink.AspNetCoreWebApi/Program.cs#L182-L187) and the Twilio channel provider to be configured correctly.
 
-## Microservices
+## [Microservices](https://github.com/transmitly/transmitly/tree/main/samples/Microservices)
 Demonstrates how you can completely extend the default Transmitly behavior by showcasing an notifications service that other services might call. 
 
 ### Features
@@ -87,5 +87,5 @@ architecture-beta
 
 **This sample is not intended to show best practices of microservice architecture. The overall design is kept as simple as possible but could just as easily be extended to a more complex architecture.*
  
-## Transmitly.ChannelProvider.Logger
+## [Transmitly.ChannelProvider.Logger](https://github.com/transmitly/transmitly/tree/main/samples/Transmitly.ChannelProvider.Logger)
 An example channel provider that handles all channels. It's only purpose is to log communications dispatched with Transmitly.
