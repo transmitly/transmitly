@@ -1,12 +1,13 @@
-## Kitchen Sink
-Aims to use as many features of Transmitly as possible. 
 
-<div align="center">
-<img src="https://github.com/user-attachments/assets/91261a97-cfac-46af-b2c3-c2b977a73107" width="400" height="300"/>
-</div>
+# Kitchen Sink
+<img src="https://github.com/user-attachments/assets/91261a97-cfac-46af-b2c3-c2b977a73107" style="width:200px; height:150px;max-width:100%" align="left"/>
 
-
-Take a look at the [appsettings.json]() for configuration options. If you change nothing, all communications will be logged to the console of the app.
+Aims to demonstrate as many features of Transmitly as possible in a single project. 
+<br/><br/>
+<br/>
+<br/><br/><br/>
+## 
+Take a look at the [appsettings.json](https://github.com/transmitly/transmitly/blob/main/samples/Transmitly.KitchenSink.AspNetCoreWebApi/appsettings.json) for configuration options. If you change nothing, all communications will be logged to the console of the app.
 
 ### Features
 * Channel - Available Providers
