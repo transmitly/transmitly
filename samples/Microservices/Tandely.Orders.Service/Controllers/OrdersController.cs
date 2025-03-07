@@ -42,7 +42,11 @@ namespace Tandely.Orders.Service.Controllers
 				action_url = "https://tandelyshop.example.com/orders/" + model.Id,
 				invoice_details = new[]{new {
 						description= "Tandely Shirt",
-						amount = "$"+model.Total
+						amount = "$"+model.Total/2
+					},
+					new {
+						description= "Tandely Hat",
+						amount = "$"+model.Total/2
 					}
 				},
 				support_url = "https://tandelyshop.example.com/support"
