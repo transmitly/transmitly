@@ -1,3 +1,5 @@
+
+
 ## Microservices
 Demonstrates how you can completely extend the default Transmitly behavior by showcasing an notifications service that other services might call. 
 
@@ -20,6 +22,9 @@ Demonstrates how you can completely extend the default Transmitly behavior by sh
   * Logger - All
 * Delivery Reports
 ### Scenario
+<div align="center">
+<img src="https://github.com/user-attachments/assets/0bc4c52f-eca8-4d28-865a-7051eef34341" width="300" height="300" align="center"/>
+</div>
 Tandely is a fictional ecommerce platform that has been setup to use a simple microservice architecture. 
 The Orders and Shipping services are responsible for creating new orders and shipping them respectively. 
 These services will dispatch a notification event that will be sent to the Notifications service. 
