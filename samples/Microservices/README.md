@@ -1,11 +1,13 @@
+# Microservices
+<img src="https://github.com/user-attachments/assets/0bc4c52f-eca8-4d28-865a-7051eef34341" width="200" height="200" align="right"/>
 
-
-## Microservices
 Demonstrates how you can completely extend the default Transmitly behavior by showcasing an notifications service that other services might call. 
 
-<div align="center">
-<img src="https://github.com/user-attachments/assets/0bc4c52f-eca8-4d28-865a-7051eef34341" width="300" height="300" align="center"/>
-</div>
+**This sample is not intended to show best practices of microservice architecture. The overall design is kept as simple as possible but could just as easily be extended to a more complex architecture.*
+<br/><br/>
+<br/>
+<br/>
+## 
 
 ### Features
 * Communications Client extensibility
@@ -58,4 +60,4 @@ architecture-beta
 * Shipping - Manages shipping orders
 
 
-**This sample is not intended to show best practices of microservice architecture. The overall design is kept as simple as possible but could just as easily be extended to a more complex architecture.*
+
