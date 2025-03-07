@@ -12,11 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Transmitly;
 using Transmitly.Channel.Configuration;
 using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
+using Transmitly.Samples.Shared;
 using Transmitly.Template.Configuration;
 
 namespace Tandely.Notifications.Client
@@ -45,8 +48,14 @@ namespace Tandely.Notifications.Client
 				platformIdentityResolverRegistrations,
 				context.DeliveryReportProvider
 			);
-
-			return new NotificationsCommunicationsClient(defaultClient, context, platformIdentityResolverRegistrations, _options);
+			var jsonOptions = new JsonSerializerOptions()
+			{
+				PropertyNameCaseInsensitive = true,
+				PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+			};
+			jsonOptions.Converters.Add(new JsonExceptionConverter());
+			jsonOptions.Converters.Add(new JsonStringEnumConverter());
+			return new NotificationsCommunicationsClient(defaultClient, context, platformIdentityResolverRegistrations, _options, jsonOptions);
 		}
 	}
 }

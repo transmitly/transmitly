@@ -12,7 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Microsoft.AspNetCore.Http.Json;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Transmitly.Samples.Shared;
 
 namespace Tandely.Customers.Service
 {
@@ -23,6 +27,21 @@ namespace Tandely.Customers.Service
 			var builder = WebApplication.CreateBuilder(args);
 
 			// Add services to the container.
+			builder.Services.AddControllers().AddJsonOptions(options =>
+			{
+				options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+				options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+				options.JsonSerializerOptions.Converters.Add(new JsonExceptionConverter());
+				options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+			});
+
+			builder.Services.Configure<JsonOptions>(options =>
+			{
+				options.SerializerOptions.PropertyNameCaseInsensitive = true;
+				options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+				options.SerializerOptions.Converters.Add(new JsonExceptionConverter());
+				options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+			});
 
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

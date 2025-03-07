@@ -14,19 +14,42 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Transmitly.KitchenSink.AspNetCoreWebApi
+namespace Transmitly.Samples.Shared
 {
-	//Source = https://stackoverflow.com/a/76797018
 	public sealed class JsonExceptionConverter : JsonConverter<Exception>
 	{
 		public override Exception Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			throw new NotImplementedException();
+			// Deserialize into your intermediate representation.
+			var detail = JsonSerializer.Deserialize<LimitedExceptionDetail>(ref reader, options);
+			if (detail == null)
+			{
+				throw new JsonException("Unable to deserialize LimitedExceptionDetail.");
+			}
+
+			// Recursively build the Exception from the detail.
+			return CreateExceptionFromDetail(detail);
 		}
 
 		public override void Write(Utf8JsonWriter writer, Exception value, JsonSerializerOptions options)
 		{
 			writer.WriteRawValue(JsonSerializer.Serialize(new LimitedExceptionDetail(value)));
+		}
+
+		private Exception CreateExceptionFromDetail(LimitedExceptionDetail detail)
+		{
+			// Recursively create the inner exception if present.
+			Exception? inner = detail.InnerException is not null ? CreateExceptionFromDetail(detail.InnerException) : null;
+
+			// Build a message including the type and source if available.
+			string message = detail.Message ?? "An unknown error occurred.";
+
+			if (!string.IsNullOrWhiteSpace(detail.StackTrace))
+			{
+				message += $" {Environment.NewLine}{detail.StackTrace}";
+			}
+
+			return new Exception(message, inner) { Source = detail.Source };
 		}
 	}
 

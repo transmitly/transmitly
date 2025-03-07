@@ -14,8 +14,9 @@
 using Swashbuckle.AspNetCore.Filters;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Transmitly.KitchenSink.AspNetCoreWebApi.Configuration;
 using Transmitly.Delivery;
+using Transmitly.Samples.Shared;
+using Transmitly;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
@@ -28,6 +29,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
 			/// !!! See appSettings.json for examples of how to configure with your own settings !!!
 			var tlyConfig = builder.Configuration.GetRequiredSection("Transmitly").Get<TransmitlyConfiguration>();
+			if (tlyConfig == null)
+				throw new Exception("Transmitly configuration is missing from configuration.");
 
 			// Add services to the container.
 			builder.Services
@@ -57,15 +60,18 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			builder.Services.AddTransmitly(tly =>
 			{
 				// Configure channel providers loaded from appsettings.json
-				AddSmtpSupport(tly, tlyConfig);//Email
-				AddTwilioSupport(tly, tlyConfig);//Email/SMS
-				AddInfobipSupport(tly, tlyConfig);//Email/Sms/Voice
-				AddFirebaseSupport(tly, tlyConfig);//Push
-				AddSendGridSupport(tly, tlyConfig);//Email
-												   //AddFluidTemplateEngine comes from the Transmitly.TemplateEngine.Fluid
-												   //This will give us the ability to replace and generate content in our templates.
-												   //In this case, we can use Fluid style templating.
-				tly.AddFluidTemplateEngine(options => { })
+				tly
+				.AddDispatchLoggingSupport(tlyConfig)//Console logging
+				.AddSmtpSupport(tlyConfig)//Email
+				.AddTwilioSupport(tlyConfig)//Email/SMS
+				.AddInfobipSupport(tlyConfig)//Email/Sms/Voice
+				.AddFirebaseSupport(tlyConfig)//Push
+				.AddSendGridSupport(tlyConfig)//Email
+
+				//AddFluidTemplateEngine comes from the Transmitly.TemplateEngine.Fluid
+				//This will give us the ability to replace and generate content in our templates.
+				//In this case, we can use Fluid style templating.
+				.AddFluidTemplateEngine(options => { })
 				// We can use delivery report handlers for doing things like logging and storing
 				// the generated communications even firing off webhooks to notify other systems.
 				.AddDeliveryReportHandler((report) =>
@@ -207,80 +213,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			app.Run();
 		}
 
-		private static void AddFirebaseSupport(CommunicationsClientBuilder tly, TransmitlyConfiguration tlyConfig)
-		{
-			foreach (var firebaseSetting in tlyConfig.ChannelProviders.Firebase.Where(s => s.IsEnabled))
-			{
-				tly.AddFirebaseSupport(firebase =>
-				{
-					firebase.ProjectId = firebaseSetting.Options.ProjectId;
-					firebase.Credential = firebaseSetting.Options.Credential;
-					firebase.ServiceAccountId = firebaseSetting.Options.ServiceAccountId;
-				}, firebaseSetting.Id);
-			}
-		}
 
-		private static void AddInfobipSupport(CommunicationsClientBuilder tly, TransmitlyConfiguration tlyConfig)
-		{
-			foreach (var infobipSetting in tlyConfig.ChannelProviders.Infobip.Where(s => s.IsEnabled))
-			{
-				// Adding the Transmitly.ChannelProvider.Infobip package
-				// allows us to add support to our app for Email, SMS & Voice through
-				// an account with Infobip.
-				tly.AddInfobipSupport(infobip =>
-				{
-					infobip.BasePath = infobipSetting.BasePath;
-					infobip.ApiKey = infobipSetting.ApiKey;
-					infobip.ApiKeyPrefix = infobipSetting.ApiKeyPrefix;
-				}, infobipSetting.Id);
-			}
-		}
-
-		private static void AddTwilioSupport(CommunicationsClientBuilder tly, TransmitlyConfiguration tlyConfig)
-		{
-			foreach (var twilioSetting in tlyConfig.ChannelProviders.Twilio.Where(s => s.IsEnabled))
-			{
-				// Adding the Transmitly.ChannelProvider.Twilio package
-				// allows us to add support to our app for SMS through
-				// an account with Twilio.
-				tly.AddTwilioSupport(twilio =>
-				{
-					twilio.AuthToken = twilioSetting.AuthToken;
-					twilio.AccountSid = twilioSetting.AccountSid;
-				}, twilioSetting.Id);
-			}
-		}
-
-		private static void AddSmtpSupport(CommunicationsClientBuilder tly, TransmitlyConfiguration tlyConfig)
-		{
-			foreach (var smtpSetting in tlyConfig.ChannelProviders.Smtp.Where(s => s.IsEnabled))
-			{
-				// Adding the Transmitly.ChannelProvider.Smtp package
-				// allows us to add support to our app for Email via SMTP
-				// with the MailKit library. 
-				tly.AddSmtpSupport(smtp =>
-				{
-					smtp.Host = smtpSetting.Host;
-					smtp.SocketOptions = ChannelProvider.Smtp.Configuration.SecureSocketOptions.Auto;
-					smtp.Port = smtpSetting.Port;
-					smtp.UserName = smtpSetting.Username;
-					smtp.Password = smtpSetting.Password;
-				}, smtpSetting.Id);
-			}
-		}
-
-		private static void AddSendGridSupport(CommunicationsClientBuilder tly, TransmitlyConfiguration tlyConfig)
-		{
-			// Adding the Transmitly.ChannelProvider.SendGrid package
-			// allows us to add support to our app for Email
-			// through an account with SendGrid. 
-			foreach (var sendGridSetting in tlyConfig.ChannelProviders.SendGrid.Where(s => s.IsEnabled))
-			{
-				tly.AddSendGridSupport(sendgrid =>
-				{
-					sendgrid.ApiKey = sendGridSetting.ApiKey;
-				});
-			}
-		}
 	}
 }

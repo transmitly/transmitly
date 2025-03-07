@@ -15,5 +15,9 @@
 		<PackageReference Include="Transmitly" Version="0.1.0-241.adfd754" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Transmitly.Samples.Shared\Transmitly.Samples.Shared.csproj" />
+	</ItemGroup>
+
 	
 </Project>

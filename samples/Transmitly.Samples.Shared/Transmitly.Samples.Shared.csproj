@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Transmitly" Version="0.1.0-241.adfd754" />
+		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.1.1-7.c458b55" />
+		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.1.0-7.baf325e" />
+		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.1.1-8.adf0386" />
+		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="0.1.1-10.8a01f22" />
+		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.1.1-5.3df252f" />
+
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+		<PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="All" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Transmitly.ChannelProvider.Logger\Transmitly.ChannelProvider.Logger.csproj" />
+	</ItemGroup>
+</Project>

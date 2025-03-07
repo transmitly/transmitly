@@ -14,8 +14,10 @@
 
 using Microsoft.AspNetCore.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Tandely.IntegrationEvents;
 using Transmitly;
+using Transmitly.Samples.Shared;
 
 namespace Tandely.Notifications.Service
 {
@@ -24,19 +26,29 @@ namespace Tandely.Notifications.Service
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
+
+			/// !!! See appSettings.json for examples of how to configure with your own settings !!!
+			var tlyConfig = builder.Configuration.GetRequiredSection("Transmitly").Get<TransmitlyConfiguration>();
+			if (tlyConfig == null)
+				throw new Exception("Transmitly configuration is missing from configuration.");
+
 			// Add services to the container.
 			builder.Services.AddControllers().AddJsonOptions(options =>
 			{
 				options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 				options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 				options.JsonSerializerOptions.Converters.Add(new JsonExceptionConverter());
+				options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 			});
+
 			builder.Services.Configure<JsonOptions>(options =>
 			{
 				options.SerializerOptions.PropertyNameCaseInsensitive = true;
 				options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 				options.SerializerOptions.Converters.Add(new JsonExceptionConverter());
+				options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 			});
+
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
@@ -54,7 +66,14 @@ namespace Tandely.Notifications.Service
 
 			builder.Services.AddTransmitly(tly =>
 			{
+				// Configure channel providers loaded from appsettings.json
 				tly
+				.AddDispatchLoggingSupport(tlyConfig)//Console logging
+				.AddSmtpSupport(tlyConfig)//Email
+				.AddTwilioSupport(tlyConfig)//Email/SMS
+				.AddInfobipSupport(tlyConfig)//Email/Sms/Voice
+				.AddFirebaseSupport(tlyConfig)//Push
+				.AddSendGridSupport(tlyConfig)//Email
 				.AddPlatformIdentityResolver<CustomerRepository>("Customer")
 				.AddDeliveryReportHandler((report) =>
 				{
@@ -63,18 +82,19 @@ namespace Tandely.Notifications.Service
 				})
 				.AddFluidTemplateEngine()
 				.AddPersona<Customer>("VIP", nameof(Customer), (c) => c.LoyaltyPoints > 500)
-				.AddDispatchLoggingSupport(options =>
-				{
-					options.SimulateDispatchResult = true;
-				})
 				.AddPipeline(ShippingIntegrationEvent.OrderShipped, pipeline =>
 				{
 					pipeline
-					.AddSms("+188812345678".AsIdentityAddress(), sms =>
+					.AddSms(tlyConfig.DefaultSmsFromAddress.AsIdentityAddress(), sms =>
 					{
 						sms.Message.AddStringTemplate("{{aud.FirstName}}, #{{OrderId}} has shipped with {{Carrier}}! You can track it <a href=\"https://shipping.example.com/?track={{TrackingNumber}}\">here</a>");
 					})
-					.AddEmail((ctx) => (ctx.ChannelProviderId == Id.ChannelProvider.Smtp() ? "jeremy@transmit.ly" : "from-other@example.com").AsIdentityAddress(), email =>
+					.AddEmail((ctx) =>
+					{
+						dynamic? contentModel = ctx.ContentModel?.Model;
+						return (contentModel?.TenantId != "tenant-1" ? tlyConfig.DefaultEmailFromAddress : "from@tenant-1.com").AsIdentityAddress();
+					},
+					email =>
 					{
 						email.Subject.AddStringTemplate("Tandely order, {{OrderId}}, shipped!");
 						email.HtmlBody.AddEmbeddedResourceTemplate("Tandely.Notifications.Service.templates.order_shipped.email.default.html");
@@ -94,7 +114,7 @@ namespace Tandely.Notifications.Service
 				.AddPipeline(OrdersIntegrationEvent.OrderConfirmation, pipeline =>
 				{
 					pipeline
-					.AddEmail("from@example.com".AsIdentityAddress(), email =>
+					.AddEmail(tlyConfig.DefaultEmailFromAddress.AsIdentityAddress(), email =>
 					{
 						email.Subject.AddStringTemplate("Thank you for your order, {{aud.FirstName}}");
 						email.HtmlBody.AddTemplateResolver(async ctx =>
@@ -106,7 +126,6 @@ namespace Tandely.Notifications.Service
 								return "Your total for your order, #{{Order.Id}} is <strong>${{Order.Total}}</strong> which brings you to <strong>{{aud.LoyaltyPoints}}</strong> loyalty points!";
 							return result;
 						});
-						//email.HtmlBody.AddStringTemplate("Your total for your order, #{{Order.Id}} is <strong>${{Order.Total}}</strong> which brings you to <strong>{{aud.LoyaltyPoints}}</strong> loyalty points!");
 					});
 				});
 			});
@@ -118,6 +137,7 @@ namespace Tandely.Notifications.Service
 			{
 				app.UseSwagger();
 				app.UseSwaggerUI();
+				app.UseDeveloperExceptionPage();
 			}
 
 			app.UseHttpsRedirection();

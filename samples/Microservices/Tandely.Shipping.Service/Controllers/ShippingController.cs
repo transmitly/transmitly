@@ -34,7 +34,8 @@ namespace Tandely.Shipping.Service.Controllers
 			{
 				model.OrderId,
 				model.TrackingNumber,
-				model.Carrier
+				model.Carrier,
+				//TenantId = "tenant-1"
 			}));
 
 			logger.LogDebug("{success} Dispatched order confirmation for order {orderId}", result.IsSuccessful ? "Successfully" : "Unsuccessfully", model.OrderId);

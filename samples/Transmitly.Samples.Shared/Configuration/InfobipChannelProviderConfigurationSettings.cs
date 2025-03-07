@@ -12,22 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace Tandely.Notifications.Service
+namespace Transmitly.Samples.Shared
 {
-	//Source = https://stackoverflow.com/a/76797018
-	public sealed class JsonExceptionConverter : JsonConverter<Exception>
+	public class InfobipChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
 	{
-		public override Exception Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void Write(Utf8JsonWriter writer, Exception value, JsonSerializerOptions options)
-		{
-			writer.WriteRawValue(JsonSerializer.Serialize(new LimitedExceptionDetail(value)));
-		}
+		public string BasePath { get; set; } = "https://base.infobip.com";
+		public string ApiKeyPrefix { get; set; } = "App";
+		public string? ApiKey { get; set; }
 	}
 }

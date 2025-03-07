@@ -12,14 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
+namespace Transmitly.Samples.Shared
 {
-	public class TransmitlyConfiguration
+	public class TwilioChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
 	{
-		public string DefaultEmailFromAddress { get; set; } = "example@domain.com";
-		public string DefaultSmsFromAddress { get; set; } = "8881234567";
-		public string DefaultVoiceFromAddress { get; set; } = "8881234567";
-
-		public ChannelProviderConfiguration ChannelProviders { get; set; } = new();
+		public string? AuthToken { get; set; }
+		public string? AccountSid { get; set; }
 	}
 }

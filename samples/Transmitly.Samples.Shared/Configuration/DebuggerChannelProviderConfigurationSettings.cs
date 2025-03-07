@@ -12,12 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
+using Microsoft.Extensions.Logging;
+
+namespace Transmitly.Samples.Shared
 {
-	public class InfobipChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
+	public class DebuggerChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
 	{
-		public string BasePath { get; set; } = "https://base.infobip.com";
-		public string ApiKeyPrefix { get; set; } = "App";
-		public string? ApiKey { get; set; }
+		public bool SimulateDispatchResult { get; set; } = false;
+		public LogLevel LogLevel { get; set; } = LogLevel.Information;
 	}
 }

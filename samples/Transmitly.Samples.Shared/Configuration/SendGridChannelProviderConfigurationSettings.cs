@@ -12,11 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.KitchenSink.AspNetCoreWebApi.Configuration
+namespace Transmitly.Samples.Shared
 {
-	public abstract class ChannelProviderConfigurationSettings
+	public class SendGridChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings
 	{
-		public string? Id { get; set; }
-		public bool IsEnabled { get; set; }
+		public string? ApiKey { get; set; }
 	}
 }

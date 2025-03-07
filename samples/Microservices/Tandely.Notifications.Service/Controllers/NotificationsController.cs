@@ -12,8 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly;
 using Microsoft.AspNetCore.Mvc;
+using Transmitly;
 
 namespace Tandely.Notifications.Service.Controllers
 {
@@ -48,6 +48,7 @@ namespace Tandely.Notifications.Service.Controllers
 			{
 				return Ok(result);
 			}
+
 			return BadRequest(result);
 		}
 	}

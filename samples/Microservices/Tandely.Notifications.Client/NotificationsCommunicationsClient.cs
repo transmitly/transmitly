@@ -23,16 +23,22 @@ namespace Tandely.Notifications.Client
 {
 	public sealed class NotificationsCommunicationsClient : ICommunicationsClient
 	{
+		readonly JsonSerializerOptions _jsonOptions;
 		readonly static Lazy<HttpClient> _httpClient = new(() => CreateHttpClient(_options));
 		static NotificationsOptions? _options;
 		readonly DefaultCommunicationsClient _defaultClient;
 		readonly IReadOnlyCollection<IPersonaRegistration>? _pipelinePersonas;
 		readonly static object _lock = new();
-		internal NotificationsCommunicationsClient(DefaultCommunicationsClient defaultClient, ICreateCommunicationsClientContext context, IPlatformIdentityResolverFactory platformIdentityResolverFactory, NotificationsOptions options)
+
+		internal NotificationsCommunicationsClient(DefaultCommunicationsClient defaultClient, ICreateCommunicationsClientContext context,
+			IPlatformIdentityResolverFactory platformIdentityResolverFactory, NotificationsOptions options,
+			JsonSerializerOptions jsonOptions
+		)
 		{
 			_pipelinePersonas = Guard.AgainstNull(context.Personas);
 			_defaultClient = Guard.AgainstNull(defaultClient);
 			_options = Guard.AgainstNull(options);
+			_jsonOptions = Guard.AgainstNull(jsonOptions);
 		}
 
 		private static HttpClient CreateHttpClient(NotificationsOptions? options)
@@ -84,7 +90,8 @@ namespace Tandely.Notifications.Client
 
 				var apiCallResult = await _httpClient.Value.PostAsync($"notifications/dispatch", new StringContent(payload, System.Text.Encoding.UTF8, "application/json"), cancellationToken);
 
-				var apiResult = JsonSerializer.Deserialize<DispatchNotificationResult?>(await apiCallResult.Content.ReadAsStringAsync(cancellationToken));
+				var result = await apiCallResult.Content.ReadAsStringAsync(cancellationToken);
+				var apiResult = JsonSerializer.Deserialize<DispatchNotificationResult?>(result, _jsonOptions);
 
 				if (apiCallResult.IsSuccessStatusCode)
 				{
@@ -104,7 +111,7 @@ namespace Tandely.Notifications.Client
 							DispatchStatus = DispatchStatus.Undeliverable,
 							ResourceId = dispatchCorrelationId,
 							ChannelId = "Tandely.Notifications",
-							Exception = new Exception(string.Join(", ", apiResult?.Errors.Select(x => x.ErrorMessage)??[])),
+							Exception = new Exception(string.Join(", ", apiResult?.Results.Select(x => x.Exception?.ToString())??[])),
 							ChannelProviderId = "Tandely.Notifications"
 						}], false);
 				}
@@ -116,7 +123,7 @@ namespace Tandely.Notifications.Client
 						DispatchStatus = DispatchStatus.Exception,
 						ResourceId = null,
 						ChannelId = "Tandely.Notifications",
-						Exception = new Exception("An exception occurred while attempting to dispatch communications to the Tandely Notifications services",  ex),
+						Exception = new Exception("An exception occurred while attempting to dispatch communications to the Tandely Notifications services", ex),
 						ChannelProviderId = "Tandely.Notifications"
 					}], false);
 			}

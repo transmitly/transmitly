@@ -12,34 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly;
+
 namespace Tandely.Notifications.Client
 {
 	public class NotificationsPipelineDispatchResult
 	{
-
-		/// <summary>
-		/// The name of the pipeline, if resolution has completed by the time this result is returned.
-		/// </summary>
-		public string PipelineName { get; set; }
-
-		/// <summary>
-		/// The ID of the pipeline instance, if resolution and instantiation has completed by the time this result is returned.
-		/// </summary>
-		public Guid? PipelineInstanceId { get; set; }
-
-		/// <summary>
-		/// A reference identifier you want to track the originating send command to
-		/// </summary>
-		public string? ExternalInstanceReferenceId { get; set; }
-
-		/// <summary>
-		/// The status of the pipeline instance.
-		/// </summary>
-		public PipelineInstanceStatus PipelineStatus { get; set; }
-
-		/// <summary>
-		/// The pipeline resolution associated with the originating communication request or signal.
-		/// </summary>
-		public PipelineResolutionResult ResolutionStatus { get; set; }
+		public DispatchStatus DispatchStatus { get; set; }
+		public string? ChannelId { get; set; }
+		public string? ChannelProviderId { get; set; }
+		public string? ResourceId { get; set; }
+		public Exception? Exception { get; set; }
 	}
 }
