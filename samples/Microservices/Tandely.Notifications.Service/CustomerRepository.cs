@@ -32,7 +32,7 @@ namespace Tandely.Notifications.Service
 				if (response.IsSuccessStatusCode)
 				{
 					var content = await response.Content.ReadAsStreamAsync();
-					var customer = await JsonSerializer.DeserializeAsync<Customer>(content, jsonOptions.Value.SerializerOptions);
+					var customer = await JsonSerializer.DeserializeAsync<Customer?>(content, jsonOptions.Value.SerializerOptions);
 					return customer;
 				}
 				return null;

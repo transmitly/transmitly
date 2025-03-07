@@ -91,8 +91,8 @@ namespace Tandely.Notifications.Service
 					})
 					.AddEmail((ctx) =>
 					{
-						dynamic? contentModel = ctx.ContentModel?.Model;
-						return (contentModel?.TenantId != "tenant-1" ? tlyConfig.DefaultEmailFromAddress : "from@tenant-1.com").AsIdentityAddress();
+						var contentModel = (IDictionary<string, object>?)ctx.ContentModel?.Model;
+						return (contentModel?.TryGetValue("TenantId", out var tenantValue) ?? false && tenantValue?.ToString() == "tenant-1" ? "from@tenant-1.com" : tlyConfig.DefaultEmailFromAddress).AsIdentityAddress();
 					},
 					email =>
 					{

@@ -28,7 +28,7 @@ namespace Tandely.Shipping.Service.Controllers
 			{
 				OrderId = _random.Number(100000, 999999).ToString(),
 				TrackingNumber = _random.AlphaNumeric(25),
-				Customer = new IdentityReference("Customer", "f1ae5bd5-c18d-a9eb-bae5-8aba36d2d1eb"),
+				Customer = new IdentityReference("Customer", "2a8a8eac-ff65-ebb1-8a06-0f689e6bb894"),
 				Carrier = new Faker().PickRandomParam(["UPS", "FedEx", "USPS"])
 			};
 		}

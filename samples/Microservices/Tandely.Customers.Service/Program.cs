@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -27,7 +28,14 @@ namespace Tandely.Customers.Service
 			var builder = WebApplication.CreateBuilder(args);
 
 			// Add services to the container.
-			builder.Services.AddControllers().AddJsonOptions(options =>
+			builder.Services.AddControllers(options =>
+			{
+				var noContentFormatter = options.OutputFormatters.OfType<HttpNoContentOutputFormatter>().FirstOrDefault();
+				if (noContentFormatter != null)
+				{
+					noContentFormatter.TreatNullValueAsNoContent = false;
+				}
+			}).AddJsonOptions(options =>
 			{
 				options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 				options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
