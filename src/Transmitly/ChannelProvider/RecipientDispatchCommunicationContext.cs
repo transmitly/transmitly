@@ -12,17 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Tandely.Customers.Service
+namespace Transmitly.ChannelProvider
 {
-	public class Customer
+	public sealed class RecipientDispatchCommunicationContext
 	{
-		public Guid Id { get; set; }
-		public string? EmailAddress { get; set; }
-		public string? MobilePhone { get; set; }
-		public string? DeviceToken { get; set; }
-		public string? FirstName { get; set; }
-		public string? LastName { get; set; }
-		public int LoyaltyPoints { get; set; }
-		public List<string>? ChannelPreference { get; set; }
+		internal RecipientDispatchCommunicationContext(IDispatchCommunicationContext context, IReadOnlyCollection<ChannelChannelProviderGroup> channelProviderGroups)
+		{
+			ChannelChannelProviderGroups = Guard.AgainstNull(channelProviderGroups);
+			Context = Guard.AgainstNull(context);
+		}
+		public IDispatchCommunicationContext Context { get; }
+		public IReadOnlyCollection<ChannelChannelProviderGroup> ChannelChannelProviderGroups { get; }
 	}
 }

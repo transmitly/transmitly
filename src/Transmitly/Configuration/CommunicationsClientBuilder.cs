@@ -25,7 +25,7 @@ using Transmitly.Template.Configuration;
 namespace Transmitly
 {
 	/// <summary>
-	/// Builds a <see cref="ICommunicationsClient"/>.
+	/// Builds an instance of a <see cref="ICommunicationsClient"/>.
 	/// </summary>
 	public sealed class CommunicationsClientBuilder
 	{
@@ -37,6 +37,7 @@ namespace Transmitly
 		private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolvers = [];
 		private readonly List<ITemplateEngineRegistration> _templateEngines = [];
 		private readonly List<IPersonaRegistration> _personaRegistrations = [];
+
 		/// <summary>
 		/// Creates an instance of the class
 		/// </summary>
@@ -195,6 +196,14 @@ namespace Transmitly
 			return PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
 		}
 
+		/// <summary>
+		/// Add a persona filter to the configuration.
+		/// </summary>
+		/// <typeparam name="TPersona">Concrete persona type.</typeparam>
+		/// <param name="name">Persona filter name.</param>
+		/// <param name="platformIdentityType">Platform Identity type name.</param>
+		/// <param name="personaCondition">Conditions that the <typeparamref name="TPersona"/> must meet.</param>
+		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddPersona<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> personaCondition)
 			where TPersona : class
 		{
@@ -240,21 +249,18 @@ namespace Transmitly
 		//	return this;
 		//}
 
-		/// <inheritdoc/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override bool Equals(object? obj)
 		{
 			return base.Equals(obj);
 		}
 
-		/// <inheritdoc/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
 		}
 
-		/// <inheritdoc/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string ToString()
 		{

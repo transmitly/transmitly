@@ -61,6 +61,6 @@ namespace Transmitly.Channel.Configuration
 
 		public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);
 
-		public IContentModel? ContentModel { get; set; } = Guard.AgainstNull(contentModel);
+		public IContentModel? ContentModel { get; set; } = contentModel;
 	}
 }

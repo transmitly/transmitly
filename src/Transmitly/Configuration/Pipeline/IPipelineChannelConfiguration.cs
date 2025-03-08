@@ -23,47 +23,59 @@ namespace Transmitly.Pipeline.Configuration
 	public interface IPipelineChannelConfiguration
 	{
 		/// <summary>
-		/// Priority of the transportation method
+		/// Description of the pipeline.
 		/// </summary>
-		TransportPriority TransportPriority { get; set; }
+		string? Description { get; set; }
 		/// <summary>
-		/// Priority of the message
-		/// </summary>
-		MessagePriority MessagePriority { get; set; }
-		/// <summary>
-		/// Recipients to copy the message to (if supported)
-		/// </summary>
-		/// <param name="platformIdentityType"></param>
-		void CopyIdentityAddress(params string[] platformIdentityType);
-		/// <summary>
-		/// Recipients to blind copy the message to (if supported)
-		/// </summary>
-		/// <param name="platformIdentityType"></param>
-		void BlindCopyIdentityAddress(params string[] platformIdentityType);
-		/// <summary>
-		/// Registers a communication channel with the pipeline
-		/// </summary>
-		/// <param name="channel"><see cref="IChannel"/> to register</param>
-		void AddChannel(IChannel channel);
-		/// <summary>
-		/// Gets the list of available channels registered in the pipeline
+		/// Gets the list of available channels registered in the pipeline.
 		/// </summary>
 		/// <see cref="AddChannel(IChannel)"/>
 		IReadOnlyCollection<IChannel> Channels { get; }
-
+		/// <summary>
+		/// Gets the list of persona filters registered in the pipeline.
+		/// </summary>
 		IReadOnlyCollection<string> PersonaFilters { get; }
 		/// <summary>
 		/// Gets the registered channel sending strategy provider
 		/// </summary>
 		BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; }
 		/// <summary>
-		/// Sets the pipeline sending strategy provider
+		/// Priority of the transportation method.
 		/// </summary>
-		/// <param name="deliveryStrategyProvider">Sending strategy provider</param>
-		void UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider);
-
-		string? Description { get; set; }
-
-		void AddPersonaFilter(string personaName);
+		TransportPriority TransportPriority { get; set; }
+		/// <summary>
+		/// Priority of the message.
+		/// </summary>
+		MessagePriority MessagePriority { get; set; }
+		/// <summary>
+		/// Recipients to copy the message to (if supported).
+		/// </summary>
+		/// <param name="platformIdentityType"></param>
+		/// <returns>Pipeline configuration</returns>
+		IPipelineChannelConfiguration CopyIdentityAddress(params string[] platformIdentityType);
+		/// <summary>
+		/// Recipients to blind copy the message to (if supported).
+		/// </summary>
+		/// <param name="platformIdentityType"></param>
+		/// <returns>Pipeline configuration</returns>
+		IPipelineChannelConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType);
+		/// <summary>
+		/// Registers a communication channel with the pipeline.
+		/// </summary>
+		/// <param name="channel"><see cref="IChannel"/> to register.</param>
+		/// <returns>Pipeline configuration</returns>
+		IPipelineChannelConfiguration AddChannel(IChannel channel);
+		/// <summary>
+		/// Sets the pipeline sending strategy provider.
+		/// </summary>
+		/// <param name="deliveryStrategyProvider">Sending strategy provider.</param>
+		/// <returns>Pipeline configuration.</returns>
+		IPipelineChannelConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider);
+		/// <summary>
+		/// Adds a persona filter to the pipeline configuration.
+		/// </summary>
+		/// <param name="personaName">Name of the registered persona filter.</param>
+		/// <returns>Pipeline configuration.</returns>
+		IPipelineChannelConfiguration AddPersonaFilter(string personaName);
 	}
 }
