@@ -77,7 +77,7 @@ namespace Tandely.Notifications.Service
 				.AddPlatformIdentityResolver<CustomerRepository>("Customer")
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger.CreateLogger<Program>().LogInformation("[DeliveryReport] Dispatched to {ChannelId} with result {DispatchStatus}", report.ChannelId, report.DispatchStatus);
+					logger.CreateLogger<Program>().LogInformation("[DeliveryReport] Dispatched to {ChannelId} using {ChannelProvider} with result {DispatchStatus}", report.ChannelId, report.ChannelProviderId, report.DispatchStatus);
 					return Task.CompletedTask;
 				})
 				.AddFluidTemplateEngine()
@@ -87,7 +87,7 @@ namespace Tandely.Notifications.Service
 					pipeline
 					.AddSms(tlyConfig.DefaultSmsFromAddress.AsIdentityAddress(), sms =>
 					{
-						sms.Message.AddStringTemplate("{{aud.FirstName}}, #{{OrderId}} has shipped with {{Carrier}}! You can track it <a href=\"https://shipping.example.com/?track={{TrackingNumber}}\">here</a>");
+						sms.Message.AddStringTemplate("{{aud.FirstName}}, #{{OrderId}} has shipped with {{Carrier}}! You can track it @ https://shipping.example.com/?track={{TrackingNumber}}");
 					})
 					.AddEmail((ctx) =>
 					{
@@ -105,11 +105,17 @@ namespace Tandely.Notifications.Service
 				.AddPipeline(ShippingIntegrationEvent.OrderShipped, pipeline =>
 				{
 					pipeline.AddPersonaFilter("VIP");
-					pipeline.AddPushNotification(push =>
+					pipeline
+					.AddPushNotification(push =>
 					 {
 						 push.Title.AddStringTemplate("{{aud.FirstName}}, your VIP order shipped!");
 						 push.Body.AddStringTemplate("Your VIP Tandely order, #{{OrderId}} has shipped with {{Carrier}}! ");
+					 }).
+					 AddVoice(tlyConfig.DefaultVoiceFromAddress.AsIdentityAddress(), voice =>
+					 {
+						 voice.Message.AddStringTemplate("{{aud.FirstName}}, your personal shopper will be contacting you shortly. In the meantime, we're happy to announce your order #{{OrderId}} has shipped with {{Carrier}}! ");
 					 });
+
 				})
 				.AddPipeline(OrdersIntegrationEvent.OrderConfirmation, pipeline =>
 				{
