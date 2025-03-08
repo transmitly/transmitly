@@ -12,12 +12,18 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.PlatformIdentity.Configuration
 {
-	public abstract class PipelineModule(string name, string? category = null)
+	/// <summary>
+	/// Resolves a <see cref="IPlatformIdentityProfile"/>.
+	/// </summary>
+	public interface IPlatformIdentityResolver
 	{
-		public string Name { get; } = Guard.AgainstNullOrWhiteSpace(name);
-		public string? Category { get; } = category;
-		public abstract void Load(IPipelineConfiguration configuration);
+		/// <summary>
+		/// Resolves a <see cref="IPlatformIdentityProfile"/>
+		/// </summary>
+		/// <param name="identityReferences">Identity references to get resolvers for.</param>
+		/// <returns>Collection of matching identity reference resolvers.</returns>
+		Task<IReadOnlyCollection<IPlatformIdentityProfile>?> Resolve(IReadOnlyCollection<IPlatformIdentityReference> identityReferences);
 	}
 }

@@ -74,7 +74,6 @@ namespace Transmitly.Tests
 			Assert.AreEqual(ExpectedSendResultMessage, result.Results?.Single()?.ResourceId);
 		}
 
-
 		[TestMethod]
 		public async Task PipelineShouldBeSuccessfulIfNoChannelProviderSupportedAndNoDispatchErrors()
 		{
@@ -142,6 +141,71 @@ namespace Transmitly.Tests
 			Assert.IsTrue(result.IsSuccessful);
 			Assert.AreEqual(2, result.Results.Count);
 			Assert.IsTrue(result.Results.Any(a => a?.ChannelProviderId == "test-2" && a.DispatchStatus == DispatchStatus.Dispatched));
+		}
+
+		[TestMethod]
+		public async Task PlatformIdentityChannelPreferencesShouldPrioritizePipelineChannels()
+		{
+			const string expectedId = "test";
+			var providerObject = new Mock<IChannelProviderDispatcher<object>>();
+			var providerUnitTest = new Mock<IChannelProviderDispatcher<UnitTestCommunication>>();
+
+
+			var client = new CommunicationsClientBuilder()
+				.ChannelProvider.Add<Test2, UnitTestCommunication>(expectedId)
+				.AddPipeline("test", options =>
+				{
+					options.AddChannel(new UnitTestChannel("unit-test-address", "unit-test-channel0"));
+					options.AddChannel(new UnitTestChannel("unit-test-address", "unit-test-channel1"));
+					options.UseAnyMatchPipelineDeliveryStrategy();
+				})
+				.BuildClient();
+			var identity = new Mock<IPlatformIdentityProfile>();
+			var channelPreferences = new Mock<IChannelPreference>();
+			channelPreferences.Setup(s => s.Type).Returns(ChannelPreferenceType.Priority);
+			channelPreferences.Setup(s => s.Channels).Returns(["unit-test-channel1", "unit-test-channel0"]);
+			identity.Setup(s => s.ChannelPreferences).Returns([channelPreferences.Object]);
+			identity.Setup(s => s.Addresses).Returns(["unit-test-address-to".AsIdentityAddress()]);
+
+			var result = await client.DispatchAsync(expectedId, [identity.Object], TransactionModel.Create(new { }));
+
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(2, result.Results.Count);
+			Assert.AreEqual("unit-test-channel1", result.Results.First()!.ChannelId);
+			Assert.AreEqual("unit-test-channel0", result.Results.Skip(1).First()!.ChannelId);
+		}
+
+		[TestMethod]
+		public async Task PlatformIdentityChannelPreferencesShouldFilterPipelineChannels()
+		{
+			const string expectedId = "test";
+			var providerObject = new Mock<IChannelProviderDispatcher<object>>();
+			var providerUnitTest = new Mock<IChannelProviderDispatcher<UnitTestCommunication>>();
+
+
+			var client = new CommunicationsClientBuilder()
+				.ChannelProvider.Add<Test2, UnitTestCommunication>(expectedId)
+				.AddPipeline("test", options =>
+				{
+					options.AddChannel(new UnitTestChannel("unit-test-address", "unit-test-channel0"));
+					options.AddChannel(new UnitTestChannel("unit-test-address", "unit-test-channel1"));
+					options.UseAnyMatchPipelineDeliveryStrategy();
+				})
+				.BuildClient();
+			var identity = new Mock<IPlatformIdentityProfile>();
+			var channelPreferences = new Mock<IChannelPreference>();
+			channelPreferences.Setup(s => s.Type).Returns(ChannelPreferenceType.Filter);
+			channelPreferences.Setup(s => s.Channels).Returns(["unit-test-channel1"]);
+			identity.Setup(s => s.ChannelPreferences).Returns([channelPreferences.Object]);
+			identity.Setup(s => s.Addresses).Returns(["unit-test-address-to".AsIdentityAddress()]);
+
+			var result = await client.DispatchAsync(expectedId, [identity.Object], TransactionModel.Create(new { }));
+
+			Assert.IsNotNull(result);
+			Assert.IsTrue(result.IsSuccessful);
+			Assert.AreEqual(1, result.Results.Count);
+			Assert.AreEqual("unit-test-channel1", result.Results.First()!.ChannelId);
 		}
 	}
 }

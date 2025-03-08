@@ -41,8 +41,8 @@ namespace Transmitly
 		/// <param name="pushChannelConfiguration">Push Notification Channel configuration options</param>
 		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel</param>
 		/// <returns></returns>
-		public static IPipelineChannelConfiguration AddPushNotification(
-			this IPipelineChannelConfiguration pipelineChannelConfiguration,
+		public static IPipelineConfiguration AddPushNotification(
+			this IPipelineConfiguration pipelineChannelConfiguration,
 			Action<IPushNotificationChannel> pushChannelConfiguration,
 			params string[]? allowedChannelProviders
 		)
@@ -53,8 +53,8 @@ namespace Transmitly
 			return pipelineChannelConfiguration;
 		}
 
-		public static IPipelineChannelConfiguration AddPushNotification(
-			this IPipelineChannelConfiguration pipelineChannelConfiguration,
+		public static IPipelineConfiguration AddPushNotification(
+			this IPipelineConfiguration pipelineChannelConfiguration,
 			params string[]? allowedChannelProviders
 		)
 		{

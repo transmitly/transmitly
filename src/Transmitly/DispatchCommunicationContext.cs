@@ -22,8 +22,8 @@ namespace Transmitly.Channel.Configuration
 	///<inheritdoc cref="IDispatchCommunicationContext"/>
 	internal class DispatchCommunicationContext(
 		IContentModel? contentModel,
-		IPipelineChannelConfiguration channelConfiguration,
-		IReadOnlyCollection<IPlatformIdentity> recipients,
+		IPipelineConfiguration channelConfiguration,
+		IReadOnlyCollection<IPlatformIdentityProfile> recipients,
 		ITemplateEngine templateEngine,
 		IDeliveryReportReporter deliveryReportManager,
 		CultureInfo cultureInfo,
@@ -43,7 +43,7 @@ namespace Transmitly.Channel.Configuration
 
 		public CultureInfo CultureInfo { get; set; } = GuardCulture.AgainstNull(cultureInfo);
 
-		public IReadOnlyCollection<IPlatformIdentity> PlatformIdentities { get; set; } = Guard.AgainstNull(recipients);
+		public IReadOnlyCollection<IPlatformIdentityProfile> PlatformIdentities { get; set; } = Guard.AgainstNull(recipients);
 
 		public TransportPriority TransportPriority { get; set; } = transportPriority;
 
@@ -53,7 +53,7 @@ namespace Transmitly.Channel.Configuration
 
 		public string? ChannelProviderId { get; set; } = ChannelProviderId;
 
-		public IPipelineChannelConfiguration ChannelConfiguration { get; } = Guard.AgainstNull(channelConfiguration);
+		public IPipelineConfiguration ChannelConfiguration { get; } = Guard.AgainstNull(channelConfiguration);
 
 		public ICollection<IDispatchResult> DispatchResults { get; } = [];
 

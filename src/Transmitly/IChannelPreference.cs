@@ -12,36 +12,28 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration
+using Transmitly.Pipeline.Configuration;
+
+namespace Transmitly
 {
 	/// <summary>
-	/// A dispatch pipeline.
+	/// Describes the channel preferences for a platform identity.
 	/// </summary>
-	public interface IPipeline
+	public interface IChannelPreference
 	{
 		/// <summary>
-		/// Name of the pipeline.
+		/// How the channel preferences should be applied.
 		/// </summary>
-		string PipelineName { get; }
+		ChannelPreferenceType Type { get; }
 		/// <summary>
-		/// Description of the pipeline.
-		/// </summary>
-		string? Description { get; set; }
-		/// <summary>
-		/// Category of the pipeline.
+		/// Optional <see cref="IPipeline.Category">pipeline category</see> the channel preferences are tied to. 
+		/// When empty will apply to all pipelines.
 		/// </summary>
 		string? Category { get; }
 		/// <summary>
-		/// Priority of the transportation method.
+		/// An ordered list of channel id preferences. If a category is not provided 
+		/// the preferences will apply to all pipeline categories.
 		/// </summary>
-		TransportPriority TransportPriority { get; }
-		/// <summary>
-		/// Priority of the message.
-		/// </summary>
-		MessagePriority MessagePriority { get; }
-		/// <summary>
-		/// Pipeline channel configuration.
-		/// </summary>
-		IPipelineConfiguration ChannelConfiguration { get; }
+		IReadOnlyCollection<string> Channels { get; }
 	}
 }

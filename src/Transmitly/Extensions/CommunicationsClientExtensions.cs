@@ -12,11 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Diagnostics;
+
 namespace Transmitly
 {
 	/// <summary>
 	/// Extends a <see cref="ICommunicationsClient"/>.
 	/// </summary>
+	[DebuggerStepThrough]
 	public static class CommunicationsClientExtensions
 	{
 		/// <summary>
@@ -29,7 +32,7 @@ namespace Transmitly
 		/// <param name="cultureInfo">Culture ISO.</param>
 		/// <param name="cancellationToken">Cancellation token.</param>
 		/// <returns>Dispatch results</returns>
-		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			return client.DispatchAsync(pipelineName, platformIdentities, transactionalModel, [], cultureInfo, cancellationToken);
 		}
@@ -96,7 +99,7 @@ namespace Transmitly
 		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			Guard.AgainstNull(identityAddresses);
-			var platformIdentities = new PlatformIdentityRecord[] {
+			var platformIdentities = new PlatformIdentityProfile[] {
 				new(null,null,identityAddresses)
 			};
 			return client.DispatchAsync(pipelineName, platformIdentities, transactionalModel, cultureInfo, cancellationToken);
@@ -127,7 +130,7 @@ namespace Transmitly
 		/// <param name="cultureInfo">Culture ISO.</param>
 		/// <param name="cancellationToken">Cancellation token.</param>
 		/// <returns>Dispatch results</returns>
-		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			return client.DispatchAsync(pipelineName, identityReferences, transactionalModel, [], cultureInfo, cancellationToken);
 		}

@@ -16,16 +16,16 @@ using System.Dynamic;
 
 namespace Transmitly.Delivery
 {
-	sealed class WrappedPlatformIdentity(ExpandoObject expando) : DynamicObject, IPlatformIdentity, ICustomTypeDescriptor
+	sealed class WrappedPlatformIdentity(ExpandoObject expando) : DynamicObject, IPlatformIdentityProfile, ICustomTypeDescriptor
 	{
 		private readonly ExpandoObject _expando = Guard.AgainstNull(expando);
 
-		public string? Id => GetValue(nameof(IPlatformIdentity.Id)) as string;
-		public string? Type => GetValue(nameof(IPlatformIdentity.Type)) as string;
+		public string? Id => GetValue(nameof(IPlatformIdentityProfile.Id)) as string;
+		public string? Type => GetValue(nameof(IPlatformIdentityProfile.Type)) as string;
 		public IReadOnlyCollection<IIdentityAddress> Addresses =>
-			GetValue(nameof(IPlatformIdentity.Addresses)) as IReadOnlyCollection<IIdentityAddress> ?? Array.Empty<IIdentityAddress>();
-		public IReadOnlyCollection<string> ChannelPreferences =>
-			GetValue(nameof(IPlatformIdentity.ChannelPreferences)) as IReadOnlyCollection<string> ?? Array.Empty<string>();
+			GetValue(nameof(IPlatformIdentityProfile.Addresses)) as IReadOnlyCollection<IIdentityAddress> ?? Array.Empty<IIdentityAddress>();
+		public IReadOnlyCollection<IChannelPreference>? ChannelPreferences =>
+			GetValue(nameof(IPlatformIdentityProfile.ChannelPreferences)) as IReadOnlyCollection<IChannelPreference>;
 
 		private object? GetValue(string propertyName)
 		{

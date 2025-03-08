@@ -109,7 +109,7 @@ namespace Transmitly
 		/// <param name="messagePriority">The message priority of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineChannelConfiguration> options) =>
+		public CommunicationsClientBuilder AddPipeline(string name, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options) =>
 			Pipeline.Add(name, category, transportPriority, messagePriority, options);
 
 		/// <summary>
@@ -119,7 +119,7 @@ namespace Transmitly
 		/// <param name="category">The optional category of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, string? category, Action<IPipelineChannelConfiguration> options) =>
+		public CommunicationsClientBuilder AddPipeline(string name, string? category, Action<IPipelineConfiguration> options) =>
 			Pipeline.Add(name, category, options);
 
 		/// <summary>
@@ -128,7 +128,7 @@ namespace Transmitly
 		/// <param name="name">The name of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, Action<IPipelineChannelConfiguration> options) =>
+		public CommunicationsClientBuilder AddPipeline(string name, Action<IPipelineConfiguration> options) =>
 			Pipeline.Add(name, options);
 
 		/// <summary>
@@ -139,7 +139,7 @@ namespace Transmitly
 		/// <param name="messagePriority">The message priority of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineChannelConfiguration> options) =>
+		public CommunicationsClientBuilder AddPipeline(string name, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options) =>
 			Pipeline.Add(name, transportPriority, messagePriority, options);
 
 		/// <summary>

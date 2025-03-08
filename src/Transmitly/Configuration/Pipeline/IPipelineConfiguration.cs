@@ -20,12 +20,8 @@ namespace Transmitly.Pipeline.Configuration
 	/// <summary>
 	/// Configuration of a pipeline
 	/// </summary>
-	public interface IPipelineChannelConfiguration
+	public interface IPipelineConfiguration
 	{
-		/// <summary>
-		/// Description of the pipeline.
-		/// </summary>
-		string? Description { get; set; }
 		/// <summary>
 		/// Gets the list of available channels registered in the pipeline.
 		/// </summary>
@@ -52,30 +48,30 @@ namespace Transmitly.Pipeline.Configuration
 		/// </summary>
 		/// <param name="platformIdentityType"></param>
 		/// <returns>Pipeline configuration</returns>
-		IPipelineChannelConfiguration CopyIdentityAddress(params string[] platformIdentityType);
+		IPipelineConfiguration CopyIdentityAddress(params string[] platformIdentityType);
 		/// <summary>
 		/// Recipients to blind copy the message to (if supported).
 		/// </summary>
 		/// <param name="platformIdentityType"></param>
 		/// <returns>Pipeline configuration</returns>
-		IPipelineChannelConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType);
+		IPipelineConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType);
 		/// <summary>
 		/// Registers a communication channel with the pipeline.
 		/// </summary>
 		/// <param name="channel"><see cref="IChannel"/> to register.</param>
 		/// <returns>Pipeline configuration</returns>
-		IPipelineChannelConfiguration AddChannel(IChannel channel);
+		IPipelineConfiguration AddChannel(IChannel channel);
 		/// <summary>
 		/// Sets the pipeline sending strategy provider.
 		/// </summary>
 		/// <param name="deliveryStrategyProvider">Sending strategy provider.</param>
 		/// <returns>Pipeline configuration.</returns>
-		IPipelineChannelConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider);
+		IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider);
 		/// <summary>
 		/// Adds a persona filter to the pipeline configuration.
 		/// </summary>
 		/// <param name="personaName">Name of the registered persona filter.</param>
 		/// <returns>Pipeline configuration.</returns>
-		IPipelineChannelConfiguration AddPersonaFilter(string personaName);
+		IPipelineConfiguration AddPersonaFilter(string personaName);
 	}
 }

@@ -17,7 +17,7 @@ using Transmitly.Delivery;
 
 namespace Transmitly.Pipeline.Configuration
 {
-	internal class DefaultPipelineProviderConfiguration : IPipelineChannelConfiguration
+	internal class DefaultPipelineProviderConfiguration : IPipelineConfiguration
 	{
 		private readonly List<IChannel> _channels = [];
 		private readonly List<string> _personaFilters = [];
@@ -38,31 +38,31 @@ namespace Transmitly.Pipeline.Configuration
 
 		public string? Description { get; set; }
 
-		public IPipelineChannelConfiguration AddChannel(IChannel channel)
+		public IPipelineConfiguration AddChannel(IChannel channel)
 		{
 			_channels.Add(Guard.AgainstNull(channel));
 			return this;
 		}
 		
-		public IPipelineChannelConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType)
+		public IPipelineConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType)
 		{
 			Array.ForEach(platformIdentityType, BlindCopyIdentityAddresses.Add);
 			return this;
 		}
 
-		public IPipelineChannelConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider)
+		public IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider)
 		{
 			PipelineDeliveryStrategyProvider = Guard.AgainstNull(deliveryStrategyProvider);
 			return this;
 		}
 
-		public IPipelineChannelConfiguration CopyIdentityAddress(params string[] platformIdentityType)
+		public IPipelineConfiguration CopyIdentityAddress(params string[] platformIdentityType)
 		{
 			Array.ForEach(platformIdentityType, CopyIdentityAddresses.Add);
 			return this;
 		}
 
-		public IPipelineChannelConfiguration AddPersonaFilter(string personaName)
+		public IPipelineConfiguration AddPersonaFilter(string personaName)
 		{
 			Guard.AgainstNullOrWhiteSpace(personaName);
 
