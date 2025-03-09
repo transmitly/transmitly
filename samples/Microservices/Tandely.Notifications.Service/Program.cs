@@ -82,6 +82,10 @@ namespace Tandely.Notifications.Service
 				})
 				.AddFluidTemplateEngine()
 				.AddPersona<Customer>("VIP", nameof(Customer), (c) => c.LoyaltyPoints > 500)
+
+				// Order Shipped, also becomes the name of the pipeline by default
+				// Alternatively, you can specify a pipeline name for uniqueness of configurations
+				.AddPipeline(ShippingIntegrationEvent.OrderShipped, PipelineNames.OrderShippedToStandardUsers, pipeline =>
 				.AddPipeline(ShippingIntegrationEvent.OrderShipped, pipeline =>
 				{
 					pipeline
@@ -102,7 +106,7 @@ namespace Tandely.Notifications.Service
 					})
 					.UseFirstMatchPipelineDeliveryStrategy();
 				})
-				.AddPipeline(ShippingIntegrationEvent.OrderShipped, pipeline =>
+				.AddPipeline(ShippingIntegrationEvent.OrderShipped, PipelineNames.OrderShippedToVipUsers, pipeline =>
 				{
 					pipeline.AddPersonaFilter("VIP");
 					pipeline

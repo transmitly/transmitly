@@ -40,7 +40,7 @@ namespace Tandely.Notifications.Client
 			_jsonOptions = Guard.AgainstNull(jsonOptions);
 		}
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public async Task<IDispatchCommunicationResult> DispatchAsync(string communicationIntentId, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			try
 			{
@@ -50,7 +50,7 @@ namespace Tandely.Notifications.Client
 				var payload = JsonSerializer.Serialize(new DispatchNotificationModel
 				{
 					AllowedChannels = channelPreferences,
-					CommunicationId = pipelineName,
+					CommunicationIntentId = communicationIntentId,
 					PersonFilters = personFilters ?? [],
 					ExternalInstanceReferenceId = dispatchCorrelationId,
 					TransactionalModel = new NotificationsTransactionalModel(transactionalModel),
