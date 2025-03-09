@@ -10,7 +10,7 @@
 		<PackageReference Include="Bogus" Version="35.6.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" />
-		<PackageReference Include="Transmitly" Version="0.1.0-241.adfd754" />
+		<PackageReference Include="Transmitly" Version="11.0.0" />
 		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.1-5.9d072d4" />
 	</ItemGroup>
 

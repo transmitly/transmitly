@@ -28,7 +28,6 @@ namespace Tandely.Notifications.Client
 		static NotificationsOptions? _options;
 		readonly DefaultCommunicationsClient _defaultClient;
 		readonly IReadOnlyCollection<IPersonaRegistration>? _pipelinePersonas;
-		readonly static object _lock = new();
 
 		internal NotificationsCommunicationsClient(DefaultCommunicationsClient defaultClient, ICreateCommunicationsClientContext context,
 			IPlatformIdentityResolverFactory platformIdentityResolverFactory, NotificationsOptions options,
@@ -41,26 +40,7 @@ namespace Tandely.Notifications.Client
 			_jsonOptions = Guard.AgainstNull(jsonOptions);
 		}
 
-		private static HttpClient CreateHttpClient(NotificationsOptions? options)
-		{
-			Guard.AgainstNull(options);
-
-			var client = new HttpClient { BaseAddress = options.BasePath };
-			client.DefaultRequestHeaders.Add("x-tandely-api-key", options.ApiKey);
-			return client;
-		}
-
-		public void DeliverReport(DeliveryReport report)
-		{
-			_defaultClient.DeliverReport(report);
-		}
-
-		public void DeliverReports(IReadOnlyCollection<DeliveryReport> reports)
-		{
-			_defaultClient.DeliverReports(reports);
-		}
-
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			try
 			{
@@ -69,7 +49,7 @@ namespace Tandely.Notifications.Client
 
 				var payload = JsonSerializer.Serialize(new DispatchNotificationModel
 				{
-					AllowedChannels = allowedChannels,
+					AllowedChannels = channelPreferences,
 					CommunicationId = pipelineName,
 					PersonFilters = personFilters ?? [],
 					ExternalInstanceReferenceId = dispatchCorrelationId,
@@ -129,50 +109,35 @@ namespace Tandely.Notifications.Client
 			}
 		}
 
-		private IPersonaRegistration[] getIdentityPersonas(IPlatformIdentity pid)
+		private static HttpClient CreateHttpClient(NotificationsOptions? options)
+		{
+			Guard.AgainstNull(options);
+
+			var client = new HttpClient { BaseAddress = options.BasePath };
+			client.DefaultRequestHeaders.Add("x-tandely-api-key", options.ApiKey);
+			return client;
+		}
+
+		public void DeliverReport(DeliveryReport report)
+		{
+			_defaultClient.DeliverReport(report);
+		}
+
+		public void DeliverReports(IReadOnlyCollection<DeliveryReport> reports)
+		{
+			_defaultClient.DeliverReports(reports);
+		}
+
+		private IPersonaRegistration[] getIdentityPersonas(IPlatformIdentityProfile pid)
 		{
 			var result = _pipelinePersonas?.Where(x => pid.GetType().IsAssignableFrom(x.PersonaType) && x.IsMatch(pid)).ToArray();
 			return result ?? [];
 		}
 
-		public Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		
+		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
-			return DispatchAsync(pipelineName, [new PlatformIdentityRecord(null, null, identityAddresses)], transactionalModel, allowedChannels, null, cancellationToken);
-		}
-
-		public Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			return DispatchAsync(pipelineName, [new PlatformIdentityRecord(null, null, [identityAddress.AsIdentityAddress()])], transactionalModel, [], cultureInfo, cancellationToken);
-		}
-
-		public Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, string identityAddress, object transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			return DispatchAsync(pipelineName, [new PlatformIdentityRecord(null, null, [identityAddress.AsIdentityAddress()])], TransactionModel.Create(transactionalModel), [], cultureInfo, cancellationToken);
-		}
-
-		public Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<string> identityAddresses, object transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			return DispatchAsync(pipelineName, [new PlatformIdentityRecord(null, null, identityAddresses.Select(m => m.AsIdentityAddress()))], TransactionModel.Create(transactionalModel), [], cultureInfo, cancellationToken);
-		}
-
-		public Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			return DispatchAsync(pipelineName, [new PlatformIdentityRecord(null, null, identityAddresses)], transactionalModel, [], cultureInfo, cancellationToken);
-		}
-
-		public Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentity> platformIdentities, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			return DispatchAsync(pipelineName, platformIdentities, transactionalModel, [], cultureInfo, cancellationToken);
-		}
-
-		public Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			return DispatchAsync(pipelineName, identityReferences, transactionalModel, [], cultureInfo, cancellationToken);
-		}
-
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedCHannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
-		{
-			return await DispatchAsync(pipelineName, identityReferences.Select(x => new PlatformIdentityRecord(x.Id, x.Type, [])).ToList(), transactionalModel, cultureInfo, cancellationToken).ConfigureAwait(false);
+			return await DispatchAsync(pipelineName, identityReferences.Select(x => new PlatformIdentityProfile(x.Id, x.Type, [])).ToList(), transactionalModel, [], cultureInfo, cancellationToken).ConfigureAwait(false);
 		}
 	}
 }

@@ -33,7 +33,7 @@ namespace Tandely.Notifications.Service.Controllers
 
 			var result = await communicationsClient.DispatchAsync(
 				notification.CommunicationId,
-				notification.PlatformIdentities.Cast<IIdentityReference>().ToList(),
+				notification.PlatformIdentities.Cast<IPlatformIdentityReference>().ToList(),
 				notification.TransactionalModel,
 				cancellationToken: cancellationToken
 			);

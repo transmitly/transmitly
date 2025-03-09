@@ -14,13 +14,13 @@
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
-	public class DispatchAudience : IPlatformIdentity
+	public class DispatchAudience : IPlatformIdentityProfile
 	{
 		public string? Id { get; set; }
 		public string? Type { get; set; }
 		public List<DispatchIdentityAddress> Addresses { get; set; } = [];
-		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get => Addresses.AsReadOnly(); }
+		IReadOnlyCollection<IIdentityAddress> IPlatformIdentityProfile.Addresses { get => Addresses.AsReadOnly(); }
 		public IDictionary<string, string>? Attributes { get; set; } = null;
-		public IReadOnlyCollection<string> ChannelPreferences { get; set; } = [];
+		public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
 	}
 }

@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Transmitly" Version="0.1.0-241.adfd754" />
+		<PackageReference Include="Transmitly" Version="11.0.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.1.1-7.c458b55" />
 		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.1.0-7.baf325e" />
 		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.1.1-8.adf0386" />
