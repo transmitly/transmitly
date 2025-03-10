@@ -17,62 +17,59 @@ using Transmitly.Delivery;
 
 namespace Transmitly.Pipeline.Configuration
 {
-	///<inheritdoc cref="IPipelineChannelConfiguration"/>
-	internal class DefaultPipelineProviderConfiguration : IPipelineChannelConfiguration
+	internal class DefaultPipelineProviderConfiguration : IPipelineConfiguration
 	{
 		private readonly List<IChannel> _channels = [];
 		private readonly List<string> _personaFilters = [];
-		/// <inheritdoc />
+		
 		public TransportPriority TransportPriority { get; set; } = TransportPriority.Normal;
 
-		/// <inheritdoc />
 		public MessagePriority MessagePriority { get; set; } = MessagePriority.Normal;
 
-		/// <inheritdoc />
 		public ICollection<string> BlindCopyIdentityAddresses { get; } = [];
 
-		/// <inheritdoc />
 		public ICollection<string> CopyIdentityAddresses { get; } = [];
 
 		public IReadOnlyCollection<string> PersonaFilters => _personaFilters.AsReadOnly();
-		/// <inheritdoc />
+		
 		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
 
-		/// <inheritdoc />
 		public IReadOnlyCollection<IChannel> Channels => _channels;
 
 		public string? Description { get; set; }
 
-		/// <inheritdoc />
-		public void AddChannel(IChannel channel)
+		public IPipelineConfiguration AddChannel(IChannel channel)
 		{
 			_channels.Add(Guard.AgainstNull(channel));
+			return this;
 		}
-
-		/// <inheritdoc />
-		public void BlindCopyIdentityAddress(params string[] platformIdentityType)
+		
+		public IPipelineConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType)
 		{
 			Array.ForEach(platformIdentityType, BlindCopyIdentityAddresses.Add);
+			return this;
 		}
 
-		/// <inheritdoc />
-		public void UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider)
+		public IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider)
 		{
 			PipelineDeliveryStrategyProvider = Guard.AgainstNull(deliveryStrategyProvider);
+			return this;
 		}
 
-		/// <inheritdoc />
-		public void CopyIdentityAddress(params string[] platformIdentityType)
+		public IPipelineConfiguration CopyIdentityAddress(params string[] platformIdentityType)
 		{
 			Array.ForEach(platformIdentityType, CopyIdentityAddresses.Add);
+			return this;
 		}
 
-		public void AddPersonaFilter(string personaName)
+		public IPipelineConfiguration AddPersonaFilter(string personaName)
 		{
 			Guard.AgainstNullOrWhiteSpace(personaName);
 
 			if (!_personaFilters.Exists(a => a.Equals(personaName, StringComparison.OrdinalIgnoreCase)))
 				_personaFilters.Add(personaName);
+
+			return this;
 		}
 	}
 }

@@ -22,9 +22,9 @@ namespace Transmitly
 			return new IdentityAddress(address, display);
 		}
 
-		public static IPlatformIdentity AsPlatformIdentity(this IReadOnlyCollection<IIdentityAddress> identityAddresses)
+		public static IPlatformIdentityProfile AsPlatformIdentity(this IReadOnlyCollection<IIdentityAddress> identityAddresses)
 		{
-			return new PlatformIdentityRecord(null, null, identityAddresses);
+			return new PlatformIdentityProfile(null, null, identityAddresses);
 		}
 	}
 }

@@ -21,7 +21,7 @@ namespace Transmitly.Delivery
 		string? GetHeaderValue(string key);
 		string? GetValue(string key);
 		string? Content { get; }
-		string? PipelineName { get; }
+		string? CommunciationIntentId { get; }
 		string? ResourceId { get; }
 	}
 }

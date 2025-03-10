@@ -14,13 +14,39 @@
 
 namespace Transmitly.Pipeline.Configuration
 {
+	/// <summary>
+	/// A dispatch pipeline.
+	/// </summary>
 	public interface IPipeline
 	{
-		string PipelineName { get; }
-		string? PlatformIdentityType { get; }
+		/// <summary>
+		/// Communication's intent identifier.
+		/// </summary>
+		string CommunicationIntentId { get; }
+		/// <summary>
+		/// Name of the pipeline
+		/// <para>Must be unique within a <see cref="CommunicationIntentId"/></para>
+		/// </summary>
+		string? PipelineName { get; }
+		/// <summary>
+		/// Description of the pipeline.
+		/// </summary>
+		string? Description { get; set; }
+		/// <summary>
+		/// Category of the pipeline.
+		/// </summary>
 		string? Category { get; }
+		/// <summary>
+		/// Pipeline channel configuration.
+		/// </summary>
+		IPipelineConfiguration PipelineConfiguration { get; }
+		/// <summary>
+		/// Priority of the transportation method.
+		/// </summary>
 		TransportPriority TransportPriority { get; }
+		/// <summary>
+		/// Priority of the message.
+		/// </summary>
 		MessagePriority MessagePriority { get; }
-		IPipelineChannelConfiguration ChannelConfiguration { get; }
 	}
 }

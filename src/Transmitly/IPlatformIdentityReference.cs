@@ -14,11 +14,9 @@
 
 namespace Transmitly
 {
-	public interface IPlatformIdentity
+	public interface IPlatformIdentityReference
 	{
-		string? Id { get; }
-		string? Type { get; }
-		IReadOnlyCollection<IIdentityAddress> Addresses { get; }
-		IReadOnlyCollection<string> ChannelPreferences { get; }
+		string Id { get; }
+		string Type { get; }
 	}
 }

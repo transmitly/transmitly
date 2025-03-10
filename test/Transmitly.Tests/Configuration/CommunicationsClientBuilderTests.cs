@@ -74,7 +74,6 @@ namespace Transmitly.Tests
 			Assert.AreEqual(ExpectedSendResultMessage, result.Results?.Single()?.ResourceId);
 		}
 
-
 		[TestMethod]
 		public async Task PipelineShouldBeSuccessfulIfNoChannelProviderSupportedAndNoDispatchErrors()
 		{

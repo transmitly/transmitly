@@ -16,19 +16,19 @@ namespace Transmitly
 {
 	internal sealed class ContentModel : IContentModel
 	{
-		public ContentModel(IContentModel? contentModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+		public ContentModel(IContentModel? contentModel, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities)
 			: this(contentModel?.Model, platformIdentities, contentModel?.Resources, contentModel?.LinkedResources)
 		{
 
 		}
 
-		public ContentModel(ITransactionModel? transactionModel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+		public ContentModel(ITransactionModel? transactionModel, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities)
 			: this(transactionModel?.Model, platformIdentities, transactionModel?.Resources, transactionModel?.LinkedResources)
 		{
 
 		}
 
-		private ContentModel(object? model, IReadOnlyCollection<IPlatformIdentity> platformIdentities, IReadOnlyList<Resource>? resources, IReadOnlyList<LinkedResource>? linkedResources)
+		private ContentModel(object? model, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, IReadOnlyList<Resource>? resources, IReadOnlyList<LinkedResource>? linkedResources)
 		{
 			Resources = resources ?? [];
 			LinkedResources = linkedResources ?? [];

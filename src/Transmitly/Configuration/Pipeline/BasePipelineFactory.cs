@@ -26,10 +26,16 @@ namespace Transmitly.Pipeline.Configuration
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelines);
 		}
 
-		public virtual Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName)
+		public Task<IReadOnlyCollection<IPipeline>> GetAsync(string communicationIntentId, string? pipelineName)
 		{
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
-				_pipelines.Where(x => x.PipelineName == pipelineName).ToList().AsReadOnly()
+				_pipelines.Where(x =>
+					x.CommunicationIntentId == pipelineName &&
+					(
+						string.IsNullOrWhiteSpace(pipelineName) ||
+						(!string.IsNullOrWhiteSpace(pipelineName) && x.PipelineName == pipelineName)
+					)
+				).ToList().AsReadOnly()
 			);
 		}
 	}

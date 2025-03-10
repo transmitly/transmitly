@@ -24,12 +24,12 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		public void ModuleShouldConfigureChannelConfig()
 		{
 			var config = new DefaultPipelineProviderConfiguration();
-			var module = new Mock<PipelineModule>("test-name", "test-category")
+			var module = new Mock<PipelineModule>("test-name", "test-name", "test-category")
 			{
 				CallBase = true
 			};
 			var channel = new UnitTestChannel("unit-test-address");
-			module.Setup(x => x.Load(It.IsAny<IPipelineChannelConfiguration>())).Callback<IPipelineChannelConfiguration>((config) =>
+			module.Setup(x => x.Load(It.IsAny<IPipelineConfiguration>())).Callback<IPipelineConfiguration>((config) =>
 			{
 				Assert.IsNotNull(config);
 				config.AddChannel(channel);
@@ -48,11 +48,11 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		[TestMethod()]
 		public async Task ShouldAddModule()
 		{
-			var module = new Mock<PipelineModule>("test-name", "test-category")
+			var module = new Mock<PipelineModule>("test-name", "test-name", "test-category")
 			{
 				CallBase = true
 			};
-			module.Setup(x => x.Load(It.IsAny<IPipelineChannelConfiguration>())).Callback<IPipelineChannelConfiguration>((config) =>
+			module.Setup(x => x.Load(It.IsAny<IPipelineConfiguration>())).Callback<IPipelineConfiguration>((config) =>
 			{
 				Assert.IsNotNull(config);
 				config.AddChannel(new UnitTestChannel("unit-test-address"));

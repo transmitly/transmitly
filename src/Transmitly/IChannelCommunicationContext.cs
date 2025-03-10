@@ -37,7 +37,7 @@ namespace Transmitly
 		/// <summary>
 		/// Gets or sets the collection of recipients.
 		/// </summary>
-		IReadOnlyCollection<IPlatformIdentity> PlatformIdentities { get; }
+		IReadOnlyCollection<IPlatformIdentityProfile> PlatformIdentities { get; }
 
 		/// <summary>
 		/// Gets or sets the transport priority.
@@ -52,7 +52,7 @@ namespace Transmitly
 		/// <summary>
 		/// Gets or sets the channel configuration.
 		/// </summary>
-		IPipelineChannelConfiguration ChannelConfiguration { get; }
+		IPipelineConfiguration ChannelConfiguration { get; }
 
 		/// <summary>
 		/// Gets the collection of dispatch results.
@@ -81,6 +81,6 @@ namespace Transmitly
 		/// <summary>
 		/// Gets the current pipeline name
 		/// </summary>
-		string PipelineName { get; }
+		string CommunicationIntentId { get; }
 	}
 }

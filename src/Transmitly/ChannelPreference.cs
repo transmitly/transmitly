@@ -12,21 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery
+namespace Transmitly
 {
-	public record DeliveryReport(
-		string EventName,
-		string? ChannelId,
-		string? ChannelProviderId,
-		string? CommunicationIntentId,
-		string? ResourceId,
-		DispatchStatus DispatchStatus,
-		object? ChannelCommunication,
-		IContentModel? ContentModel,
-		Exception? Exception
-	)
+	/// <inheritdoc cref="IChannelPreference"/>
+	public sealed class ChannelPreference(IReadOnlyCollection<string> channelIds, string? category = null, string? communicationIntentId = null) : IChannelPreference
 	{
-		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-		public static DeliveryReportEventName Event { get; } = new();
+		public string? Category { get; set; } = category;
+
+		public string? CommunicationIntentId => communicationIntentId;
+
+		public IReadOnlyCollection<string> ChannelIds => channelIds;
 	}
 }

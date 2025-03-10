@@ -28,9 +28,11 @@ namespace Transmitly.Pipeline.Configuration
 		/// <summary>
 		/// Retrieves a pipeline by pipeline name asynchronously.
 		/// </summary>
-		/// <param name="pipelineName">The pipeline name.</param>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
+		/// <param name="pipelineName">Name of the pipeline.
+		/// <para>Must be unique per <paramref name="communicationIntentId"/></para></param>
 		/// <returns>The pipeline, or null if not found.</returns>
-		Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName);
+		Task<IReadOnlyCollection<IPipeline>> GetAsync(string communicationIntentId, string? pipelineName);
 	}
 
 }

@@ -25,7 +25,7 @@ using Transmitly.Template.Configuration;
 namespace Transmitly
 {
 	/// <summary>
-	/// Builds a <see cref="ICommunicationsClient"/>.
+	/// Builds an instance of a <see cref="ICommunicationsClient"/>.
 	/// </summary>
 	public sealed class CommunicationsClientBuilder
 	{
@@ -37,6 +37,7 @@ namespace Transmitly
 		private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolvers = [];
 		private readonly List<ITemplateEngineRegistration> _templateEngines = [];
 		private readonly List<IPersonaRegistration> _personaRegistrations = [];
+
 		/// <summary>
 		/// Creates an instance of the class
 		/// </summary>
@@ -102,44 +103,70 @@ namespace Transmitly
 		/// <summary>
 		/// Adds a pipeline to the configuration.
 		/// </summary>
-		/// <param name="name">The name of the pipeline.</param>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
 		/// <param name="category">The optional category of the pipeline.</param>
 		/// <param name="transportPriority">The transport priority of the pipeline.</param>
 		/// <param name="messagePriority">The message priority of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineChannelConfiguration> options) =>
-			Pipeline.Add(name, category, transportPriority, messagePriority, options);
+		public CommunicationsClientBuilder AddPipeline(string communicationIntentId, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options) =>
+			Pipeline.Add(communicationIntentId, null, category, transportPriority, messagePriority, options);
 
 		/// <summary>
 		/// Adds a pipeline to the configuration.
 		/// </summary>
-		/// <param name="name">The name of the pipeline.</param>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
+		/// <param name="pipelineName">Name of the pipeline.
+		/// <para>Must be unique per <paramref name="communicationIntentId"/></para></param>
 		/// <param name="category">The optional category of the pipeline.</param>
-		/// <param name="options">The configuration options for the pipeline.</param>
-		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, string? category, Action<IPipelineChannelConfiguration> options) =>
-			Pipeline.Add(name, category, options);
-
-		/// <summary>
-		/// Adds a pipeline to the configuration.
-		/// </summary>
-		/// <param name="name">The name of the pipeline.</param>
-		/// <param name="options">The configuration options for the pipeline.</param>
-		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, Action<IPipelineChannelConfiguration> options) =>
-			Pipeline.Add(name, options);
-
-		/// <summary>
-		/// Adds a pipeline to the configuration.
-		/// </summary>
-		/// <param name="name">The name of the pipeline.</param>
 		/// <param name="transportPriority">The transport priority of the pipeline.</param>
 		/// <param name="messagePriority">The message priority of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineChannelConfiguration> options) =>
-			Pipeline.Add(name, transportPriority, messagePriority, options);
+		public CommunicationsClientBuilder AddPipeline(string communicationIntentId, string? pipelineName, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options) =>
+			Pipeline.Add(communicationIntentId, pipelineName, category, transportPriority, messagePriority, options);
+
+		/// <summary>
+		/// Adds a pipeline to the configuration.
+		/// </summary>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
+		/// <param name="category">The optional category of the pipeline.</param>
+		/// <param name="options">The configuration options for the pipeline.</param>
+		/// <returns>The configuration builder.</returns>
+		public CommunicationsClientBuilder AddPipeline(string communicationIntentId, string? category, Action<IPipelineConfiguration> options) =>
+			Pipeline.Add(communicationIntentId, null, category, options);
+
+		/// <summary>
+		/// Adds a pipeline to the configuration.
+		/// </summary>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
+		/// <param name="pipelineName">Name of the pipeline.
+		/// <para>Must be unique per <paramref name="communicationIntentId"/></para></param>
+		/// <param name="category">The optional category of the pipeline.</param>
+		/// <param name="options">The configuration options for the pipeline.</param>
+		/// <returns>The configuration builder.</returns>
+		public CommunicationsClientBuilder AddPipeline(string communicationIntentId, string? pipelineName, string? category, Action<IPipelineConfiguration> options) =>
+			Pipeline.Add(communicationIntentId, pipelineName, category, options);
+
+		/// <summary>
+		/// Adds a pipeline to the configuration.
+		/// </summary>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
+		/// <param name="options">The configuration options for the pipeline.</param>
+		/// <returns>The configuration builder.</returns>
+		public CommunicationsClientBuilder AddPipeline(string communicationIntentId, Action<IPipelineConfiguration> options) =>
+			Pipeline.Add(communicationIntentId, null, options);
+
+		/// <summary>
+		/// Adds a pipeline to the configuration.
+		/// </summary>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
+		/// <param name="transportPriority">The transport priority of the pipeline.</param>
+		/// <param name="messagePriority">The message priority of the pipeline.</param>
+		/// <param name="options">The configuration options for the pipeline.</param>
+		/// <returns>The configuration builder.</returns>
+		public CommunicationsClientBuilder AddPipeline(string communicationIntentId, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options) =>
+			Pipeline.Add(communicationIntentId, null, transportPriority, messagePriority, options);
 
 		/// <summary>
 		/// Adds a pipeline to the configuration by calling the provided module.
@@ -195,6 +222,14 @@ namespace Transmitly
 			return PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
 		}
 
+		/// <summary>
+		/// Add a persona filter to the configuration.
+		/// </summary>
+		/// <typeparam name="TPersona">Concrete persona type.</typeparam>
+		/// <param name="name">Persona filter name.</param>
+		/// <param name="platformIdentityType">Platform Identity type name.</param>
+		/// <param name="personaCondition">Conditions that the <typeparamref name="TPersona"/> must meet.</param>
+		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddPersona<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> personaCondition)
 			where TPersona : class
 		{
@@ -240,21 +275,18 @@ namespace Transmitly
 		//	return this;
 		//}
 
-		/// <inheritdoc/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override bool Equals(object? obj)
 		{
 			return base.Equals(obj);
 		}
 
-		/// <inheritdoc/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
 		}
 
-		/// <inheritdoc/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string ToString()
 		{

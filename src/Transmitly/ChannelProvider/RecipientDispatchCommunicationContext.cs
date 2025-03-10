@@ -12,15 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly;
-
-namespace Tandely.Notifications.Service
+namespace Transmitly.ChannelProvider
 {
-	public class NotificationsPlatformIdentity : IPlatformIdentity
+	public sealed class RecipientDispatchCommunicationContext
 	{
-		public string? Id { get; set; }
-		public string? Type { get; set; }
-		public IReadOnlyCollection<string> ChannelPreferences { get; set; } = [];
-		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses { get; } = [];
+		internal RecipientDispatchCommunicationContext(IDispatchCommunicationContext context, IReadOnlyCollection<ChannelChannelProviderGroup> channelProviderGroups)
+		{
+			ChannelChannelProviderGroups = Guard.AgainstNull(channelProviderGroups);
+			Context = Guard.AgainstNull(context);
+		}
+		public IDispatchCommunicationContext Context { get; }
+		public IReadOnlyCollection<ChannelChannelProviderGroup> ChannelChannelProviderGroups { get; }
 	}
 }

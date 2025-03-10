@@ -24,33 +24,34 @@ namespace Transmitly.Delivery
 		/// </summary>
 		/// <param name="sendingGroups">The collection of channels to send the communication to.</param>
 		/// <param name="cancellationToken">Cancellation token.</param>
-		/// <param name="context">The communication context.</param>
 		/// <returns>A task representing the asynchronous operation.</returns>
-		public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken)
+		public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<RecipientDispatchCommunicationContext> sendingGroups, CancellationToken cancellationToken)
 		{
 			var results = new List<IDispatchResult?>(sendingGroups.Count);
-			foreach (var pair in sendingGroups)
+			foreach (var recipient in sendingGroups)
 			{
-				var channel = pair.Channel;
-				foreach (var dispatcher in pair.ChannelProviderDispatchers)
+				foreach (var pair in recipient.ChannelChannelProviderGroups)
 				{
-					var result = await DispatchCommunicationAsync(channel, dispatcher, context, cancellationToken);
-
-					if (result == null || result.Count == 0)
+					var channel = pair.Channel;
+					foreach (var dispatcher in pair.ChannelProviderDispatchers)
 					{
-						continue;
-					}
+						var result = await DispatchCommunicationAsync(channel, dispatcher, recipient.Context, cancellationToken);
 
-					results.AddRange(result);
+						if (result == null || result.Count == 0)
+						{
+							continue;
+						}
 
-					if (result.Any(r => r != null && r.DispatchStatus == DispatchStatus.Exception))
-					{
-						return new DispatchCommunicationResult(results, false);
+						results.AddRange(result);
+
+						if (result.Any(r => r != null && r.DispatchStatus == DispatchStatus.Exception))
+						{
+							return new DispatchCommunicationResult(results, false);
+						}
 					}
 				}
 			}
-
-			return new DispatchCommunicationResult(results.AsReadOnly(), IsPipelineSuccessful(results));
+			return new DispatchCommunicationResult(results, IsPipelineSuccessful(results));
 		}
 	}
 }

@@ -12,21 +12,28 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery
+namespace Transmitly
 {
-	public record DeliveryReport(
-		string EventName,
-		string? ChannelId,
-		string? ChannelProviderId,
-		string? CommunicationIntentId,
-		string? ResourceId,
-		DispatchStatus DispatchStatus,
-		object? ChannelCommunication,
-		IContentModel? ContentModel,
-		Exception? Exception
-	)
+	/// <summary>
+	/// An identity of an entity in your platform.
+	/// </summary>
+	public interface IPlatformIdentityProfile
 	{
-		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-		public static DeliveryReportEventName Event { get; } = new();
+		/// <summary>
+		/// Identity's identifier.
+		/// </summary>
+		string? Id { get; }
+		/// <summary>
+		/// Identity's type.
+		/// </summary>
+		string? Type { get; }
+		/// <summary>
+		/// Collections of addresses.
+		/// </summary>
+		IReadOnlyCollection<IIdentityAddress> Addresses { get; }
+		/// <summary>
+		/// Channel preferences for the platform identity.
+		/// </summary>
+		IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; }
 	}
 }
