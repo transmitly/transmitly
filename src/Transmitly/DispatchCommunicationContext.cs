@@ -27,14 +27,14 @@ namespace Transmitly.Channel.Configuration
 		ITemplateEngine templateEngine,
 		IDeliveryReportReporter deliveryReportManager,
 		CultureInfo cultureInfo,
-		string pipelineName,
+		string communicationIntentId,
 		MessagePriority messagePriority = MessagePriority.Normal,
 		TransportPriority transportPriority = TransportPriority.Normal,
 		string? ChannelId = null, string? ChannelProviderId = null) : IDispatchCommunicationContext
 	{
 		public DispatchCommunicationContext(IDispatchCommunicationContext context, IChannel channel, IChannelProvider channelProvider)
 			: this(context.ContentModel, context.ChannelConfiguration, context.PlatformIdentities, context.TemplateEngine, context.DeliveryReportManager,
-				  context.CultureInfo, context.PipelineName, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
+				  context.CultureInfo, context.CommunicationIntentId, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
 		{
 
 		}
@@ -59,7 +59,7 @@ namespace Transmitly.Channel.Configuration
 
 		public IDeliveryReportReporter DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
 
-		public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);
+		public string CommunicationIntentId { get; } = Guard.AgainstNullOrWhiteSpace(communicationIntentId);
 
 		public IContentModel? ContentModel { get; set; } = contentModel;
 	}

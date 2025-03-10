@@ -21,33 +21,20 @@ namespace Transmitly
 	/// </summary>
 	public interface IChannelPreference
 	{
-		///// <summary>
-		///// How the channel preferences should be applied.
-		///// </summary>
-		//ChannelPreferenceType Type { get; }
-
 		/// <summary>
-		/// Optional <see cref="IPipeline.Category">pipeline category</see> the channel preferences are tied to. 
+		/// Optional <see cref="IPipeline.Category">pipeline category</see> the channel preferences are applied to. 
 		/// When empty will apply to all pipelines.
 		/// </summary>
 		string? Category { get; }
 		/// <summary>
-		/// Optional communication intent id the channel preferences are tied to.
+		/// Optional <see cref="IPipeline.CommunicationIntentId">communication intent id</see> the channel preferences are applied to.
 		/// </summary>
 		string? CommunicationIntentId { get; }
-
-		///// <summary>
-		///// An ordered list of channel id preferences. If a category is not provided 
-		///// the preferences will apply to all pipeline categories.
-		///// </summary>
-		//IReadOnlyCollection<string> Channels { get; }
-
-
 		/// <summary>
-		/// An ordered list of channel id preferences. If a category is not provided 
-		/// the preferences will apply to all pipeline categories.
+		/// An ordered list of channel id preferences and opt in to the provided channels. 
+		/// If <see cref="Category"/> and <see cref="CommunicationIntentId"/> are not provided,
+		/// the preferences and opt in will apply to all pipelines.
 		/// </summary>
-		IReadOnlyCollection<string> OptInChannelWithPriorities { get; }
+		IReadOnlyCollection<string> ChannelIds { get; }
 	}
-
 }

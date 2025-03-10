@@ -18,7 +18,7 @@ namespace Transmitly.Delivery
 		string EventName,
 		string? ChannelId,
 		string? ChannelProviderId,
-		string? PipelineName,
+		string? CommunicationIntentId,
 		string? ResourceId,
 		DispatchStatus DispatchStatus,
 		object? ChannelCommunication,

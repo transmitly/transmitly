@@ -16,11 +16,11 @@ namespace Transmitly.Tests
 {
 	internal sealed class TestChannelPreferences : IChannelPreference
 	{
-		public ChannelPreferenceType Type { get; set; } = ChannelPreferenceType.Default;
-
 		public string? Category { get; set; }
 
-		public IReadOnlyCollection<string> Channels { get; set; } = [];
+		public string? CommunicationIntentId {get;set;}
+
+		public IReadOnlyCollection<string> ChannelIds {get;set; }=[];
 	}
 
 
@@ -33,7 +33,7 @@ namespace Transmitly.Tests
 			Id = id ?? Guid.Empty.ToString();
 			Type = Guard.AgainstNullOrWhiteSpace(platformIdentityAddressType);
 
-			ChannelPreferences = [new TestChannelPreferences { Channels = [.. (channelPreferences ?? [])] }];
+			ChannelPreferences = [new TestChannelPreferences { ChannelIds = [.. (channelPreferences ?? [])] }];
 		}
 
 

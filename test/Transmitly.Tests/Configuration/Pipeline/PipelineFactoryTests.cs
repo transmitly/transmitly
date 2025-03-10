@@ -44,10 +44,10 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		public async Task GetAsync_ReturnsPipelineRegistrationByName()
 		{
 			// Arrange
-			var pipelineName = "example";
+			var communicationIntentId = "example";
 
 			// Act
-			var result = await _pipelineRegistrationStore.GetAsync(pipelineName);
+			var result = await _pipelineRegistrationStore.GetAsync(communicationIntentId, null);
 
 			// Assert
 			Assert.IsNotNull(result);

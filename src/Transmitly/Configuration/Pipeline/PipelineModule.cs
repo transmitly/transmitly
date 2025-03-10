@@ -14,10 +14,11 @@
 
 namespace Transmitly.Pipeline.Configuration
 {
-	public abstract class PipelineModule(string name, string? category = null)
+	public abstract class PipelineModule(string communicationIntentId, string? pipelineName = null, string? category = null)
 	{
-		public string Name { get; } = Guard.AgainstNullOrWhiteSpace(name);
+		public string CommunicationIntentId { get; } = Guard.AgainstNullOrWhiteSpace(communicationIntentId);
 		public string? Category { get; } = category;
+		public string? PipelineName { get; } = pipelineName;
 		public abstract void Load(IPipelineConfiguration configuration);
 	}
 }

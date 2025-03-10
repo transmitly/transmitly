@@ -14,12 +14,13 @@
 
 namespace Transmitly
 {
-	public sealed class ChannelPreference(IReadOnlyCollection<string> channels, string? category = null, ChannelPreferenceType type = ChannelPreferenceType.Default) : IChannelPreference
+	/// <inheritdoc cref="IChannelPreference"/>
+	public sealed class ChannelPreference(IReadOnlyCollection<string> channelIds, string? category = null, string? communicationIntentId = null) : IChannelPreference
 	{
-		public ChannelPreferenceType Type { get; set; } = type;
-
 		public string? Category { get; set; } = category;
 
-		public IReadOnlyCollection<string> Channels { get; set; } = Guard.AgainstNull(channels);
+		public string? CommunicationIntentId => communicationIntentId;
+
+		public IReadOnlyCollection<string> ChannelIds => channelIds;
 	}
 }

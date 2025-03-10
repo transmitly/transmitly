@@ -25,7 +25,7 @@ namespace Transmitly.Tests.Identity
 		public async Task PipelineShouldOnlyFireForMatchingPersonas()
 		{
 			const string FromAddress = "unit-test-address-from";
-			const string PipelineName = "unit-test-pipeline";
+			const string CommunicationIntentId = "unit-test-intent";
 			const string ChannelProviderId = "unit-test-channel-provider";
 			const string ExpectedMessage = "Your OTP Code: {{Code}}";
 			const string ChannelId = "unit-test-channel";
@@ -37,7 +37,7 @@ namespace Transmitly.Tests.Identity
 					ChannelProviderId,
 					ChannelId, ChannelId
 				 ).
-				AddPipeline(PipelineName, options =>
+				AddPipeline(CommunicationIntentId, options =>
 				{
 					var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
 					channel.Subject.AddStringTemplate(ExpectedMessage);
@@ -50,7 +50,7 @@ namespace Transmitly.Tests.Identity
 
 			var client = builder.BuildClient();
 
-			var result = await client.DispatchAsync(PipelineName, [new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString()), new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
+			var result = await client.DispatchAsync(CommunicationIntentId, [new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString()), new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
 
 			Assert.IsNotNull(result);
 			Assert.IsTrue(result.IsSuccessful);

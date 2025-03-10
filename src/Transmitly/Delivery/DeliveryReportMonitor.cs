@@ -20,7 +20,7 @@ namespace Transmitly.Delivery
 		private readonly IReadOnlyCollection<string> _restrictedToEventNames;
 		private readonly IReadOnlyCollection<string> _restrictedToChannelIds;
 		private readonly IReadOnlyCollection<string> _restrictedToChannelProviderIds;
-		private readonly IReadOnlyCollection<string> _restrictedToPipelineNames;
+		private readonly IReadOnlyCollection<string> _restrictedToCommunicationIntentIds;
 
 		private readonly IObserver<DeliveryReport>? _observer;
 		private IDisposable? _cancellation;
@@ -29,8 +29,8 @@ namespace Transmitly.Delivery
 			IReadOnlyCollection<string>? restrictedToEventNames = null,
 			IReadOnlyCollection<string>? restrictedToChannelIds = null,
 			IReadOnlyCollection<string>? restrictedToChannelProviderIds = null,
-			IReadOnlyCollection<string>? restrictedToPipelineNames = null)
-				: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineNames)
+			IReadOnlyCollection<string>? restrictedToCommunicationIntentIds = null)
+				: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToCommunicationIntentIds)
 		{
 			_observer = Guard.AgainstNull(reportObservable);
 		}
@@ -40,8 +40,8 @@ namespace Transmitly.Delivery
 			IReadOnlyCollection<string>? restrictedToEventNames = null,
 			IReadOnlyCollection<string>? restrictedToChannelIds = null,
 			IReadOnlyCollection<string>? restrictedToChannelProviderIds = null,
-			IReadOnlyCollection<string>? restrictedToPipelineNames = null)
-				: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineNames)
+			IReadOnlyCollection<string>? restrictedToCommunicationIntentIds = null)
+				: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToCommunicationIntentIds)
 		{
 
 			_observer = new DeliveryReportAsyncHandlerObserver(Guard.AgainstNull(reportHandler));
@@ -51,12 +51,12 @@ namespace Transmitly.Delivery
 			IReadOnlyCollection<string>? restrictedToEventNames,
 			IReadOnlyCollection<string>? restrictedToChannelIds,
 			IReadOnlyCollection<string>? restrictedToChannelProviderIds,
-			IReadOnlyCollection<string>? restrictedToPipelineNames)
+			IReadOnlyCollection<string>? restrictedToCommunicationIntentIds)
 		{
 			_restrictedToEventNames = restrictedToEventNames ?? [];//Empty = Any
 			_restrictedToChannelIds = restrictedToChannelIds ?? [];
 			_restrictedToChannelProviderIds = restrictedToChannelProviderIds ?? [];
-			_restrictedToPipelineNames = restrictedToPipelineNames ?? [];
+			_restrictedToCommunicationIntentIds = restrictedToCommunicationIntentIds ?? [];
 		}
 
 		public virtual void Subscribe(IObservable<DeliveryReport> provider) =>
@@ -97,7 +97,7 @@ namespace Transmitly.Delivery
 			if (_restrictedToChannelProviderIds.Count != 0 && value.ChannelProviderId != null && !_restrictedToChannelProviderIds.Any(c => c.Equals(value.ChannelProviderId, StringComparison.OrdinalIgnoreCase)))
 				return false;
 
-			if (_restrictedToPipelineNames.Count != 0 && !string.IsNullOrWhiteSpace(value.PipelineName) && !_restrictedToPipelineNames.Any(e => e.Equals(value.PipelineName, StringComparison.OrdinalIgnoreCase)))
+			if (_restrictedToCommunicationIntentIds.Count != 0 && !string.IsNullOrWhiteSpace(value.CommunicationIntentId) && !_restrictedToCommunicationIntentIds.Any(e => e.Equals(value.CommunicationIntentId, StringComparison.OrdinalIgnoreCase)))
 				return false;
 
 			return true;

@@ -23,7 +23,7 @@ namespace Transmitly.Tests.Integration
 			//Scenario
 			//OTP Code to specific email address
 			const string FromAddress = "unit-test-address-from";
-			const string PipelineName = "unit-test-pipeline";
+			const string CommunicationIntentId = "unit-test-intent";
 			const string ChannelProviderId = "unit-test-channel-provider";
 			const string ExpectedMessage = "Your OTP Code: {{Code}}";
 			const string ChannelId = "unit-test-channel";
@@ -37,7 +37,7 @@ namespace Transmitly.Tests.Integration
 				ChannelProviderId,
 				ChannelId, ChannelId + "-2"
 			 ).
-			 AddPipeline(PipelineName, options =>
+			 AddPipeline(CommunicationIntentId, options =>
 			{
 				var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
 				channel.Subject.AddStringTemplate("Skip me!");
@@ -55,7 +55,7 @@ namespace Transmitly.Tests.Integration
 			.BuildClient();
 
 			var model = TransactionModel.Create(new { Code = "123456" });
-			var result = await client.DispatchAsync(PipelineName, RecipientAddresses, TransactionModel.Create(new { Code = "123546" }));
+			var result = await client.DispatchAsync(CommunicationIntentId, RecipientAddresses, TransactionModel.Create(new { Code = "123546" }));
 
 			Assert.IsNotNull(result);
 			Assert.IsTrue(result.IsSuccessful);
@@ -72,7 +72,7 @@ namespace Transmitly.Tests.Integration
 			//Scenario
 			//OTP Code to specific email address
 			const string FromAddress = "unit-test-address-from";
-			const string PipelineName = "unit-test-pipeline";
+			const string CommunicationIntentId = "unit-test-intent";
 			const string PlatformIdentityType = "unit-test-platform-identity-type-0";
 			const string ChannelProviderId = "unit-test-channel-provider";
 			const string ChannelId = "unit-test-channel";
@@ -96,7 +96,7 @@ namespace Transmitly.Tests.Integration
 				//     - OTP Codes, Fraud Messages
 				//   - (Observed) Signaled activity, may trigger a communication (single or grouped signals) or multiple communications
 				//     - HSA Contributions, Welcome Kit
-				.AddPipeline(PipelineName, PlatformIdentityType, pipeline =>
+				.AddPipeline(CommunicationIntentId, PlatformIdentityType, pipeline =>
 				{
 					//Channel = Defines the structure of the communication for a channel provider
 					//   - Email - Subject, Body, Recipients
@@ -108,7 +108,7 @@ namespace Transmitly.Tests.Integration
 				})
 				.BuildClient();
 
-			var result = await client.DispatchAsync(PipelineName, RecipientAddresses, TransactionModel.Create(new { Code = "123546" }));
+			var result = await client.DispatchAsync(CommunicationIntentId, RecipientAddresses, TransactionModel.Create(new { Code = "123546" }));
 
 			Assert.IsNotNull(result);
 			Assert.IsNotNull(result.Results);

@@ -36,54 +36,62 @@ namespace Transmitly.Pipeline.Configuration
 		/// <summary>
 		/// Adds a pipeline to the communication configuration with the specified name, category, transport priority, message priority, and options.
 		/// </summary>
-		/// <param name="name">The name of the pipeline</param>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
+		/// <param name="pipelineName">Name of the pipeline.
+		/// <para>Must be unique per <paramref name="communicationIntentId"/></para></param>
 		/// <param name="category">The category of the pipeline (optional)</param>
 		/// <param name="transportPriority">The transport priority of the pipeline</param>
 		/// <param name="messagePriority">The message priority of the pipeline</param>
 		/// <param name="options">The configuration options for the pipeline</param>
 		/// <returns>The updated communication configuration builder</returns>
-		public CommunicationsClientBuilder Add(string name, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options)
+		public CommunicationsClientBuilder Add(string communicationIntentId, string? pipelineName, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options)
 		{
 			var detailConfig = new DefaultPipelineProviderConfiguration();
 			options(detailConfig);
-			_addPipeline(new PipelineRegistration(detailConfig, name, null, category, transportPriority, messagePriority));
+			_addPipeline(new PipelineRegistration(detailConfig, communicationIntentId, null, category, pipelineName, transportPriority, messagePriority));
 			return _communicationsConfiguration;
 		}
 
 		/// <summary>
 		/// Adds a pipeline to the communication configuration with the specified name, and category.
 		/// </summary>
-		/// <param name="name">The name of the pipeline</param>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
+		/// <param name="pipelineName">Name of the pipeline.
+		/// <para>Must be unique per <paramref name="communicationIntentId"/></para></param>
 		/// <param name="category">The category of the pipeline (optional)</param>
 		/// <param name="options">The configuration options for the pipeline</param>
 		/// <returns>The updated communication configuration builder</returns>
-		public CommunicationsClientBuilder Add(string name, string? category, Action<IPipelineConfiguration> options)
+		public CommunicationsClientBuilder Add(string communicationIntentId, string? pipelineName, string? category, Action<IPipelineConfiguration> options)
 		{
-			return Add(name, category, TransportPriority.Normal, MessagePriority.Normal, options);
+			return Add(communicationIntentId, category, pipelineName, TransportPriority.Normal, MessagePriority.Normal, options);
 		}
 
 		/// <summary>
 		/// Adds a pipeline to the communication configuration with the specified name, and default category.
 		/// </summary>
-		/// <param name="name">The name of the pipeline</param>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
+		/// <param name="pipelineName">Name of the pipeline.
+		/// <para>Must be unique per <paramref name="communicationIntentId"/></para></param>
 		/// <param name="options">The configuration options for the pipeline</param>
 		/// <returns>The updated communication configuration builder</returns>
-		public CommunicationsClientBuilder Add(string name, Action<IPipelineConfiguration> options)
+		public CommunicationsClientBuilder Add(string communicationIntentId, string? pipelineName, Action<IPipelineConfiguration> options)
 		{
-			return Add(name, null, options);
+			return Add(communicationIntentId, pipelineName, null, options);
 		}
 
 		/// <summary>
 		/// Adds a pipeline to the communication configuration with the specified name, transport priority, message priority, and category.
 		/// </summary>
-		/// <param name="name">The name of the pipeline</param>
+		/// <param name="communicationIntentId">Id of the intent of the pipeline.</param>
+		/// <param name="pipelineName">Name of the pipeline.
+		/// <para>Must be unique per <paramref name="communicationIntentId"/></para></param>
 		/// <param name="transportPriority">The transport priority of the pipeline</param>
 		/// <param name="messagePriority">The message priority of the pipeline</param>
 		/// <param name="options">The configuration options for the pipeline</param>
 		/// <returns>The updated communication configuration builder</returns>
-		public CommunicationsClientBuilder Add(string name, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options)
+		public CommunicationsClientBuilder Add(string communicationIntentId, string? pipelineName, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options)
 		{
-			return Add(name, null, transportPriority, messagePriority, options);
+			return Add(communicationIntentId, pipelineName, null, transportPriority, messagePriority, options);
 		}
 
 		/// <summary>
@@ -95,7 +103,7 @@ namespace Transmitly.Pipeline.Configuration
 		{
 			var config = new DefaultPipelineProviderConfiguration();
 			module.Load(config);
-			_addPipeline(new PipelineRegistration(config, module.Name, null, module.Category, config.TransportPriority, config.MessagePriority));
+			_addPipeline(new PipelineRegistration(config, module.CommunicationIntentId, null, module.Category, module.PipelineName, config.TransportPriority, config.MessagePriority));
 			return _communicationsConfiguration;
 		}
 

@@ -26,7 +26,7 @@ namespace Transmitly.ChannelProvider
 		public virtual void DispatchReport(string eventName, IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults)
 		{
 			foreach (var result in dispatchResults.Where(r => r != null))
-				context.DeliveryReportManager.DispatchReport(new DeliveryReport(eventName, context.ChannelId, context.ChannelProviderId, context.PipelineName, result!.ResourceId, result.DispatchStatus, communication, context.ContentModel, result.Exception));
+				context.DeliveryReportManager.DispatchReport(new DeliveryReport(eventName, context.ChannelId, context.ChannelProviderId, context.CommunicationIntentId, result!.ResourceId, result.DispatchStatus, communication, context.ContentModel, result.Exception));
 		}
 
 		public virtual void Dispatch(IDispatchCommunicationContext context, TCommunication communication) =>

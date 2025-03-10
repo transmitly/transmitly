@@ -24,7 +24,7 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		public void ModuleShouldConfigureChannelConfig()
 		{
 			var config = new DefaultPipelineProviderConfiguration();
-			var module = new Mock<PipelineModule>("test-name", "test-category")
+			var module = new Mock<PipelineModule>("test-name", "test-name", "test-category")
 			{
 				CallBase = true
 			};
@@ -48,7 +48,7 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		[TestMethod()]
 		public async Task ShouldAddModule()
 		{
-			var module = new Mock<PipelineModule>("test-name", "test-category")
+			var module = new Mock<PipelineModule>("test-name", "test-name", "test-category")
 			{
 				CallBase = true
 			};

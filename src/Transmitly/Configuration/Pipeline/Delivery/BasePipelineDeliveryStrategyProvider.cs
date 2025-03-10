@@ -82,7 +82,7 @@ namespace Transmitly.Delivery
 							DeliveryReport.Event.Error(),
 							channel.Id,
 							provider.Id,
-							context.PipelineName,
+							context.CommunicationIntentId,
 							r!.ResourceId,
 							r.DispatchStatus,
 							communication,

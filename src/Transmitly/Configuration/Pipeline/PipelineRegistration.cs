@@ -17,14 +17,15 @@ namespace Transmitly.Pipeline.Configuration
 	///<inheritdoc cref="IPipeline"/>
 	internal class PipelineRegistration(
 		   IPipelineConfiguration configuration,
-		   string pipelineName,
+		   string communicationIntentId,
 		   string? platformIdentityType,
 		   string? category,
+		   string? pipelineName,
 		   TransportPriority transportPriority = TransportPriority.Normal,
 		   MessagePriority messagePriority = MessagePriority.Normal
 	) : IPipeline
 	{
-		public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);
+		public string CommunicationIntentId { get; } = Guard.AgainstNullOrWhiteSpace(communicationIntentId);
 
 		public string? Description { get; set; }
 
@@ -36,8 +37,8 @@ namespace Transmitly.Pipeline.Configuration
 
 		public MessagePriority MessagePriority { get; } = messagePriority;
 
-		public IPipelineConfiguration ChannelConfiguration { get; } = Guard.AgainstNull(configuration);
+		public IPipelineConfiguration PipelineConfiguration { get; } = Guard.AgainstNull(configuration);
 
-
+		public string? PipelineName { get; } = pipelineName;
 	}
 }

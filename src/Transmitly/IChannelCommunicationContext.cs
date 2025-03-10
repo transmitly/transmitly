@@ -81,6 +81,6 @@ namespace Transmitly
 		/// <summary>
 		/// Gets the current pipeline name
 		/// </summary>
-		string PipelineName { get; }
+		string CommunicationIntentId { get; }
 	}
 }
