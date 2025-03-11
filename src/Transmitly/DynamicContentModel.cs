@@ -66,7 +66,7 @@ namespace Transmitly
 		/// </summary>
 		internal DynamicContentModel(
 			object? model,
-			IReadOnlyCollection<IPlatformIdentity> platformIdentities,
+			IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities,
 			IReadOnlyList<Resource>? resources,
 			IReadOnlyList<LinkedResource>? linkedResources)
 		{
@@ -143,7 +143,7 @@ namespace Transmitly
 			// Handle generic dictionaries.
 			if (input is IDictionary<string, object?> dict)
 			{
-				var newDict = new DynamicContentModel(null, new List<IPlatformIdentity>(), null, null);
+				var newDict = new DynamicContentModel(null, new List<IPlatformIdentityProfile>(), null, null);
 				foreach (var kvp in dict)
 				{
 					newDict._bag[kvp.Key] = ConvertToDynamic(kvp.Value);
@@ -154,7 +154,7 @@ namespace Transmitly
 			// Handle non-generic dictionaries.
 			if (input is IDictionary nonGen)
 			{
-				var newDict = new DynamicContentModel(null, new List<IPlatformIdentity>(), null, null);
+				var newDict = new DynamicContentModel(null, new List<IPlatformIdentityProfile>(), null, null);
 				foreach (DictionaryEntry entry in nonGen)
 				{
 					string key = entry.Key?.ToString() ?? "";
@@ -180,7 +180,7 @@ namespace Transmitly
 
 		private static DynamicContentModel CreateDynamicFromObject(object model)
 		{
-			var result = new DynamicContentModel(null, new List<IPlatformIdentity>(), null, null);
+			var result = new DynamicContentModel(null, new List<IPlatformIdentityProfile>(), null, null);
 			foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(model))
 			{
 				if (!result._bag.ContainsKey(prop.Name))

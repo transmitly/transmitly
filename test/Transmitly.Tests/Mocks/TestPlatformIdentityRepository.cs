@@ -19,9 +19,9 @@ namespace Transmitly.Tests
 	internal sealed class TestPlatformIdentityRepository : IPlatformIdentityResolver
 	{
 		private static bool _isFirst = true;
-		public Task<IReadOnlyCollection<IPlatformIdentity>?> Resolve(IReadOnlyCollection<IIdentityReference> identityReferences)
+		public Task<IReadOnlyCollection<IPlatformIdentityProfile>?> Resolve(IReadOnlyCollection<IPlatformIdentityReference> identityReferences)
 		{
-			var results = new List<IPlatformIdentity>();
+			var results = new List<IPlatformIdentityProfile>();
 			foreach (var refs in identityReferences)
 			{
 				if (Guid.TryParse(refs.Id, out var parsedId))
@@ -30,7 +30,7 @@ namespace Transmitly.Tests
 					_isFirst = false;
 				}
 			}
-			return Task.FromResult<IReadOnlyCollection<IPlatformIdentity>?>(results.AsReadOnly());
+			return Task.FromResult<IReadOnlyCollection<IPlatformIdentityProfile>?>(results.AsReadOnly());
 		}
 	}
 }

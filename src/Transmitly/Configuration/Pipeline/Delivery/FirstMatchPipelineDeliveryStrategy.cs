@@ -19,27 +19,30 @@ namespace Transmitly.Delivery
 {
 	internal sealed class FirstMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
 	{
-		public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken)
+		public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<RecipientDispatchCommunicationContext> sendingGroups, CancellationToken cancellationToken)
 		{
 			var results = new List<IDispatchResult?>(sendingGroups.Count);
-			foreach (var pair in sendingGroups)
+			foreach (var recipient in sendingGroups)
 			{
-				var channel = pair.Channel;
-				foreach (var provider in pair.ChannelProviderDispatchers)
+				foreach (var pair in recipient.ChannelChannelProviderGroups)
 				{
-					var result = await DispatchCommunicationAsync(channel, provider, context, cancellationToken).ConfigureAwait(false);
-
-					if (result == null || result.Count == 0)
+					var channel = pair.Channel;
+					foreach (var provider in pair.ChannelProviderDispatchers)
 					{
-						continue;
-					}
+						var result = await DispatchCommunicationAsync(channel, provider, recipient.Context, cancellationToken).ConfigureAwait(false);
 
-					results.AddRange(result);
-					if (result.All(r => r != null && r.DispatchStatus == DispatchStatus.Exception))
-					{
-						continue;
+						if (result == null || result.Count == 0)
+						{
+							continue;
+						}
+
+						results.AddRange(result);
+						if (result.All(r => r != null && r.DispatchStatus == DispatchStatus.Exception))
+						{
+							continue;
+						}
+						return new DispatchCommunicationResult(results.AsReadOnly(), true);
 					}
-					return new DispatchCommunicationResult(results.AsReadOnly(), true);
 				}
 			}
 			return new DispatchCommunicationResult(results.AsReadOnly(), IsPipelineSuccessful(results));

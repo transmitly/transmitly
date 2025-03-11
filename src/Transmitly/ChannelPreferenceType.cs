@@ -12,12 +12,24 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly
 {
-	public abstract class PipelineModule(string name, string? category = null)
+	/// <summary>
+	/// Describes how to apply channel preferences.
+	/// </summary>
+	public enum ChannelPreferenceType
 	{
-		public string Name { get; } = Guard.AgainstNullOrWhiteSpace(name);
-		public string? Category { get; } = category;
-		public abstract void Load(IPipelineConfiguration configuration);
+		/// <summary>
+		/// All of the channels are allowed but order is prioritized by the preferred order of the platform identity.
+		/// </summary>
+		Priority,
+		/// <summary>
+		/// Only the channels explicitly preferred by the platform identity are allowed.
+		/// </summary>
+		Filter,
+		/// <summary>
+		/// All of the channels are allowed but order is prioritized by the preferred order of the platform identity.
+		/// </summary>
+		Default = Priority
 	}
 }

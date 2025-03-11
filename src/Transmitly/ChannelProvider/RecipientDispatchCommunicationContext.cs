@@ -12,13 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly.ChannelProvider
 {
-	public interface IPlatformIdentity
+	public sealed class RecipientDispatchCommunicationContext
 	{
-		string? Id { get; }
-		string? Type { get; }
-		IReadOnlyCollection<IIdentityAddress> Addresses { get; }
-		IReadOnlyCollection<string> ChannelPreferences { get; }
+		internal RecipientDispatchCommunicationContext(IDispatchCommunicationContext context, IReadOnlyCollection<ChannelChannelProviderGroup> channelProviderGroups)
+		{
+			ChannelChannelProviderGroups = Guard.AgainstNull(channelProviderGroups);
+			Context = Guard.AgainstNull(context);
+		}
+		public IDispatchCommunicationContext Context { get; }
+		public IReadOnlyCollection<ChannelChannelProviderGroup> ChannelChannelProviderGroups { get; }
 	}
 }

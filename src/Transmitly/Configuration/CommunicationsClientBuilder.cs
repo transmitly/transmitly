@@ -25,7 +25,7 @@ using Transmitly.Template.Configuration;
 namespace Transmitly
 {
 	/// <summary>
-	/// Builds a <see cref="ICommunicationsClient"/>.
+	/// Builds an instance of a <see cref="ICommunicationsClient"/>.
 	/// </summary>
 	public sealed class CommunicationsClientBuilder
 	{
@@ -37,6 +37,7 @@ namespace Transmitly
 		private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolvers = [];
 		private readonly List<ITemplateEngineRegistration> _templateEngines = [];
 		private readonly List<IPersonaRegistration> _personaRegistrations = [];
+
 		/// <summary>
 		/// Creates an instance of the class
 		/// </summary>
@@ -108,7 +109,7 @@ namespace Transmitly
 		/// <param name="messagePriority">The message priority of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineChannelConfiguration> options) =>
+		public CommunicationsClientBuilder AddPipeline(string name, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options) =>
 			Pipeline.Add(name, category, transportPriority, messagePriority, options);
 
 		/// <summary>
@@ -118,7 +119,7 @@ namespace Transmitly
 		/// <param name="category">The optional category of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, string? category, Action<IPipelineChannelConfiguration> options) =>
+		public CommunicationsClientBuilder AddPipeline(string name, string? category, Action<IPipelineConfiguration> options) =>
 			Pipeline.Add(name, category, options);
 
 		/// <summary>
@@ -127,7 +128,7 @@ namespace Transmitly
 		/// <param name="name">The name of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, Action<IPipelineChannelConfiguration> options) =>
+		public CommunicationsClientBuilder AddPipeline(string name, Action<IPipelineConfiguration> options) =>
 			Pipeline.Add(name, options);
 
 		/// <summary>
@@ -138,7 +139,7 @@ namespace Transmitly
 		/// <param name="messagePriority">The message priority of the pipeline.</param>
 		/// <param name="options">The configuration options for the pipeline.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineChannelConfiguration> options) =>
+		public CommunicationsClientBuilder AddPipeline(string name, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options) =>
 			Pipeline.Add(name, transportPriority, messagePriority, options);
 
 		/// <summary>
@@ -195,6 +196,14 @@ namespace Transmitly
 			return PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
 		}
 
+		/// <summary>
+		/// Add a persona filter to the configuration.
+		/// </summary>
+		/// <typeparam name="TPersona">Concrete persona type.</typeparam>
+		/// <param name="name">Persona filter name.</param>
+		/// <param name="platformIdentityType">Platform Identity type name.</param>
+		/// <param name="personaCondition">Conditions that the <typeparamref name="TPersona"/> must meet.</param>
+		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddPersona<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> personaCondition)
 			where TPersona : class
 		{
@@ -240,21 +249,18 @@ namespace Transmitly
 		//	return this;
 		//}
 
-		/// <inheritdoc/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override bool Equals(object? obj)
 		{
 			return base.Equals(obj);
 		}
 
-		/// <inheritdoc/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
 		}
 
-		/// <inheritdoc/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string ToString()
 		{
