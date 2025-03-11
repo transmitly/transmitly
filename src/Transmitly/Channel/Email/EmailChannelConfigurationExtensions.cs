@@ -40,7 +40,7 @@ namespace Transmitly
 		/// <param name="fromAddress">Address used as the 'from' address</param>
 		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
 		/// <returns></returns>
-		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<IEmailChannel> emailChannelConfiguration)
+		public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<IEmailChannel> emailChannelConfiguration)
 		{
 			return AddEmail(pipelineChannelConfiguration, fromAddress, emailChannelConfiguration, null);
 		}
@@ -53,7 +53,7 @@ namespace Transmitly
 		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
 		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel</param>
 		/// <returns></returns>
-		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
+		public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
 		{
 			var emailOptions = new EmailChannel(fromAddress, allowedChannelProviders);
 			emailChannelConfiguration(emailOptions);
@@ -69,7 +69,7 @@ namespace Transmitly
 		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
 		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel</param>
 		/// <returns></returns>
-		public static IPipelineChannelConfiguration AddEmail(this IPipelineChannelConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
+		public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, Action<IEmailChannel> emailChannelConfiguration, params string[]? allowedChannelProviders)
 		{
 			var emailOptions = new EmailChannel(fromAddressResolver, allowedChannelProviders);
 			emailChannelConfiguration(emailOptions);

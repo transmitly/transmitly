@@ -16,22 +16,22 @@ using System.Collections.ObjectModel;
 
 namespace Transmitly
 {
-	public sealed class PlatformIdentityRecord : IPlatformIdentity
+	public sealed class PlatformIdentityProfile : IPlatformIdentityProfile
 	{
 		private ReadOnlyCollection<IIdentityAddress> _addresses;
-		
-		public PlatformIdentityRecord(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses, IEnumerable<string>? channelPreferences = null)
+
+		public PlatformIdentityProfile(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses, IEnumerable<string>? channelPreferences = null)
 		{
 			Id = id;
 			Type = type;
 			Guard.AgainstNull(identityAddresses);
 			_addresses = new ReadOnlyCollection<IIdentityAddress>([.. identityAddresses]);
-			ChannelPreferences = new ReadOnlyCollection<string>([.. channelPreferences ?? []]);
+			ChannelPreferences = new ReadOnlyCollection<IChannelPreference>([new ChannelPreference([.. channelPreferences ?? []])]);
 		}
-		
+
 		public string? Id { get; set; }
 		public string? Type { get; set; }
 		public IReadOnlyCollection<IIdentityAddress> Addresses { get => _addresses; set => _addresses = new ReadOnlyCollection<IIdentityAddress>([.. value]); }
-		public IReadOnlyCollection<string> ChannelPreferences { get; set; } = new ReadOnlyCollection<string>([]);
+		public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
 	}
 }

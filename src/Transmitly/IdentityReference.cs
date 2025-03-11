@@ -14,7 +14,7 @@
 
 namespace Transmitly
 {
-	public sealed record IdentityReference : IIdentityReference
+	public sealed record IdentityReference : IPlatformIdentityReference
 	{
 		public IdentityReference(string type, string id)
 		{

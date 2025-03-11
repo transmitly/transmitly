@@ -40,7 +40,7 @@ namespace Transmitly.Tests
 				}
 			});
 
-			IReadOnlyCollection<IPlatformIdentity> identities = [new TestPlatformIdentity1(expectedId)];
+			IReadOnlyCollection<IPlatformIdentityProfile> identities = [new TestPlatformIdentity1(expectedId)];
 
 			ContentModel contentModel = new(transModel, identities);
 			dynamic model = contentModel.Model;

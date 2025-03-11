@@ -33,10 +33,9 @@ namespace Transmitly.Delivery
 		/// Dispatches the communications(s) through the provided channel channel provider groups.
 		/// </summary>
 		/// <param name="sendingGroups">Channel/Channel provider groupings.</param>
-		/// <param name="context">Context of the dispatch operation.</param>
 		/// <param name="cancellationToken">Cancellation token.</param>
 		/// <returns>Collection of dispatch results.</returns>
-		public abstract Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<ChannelChannelProviderGroup> sendingGroups, IDispatchCommunicationContext context, CancellationToken cancellationToken);
+		public abstract Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<RecipientDispatchCommunicationContext> sendingGroups, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Dispatches the communication(s) through the provided channel and with the provided channel provider.
@@ -48,32 +47,17 @@ namespace Transmitly.Delivery
 		/// <returns>Collection of dispatch results.</returns>
 		protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, CancellationToken cancellationToken)
 		{
-			var filteredRecipients = FilterRecipientAddresses(channel, context.PlatformIdentities);
-			var allResults = new List<IDispatchResult?>();
-			foreach (var recipient in filteredRecipients)
-			{
-				var contentModel = new ContentModel(context.ContentModel, filteredRecipients);
+			var communication = await GetChannelCommunicationAsync(channel, context).ConfigureAwait(false);
 
-				var internalContext = new DispatchCommunicationContext(context, channel, provider)
-				{
-					PlatformIdentities = [recipient],
-					ContentModel = contentModel
-				};
+			var dispatchResult = await DispatchCommunicationInternal(channel, provider, context, context.ContentModel, communication, cancellationToken).ConfigureAwait(false);
 
-				var communication = await GetChannelCommunicationAsync(channel, internalContext).ConfigureAwait(false);
-
-				var dispatchResult = await DispatchCommunicationInternal(channel, provider, context, contentModel, internalContext, communication, cancellationToken).ConfigureAwait(false);
-
-				allResults.AddRange(dispatchResult);
-			}
-
-			if (allResults.Count == 0 || allResults.All(r => r == null))
+			if (dispatchResult.Count == 0 || dispatchResult.All(r => r == null))
 				return Array.Empty<IDispatchResult?>();
 
-			return allResults;
+			return dispatchResult;
 		}
 
-		private static async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationInternal(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, ContentModel contentModel, DispatchCommunicationContext internalContext, object communication, CancellationToken cancellationToken)
+		private static async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationInternal(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, IContentModel? contentModel, object communication, CancellationToken cancellationToken)
 		{
 			IReadOnlyCollection<IDispatchResult?>? results = null;
 			try
@@ -82,7 +66,7 @@ namespace Transmitly.Delivery
 					return [];
 
 				var client = Guard.AgainstNull(await provider.DispatcherInstance());
-				results = await InvokeCommunicationTypedDispatchAsyncOnDispatcher(provider, internalContext, communication, client, cancellationToken).ConfigureAwait(false);
+				results = await InvokeCommunicationTypedDispatchAsyncOnDispatcher(provider, context, communication, client, cancellationToken).ConfigureAwait(false);
 
 				if (results == null || results.Count == 0)
 					return [];
@@ -96,8 +80,8 @@ namespace Transmitly.Delivery
 					var reports = results.Select(r =>
 						new DeliveryReport(
 							DeliveryReport.Event.Error(),
-							internalContext.ChannelId,
-							internalContext.ChannelProviderId,
+							channel.Id,
+							provider.Id,
 							context.PipelineName,
 							r!.ResourceId,
 							r.DispatchStatus,
@@ -146,41 +130,41 @@ namespace Transmitly.Delivery
 			return await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);
 		}
 
-		/// <summary>
-		/// Filters the available platform identities to those supported by the provided channel.
-		/// </summary>
-		/// <param name="channel">The channel to use for filtering.</param>
-		/// <param name="platformIdentities">Collection of identities to filter.</param>
-		/// <returns>Filtered collection of <see cref="PlatformIdentityRecord"/>.</returns>
-		protected virtual IReadOnlyCollection<IPlatformIdentity> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
-		{
-			return platformIdentities.Select(x =>
-				FilterPlatformIdentityAddresses(x, x.Addresses.Where(a => channel.SupportsIdentityAddress(a)))
-			).ToList().AsReadOnly();
-		}
+		///// <summary>
+		///// Filters the available platform identities to those supported by the provided channel.
+		///// </summary>
+		///// <param name="channel">The channel to use for filtering.</param>
+		///// <param name="platformIdentities">Collection of identities to filter.</param>
+		///// <returns>Filtered collection of <see cref="PlatformIdentityRecord"/>.</returns>
+		//protected virtual IReadOnlyCollection<IPlatformIdentity> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
+		//{
+		//	return platformIdentities.Select(x =>
+		//		WrapPlatformIdentity(x, x.Addresses.Where(a => channel.SupportsIdentityAddress(a)))
+		//	).ToList().AsReadOnly();
+		//}
 
-		/// <summary>
-		/// Since the platform Identity does not allow updating the addresses we need to wrap the provided 
-		/// platform identity so we don't lose the underlying properties.
-		/// </summary>
-		/// <param name="source">Source Platform Identity.</param>
-		/// <param name="filteredAddresses">Collection of address that have been filtered.</param>
-		/// <returns>Wrapped platform identity</returns>
-		private static WrappedPlatformIdentity FilterPlatformIdentityAddresses(IPlatformIdentity source, IEnumerable<IIdentityAddress> filteredAddresses)
-		{
-			var expando = new ExpandoObject();
-			var dict = (IDictionary<string, object>)expando!;
+		///// <summary>
+		///// Since the platform Identity does not allow updating the addresses we need to wrap the provided 
+		///// platform identity so we don't lose the underlying properties.
+		///// </summary>
+		///// <param name="source">Source Platform Identity.</param>
+		///// <param name="filteredAddresses">Collection of address that have been filtered.</param>
+		///// <returns>Wrapped platform identity</returns>
+		//private static WrappedPlatformIdentity WrapPlatformIdentity(IPlatformIdentity source, IEnumerable<IIdentityAddress> filteredAddresses)
+		//{
+		//	var expando = new ExpandoObject();
+		//	var dict = (IDictionary<string, object>)expando!;
 
-			foreach (var prop in source.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
-			{
-				var value = prop.GetValue(source);
-				dict[prop.Name] = value!;
-			}
+		//	foreach (var prop in source.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+		//	{
+		//		var value = prop.GetValue(source);
+		//		dict[prop.Name] = value!;
+		//	}
 
-			dict[nameof(IPlatformIdentity.Addresses)] = filteredAddresses.ToList().AsReadOnly();
+		//	dict[nameof(IPlatformIdentity.Addresses)] = filteredAddresses.ToList().AsReadOnly();
 
-			return new WrappedPlatformIdentity(expando);
-		}
+		//	return new WrappedPlatformIdentity(expando);
+		//}
 
 		/// <summary>
 		/// Gets the communication as rendered by the provided channel.
@@ -193,6 +177,6 @@ namespace Transmitly.Delivery
 			return await channel.GenerateCommunicationAsync(context);
 		}
 
-		
+
 	}
 }
