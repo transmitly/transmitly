@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using System.Dynamic;
+using System.Linq;
 using System.Reflection;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
@@ -42,14 +43,43 @@ namespace Transmitly.Delivery
 		/// </summary>
 		/// <param name="channel">Communication channel.</param>
 		/// <param name="provider">Channel provider used for dispatching.</param>
-		/// <param name="context">Context of the dispatch operation.</param>
+		/// <param name="recipientContext"></param>
 		/// <param name="cancellationToken">Cancellation token.</param>
 		/// <returns>Collection of dispatch results.</returns>
-		protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, CancellationToken cancellationToken)
+		protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, RecipientDispatchCommunicationContext recipientContext, CancellationToken cancellationToken)
 		{
-			var communication = await GetChannelCommunicationAsync(channel, context).ConfigureAwait(false);
+			var context = recipientContext.Context;
+			//The dispatch client is temporarily only allowing a single platform identity per context.
+			//Ensure that is the case until it's eventually changed.
+			if (context.PlatformIdentities.Count > 1)
+				throw new NotSupportedException("Only a single platform identity is currently supported.");
 
-			var dispatchResult = await DispatchCommunicationInternal(channel, provider, context, context.ContentModel, communication, cancellationToken).ConfigureAwait(false);
+			//Temporarily only use the first supported address for the provided channel
+			var singlePlatformProfile = context.PlatformIdentities.FirstOrDefault();
+			var identityProfiles = new List<IPlatformIdentityProfile>();
+			if (singlePlatformProfile != null)
+			{
+				singlePlatformProfile.Addresses = singlePlatformProfile.Addresses.Where(a => channel.SupportsIdentityAddress(a)).ToList().AsReadOnly();
+				identityProfiles.Add(singlePlatformProfile);
+			}
+
+			var contentModel = new ContentModel(context.TransactionModel, identityProfiles);
+			var dispatchingContext = new DispatchCommunicationContext(contentModel,
+				context.ChannelConfiguration,
+				context.PlatformIdentities,
+				context.TemplateEngine,
+				context.DeliveryReportManager,
+				context.CultureInfo,
+				context.PipelineName,
+				context.MessagePriority,
+				context.TransportPriority,
+				channel.Id,
+				provider.Id);
+
+
+			var communication = await GetChannelCommunicationAsync(channel, dispatchingContext).ConfigureAwait(false);
+
+			var dispatchResult = await DispatchCommunicationInternal(channel, provider, dispatchingContext, dispatchingContext.ContentModel, communication, cancellationToken).ConfigureAwait(false);
 
 			if (dispatchResult.Count == 0 || dispatchResult.All(r => r == null))
 				return Array.Empty<IDispatchResult?>();
@@ -57,7 +87,7 @@ namespace Transmitly.Delivery
 			return dispatchResult;
 		}
 
-		private static async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationInternal(IChannel channel, IChannelProvider provider, IDispatchCommunicationContext context, IContentModel? contentModel, object communication, CancellationToken cancellationToken)
+		private static async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationInternal(IChannel channel, IChannelProvider provider, DispatchCommunicationContext context, IContentModel? contentModel, object communication, CancellationToken cancellationToken)
 		{
 			IReadOnlyCollection<IDispatchResult?>? results = null;
 			try
@@ -130,42 +160,6 @@ namespace Transmitly.Delivery
 			return await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);
 		}
 
-		///// <summary>
-		///// Filters the available platform identities to those supported by the provided channel.
-		///// </summary>
-		///// <param name="channel">The channel to use for filtering.</param>
-		///// <param name="platformIdentities">Collection of identities to filter.</param>
-		///// <returns>Filtered collection of <see cref="PlatformIdentityRecord"/>.</returns>
-		//protected virtual IReadOnlyCollection<IPlatformIdentity> FilterRecipientAddresses(IChannel channel, IReadOnlyCollection<IPlatformIdentity> platformIdentities)
-		//{
-		//	return platformIdentities.Select(x =>
-		//		WrapPlatformIdentity(x, x.Addresses.Where(a => channel.SupportsIdentityAddress(a)))
-		//	).ToList().AsReadOnly();
-		//}
-
-		///// <summary>
-		///// Since the platform Identity does not allow updating the addresses we need to wrap the provided 
-		///// platform identity so we don't lose the underlying properties.
-		///// </summary>
-		///// <param name="source">Source Platform Identity.</param>
-		///// <param name="filteredAddresses">Collection of address that have been filtered.</param>
-		///// <returns>Wrapped platform identity</returns>
-		//private static WrappedPlatformIdentity WrapPlatformIdentity(IPlatformIdentity source, IEnumerable<IIdentityAddress> filteredAddresses)
-		//{
-		//	var expando = new ExpandoObject();
-		//	var dict = (IDictionary<string, object>)expando!;
-
-		//	foreach (var prop in source.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
-		//	{
-		//		var value = prop.GetValue(source);
-		//		dict[prop.Name] = value!;
-		//	}
-
-		//	dict[nameof(IPlatformIdentity.Addresses)] = filteredAddresses.ToList().AsReadOnly();
-
-		//	return new WrappedPlatformIdentity(expando);
-		//}
-
 		/// <summary>
 		/// Gets the communication as rendered by the provided channel.
 		/// </summary>
@@ -176,7 +170,5 @@ namespace Transmitly.Delivery
 		{
 			return await channel.GenerateCommunicationAsync(context);
 		}
-
-
 	}
 }
