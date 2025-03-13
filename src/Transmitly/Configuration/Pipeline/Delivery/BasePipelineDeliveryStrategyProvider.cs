@@ -49,24 +49,13 @@ namespace Transmitly.Delivery
 		protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, RecipientDispatchCommunicationContext recipientContext, CancellationToken cancellationToken)
 		{
 			var context = recipientContext.Context;
-			//The dispatch client is temporarily only allowing a single platform identity per context.
-			//Ensure that is the case until it's eventually changed.
-			if (context.PlatformIdentities.Count > 1)
-				throw new NotSupportedException("Only a single platform identity is currently supported.");
 
-			//Temporarily only use the first supported address for the provided channel
-			var singlePlatformProfile = context.PlatformIdentities.FirstOrDefault();
-			var identityProfiles = new List<IPlatformIdentityProfile>();
-			if (singlePlatformProfile != null)
-			{
-				singlePlatformProfile.Addresses = singlePlatformProfile.Addresses.Where(a => channel.SupportsIdentityAddress(a)).ToList().AsReadOnly();
-				identityProfiles.Add(singlePlatformProfile);
-			}
+			var filteredProfiles = FilterToASingleIdentityWithSingleSupportedAddress(channel, context);
 
-			var contentModel = new ContentModel(context.TransactionModel, identityProfiles);
+			var contentModel = new ContentModel(context.TransactionModel, filteredProfiles);
 			var dispatchingContext = new DispatchCommunicationContext(contentModel,
 				context.ChannelConfiguration,
-				context.PlatformIdentities,
+				filteredProfiles,
 				context.TemplateEngine,
 				context.DeliveryReportManager,
 				context.CultureInfo,
@@ -85,6 +74,31 @@ namespace Transmitly.Delivery
 				return Array.Empty<IDispatchResult?>();
 
 			return dispatchResult;
+		}
+
+		private static List<IPlatformIdentityProfile> FilterToASingleIdentityWithSingleSupportedAddress(IChannel channel, IInternalDispatchCommunicationContext context)
+		{
+			//The dispatch client is temporarily only allowing a single platform identity per context.
+			//Ensure that is the case until it's eventually changed.
+			if (context.PlatformIdentities.Count > 1)
+				throw new NotSupportedException("Only a single platform identity is currently supported.");
+
+			//Temporarily only use the first supported address for the provided channel
+			var singlePlatformProfile = context.PlatformIdentities.FirstOrDefault();
+			var identityProfiles = new List<IPlatformIdentityProfile>();
+			if (singlePlatformProfile != null)
+			{
+				var matchingAddress = singlePlatformProfile.Addresses.FirstOrDefault(a => channel.SupportsIdentityAddress(a));
+				IPlatformIdentityProfile profile;
+				if (matchingAddress != null)
+					profile = new PlatformIdentityProfileProxy(singlePlatformProfile, [matchingAddress]);
+				else
+					profile = new PlatformIdentityProfileProxy(singlePlatformProfile, []);
+
+				identityProfiles.Add(profile);
+			}
+
+			return identityProfiles;
 		}
 
 		private static async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationInternal(IChannel channel, IChannelProvider provider, DispatchCommunicationContext context, IContentModel? contentModel, object communication, CancellationToken cancellationToken)

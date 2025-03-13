@@ -26,7 +26,7 @@ namespace Transmitly.Tests
 			{
 				if (Guid.TryParse(refs.Id, out var parsedId))
 				{
-					results.Add(new TestPlatformIdentity1(parsedId) { IsPersona = _isFirst, Addresses = new List<IdentityAddress>() { new("unit-test-address") } });
+					results.Add(new TestPlatformIdentity1(parsedId) { IsPersona = _isFirst, Addresses = new List<IdentityAddress>() { new("unit-test-address"), new("unit-test-address2"), new("xxx") } });
 					_isFirst = false;
 				}
 			}

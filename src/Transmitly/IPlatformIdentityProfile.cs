@@ -30,7 +30,7 @@ namespace Transmitly
 		/// <summary>
 		/// Collections of addresses.
 		/// </summary>
-		IReadOnlyCollection<IIdentityAddress> Addresses { get; set; }
+		IReadOnlyCollection<IIdentityAddress> Addresses { get; }
 		/// <summary>
 		/// Channel preferences for the platform identity.
 		/// </summary>

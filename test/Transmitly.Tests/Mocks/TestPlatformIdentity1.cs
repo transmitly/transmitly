@@ -26,6 +26,7 @@ namespace Transmitly.Tests
 
 	internal sealed record TestPlatformIdentity1 : IPlatformIdentityProfile
 	{
+		public string SomeValue => Id + "_Test";
 		public const string DefaultPlatformIdentityType = "test-identity-type";
 
 		public TestPlatformIdentity1(string? id, string platformIdentityAddressType = DefaultPlatformIdentityType, IEnumerable<string>? channelPreferences = null)
