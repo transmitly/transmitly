@@ -55,7 +55,7 @@ namespace Transmitly
 		/// <param name="pipelineChannelConfiguration">The pipeline to configure.</param>
 		public static void UseDefaultPipelineDeliveryStrategy(this IPipelineConfiguration pipelineChannelConfiguration)
 		{
-			UseAnyMatchPipelineDeliveryStrategy(pipelineChannelConfiguration);
+			UseFirstMatchPipelineDeliveryStrategy(pipelineChannelConfiguration);
 		}
 	}
 }
