@@ -67,9 +67,8 @@ namespace Transmitly
 
 				var dispatchList = filteredPlatformIdentities.Select(identity =>
 				{
-					var contentModel = new ContentModel(transactionalModel, [identity]);
-					var context = new DispatchCommunicationContext(
-						contentModel,
+					var context = new InternalDispatchCommunicationContext(
+						transactionalModel,
 						pipelineConfiguration,
 						[identity],
 						templateEngine,

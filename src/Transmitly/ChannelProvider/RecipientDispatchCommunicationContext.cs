@@ -16,12 +16,12 @@ namespace Transmitly.ChannelProvider
 {
 	public sealed class RecipientDispatchCommunicationContext
 	{
-		internal RecipientDispatchCommunicationContext(IDispatchCommunicationContext context, IReadOnlyCollection<ChannelChannelProviderGroup> channelProviderGroups)
+		internal RecipientDispatchCommunicationContext(IInternalDispatchCommunicationContext context, IReadOnlyCollection<ChannelChannelProviderGroup> channelProviderGroups)
 		{
 			ChannelChannelProviderGroups = Guard.AgainstNull(channelProviderGroups);
 			Context = Guard.AgainstNull(context);
 		}
-		public IDispatchCommunicationContext Context { get; }
+		internal IInternalDispatchCommunicationContext Context { get; }
 		public IReadOnlyCollection<ChannelChannelProviderGroup> ChannelChannelProviderGroups { get; }
 	}
 }

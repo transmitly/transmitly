@@ -29,7 +29,7 @@ namespace Transmitly.Delivery
 					var channel = pair.Channel;
 					foreach (var provider in pair.ChannelProviderDispatchers)
 					{
-						var result = await DispatchCommunicationAsync(channel, provider, recipient.Context, cancellationToken).ConfigureAwait(false);
+						var result = await DispatchCommunicationAsync(channel, provider, recipient, cancellationToken).ConfigureAwait(false);
 
 						if (result == null || result.Count == 0)
 						{
