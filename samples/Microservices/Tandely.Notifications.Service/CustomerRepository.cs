@@ -24,7 +24,7 @@ namespace Tandely.Notifications.Service
 	{
 		private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
-		public async Task<IReadOnlyCollection<IPlatformIdentity>?> Resolve(IReadOnlyCollection<IIdentityReference> identityReferences)
+		public async Task<IReadOnlyCollection<IPlatformIdentityProfile>?> Resolve(IReadOnlyCollection<IPlatformIdentityReference> identityReferences)
 		{
 			var tasks = identityReferences.Select(async identityReference =>
 			{
@@ -38,7 +38,7 @@ namespace Tandely.Notifications.Service
 				return null;
 			});
 			await Task.WhenAll(tasks);
-			return tasks.Select(x => x.Result).Where(x => x != null).Cast<IPlatformIdentity>().ToList().AsReadOnly();
+			return tasks.Select(x => x.Result).Where(x => x != null).Cast<IPlatformIdentityProfile>().ToList().AsReadOnly();
 		}
 	}
 }

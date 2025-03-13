@@ -17,7 +17,7 @@ using Transmitly.Channel.Push;
 
 namespace Tandely.Notifications.Service
 {
-	sealed class Customer : IPlatformIdentity
+	sealed class Customer : IPlatformIdentityProfile
 	{
 		public Guid Id { get; set; }
 		public string? EmailAddress { get; set; }
@@ -27,12 +27,12 @@ namespace Tandely.Notifications.Service
 		public string? FirstName { get; set; }
 		public string? LastName { get; set; }
 		public int LoyaltyPoints { get; set; }
-		public IReadOnlyCollection<string> ChannelPreferences { get; set; } = [];
+		public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
 
 
-		string? IPlatformIdentity.Id { get => Id.ToString();  }
-		string? IPlatformIdentity.Type { get => nameof(Customer); }
-		IReadOnlyCollection<IIdentityAddress> IPlatformIdentity.Addresses
+		string? IPlatformIdentityProfile.Id { get => Id.ToString(); }
+		string? IPlatformIdentityProfile.Type { get => nameof(Customer); }
+		IReadOnlyCollection<IIdentityAddress> IPlatformIdentityProfile.Addresses
 		{
 			get
 			{

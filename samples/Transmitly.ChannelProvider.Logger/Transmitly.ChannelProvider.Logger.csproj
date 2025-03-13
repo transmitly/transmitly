@@ -8,10 +8,10 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Transmitly" Version="0.1.0-241.adfd754" />
+		<PackageReference Include="Transmitly" Version="0.1.0-271.a05261c" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
-		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.1-5.9d072d4" />
+		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.1.1-8.5c3e2f6" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 		<PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="All" />
 	</ItemGroup>
