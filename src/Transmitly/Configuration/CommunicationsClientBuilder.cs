@@ -143,13 +143,18 @@ namespace Transmitly
 			Pipeline.Add(name, transportPriority, messagePriority, options);
 
 		/// <summary>
-		/// Adds a pipeline to the configuration by calling the provided module.
+		/// Adds a pipeline configurator to the configuration.
 		/// </summary>
-		/// <param name="module"><see cref="PipelineModule"/> to add.</param>
+		/// <param name="configurator">The configurator to add.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipelineModule(PipelineModule module) =>
-			Pipeline.AddModule(module);
+		public CommunicationsClientBuilder AddPipelineConfigurator(IPipelineConfigurator configurator) =>
+			Pipeline.AddConfigurator(configurator);
 
+		/// <summary>
+		/// Registers a custom client factory.
+		/// </summary>
+		/// <param name="communicationClientFactory">Factory to register</param>
+		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder RegisterClientFactory(ICommunicationClientFactory communicationClientFactory)
 		{
 			_clientFactory = communicationClientFactory;
