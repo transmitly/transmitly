@@ -87,17 +87,18 @@ namespace Transmitly.Pipeline.Configuration
 		}
 
 		/// <summary>
-		/// Adds a pipeline to the configuration by calling the provided module.
+		/// Configures a pipeline with a provided configurator.
 		/// </summary>
-		/// <param name="module"><see cref="PipelineModule"/> to add.</param>
+		/// <param name="configurator">The configurator to add.</param>
 		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddModule(PipelineModule module)
+		public CommunicationsClientBuilder AddConfigurator(IPipelineConfigurator configurator)
 		{
+			Guard.AgainstNull(configurator);
+
 			var config = new DefaultPipelineProviderConfiguration();
-			module.Load(config);
-			_addPipeline(new PipelineRegistration(config, module.Name, null, module.Category, config.TransportPriority, config.MessagePriority));
+			configurator.Configure(config);
+			_addPipeline(new PipelineRegistration(config, configurator.Name, null, configurator.Category, config.TransportPriority, config.MessagePriority));
 			return _communicationsConfiguration;
 		}
-
 	}
 }
