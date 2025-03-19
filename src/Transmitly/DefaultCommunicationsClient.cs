@@ -198,11 +198,18 @@ namespace Transmitly
 
 					foreach (var dispatcher in channelProvider.DispatcherRegistrations)
 					{
-						var wrapper = IsDispatcherEligible(channelProviderFactory, platformIdentity, activeChannelPreferences, channel, channelProvider, dispatcher);
-						if (wrapper == null)
+						if (!IsDispatcherEligible(channelProviderFactory, platformIdentity, activeChannelPreferences, channel, channelProvider, dispatcher))
 						{
 							continue;
 						}
+
+						// Create the wrapper with a lazy resolver for the dispatcher.
+						var wrapper = new ChannelProviderWrapper(
+							channelProvider.Id,
+							dispatcher,
+							async () => await channelProviderFactory.ResolveDispatcherAsync(channelProvider, dispatcher).ConfigureAwait(false)
+						);
+
 						providerWrappers.Add(wrapper);
 					}
 				}
@@ -222,28 +229,22 @@ namespace Transmitly
 			return groups.AsReadOnly();
 		}
 
-		private static ChannelProviderWrapper? IsDispatcherEligible(IChannelProviderFactory channelProviderFactory, IPlatformIdentityProfile platformIdentity, IChannelPreference? activeChannelPreferences, IChannel channel, IChannelProviderRegistration channelProvider, IChannelProviderDispatcherRegistration dispatcher)
+		private static bool IsDispatcherEligible(IChannelProviderFactory channelProviderFactory, IPlatformIdentityProfile platformIdentity, IChannelPreference? activeChannelPreferences, IChannel channel, IChannelProviderRegistration channelProvider, IChannelProviderDispatcherRegistration dispatcher)
 		{
 			if (!dispatcher.SupportsChannel(channel.Id))
-				return null;
+				return false;
 
 			if (dispatcher.CommunicationType != typeof(object) && channel.CommunicationType != dispatcher.CommunicationType)
-				return null;
+				return false;
 
-			if (activeChannelPreferences != null && activeChannelPreferences.Type == ChannelPreferenceType.Filter &&
+			if (activeChannelPreferences != null && activeChannelPreferences.Channels.Count != 0 && activeChannelPreferences.Type == ChannelPreferenceType.Filter &&
 				!activeChannelPreferences.Channels.Any(c => string.Equals(c, channel.Id, StringComparison.InvariantCulture)))
-				return null;
+				return false;
 
 			if (!platformIdentity.Addresses.Any(a => channel.SupportsIdentityAddress(a)))
-				return null;
+				return false;
 
-			// Create the wrapper with a lazy resolver for the dispatcher.
-			var wrapper = new ChannelProviderWrapper(
-				channelProvider.Id,
-				dispatcher,
-				async () => await channelProviderFactory.ResolveDispatcherAsync(channelProvider, dispatcher).ConfigureAwait(false)
-			);
-			return wrapper;
+			return true;
 		}
 
 		private static bool IsChannelProviderEligible(IReadOnlyCollection<string> dispatchChannelPreferences, IChannel channel, IChannelProviderRegistration channelProvider)

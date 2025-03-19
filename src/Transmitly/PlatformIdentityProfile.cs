@@ -20,13 +20,13 @@ namespace Transmitly
 	{
 		private ReadOnlyCollection<IIdentityAddress> _addresses;
 
-		public PlatformIdentityProfile(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses, IEnumerable<string>? channelPreferences = null)
+		public PlatformIdentityProfile(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses, IEnumerable<IChannelPreference>? channelPreferences = null)
 		{
 			Id = id;
 			Type = type;
 			Guard.AgainstNull(identityAddresses);
 			_addresses = new ReadOnlyCollection<IIdentityAddress>([.. identityAddresses]);
-			ChannelPreferences = new ReadOnlyCollection<IChannelPreference>([new ChannelPreference([.. channelPreferences ?? []])]);
+			ChannelPreferences = [.. (channelPreferences ?? [])];
 		}
 
 		public string? Id { get; set; }
