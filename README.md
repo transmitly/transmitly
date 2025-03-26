@@ -122,7 +122,6 @@ options.ApiKey = "MySendGridApi";
         email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
         email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
     });
-
 })
 .BuildClient();
 
