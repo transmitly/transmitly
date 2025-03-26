@@ -112,7 +112,7 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
 //})
 .AddSendGridSupport(options =>
 {
-options.ApiKey = "MySendGridApi";
+    options.ApiKey = "MySendGridApi";
 })
 .AddPipeline("WelcomeKit", pipeline =>
 {
