@@ -46,6 +46,7 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
        email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
        email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
     });
+})
 .BuildClient();
 
 //In this case, we're using Microsoft.DependencyInjection. We need to register our `ICommunicationsClient` with the service collection
@@ -109,18 +110,19 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
 //  options.UserName = "MySMTPUsername";
 //  options.Password = "MyPassword";
 //})
-.AddSendGridSupport(options=>
+.AddSendGridSupport(options =>
 {
-    options.ApiKey = "MySendGridApi";
+options.ApiKey = "MySendGridApi";
 })
 .AddPipeline("WelcomeKit", pipeline =>
 {
     pipeline.AddEmail("welcome@my.app".AsIdentityAddress("Welcome Committee"), email =>
     {
-       email.Subject.AddStringTemplate("Thanks for creating an account!");
-       email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
-       email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
+        email.Subject.AddStringTemplate("Thanks for creating an account!");
+        email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
+        email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
     });
+})
 .BuildClient();
 
 builder.Services.AddSingleton(communicationsClient);
