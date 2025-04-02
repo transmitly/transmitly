@@ -47,7 +47,7 @@ namespace Transmitly.Channel.Push
 
 		public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
 		{
-			return _supportedAddressTypes.Contains(identityAddress.Type);
+			return _supportedAddressTypes.Contains(identityAddress.ChannelId);
 		}
 	}
 }

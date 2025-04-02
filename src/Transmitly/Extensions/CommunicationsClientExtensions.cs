@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace Transmitly
@@ -49,9 +50,8 @@ namespace Transmitly
 		/// <returns></returns>
 		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, string identityAddress, object transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
-			Guard.AgainstNullOrWhiteSpace(identityAddress);
-
-			return client.DispatchAsync(pipelineName, [identityAddress], transactionalModel, cultureInfo, cancellationToken);
+			var platformIdentities = WrapAsPlatformIdentityProfileCollection(identityAddress);
+			return client.DispatchAsync(pipelineName, platformIdentities, TransactionModel.Create(transactionalModel), [], cultureInfo, cancellationToken);
 		}
 
 		/// <summary>
@@ -66,7 +66,8 @@ namespace Transmitly
 		/// <returns>Dispatch results</returns>
 		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, string identityAddress, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
-			return client.DispatchAsync(pipelineName, new IdentityAddress[] { new(identityAddress) }, transactionalModel, cultureInfo, cancellationToken);
+			var platformIdentities = WrapAsPlatformIdentityProfileCollection(identityAddress);
+			return client.DispatchAsync(pipelineName, platformIdentities, transactionalModel, [], cultureInfo, cancellationToken);
 		}
 
 		/// <summary>
@@ -82,8 +83,8 @@ namespace Transmitly
 		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<string> identityAddresses, object transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			Guard.AgainstNull(identityAddresses);
-
-			return client.DispatchAsync(pipelineName, identityAddresses.Select(x => (IIdentityAddress)new IdentityAddress(x)).ToList(), TransactionModel.Create(transactionalModel), cultureInfo, cancellationToken);
+			var platformIdentities = identityAddresses.Select(x => (IPlatformIdentityProfile)WrapAsPlatformIdentityProfileCollection(x)).ToList().AsReadOnly();
+			return client.DispatchAsync(pipelineName, platformIdentities, TransactionModel.Create(transactionalModel), [], cultureInfo, cancellationToken);
 		}
 
 		/// <summary>
@@ -99,10 +100,8 @@ namespace Transmitly
 		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			Guard.AgainstNull(identityAddresses);
-			var platformIdentities = new PlatformIdentityProfile[] {
-				new(null,null,identityAddresses)
-			};
-			return client.DispatchAsync(pipelineName, platformIdentities, transactionalModel, cultureInfo, cancellationToken);
+			var platformIdentities = identityAddresses.Select(x => (IPlatformIdentityProfile)new PlatformIdentityProfile(null, null, [x])).ToList().AsReadOnly();
+			return client.DispatchAsync(pipelineName, platformIdentities, transactionalModel, [], cultureInfo, cancellationToken);
 		}
 		/// <summary>
 		/// Dispatches the communications for the provided pipeline name.
@@ -133,6 +132,14 @@ namespace Transmitly
 		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			return client.DispatchAsync(pipelineName, identityReferences, transactionalModel, [], cultureInfo, cancellationToken);
+		}
+
+
+		private static IReadOnlyCollection<IPlatformIdentityProfile> WrapAsPlatformIdentityProfileCollection(string identityAddress)
+		{
+			Guard.AgainstNullOrWhiteSpace(identityAddress);
+			return new ReadOnlyCollection<IPlatformIdentityProfile>([new PlatformIdentityProfile(null, null, [identityAddress.AsIdentityAddress()])]);
+
 		}
 	}
 }

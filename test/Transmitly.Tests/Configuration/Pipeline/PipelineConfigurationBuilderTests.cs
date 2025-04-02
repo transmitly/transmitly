@@ -44,9 +44,10 @@ namespace Transmitly.Pipeline.Configuration.Tests
 			}).Verifiable();
 
 			configurator.Object.Configure(config);
+			config.Build();
 
-			Assert.AreEqual(1, config.Channels.Count);
-			Assert.AreSame(channel, config.Channels.First());
+			Assert.AreEqual(1, config.ChannelRegistrations.Count);
+			Assert.AreSame(channel, config.ChannelRegistrations.First().Channel);
 			Assert.AreEqual(MessagePriority.Highest, config.MessagePriority);
 			Assert.AreEqual(TransportPriority.Lowest, config.TransportPriority);
 		}
@@ -89,6 +90,25 @@ namespace Transmitly.Pipeline.Configuration.Tests
 
 			Assert.AreEqual(expectedChannelId, sentResult.Results?.First()?.ChannelId);
 			Assert.AreEqual(expectedChannelProviderId, deliveryResult?.ChannelProviderId);
+		}
+
+		[TestMethod]
+		public void FluentConfigurationTest()
+		{
+			var config = new DefaultPipelineProviderConfiguration();
+			config
+				.AddChannel(new UnitTestChannel("unit-test-address"))
+					.ToAddress("1")
+					.ToAddressPurpose("2")
+				.AddEmail("test".AsIdentityAddress(), e => { })
+				.AddSms("test-sms".AsIdentityAddress(), cfg => { })
+					.ChannelProviderFilter("InfoBip")
+					.CompleteOnDispatched()
+				.Id("3")
+				.AddPlatformIdentityTypeFilter("x");
+			config.Build();
+			Assert.AreEqual(3, config.ChannelRegistrations.Count);
+			Assert.AreEqual("3", config.PipelineId);
 		}
 	}
 }

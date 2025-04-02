@@ -29,21 +29,9 @@ namespace Transmitly.Pipeline.Configuration.Tests
 			var channel = new Mock<IChannel>();
 
 			configuration.AddChannel(channel.Object);
-
-			Assert.AreEqual(1, configuration.Channels.Count);
-			Assert.AreEqual(channel.Object, configuration.Channels.First());
-		}
-
-		[TestMethod]
-		public void BlindCopy_Should_AddIdentityAddressToList()
-		{
-			var configuration = new DefaultPipelineProviderConfiguration();
-
-			configuration.BlindCopyIdentityAddress("Identity1", "Identity2");
-
-			Assert.AreEqual(2, configuration.BlindCopyIdentityAddresses.Count);
-			Assert.IsTrue(configuration.BlindCopyIdentityAddresses.Contains("Identity1"));
-			Assert.IsTrue(configuration.BlindCopyIdentityAddresses.Contains("Identity2"));
+			configuration.Build();
+			Assert.AreEqual(1, configuration.ChannelRegistrations.Count);
+			Assert.AreEqual(channel.Object, configuration.ChannelRegistrations.First().Channel);
 		}
 
 		[TestMethod]
@@ -64,18 +52,6 @@ namespace Transmitly.Pipeline.Configuration.Tests
 
 			Assert.IsNotNull(configuration.PipelineDeliveryStrategyProvider);
 			Assert.IsInstanceOfType(configuration.PipelineDeliveryStrategyProvider, typeof(FirstMatchPipelineDeliveryStrategy));
-		}
-
-		[TestMethod]
-		public void Copy_Should_AddIdentityAddressToList()
-		{
-			var configuration = new DefaultPipelineProviderConfiguration();
-
-			configuration.CopyIdentityAddress("Identity1", "Identity2");
-
-			Assert.AreEqual(2, configuration.CopyIdentityAddresses.Count);
-			Assert.IsTrue(configuration.CopyIdentityAddresses.Contains("Identity1"));
-			Assert.IsTrue(configuration.CopyIdentityAddresses.Contains("Identity2"));
 		}
 	}
 }

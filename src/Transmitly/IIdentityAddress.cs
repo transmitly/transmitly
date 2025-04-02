@@ -14,13 +14,40 @@
 
 namespace Transmitly
 {
+	/// <summary>
+	/// An address for an identity.
+	/// </summary>
 	public interface IIdentityAddress
-	{
-		IDictionary<string, string?> AddressParts { get; set; }
-		IDictionary<string, string?> Attributes { get; set; }
+	{		
+		/// <summary>
+		/// Value of the address (test@example.com, +1234567890)
+		/// </summary>
+		/// <example>test@example.com; +1234567890; 123 Main St, Example, EX 01234</example>
 		string Value { get; set; }
+		/// <summary>
+		/// Display name of the address.
+		/// </summary>
+		/// <example>John Doe, Work Group</example>
 		string? Display { get; set; }
-		string? Type { get; set; }
-		//int Priority { get; set; }
+		/// <summary>
+		/// The <see cref="Id.Channel">channel id</see> the address intended for.
+		/// </summary>
+		/// <example>Sms, Email, Push</example>
+		string? ChannelId { get; set; }
+		/// <summary>
+		/// <see cref="IIdentityAddressType">Purpose</see> of the address.
+		/// </summary>
+		/// <example>Primary, Secondary, Home, Work, Mobile</example>
+		string? Purpose { get; set; }
+		/// <summary>
+		/// Defines the parts of an identity address.
+		/// </summary>
+		/// <remarks>Primarily for addresses that are not well represented by a single line. For example: Mailing addresses</remarks>
+		IDictionary<string, string?> AddressParts { get; set; }
+		/// <summary>
+		/// Additional attributes for the address.
+		/// </summary>
+		/// <remarks>Primarily used to define additional context for an address that might be used by a channel provider.</remarks>
+		IDictionary<string, string?> Attributes { get; set; }
 	}
 }

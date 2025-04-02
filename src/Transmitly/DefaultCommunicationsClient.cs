@@ -81,7 +81,7 @@ namespace Transmitly
 					var group = CreateChannelChannelProviderGroupsForPlatformIdentity(
 						pipeline.Category,
 						_channelProviderRegistrations,
-						pipelineConfiguration.Channels,
+						pipelineConfiguration.ChannelRegistrations,
 						allRegisteredChannelProviders,
 						dispatchChannelPreferences,
 						identity
@@ -176,7 +176,7 @@ namespace Transmitly
 		private static ReadOnlyCollection<ChannelChannelProviderGroup> CreateChannelChannelProviderGroupsForPlatformIdentity(
 			string? pipelineCategory,
 			IChannelProviderFactory channelProviderFactory,
-			IReadOnlyCollection<IChannel> configuredChannels,
+			IReadOnlyCollection<IChannelRegistration> configuredChannels,
 			IReadOnlyCollection<IChannelProviderRegistration> configuredChannelProviders,
 			IReadOnlyCollection<string> dispatchChannelPreferences,
 			IPlatformIdentityProfile platformIdentity)
@@ -191,14 +191,14 @@ namespace Transmitly
 				// Filter allowed channel providers based on dispatch preferences and channel restrictions
 				foreach (var channelProvider in configuredChannelProviders)
 				{
-					if (!IsChannelProviderEligible(dispatchChannelPreferences, channel, channelProvider))
+					if (!IsChannelProviderEligible(dispatchChannelPreferences, channel.Channel, channelProvider))
 					{
 						continue;
 					}
 
 					foreach (var dispatcher in channelProvider.DispatcherRegistrations)
 					{
-						if (!IsDispatcherEligible(channelProviderFactory, platformIdentity, activeChannelPreferences, channel, channelProvider, dispatcher))
+						if (!IsDispatcherEligible(channelProviderFactory, platformIdentity, activeChannelPreferences, channel.Channel, channelProvider, dispatcher))
 						{
 							continue;
 						}
@@ -216,7 +216,7 @@ namespace Transmitly
 
 				if (providerWrappers.Count > 0)
 				{
-					groups.Add(new ChannelChannelProviderGroup(channel, providerWrappers.AsReadOnly()));
+					groups.Add(new ChannelChannelProviderGroup(channel.Channel, providerWrappers.AsReadOnly()));
 				}
 			}
 

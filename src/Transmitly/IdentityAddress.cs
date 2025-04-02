@@ -16,13 +16,8 @@ using System.Diagnostics;
 
 namespace Transmitly
 {
-	/// <summary>
-	/// Represents an identity address.
-	/// </summary>
-	/// <remarks>
-	/// Initializes a new instance of the <see cref="IdentityAddress"/> class.
-	/// </remarks>
-	[DebuggerStepThrough]
+
+	/// <inheritdoc cref="IdentityAddress"/>
 	public sealed class IdentityAddress : IIdentityAddress, IEquatable<IdentityAddress>
 	{
 		private const string ValueKey = "value";
@@ -31,7 +26,8 @@ namespace Transmitly
 		/// <param name="addressParts"></param>
 		/// <param name="attributes"></param>        
 		/// <param name="type">Optional type for this address. See: <see cref="Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.</param>
-		public IdentityAddress(IDictionary<string, string?> addressParts, IDictionary<string, string?> attributes, string? type = null)
+		/// <param name="purpose">Purpose of the address.</param>
+		public IdentityAddress(IDictionary<string, string?> addressParts, IDictionary<string, string?> attributes, string? type = null, string? purpose = null)
 		{
 			AddressParts = Guard.AgainstNull(addressParts);
 			Attributes = Guard.AgainstNull(attributes);
@@ -42,22 +38,17 @@ namespace Transmitly
 #pragma warning restore S3928, CA2208 // Parameter names used into ArgumentException constructors should match an existing one 
 			Value = value!;
 
-			Type = type;
+			ChannelId = type;
+			Purpose = purpose;
 		}
 
-		public IdentityAddress(string value, string? display = null, IDictionary<string, string?>? attributes = null, string? type = null)
-			: this(new Dictionary<string, string?>() { { ValueKey, Guard.AgainstNullOrWhiteSpace(value) }, { DisplayKey, display } }, attributes ?? new Dictionary<string, string?>(), type)
+		public IdentityAddress(string value, string? display = null, IDictionary<string, string?>? attributes = null, string? type = null, string? purpose = null)
+			: this(new Dictionary<string, string?>() { { ValueKey, Guard.AgainstNullOrWhiteSpace(value) }, { DisplayKey, display } }, attributes ?? new Dictionary<string, string?>(), type, purpose)
 		{
 		}
 
-		/// <summary>
-		/// Types of identity addresses defined by channels. See: <see cref="Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.
-		/// </summary>
 		public readonly static IIdentityAddressType? Types;
 
-		/// <summary>
-		/// Gets or sets the value of the identity address.
-		/// </summary>
 		public string Value
 		{
 			get => AddressParts[ValueKey]!;
@@ -72,9 +63,6 @@ namespace Transmitly
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets the display value of the identity address.
-		/// </summary>
 		public string? Display
 		{
 			get
@@ -92,14 +80,13 @@ namespace Transmitly
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets the type of identity address. See: <see cref="Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.
-		/// </summary>
-		public string? Type { get; set; }
+		public string? ChannelId { get; set; }
 
 		public IDictionary<string, string?> AddressParts { get; set; }
 
 		public IDictionary<string, string?> Attributes { get; set; }
+
+		public string? Purpose { get; set; }
 
 		/// <summary>
 		/// Implicitly converts a string to an <see cref="IdentityAddress"/>.

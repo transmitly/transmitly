@@ -12,30 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Tests
-{
-	[TestClass()]
-	public class InternetAddressTests
-	{
-		[TestMethod()]
-		[DataRow("")]
-		[DataRow(" ")]
-		[DataRow(null)]
-		public void ShouldRequireValue(string input)
-		{
-			Assert.ThrowsException<ArgumentNullException>(() => new IdentityAddress(input, "notnull"));
-		}
+using Transmitly.Channel.Configuration;
 
-		[TestMethod()]
-		[DataRow("")]
-		[DataRow(" ")]
-		[DataRow(null)]
-		public void ShouldNotRequireDisplayValue(string input)
-		{
-			const string expectedValue = "value";
-			var address = new IdentityAddress(expectedValue, input);
-			Assert.AreEqual(expectedValue, address.Value);
-			Assert.AreEqual(input, address.Display);
-		}
+namespace Transmitly.Pipeline.Configuration
+{
+	public interface IChannelRegistration
+	{
+		public IChannel Channel { get; }
+		public string? ToAddress { get; }
+		public string? ToAddressPurpose { get; }
+		public string? BlindCopyAddress { get; }
+		public string? BlindCopyAddressPurpose { get; }
+		public string? CopyAddress { get; }
+		public string? CopyAddressPurpose { get; }
+		public bool CompleteOnDispatch { get; }
+		IReadOnlyCollection<string> FilterChannelProviderIds { get; }
 	}
 }

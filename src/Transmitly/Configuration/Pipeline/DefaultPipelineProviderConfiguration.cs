@@ -17,48 +17,40 @@ using Transmitly.Delivery;
 
 namespace Transmitly.Pipeline.Configuration
 {
+	/// <inheritdoc cref="IPipelineConfiguration"/>
 	internal class DefaultPipelineProviderConfiguration : IPipelineConfiguration
 	{
-		private readonly List<IChannel> _channels = [];
+		private readonly List<IChannelRegistration> _channelRegistrations = [];
 		private readonly List<string> _personaFilters = [];
-		
+		private DefaultPipelineChannelConfiguration? _activeChannel;
+		private readonly List<string> _platformIdentityTypeFilters = [];
+
 		public TransportPriority TransportPriority { get; set; } = TransportPriority.Normal;
 
 		public MessagePriority MessagePriority { get; set; } = MessagePriority.Normal;
 
-		public ICollection<string> BlindCopyIdentityAddresses { get; } = [];
-
-		public ICollection<string> CopyIdentityAddresses { get; } = [];
-
 		public IReadOnlyCollection<string> PersonaFilters => _personaFilters.AsReadOnly();
-		
+
+		public string? PipelineId { get; set; }
+
 		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
 
-		public IReadOnlyCollection<IChannel> Channels => _channels;
+		public IReadOnlyCollection<IChannelRegistration> ChannelRegistrations => _channelRegistrations.AsReadOnly();
+
+		public IReadOnlyCollection<string> PlatformIdentityTypeFilters => _platformIdentityTypeFilters.AsReadOnly();
 
 		public string? Description { get; set; }
 
-		public IPipelineConfiguration AddChannel(IChannel channel)
+		public IPipelineChannelConfiguration AddChannel(IChannel channel)
 		{
-			_channels.Add(Guard.AgainstNull(channel));
-			return this;
-		}
-		
-		public IPipelineConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType)
-		{
-			Array.ForEach(platformIdentityType, BlindCopyIdentityAddresses.Add);
-			return this;
+			EndActiveChannelConfiguration();
+			_activeChannel = new DefaultPipelineChannelConfiguration(this, new ChannelRegistration(channel));
+			return _activeChannel;
 		}
 
 		public IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider)
 		{
 			PipelineDeliveryStrategyProvider = Guard.AgainstNull(deliveryStrategyProvider);
-			return this;
-		}
-
-		public IPipelineConfiguration CopyIdentityAddress(params string[] platformIdentityType)
-		{
-			Array.ForEach(platformIdentityType, CopyIdentityAddresses.Add);
 			return this;
 		}
 
@@ -70,6 +62,36 @@ namespace Transmitly.Pipeline.Configuration
 				_personaFilters.Add(personaName);
 
 			return this;
+		}
+
+		public IPipelineConfiguration AddPlatformIdentityTypeFilter(string platformIdentityType)
+		{
+			Guard.AgainstNullOrWhiteSpace(platformIdentityType);
+
+			if (!_personaFilters.Exists(a => a.Equals(platformIdentityType, StringComparison.OrdinalIgnoreCase)))
+				_personaFilters.Add(platformIdentityType);
+
+			return this;
+		}
+
+		public IPipelineConfiguration Id(string id)
+		{
+			PipelineId = id;
+			return this;
+		}
+
+		public void Build()
+		{
+			EndActiveChannelConfiguration();
+		}
+
+		private void EndActiveChannelConfiguration()
+		{
+			if (_activeChannel == null)
+				return;
+
+			_channelRegistrations.Add(_activeChannel.Registration);
+			_activeChannel = null;
 		}
 	}
 }

@@ -19,7 +19,7 @@ namespace Transmitly
 		public static bool IsType(this IIdentityAddress identityAddress, string type)
 		{
 			Guard.AgainstNull(identityAddress);
-			return type.Equals(identityAddress.Type, StringComparison.OrdinalIgnoreCase);
+			return type.Equals(identityAddress.ChannelId, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public static T? IfType<T>(this IIdentityAddress identityAddress, string type, T? value)

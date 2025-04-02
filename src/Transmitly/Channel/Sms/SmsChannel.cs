@@ -82,10 +82,10 @@ namespace Transmitly.Channel.Sms
 		{
 			return identityAddress != null &&
 				(
-					string.IsNullOrWhiteSpace(identityAddress.Type) ||
+					string.IsNullOrWhiteSpace(identityAddress.ChannelId) ||
 					(
-						!string.IsNullOrWhiteSpace(identityAddress.Type) &&
-						!_supportedAddressTypes.Contains(identityAddress.Type)
+						!string.IsNullOrWhiteSpace(identityAddress.ChannelId) &&
+						!_supportedAddressTypes.Contains(identityAddress.ChannelId)
 					)
 				) &&
 				_smsMatchRegex.IsMatch(identityAddress.Value);

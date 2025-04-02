@@ -34,7 +34,7 @@ namespace Transmitly.Channel.Push.Tests
 				var channel = new PushNotificationChannel([]);
 				var result = channel.SupportsIdentityAddress(test.Item1);
 
-				Assert.AreEqual(test.Item2, result, test.Item1.Value + ":" + test.Item1.Type);
+				Assert.AreEqual(test.Item2, result, test.Item1.Value + ":" + test.Item1.ChannelId);
 			}
 		}
 	}

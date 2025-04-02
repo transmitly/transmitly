@@ -17,7 +17,5 @@ namespace Transmitly
 	/// <summary>
 	/// Marker interface for allowing <see cref="Channel.Configuration.IChannel"/>'s to define address types programmatically.
 	/// </summary>
-	public interface IIdentityAddressType
-	{
-	}
+	public interface IIdentityAddressType { }
 }

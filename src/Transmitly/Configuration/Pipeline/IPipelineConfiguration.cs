@@ -26,7 +26,7 @@ namespace Transmitly.Pipeline.Configuration
 		/// Gets the list of available channels registered in the pipeline.
 		/// </summary>
 		/// <see cref="AddChannel(IChannel)"/>
-		IReadOnlyCollection<IChannel> Channels { get; }
+		IReadOnlyCollection<IChannelRegistration> ChannelRegistrations { get; }
 		/// <summary>
 		/// Gets the list of persona filters registered in the pipeline.
 		/// </summary>
@@ -44,23 +44,11 @@ namespace Transmitly.Pipeline.Configuration
 		/// </summary>
 		MessagePriority MessagePriority { get; set; }
 		/// <summary>
-		/// Recipients to copy the message to (if supported).
-		/// </summary>
-		/// <param name="platformIdentityType"></param>
-		/// <returns>Pipeline configuration</returns>
-		IPipelineConfiguration CopyIdentityAddress(params string[] platformIdentityType);
-		/// <summary>
-		/// Recipients to blind copy the message to (if supported).
-		/// </summary>
-		/// <param name="platformIdentityType"></param>
-		/// <returns>Pipeline configuration</returns>
-		IPipelineConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType);
-		/// <summary>
 		/// Registers a communication channel with the pipeline.
 		/// </summary>
 		/// <param name="channel"><see cref="IChannel"/> to register.</param>
 		/// <returns>Pipeline configuration</returns>
-		IPipelineConfiguration AddChannel(IChannel channel);
+		IPipelineChannelConfiguration AddChannel(IChannel channel);
 		/// <summary>
 		/// Sets the pipeline sending strategy provider.
 		/// </summary>
@@ -73,5 +61,17 @@ namespace Transmitly.Pipeline.Configuration
 		/// <param name="personaName">Name of the registered persona filter.</param>
 		/// <returns>Pipeline configuration.</returns>
 		IPipelineConfiguration AddPersonaFilter(string personaName);
+		/// <summary>
+		/// Adds a platform identity type filter to the pipeline configuration.
+		/// </summary>
+		/// <param name="platformIdentityType"></param>
+		/// <returns></returns>
+		IPipelineConfiguration AddPlatformIdentityTypeFilter(string platformIdentityType);
+		/// <summary>
+		///  If more than one pipeline is registered for the same name, the id is used to differentiate them.
+		/// </summary>
+		/// <param name="id">Unique id of the pipeline.</param>
+		/// <returns>Pipeline configuration.</returns>
+		IPipelineConfiguration Id(string id);
 	}
 }

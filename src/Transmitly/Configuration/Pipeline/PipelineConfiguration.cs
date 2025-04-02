@@ -46,6 +46,7 @@ namespace Transmitly.Pipeline.Configuration
 		{
 			var detailConfig = new DefaultPipelineProviderConfiguration();
 			options(detailConfig);
+			detailConfig.Build();
 			_addPipeline(new PipelineRegistration(detailConfig, name, null, category, transportPriority, messagePriority));
 			return _communicationsConfiguration;
 		}
@@ -97,6 +98,7 @@ namespace Transmitly.Pipeline.Configuration
 
 			var config = new DefaultPipelineProviderConfiguration();
 			configurator.Configure(config);
+			config.Build();
 			_addPipeline(new PipelineRegistration(config, configurator.Name, null, configurator.Category, config.TransportPriority, config.MessagePriority));
 			return _communicationsConfiguration;
 		}
