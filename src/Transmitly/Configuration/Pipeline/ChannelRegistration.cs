@@ -16,7 +16,7 @@ using Transmitly.Channel.Configuration;
 
 namespace Transmitly.Pipeline.Configuration
 {
-	internal class ChannelRegistration(IChannel channel) : IChannelRegistration
+	internal sealed class ChannelRegistration(IChannel channel) : IChannelRegistration
 	{
 		public IChannel Channel { get; } = Guard.AgainstNull(channel);
 		public string? ToAddress { get; internal set; }

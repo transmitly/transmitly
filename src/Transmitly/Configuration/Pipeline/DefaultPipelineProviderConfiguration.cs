@@ -18,12 +18,13 @@ using Transmitly.Delivery;
 namespace Transmitly.Pipeline.Configuration
 {
 	/// <inheritdoc cref="IPipelineConfiguration"/>
-	internal class DefaultPipelineProviderConfiguration : IPipelineConfiguration
+	internal sealed class DefaultPipelineProviderConfiguration : IPipelineConfiguration
 	{
 		private readonly List<IChannelRegistration> _channelRegistrations = [];
 		private readonly List<string> _personaFilters = [];
 		private DefaultPipelineChannelConfiguration? _activeChannel;
 		private readonly List<string> _platformIdentityTypeFilters = [];
+		private bool _isConfigurationComplete = false;
 
 		public TransportPriority TransportPriority { get; set; } = TransportPriority.Normal;
 
@@ -31,7 +32,7 @@ namespace Transmitly.Pipeline.Configuration
 
 		public IReadOnlyCollection<string> PersonaFilters => _personaFilters.AsReadOnly();
 
-		public string? PipelineId { get; set; }
+		public string? PipelineId { get; private set; }
 
 		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
 
@@ -39,23 +40,24 @@ namespace Transmitly.Pipeline.Configuration
 
 		public IReadOnlyCollection<string> PlatformIdentityTypeFilters => _platformIdentityTypeFilters.AsReadOnly();
 
-		public string? Description { get; set; }
-
 		public IPipelineChannelConfiguration AddChannel(IChannel channel)
 		{
+			EnsureNotCompleted();
 			EndActiveChannelConfiguration();
-			_activeChannel = new DefaultPipelineChannelConfiguration(this, new ChannelRegistration(channel));
+			_activeChannel = new(this, channel);
 			return _activeChannel;
 		}
 
 		public IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider)
 		{
+			EnsureNotCompleted();
 			PipelineDeliveryStrategyProvider = Guard.AgainstNull(deliveryStrategyProvider);
 			return this;
 		}
 
 		public IPipelineConfiguration AddPersonaFilter(string personaName)
 		{
+			EnsureNotCompleted();
 			Guard.AgainstNullOrWhiteSpace(personaName);
 
 			if (!_personaFilters.Exists(a => a.Equals(personaName, StringComparison.OrdinalIgnoreCase)))
@@ -66,23 +68,34 @@ namespace Transmitly.Pipeline.Configuration
 
 		public IPipelineConfiguration AddPlatformIdentityTypeFilter(string platformIdentityType)
 		{
+			EnsureNotCompleted();
 			Guard.AgainstNullOrWhiteSpace(platformIdentityType);
 
-			if (!_personaFilters.Exists(a => a.Equals(platformIdentityType, StringComparison.OrdinalIgnoreCase)))
-				_personaFilters.Add(platformIdentityType);
+			if (!_platformIdentityTypeFilters.Exists(a => a.Equals(platformIdentityType, StringComparison.OrdinalIgnoreCase)))
+				_platformIdentityTypeFilters.Add(platformIdentityType);
 
 			return this;
 		}
 
 		public IPipelineConfiguration Id(string id)
 		{
+			EnsureNotCompleted();
 			PipelineId = id;
 			return this;
 		}
 
+
 		public void Build()
 		{
+			EnsureNotCompleted();
 			EndActiveChannelConfiguration();
+			_isConfigurationComplete = true;
+		}
+
+		private void EnsureNotCompleted()
+		{
+			if (_isConfigurationComplete)
+				throw new InvalidOperationException("Configuration has been built and cannot be modified.");
 		}
 
 		private void EndActiveChannelConfiguration()

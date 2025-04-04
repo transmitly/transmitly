@@ -44,6 +44,10 @@ namespace Transmitly.Pipeline.Configuration
 		/// </summary>
 		MessagePriority MessagePriority { get; set; }
 		/// <summary>
+		/// Unique Id of the pipeline.
+		/// </summary>
+		string? PipelineId { get; }
+		/// <summary>
 		/// Registers a communication channel with the pipeline.
 		/// </summary>
 		/// <param name="channel"><see cref="IChannel"/> to register.</param>

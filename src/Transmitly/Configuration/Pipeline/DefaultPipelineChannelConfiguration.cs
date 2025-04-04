@@ -17,10 +17,10 @@ using Transmitly.Delivery;
 
 namespace Transmitly.Pipeline.Configuration
 {
-	internal class DefaultPipelineChannelConfiguration(DefaultPipelineProviderConfiguration pipelineConfiguration, ChannelRegistration channelRegistration) : IPipelineChannelConfiguration
+	internal sealed class DefaultPipelineChannelConfiguration(IPipelineConfiguration pipelineConfiguration, IChannel channel) : IPipelineChannelConfiguration
 	{
-		private readonly DefaultPipelineProviderConfiguration _pipeline = Guard.AgainstNull(pipelineConfiguration);
-		private readonly ChannelRegistration _registration = Guard.AgainstNull(channelRegistration);
+		private readonly IPipelineConfiguration _pipeline = Guard.AgainstNull(pipelineConfiguration);
+		private readonly ChannelRegistration _registration = new(Guard.AgainstNull(channel));
 		internal ChannelRegistration Registration => _registration;
 
 		public IReadOnlyCollection<IChannelRegistration> ChannelRegistrations => _pipeline.ChannelRegistrations;
@@ -31,6 +31,8 @@ namespace Transmitly.Pipeline.Configuration
 
 		public TransportPriority TransportPriority { get => _pipeline.TransportPriority; set => _pipeline.TransportPriority = value; }
 		public MessagePriority MessagePriority { get => _pipeline.MessagePriority; set => _pipeline.MessagePriority = value; }
+
+		public string? PipelineId => _pipeline.PipelineId;
 
 		public IPipelineChannelConfiguration AddChannel(IChannel channel)
 		{
@@ -104,6 +106,5 @@ namespace Transmitly.Pipeline.Configuration
 		{
 			return _pipeline.UsePipelineDeliveryStrategy(deliveryStrategyProvider);
 		}
-
 	}
 }

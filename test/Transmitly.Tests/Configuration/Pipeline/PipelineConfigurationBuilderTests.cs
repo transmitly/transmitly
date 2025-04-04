@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using Moq;
+using Transmitly.Delivery;
 using Transmitly.Tests;
 
 namespace Transmitly.Pipeline.Configuration.Tests
@@ -20,6 +21,13 @@ namespace Transmitly.Pipeline.Configuration.Tests
 	[TestClass()]
 	public class PipelineConfiguratorTests
 	{
+		private DefaultPipelineProviderConfiguration config;
+		[TestInitialize]
+		public void Setup()
+		{
+			config = new DefaultPipelineProviderConfiguration();
+		}
+
 		[TestMethod]
 		public void PipelineConfiguratorShouldConfigureChannelConfig()
 		{
@@ -93,22 +101,84 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		}
 
 		[TestMethod]
-		public void FluentConfigurationTest()
+		public void BuildShouldSetPipelineIdAndPlatformIdentityTypeFilter()
 		{
-			var config = new DefaultPipelineProviderConfiguration();
-			config
-				.AddChannel(new UnitTestChannel("unit-test-address"))
-					.ToAddress("1")
-					.ToAddressPurpose("2")
-				.AddEmail("test".AsIdentityAddress(), e => { })
-				.AddSms("test-sms".AsIdentityAddress(), cfg => { })
-					.ChannelProviderFilter("InfoBip")
-					.CompleteOnDispatched()
-				.Id("3")
-				.AddPlatformIdentityTypeFilter("x");
+			var expectedPipelineId = "ExpectedPipelineId";
+			var expectedPlatformIdentityTypeFilter = "ExpectedPlatformIdentityFilter";
+			config.Id(expectedPipelineId)
+				  .AddPlatformIdentityTypeFilter(expectedPlatformIdentityTypeFilter);
+
 			config.Build();
-			Assert.AreEqual(3, config.ChannelRegistrations.Count);
-			Assert.AreEqual("3", config.PipelineId);
+
+			Assert.AreEqual(expectedPipelineId, config.PipelineId, "PipelineId was not set correctly.");
+			Assert.AreEqual(expectedPlatformIdentityTypeFilter, config.PlatformIdentityTypeFilters.First(), "PlatformIdentityTypeFilter was not set correctly.");
+		}
+
+		[TestMethod]
+		public void AddChannelShouldConfigureToAddressAndToAddressPurpose()
+		{
+			var expectedToAddress = "ExpectedToAddress";
+			var expectedToAddressPurpose = "ExpectedToAddressPurpose";
+
+			var channelBuilder = config.AddChannel(new UnitTestChannel("unit-test-address"));
+			channelBuilder.ToAddress(expectedToAddress)
+						  .ToAddressPurpose(expectedToAddressPurpose);
+
+			config.Build();
+
+			var channel = config.ChannelRegistrations.FirstOrDefault(c => c.ToAddress == expectedToAddress);
+			Assert.IsNotNull(channel, "Channel registration with the expected ToAddress was not found.");
+			Assert.AreEqual(expectedToAddress, channel.ToAddress, "ToAddress was not configured correctly.");
+			Assert.AreEqual(expectedToAddressPurpose, channel.ToAddressPurpose, "ToAddressPurpose was not configured correctly.");
+		}
+
+		[TestMethod]
+		public void AddSmsShouldApplyChannelProviderFilterAndDispatchSetting()
+		{
+			var expectedChannelProviderFilter = "ExpectedProviderFilter";
+
+			config.AddEmail("test".AsIdentityAddress(), e => { });
+
+			var smsBuilder = config.AddSms("test-sms".AsIdentityAddress(), cfg => { });
+			smsBuilder.ChannelProviderFilter(expectedChannelProviderFilter)
+					  .CompleteOnDispatched();
+
+			config.Build();
+
+			var smsChannel = config.ChannelRegistrations.FirstOrDefault(c => c.FilterChannelProviderIds.Count > 0);
+			Assert.IsNotNull(smsChannel, "SMS channel with a provider filter was not found.");
+			Assert.AreEqual(expectedChannelProviderFilter, smsChannel.FilterChannelProviderIds.First(), "ChannelProviderFilter was not set correctly on the SMS channel.");
+		}
+
+		[TestMethod]
+		public void ChannelRegistrationsShouldHaveExpectedCountAfterBuild()
+		{
+			config.AddChannel(new UnitTestChannel("unit-test-address"))
+				  .ToAddress("Address1")
+				  .ToAddressPurpose("Purpose1");
+			config.AddEmail("email@test.com".AsIdentityAddress(), e => { });
+			config.AddSms("sms@test.com".AsIdentityAddress(), cfg => { })
+				  .ChannelProviderFilter("ProviderFilter")
+				  .CompleteOnDispatched();
+
+			config.Build();
+
+			var expectedChannelRegistrationCount = 3;
+			Assert.AreEqual(expectedChannelRegistrationCount, config.ChannelRegistrations.Count, "The number of channel registrations is not as expected.");
+		}
+
+		[TestMethod]
+		public void ConfigurationShouldBeImmutableAfterBuild()
+		{
+			config.Id("InitialPipelineId");
+			config.Build();
+
+			Assert.ThrowsExactly<InvalidOperationException>(() => config.Id("AnotherPipelineId"), "Configuration should be immutable after Build is called.");
+			Assert.ThrowsExactly<InvalidOperationException>(() => config.AddPlatformIdentityTypeFilter("AnotherPipelineId"), "Configuration should be immutable after Build is called.");
+			Assert.ThrowsExactly<InvalidOperationException>(() => config.AddPersonaFilter("AnotherPipelineId"), "Configuration should be immutable after Build is called.");
+			Assert.ThrowsExactly<InvalidOperationException>(() => config.UsePipelineDeliveryStrategy(new AnyMatchPipelineDeliveryStrategy()), "Configuration should be immutable after Build is called.");
+			Assert.ThrowsExactly<InvalidOperationException>(() => config.AddChannel(new UnitTestChannel("test")), "Configuration should be immutable after Build is called.");
+			Assert.ThrowsExactly<InvalidOperationException>(() => config.Build(), "Configuration should be immutable after Build is called.");
 		}
 	}
 }
