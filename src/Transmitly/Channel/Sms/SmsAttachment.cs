@@ -16,7 +16,7 @@ using Transmitly.Exceptions;
 
 namespace Transmitly.Channel.Sms
 {
-	internal class SmsAttachment : IAttachment
+	internal class SmsAttachment : ISmsAttachment
 	{
 		public SmsAttachment(Resource resource)
 		{

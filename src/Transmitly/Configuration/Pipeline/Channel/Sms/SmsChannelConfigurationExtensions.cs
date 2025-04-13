@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Channel.Configuration.Sms;
 using Transmitly.Channel.Sms;
 using Transmitly.Pipeline.Configuration;
 
@@ -40,13 +41,12 @@ namespace Transmitly
 		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
 		/// <param name="fromAddressResolver">Service to resolve the from address for this channel.</param>
 		/// <param name="smsChannelConfiguration">Sms Channel configuration options.</param>
-		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel.</param>
 		/// <returns></returns>
-		public static IPipelineConfiguration AddSms(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, Action<ISmsChannel> smsChannelConfiguration, params string[]? allowedChannelProviders)
+		public static IPipelineConfiguration AddSms(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress?>? fromAddressResolver, Action<ISmsChannelConfiguration> smsChannelConfiguration)
 		{
-			var emailOptions = new SmsChannel(fromAddressResolver, allowedChannelProviders);
-			smsChannelConfiguration(emailOptions);
-			pipelineChannelConfiguration.AddChannel(emailOptions);
+			var smsOptions = new SmsChannelConfiguration(fromAddressResolver);
+			smsChannelConfiguration(smsOptions);
+			pipelineChannelConfiguration.AddChannel(new SmsChannel(smsOptions));
 			return pipelineChannelConfiguration;
 		}
 
@@ -56,14 +56,10 @@ namespace Transmitly
 		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
 		/// <param name="fromAddress">Address used as the 'from' address.</param>
 		/// <param name="smsChannelConfiguration">Sms Channel configuration options.</param>
-		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel.</param>
 		/// <returns></returns>
-		public static IPipelineConfiguration AddSms(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<ISmsChannel> smsChannelConfiguration, params string[]? allowedChannelProviders)
+		public static IPipelineConfiguration AddSms(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<ISmsChannelConfiguration> smsChannelConfiguration)
 		{
-			var emailOptions = new SmsChannel(fromAddress, allowedChannelProviders);
-			smsChannelConfiguration(emailOptions);
-			pipelineChannelConfiguration.AddChannel(emailOptions);
-			return pipelineChannelConfiguration;
+			return AddSms(pipelineChannelConfiguration, _ => fromAddress, smsChannelConfiguration);
 		}
 
 		/// <summary>
@@ -71,14 +67,10 @@ namespace Transmitly
 		/// </summary>
 		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
 		/// <param name="smsChannelConfiguration">Sms Channel configuration options.</param>
-		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel.</param>
 		/// <returns></returns>
-		public static IPipelineConfiguration AddSms(this IPipelineConfiguration pipelineChannelConfiguration, Action<ISmsChannel> smsChannelConfiguration, params string[]? allowedChannelProviders)
+		public static IPipelineConfiguration AddSms(this IPipelineConfiguration pipelineChannelConfiguration, Action<ISmsChannelConfiguration> smsChannelConfiguration)
 		{
-			var emailOptions = new SmsChannel(allowedChannelProviders);
-			smsChannelConfiguration(emailOptions);
-			pipelineChannelConfiguration.AddChannel(emailOptions);
-			return pipelineChannelConfiguration;
+			return AddSms(pipelineChannelConfiguration, fromAddressResolver: null, smsChannelConfiguration);
 		}
 	}
 }

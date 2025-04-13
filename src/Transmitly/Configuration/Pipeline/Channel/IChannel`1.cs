@@ -12,23 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Exceptions;
-
-namespace Transmitly.Channel.Email
+namespace Transmitly.Channel.Configuration
 {
-	internal class EmailAttachment : IEmailAttachment
+	public interface IChannel<T> : IChannel
 	{
-		public EmailAttachment(Resource resource)
-		{
-			Name = Guard.AgainstNullOrWhiteSpace(resource.Name);
-			ContentType = Guard.AgainstNullOrWhiteSpace(resource.ContentType);
-			ContentStream = Guard.AgainstNull(resource.ContentStream);
-			if (!ContentStream.CanRead)
-				throw new CommunicationsException("Attachment ContentStream is not readable.");
-		}
-
-		public string? Name { get; }
-		public string? ContentType { get; }
-		public Stream? ContentStream { get; }
+		/// <summary>
+		/// Generates a channel communication given the provided dispatch context.
+		/// </summary>
+		/// <param name="communicationContext">Context of the operation.</param>
+		/// <returns>Channel communication</returns>
+		new Task<T> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
 	}
 }

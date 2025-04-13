@@ -19,7 +19,7 @@ namespace Transmitly
 		string? Title { get; }
 		string? Body { get; }
 		string? ImageUrl { get; }
-		IReadOnlyCollection<IIdentityAddress> To { get; }
+		IReadOnlyCollection<IIdentityAddress> Recipient { get; }
 		IExtendedProperties ExtendedProperties { get; }
 	}
 }

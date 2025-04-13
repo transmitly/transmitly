@@ -13,8 +13,8 @@
 //  limitations under the License.
 
 using AutoFixture;
-using Transmitly.Template.Configuration;
 using Transmitly.Exceptions;
+using Transmitly.Template.Configuration;
 
 namespace Transmitly.Tests
 {

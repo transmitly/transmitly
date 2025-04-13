@@ -21,8 +21,8 @@ namespace Transmitly
 		{
 
 #if NET6_0_OR_GREATER
-            ArgumentNullException.ThrowIfNull(nameof(source));
-            ArgumentNullException.ThrowIfNull(nameof(predicate));
+			ArgumentNullException.ThrowIfNull(nameof(source));
+			ArgumentNullException.ThrowIfNull(nameof(predicate));
 #else
 			if (source == null)
 				throw new ArgumentNullException(nameof(source));
@@ -43,8 +43,8 @@ namespace Transmitly
 		public static async Task<bool> AllAsync<TSource>(this IEnumerable<Task<TSource>> source, Func<TSource, bool> predicate)
 		{
 #if NET6_0_OR_GREATER
-            ArgumentNullException.ThrowIfNull(nameof(source));
-            ArgumentNullException.ThrowIfNull(nameof(predicate));
+			ArgumentNullException.ThrowIfNull(nameof(source));
+			ArgumentNullException.ThrowIfNull(nameof(predicate));
 #else
 			if (source == null)
 				throw new ArgumentNullException(nameof(source));

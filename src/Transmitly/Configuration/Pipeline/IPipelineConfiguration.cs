@@ -58,7 +58,7 @@ namespace Transmitly.Pipeline.Configuration
 		/// <summary>
 		/// Registers a communication channel with the pipeline.
 		/// </summary>
-		/// <param name="channel"><see cref="IChannel"/> to register.</param>
+		/// <param name="channel"><see cref="IChannelConfiguration"/> to register.</param>
 		/// <returns>Pipeline configuration</returns>
 		IPipelineConfiguration AddChannel(IChannel channel);
 		/// <summary>

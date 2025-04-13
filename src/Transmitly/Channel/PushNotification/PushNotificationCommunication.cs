@@ -22,7 +22,7 @@ namespace Transmitly.Channel.Push
 
 		public string? ImageUrl { get; set; } = imageUrl;
 
-		public IReadOnlyCollection<IIdentityAddress> To { get; } = Guard.AgainstNull(identityAddresses);
+		public IReadOnlyCollection<IIdentityAddress> Recipient { get; } = Guard.AgainstNull(identityAddresses);
 
 		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 	}

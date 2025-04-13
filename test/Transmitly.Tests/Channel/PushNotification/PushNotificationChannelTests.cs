@@ -12,6 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Channel.Configuration.Push;
+
 namespace Transmitly.Channel.Push.Tests
 {
 	[TestClass()]
@@ -31,7 +33,7 @@ namespace Transmitly.Channel.Push.Tests
 
 			foreach (var test in tests)
 			{
-				var channel = new PushNotificationChannel([]);
+				var channel = new PushNotificationChannel(new PushNotificationChannelConfiguration());
 				var result = channel.SupportsIdentityAddress(test.Item1);
 
 				Assert.AreEqual(test.Item2, result, test.Item1.Value + ":" + test.Item1.Type);

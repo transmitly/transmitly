@@ -133,7 +133,7 @@ namespace Transmitly
 
 			// Return primitive types, strings, decimals, DateTimes as is.
 			var type = input.GetType();
-			if (input is string || type.IsPrimitive || input is decimal || input is DateTime|| input is Guid)
+			if (input is string || type.IsPrimitive || input is decimal || input is DateTime || input is Guid)
 				return input;
 
 			// If already a DynamicContentModel, no need to convert further.

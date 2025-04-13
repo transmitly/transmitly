@@ -21,7 +21,7 @@ namespace Transmitly.Pipeline.Configuration
 	{
 		private readonly List<IChannel> _channels = [];
 		private readonly List<string> _personaFilters = [];
-		
+
 		public TransportPriority TransportPriority { get; set; } = TransportPriority.Normal;
 
 		public MessagePriority MessagePriority { get; set; } = MessagePriority.Normal;
@@ -31,19 +31,19 @@ namespace Transmitly.Pipeline.Configuration
 		public ICollection<string> CopyIdentityAddresses { get; } = [];
 
 		public IReadOnlyCollection<string> PersonaFilters => _personaFilters.AsReadOnly();
-		
+
 		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
 
-		public IReadOnlyCollection<IChannel> Channels => _channels;
-
 		public string? Description { get; set; }
+
+		public IReadOnlyCollection<IChannel> Channels => _channels.AsReadOnly();
 
 		public IPipelineConfiguration AddChannel(IChannel channel)
 		{
 			_channels.Add(Guard.AgainstNull(channel));
 			return this;
 		}
-		
+
 		public IPipelineConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType)
 		{
 			Array.ForEach(platformIdentityType, BlindCopyIdentityAddresses.Add);

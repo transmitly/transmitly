@@ -14,6 +14,7 @@
 
 using AutoFixture;
 using Moq;
+using Transmitly.Channel.Configuration.Voice;
 using Transmitly.Exceptions;
 using Transmitly.Tests;
 
@@ -38,7 +39,7 @@ namespace Transmitly.Channel.Voice.Tests
 		[DataRow("+2902124", true)]
 		public void SupportsIdentityAddressTest(string value, bool expected)
 		{
-			var sms = new VoiceChannel();
+			var sms = new VoiceChannel(new VoiceChannelConfiguration(null));
 			var result = sms.SupportsIdentityAddress(value.AsIdentityAddress());
 			Assert.AreEqual(expected, result, value);
 		}
@@ -57,27 +58,30 @@ namespace Transmitly.Channel.Voice.Tests
 			var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
 			mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 			var context = mockContext.Object;
-			var sut = fixture.Create<VoiceChannel>();
+			var from = "8888".AsIdentityAddress();
+			var config = new VoiceChannelConfiguration(_ => from);
 			var body = fixture.Freeze<string>();
-			sut.Message.AddStringTemplate(body);
+			config.Message.AddStringTemplate(body);
+
+			var sut = new VoiceChannel(config);
 
 			var result = await sut.GenerateCommunicationAsync(context);
 
 			Assert.IsInstanceOfType(result, typeof(IVoice));
-			var sms = (IVoice)result;
-			Assert.AreEqual(sut.From, sms.From);
-			Assert.AreEqual(body, sms.Message);
-			Assert.AreEqual(context.TransportPriority, sms.TransportPriority);
-			Assert.AreEqual(sut.DeliveryReportCallbackUrl, sms.DeliveryReportCallbackUrl);
-			Assert.AreEqual(sut.DeliveryReportCallbackUrlResolver, sms.DeliveryReportCallbackUrlResolver);
-			CollectionAssert.AreEquivalent(mockContext.Object.PlatformIdentities.SelectMany(m => m.Addresses).ToArray(), sms.To);
+
+			Assert.AreEqual(from, result.From);
+			Assert.AreEqual(body, result.Message);
+			Assert.AreEqual(context.TransportPriority, result.TransportPriority);
+			CollectionAssert.AreEquivalent(mockContext.Object.PlatformIdentities.SelectMany(m => m.Addresses).ToArray(), result.To);
 		}
 
 		[TestMethod]
 		public void ShouldSetProvidedChannelProviderIds()
 		{
 			var list = fixture.Freeze<string[]>();
-			var sut = new VoiceChannel(list);
+			var config = new VoiceChannelConfiguration(null);
+			config.AddChannelProviderFilter(list);
+			var sut = new VoiceChannel(config);
 			CollectionAssert.AreEquivalent(list, sut.AllowedChannelProviderIds.ToArray());
 		}
 
@@ -97,11 +101,10 @@ namespace Transmitly.Channel.Voice.Tests
 		public void ShouldSetProvidedFromAddress()
 		{
 			var from = fixture.Freeze<IIdentityAddress>();
-			var sut = new VoiceChannel(from);
-			Assert.AreSame(from, sut.From);
-
-			sut = new VoiceChannel(from, fixture.Create<string[]>());
-			Assert.AreSame(from, sut.From);
+			var config = new VoiceChannelConfiguration(_ => from);
+			var sut = new VoiceChannel(config);
+			Assert.IsNotNull(config.FromAddressResolver);
+			Assert.AreSame(from, config.FromAddressResolver(new Mock<IDispatchCommunicationContext>().Object));
 		}
 
 		[TestMethod]
@@ -113,12 +116,12 @@ namespace Transmitly.Channel.Voice.Tests
 			var context = mockContext.Object;
 			var body = fixture.Freeze<string>();
 
+			var config = new VoiceChannelConfiguration(_ => from);
+			config.Message.AddStringTemplate(body);
+			var sut = new VoiceChannel(config);
 
-			var sut = new VoiceChannel((ctx) => from);
-			sut.Message.AddStringTemplate(body);
 			var result = await sut.GenerateCommunicationAsync(context);
-			var sms = (IVoice)result;
-			Assert.AreSame(from, sms.From);
+			Assert.AreSame(from, result.From);
 		}
 	}
 }

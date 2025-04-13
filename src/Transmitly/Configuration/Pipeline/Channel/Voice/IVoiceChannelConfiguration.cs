@@ -12,24 +12,23 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel.Configuration;
 using Transmitly.Template.Configuration;
 
-namespace Transmitly
+namespace Transmitly.Channel.Configuration.Voice
 {
 	/// <summary>
 	/// Voice Communications Channel
 	/// </summary>
-	public interface IVoiceChannel : IChannel
+	public interface IVoiceChannelConfiguration : IChannelConfiguration
 	{
 		/// <summary>
 		/// From Address
 		/// </summary>
-		IIdentityAddress? From { get; }
+		Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver { get; }
 		/// <summary>
 		/// Details of the voice to use.
 		/// </summary>
-		IVoiceType? VoiceType { get; set; }
+		IVoiceType? VoiceType { get; }
 		/// <summary>
 		/// SSML voice message 
 		/// </summary>
@@ -37,14 +36,6 @@ namespace Transmitly
 		/// <summary>
 		/// Level of machine detection.
 		/// </summary>
-		MachineDetection MachineDetection { get; set; }
-		/// <summary>
-		/// The URL to call for status updates for the dispatched communication.
-		/// </summary>
-		string? DeliveryReportCallbackUrl { get; set; }
-		/// <summary>
-		/// A resolver that will return The URL to call for status updates for the dispatched communication.
-		/// </summary>
-		Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+		MachineDetection MachineDetection { get; }
 	}
 }

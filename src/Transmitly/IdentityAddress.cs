@@ -31,7 +31,8 @@ namespace Transmitly
 		/// <param name="addressParts"></param>
 		/// <param name="attributes"></param>        
 		/// <param name="type">Optional type for this address. See: <see cref="Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.</param>
-		public IdentityAddress(IDictionary<string, string?> addressParts, IDictionary<string, string?> attributes, string? type = null)
+		/// <param name="purposes">Optional purposes this address can be used for.</param>
+		public IdentityAddress(IDictionary<string, string?> addressParts, IDictionary<string, string?> attributes, string? type = null, params string[] purposes)
 		{
 			AddressParts = Guard.AgainstNull(addressParts);
 			Attributes = Guard.AgainstNull(attributes);
@@ -43,6 +44,8 @@ namespace Transmitly
 			Value = value!;
 
 			Type = type;
+
+			Purposes = purposes;
 		}
 
 		public IdentityAddress(string value, string? display = null, IDictionary<string, string?>? attributes = null, string? type = null)
@@ -100,6 +103,8 @@ namespace Transmitly
 		public IDictionary<string, string?> AddressParts { get; set; }
 
 		public IDictionary<string, string?> Attributes { get; set; }
+
+		public IReadOnlyCollection<string>? Purposes { get; set; }
 
 		/// <summary>
 		/// Implicitly converts a string to an <see cref="IdentityAddress"/>.

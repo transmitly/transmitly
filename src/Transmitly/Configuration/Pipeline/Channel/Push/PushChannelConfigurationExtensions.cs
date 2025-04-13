@@ -12,7 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel.Push;
+using Transmitly.Channel.Configuration.Push;
 using Transmitly.Pipeline.Configuration;
 
 namespace Transmitly
@@ -39,26 +39,18 @@ namespace Transmitly
 		/// </summary>
 		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
 		/// <param name="pushChannelConfiguration">Push Notification Channel configuration options</param>
-		/// <param name="allowedChannelProviders">List of channel providers that will be allowed to handle this channel</param>
 		/// <returns></returns>
-		public static IPipelineConfiguration AddPushNotification(
-			this IPipelineConfiguration pipelineChannelConfiguration,
-			Action<IPushNotificationChannel> pushChannelConfiguration,
-			params string[]? allowedChannelProviders
-		)
+		public static IPipelineConfiguration AddPushNotification(this IPipelineConfiguration pipelineChannelConfiguration, Action<IPushNotificationChannelConfiguration> pushChannelConfiguration)
 		{
-			var pushOptions = new PushNotificationChannel(allowedChannelProviders);
+			var pushOptions = new PushNotificationChannelConfiguration();
 			pushChannelConfiguration(pushOptions);
-			pipelineChannelConfiguration.AddChannel(pushOptions);
+			pipelineChannelConfiguration.AddChannel(new PushNotificationChannel(pushOptions));
 			return pipelineChannelConfiguration;
 		}
 
-		public static IPipelineConfiguration AddPushNotification(
-			this IPipelineConfiguration pipelineChannelConfiguration,
-			params string[]? allowedChannelProviders
-		)
+		public static IPipelineConfiguration AddPushNotification(this IPipelineConfiguration pipelineChannelConfiguration)
 		{
-			return AddPushNotification(pipelineChannelConfiguration, (opts) => { }, allowedChannelProviders);
+			return AddPushNotification(pipelineChannelConfiguration, (opts) => { });
 		}
 	}
 }

@@ -14,11 +14,11 @@
 
 
 using Transmitly.ChannelProvider.Configuration;
-using Transmitly.Pipeline.Configuration;
-using Transmitly.Template.Configuration;
 using Transmitly.Delivery;
-using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Persona.Configuration;
+using Transmitly.Pipeline.Configuration;
+using Transmitly.PlatformIdentity.Configuration;
+using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {

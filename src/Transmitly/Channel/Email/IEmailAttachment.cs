@@ -12,15 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel.Configuration;
-using Transmitly.Template.Configuration;
+using Transmitly.Channel;
 
 namespace Transmitly
 {
-	public interface IPushNotificationChannel : IChannel
+	public interface IEmailAttachment : IAttachment
 	{
-		IContentTemplateConfiguration Title { get; }
-		IContentTemplateConfiguration Body { get; }
-		IContentTemplateConfiguration ImageUrl { get; }
+
 	}
 }

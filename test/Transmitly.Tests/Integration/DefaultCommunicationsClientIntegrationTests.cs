@@ -40,12 +40,12 @@ namespace Transmitly.Tests.Integration
 			 AddPipeline(PipelineName, options =>
 			{
 				var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
-				channel.Subject.AddStringTemplate("Skip me!");
+				channel.Configuration.Subject.AddStringTemplate("Skip me!");
 
 				options.AddChannel(channel);
 
 				var channel2 = new UnitTestChannel(FromAddress + "-2", ChannelId + "-2", ChannelProviderId);
-				channel2.Subject.AddStringTemplate(ExpectedMessage);
+				channel2.Configuration.Subject.AddStringTemplate(ExpectedMessage);
 
 				options.AddChannel(channel2);
 
@@ -103,7 +103,7 @@ namespace Transmitly.Tests.Integration
 					//   - SMS - Recipient, Message
 					//   - Voice - Recipient, Content, Callbacks
 					var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
-					channel.Subject.AddStringTemplate("Your OTP Code: {{Code}}");
+					channel.Configuration.Subject.AddStringTemplate("Your OTP Code: {{Code}}");
 					pipeline.AddChannel(channel);
 				})
 				.BuildClient();

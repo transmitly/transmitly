@@ -18,8 +18,8 @@ namespace Transmitly.Delivery
 	{
 		public static ISmsDeliveryReport? Sms(this DeliveryReport deliveryReport)
 		{
-			if (deliveryReport is ISmsDeliveryReport voiceReport)
-				return voiceReport;
+			if (deliveryReport is ISmsDeliveryReport smsReport)
+				return smsReport;
 			return null;
 		}
 	}

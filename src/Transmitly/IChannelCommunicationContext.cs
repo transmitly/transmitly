@@ -13,9 +13,9 @@
 //  limitations under the License.
 
 using System.Globalization;
+using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
-using Transmitly.Delivery;
 
 namespace Transmitly
 {

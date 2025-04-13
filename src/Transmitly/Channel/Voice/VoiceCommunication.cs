@@ -40,9 +40,6 @@ namespace Transmitly.Channel.Voice
 		public MachineDetection MachineDetection { get; set; }
 
 		///<inheritdoc/>
-		public string? DeliveryReportCallbackUrl { get; set; }
-
-		///<inheritdoc/>
 		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 	}
 }

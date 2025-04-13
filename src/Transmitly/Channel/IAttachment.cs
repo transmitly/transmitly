@@ -12,19 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel.Configuration;
-
 namespace Transmitly.Channel
 {
-	public abstract class BaseChannel(params string[]? allowedChannelProviders) : IChannel
+	public interface IAttachment
 	{
-		public abstract Type CommunicationType { get; }
-		public abstract string Id { get; }
-		public virtual IEnumerable<string> AllowedChannelProviderIds { get; } = allowedChannelProviders ?? [];
-
-		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-
-		public abstract Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
-		public abstract bool SupportsIdentityAddress(IIdentityAddress identityAddress);
+		string? Name { get; }
+		string? ContentType { get; }
+		Stream? ContentStream { get; }
 	}
 }

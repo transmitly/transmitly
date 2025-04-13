@@ -40,7 +40,7 @@ namespace Transmitly.Tests.Identity
 				AddPipeline(PipelineName, options =>
 				{
 					var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
-					channel.Subject.AddStringTemplate(ExpectedMessage);
+					channel.Configuration.Subject.AddStringTemplate(ExpectedMessage);
 					options.AddChannel(channel);
 					options.AddPersonaFilter(ExpectedPersona);
 				})

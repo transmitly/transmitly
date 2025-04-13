@@ -12,15 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using AutoFixture;
 using Moq;
 using Transmitly.ChannelProvider.Configuration;
+using Transmitly.Delivery;
+using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
+using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Template.Configuration;
 using Transmitly.Tests.Integration;
-using Transmitly.Delivery;
-using Transmitly.PlatformIdentity.Configuration;
-using Transmitly.Persona.Configuration;
-using AutoFixture;
 namespace Transmitly.Tests
 {
 	[TestClass]
@@ -96,6 +96,7 @@ namespace Transmitly.Tests
 			{
 				options.AddEmail("from@address.com".AsIdentityAddress(), email =>
 				{
+					email.AddRecipientAddressPurpose("Test").AddDeliveryReportCallbackUrlResolver(_ => Task.FromResult<string?>("https://test.com"));
 					email.Subject.AddStringTemplate("Test sub");
 				});
 			});

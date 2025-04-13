@@ -21,6 +21,6 @@ namespace Transmitly
 		string Value { get; set; }
 		string? Display { get; set; }
 		string? Type { get; set; }
-		//int Priority { get; set; }
+		IReadOnlyCollection<string>? Purposes { get; set; }
 	}
 }

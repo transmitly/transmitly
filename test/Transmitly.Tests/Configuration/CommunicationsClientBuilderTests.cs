@@ -48,7 +48,7 @@ namespace Transmitly.Tests
 			}
 		}
 		[TestMethod]
-		public async Task ChannelProviderShouldBeAbleToRegisterMultipleChannelProviderDispatcherssWithSameProviderId()
+		public async Task ChannelProviderShouldBeAbleToRegisterMultipleChannelProviderDispatchersWithSameProviderId()
 		{
 
 			string ExpectedSendResultMessage = nameof(Test2);

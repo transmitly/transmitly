@@ -13,22 +13,15 @@
 //  limitations under the License.
 
 using Transmitly.Channel.Configuration;
-using Transmitly.Template.Configuration;
 
-namespace Transmitly
+namespace Transmitly.Tests
 {
-	public interface ISmsChannel : IChannel
+	internal sealed class UnitTestChannel<T>(string fromAddress, string channelId = "unit-test-channel", params string[] allowedChannelProviders) :
+		UnitTestChannel(fromAddress, channelId, allowedChannelProviders), IChannel<T>
 	{
-		IIdentityAddress? From { get; }
-		IContentTemplateConfiguration Message { get; }
-		/// <summary>
-		/// The URL to call for status updates for the dispatched communication.
-		/// </summary>
-		string? DeliveryReportCallbackUrl { get; set; }
-
-		/// <summary>
-		/// A resolver that will return The URL to call for status updates for the dispatched communication.
-		/// </summary>
-		Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+		async Task<T> IChannel<T>.GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
+		{
+			return (T)(await base.GenerateCommunicationAsync(communicationContext));
+		}
 	}
 }

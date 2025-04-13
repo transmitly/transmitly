@@ -22,5 +22,6 @@ namespace Transmitly.Tests
 		public string? Display { get; set; }
 		public IDictionary<string, string?> AddressParts { get; set; } = new Dictionary<string, string?> { { "value", Value }, { "display", null } };
 		public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
+		public IReadOnlyCollection<string>? Purposes { get; set; }
 	}
 }

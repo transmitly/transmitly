@@ -136,7 +136,7 @@ namespace Transmitly
 			return await DispatchAsync(pipelineName, results, transactionalModel, channelPreferences, cultureInfo, cancellationToken).ConfigureAwait(false);
 		}
 
-		private static IEnumerable<ChannelChannelProviderGroup> OrderProvidersByPlatformIdentityPreference(string? pipelineCategory, IEnumerable<ChannelChannelProviderGroup> groups, IReadOnlyCollection<string>? preferences)
+		private static IEnumerable<ChannelChannelProviderGroup> OrderProvidersByPlatformIdentityPreference(IEnumerable<ChannelChannelProviderGroup> groups, IReadOnlyCollection<string>? preferences)
 		{
 			if ((preferences?.Count ?? 0) == 0)
 				return groups;
@@ -198,7 +198,7 @@ namespace Transmitly
 
 					foreach (var dispatcher in channelProvider.DispatcherRegistrations)
 					{
-						if (!IsDispatcherEligible(channelProviderFactory, platformIdentity, activeChannelPreferences, channel, channelProvider, dispatcher))
+						if (!IsDispatcherEligible(platformIdentity, activeChannelPreferences, channel, dispatcher))
 						{
 							continue;
 						}
@@ -223,13 +223,13 @@ namespace Transmitly
 			// Order the groups according to channel preferences, if any
 			if (activeChannelPreferences != null && activeChannelPreferences.Type == ChannelPreferenceType.Priority)
 			{
-				groups = [.. OrderProvidersByPlatformIdentityPreference(pipelineCategory, groups, activeChannelPreferences.Channels)];
+				groups = [.. OrderProvidersByPlatformIdentityPreference(groups, activeChannelPreferences.Channels)];
 			}
 
 			return groups.AsReadOnly();
 		}
 
-		private static bool IsDispatcherEligible(IChannelProviderFactory channelProviderFactory, IPlatformIdentityProfile platformIdentity, IChannelPreference? activeChannelPreferences, IChannel channel, IChannelProviderRegistration channelProvider, IChannelProviderDispatcherRegistration dispatcher)
+		private static bool IsDispatcherEligible(IPlatformIdentityProfile platformIdentity, IChannelPreference? activeChannelPreferences, IChannel channel, IChannelProviderDispatcherRegistration dispatcher)
 		{
 			if (!dispatcher.SupportsChannel(channel.Id))
 				return false;
@@ -251,7 +251,7 @@ namespace Transmitly
 		{
 			// Check dispatch preferences: if preferences exist, the channel must be listed.
 			if (dispatchChannelPreferences.Count > 0 &&
-				!dispatchChannelPreferences.Any(pref => string.Equals(channel.Id, pref, StringComparison.InvariantCulture)))
+				!dispatchChannelPreferences.Any(preference => string.Equals(channel.Id, preference, StringComparison.InvariantCulture)))
 			{
 				return false;
 			}

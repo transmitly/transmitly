@@ -12,24 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Channel.Configuration;
 using Transmitly.Template.Configuration;
 
-namespace Transmitly
+namespace Transmitly.Channel.Configuration.Sms
 {
-	public interface IEmailChannel : IChannel
+	public interface ISmsChannelConfiguration : IChannelConfiguration
 	{
-		IContentTemplateConfiguration Subject { get; }
-		IContentTemplateConfiguration HtmlBody { get; }
-		IContentTemplateConfiguration TextBody { get; }
-		IIdentityAddress? FromAddress { get; }
-		/// <summary>
-		/// The URL to call for status updates for the dispatched communication.
-		/// </summary>
-		string? DeliveryReportCallbackUrl { get; set; }
-		/// <summary>
-		/// A resolver that will return The URL to call for status updates for the dispatched communication.
-		/// </summary>
-		Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+		Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver { get; }
+		IContentTemplateConfiguration Message { get; }
 	}
 }

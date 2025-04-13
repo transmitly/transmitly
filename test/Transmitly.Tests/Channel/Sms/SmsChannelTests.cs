@@ -12,8 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Moq;
 using AutoFixture;
+using Moq;
+using Transmitly.Channel.Configuration.Sms;
 using Transmitly.Exceptions;
 using Transmitly.Tests;
 
@@ -40,7 +41,7 @@ namespace Transmitly.Channel.Sms.Tests
 		[DataRow("15551231234", true)]
 		public void SupportsIdentityAddressTest(string value, bool expected)
 		{
-			var sms = new SmsChannel();
+			var sms = new SmsChannel(new SmsChannelConfiguration());
 			var result = sms.SupportsIdentityAddress(value.AsIdentityAddress());
 			Assert.AreEqual(expected, result, value);
 		}
@@ -59,27 +60,31 @@ namespace Transmitly.Channel.Sms.Tests
 			var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
 			mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 			var context = mockContext.Object;
-			var sut = fixture.Create<SmsChannel>();
+			var from = "8888".AsIdentityAddress();
+			var config = new SmsChannelConfiguration(_ => from);
 			var body = fixture.Freeze<string>();
-			sut.Message.AddStringTemplate(body);
+			config.Message.AddStringTemplate(body);
+
+			var sut = new SmsChannel(config);
+
 
 			var result = await sut.GenerateCommunicationAsync(context);
 
 			Assert.IsInstanceOfType(result, typeof(ISms));
-			var sms = (ISms)result;
-			Assert.AreEqual(sut.From, sms.From);
-			Assert.AreEqual(body, sms.Message);
-			Assert.AreEqual(context.TransportPriority, sms.TransportPriority);
-			Assert.AreEqual(sut.DeliveryReportCallbackUrl, sms.DeliveryReportCallbackUrl);
-			Assert.AreEqual(sut.DeliveryReportCallbackUrlResolver, sms.DeliveryReportCallbackUrlResolver);
-			CollectionAssert.AreEquivalent(mockContext.Object.PlatformIdentities.SelectMany(m => m.Addresses).ToArray(), sms.To);
+
+			Assert.AreEqual(from, result.From);
+			Assert.AreEqual(body, result.Message);
+			Assert.AreEqual(context.TransportPriority, result.TransportPriority);
+			CollectionAssert.AreEquivalent(mockContext.Object.PlatformIdentities.SelectMany(m => m.Addresses).ToArray(), result.To);
 		}
 
 		[TestMethod]
 		public void ShouldSetProvidedChannelProviderIds()
 		{
 			var list = fixture.Freeze<string[]>();
-			var sut = new SmsChannel(list);
+			var config = new SmsChannelConfiguration(_ => fixture.Create<IIdentityAddress>());
+			config.AddChannelProviderFilter(list);
+			var sut = new SmsChannel(config);
 			CollectionAssert.AreEquivalent(list, sut.AllowedChannelProviderIds.ToArray());
 		}
 
@@ -96,17 +101,6 @@ namespace Transmitly.Channel.Sms.Tests
 		}
 
 		[TestMethod]
-		public void ShouldSetProvidedFromAddress()
-		{
-			var from = fixture.Freeze<IIdentityAddress>();
-			var sut = new SmsChannel(from);
-			Assert.AreSame(from, sut.From);
-
-			sut = new SmsChannel(from, fixture.Create<string[]>());
-			Assert.AreSame(from, sut.From);
-		}
-
-		[TestMethod]
 		public async Task ShouldSetProvidedFromAddressResolver()
 		{
 			var from = fixture.Freeze<IIdentityAddress>();
@@ -114,13 +108,13 @@ namespace Transmitly.Channel.Sms.Tests
 			mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 			var context = mockContext.Object;
 			var body = fixture.Freeze<string>();
+			var config = new SmsChannelConfiguration(_ => from);
+			config.Message.AddStringTemplate(body);
+			var sut = new SmsChannel(config);
 
-
-			var sut = new SmsChannel((ctx) => from);
-			sut.Message.AddStringTemplate(body);
 			var result = await sut.GenerateCommunicationAsync(context);
-			var sms = (ISms)result;
-			Assert.AreSame(from, sms.From);
+
+			Assert.AreSame(from, result.From);
 		}
 
 		[TestMethod]
@@ -132,13 +126,15 @@ namespace Transmitly.Channel.Sms.Tests
 			mockContext.Setup(x => x.ContentModel!.Resources).Returns([resource]);
 			var context = mockContext.Object;
 			var body = fixture.Freeze<string>();
-			var sut = new SmsChannel();
-			sut.Message.AddStringTemplate(body);
+			var config = new SmsChannelConfiguration(_ => from);
+			config.Message.AddStringTemplate(body);
+
+			var sut = new SmsChannel(config);
 
 			var result = await sut.GenerateCommunicationAsync(context);
-			var sms = (ISms)result;
-			Assert.AreEqual(1, sms.Attachments.Count);
-			Assert.AreEqual(resource.Name, sms.Attachments.First().Name);
+
+			Assert.AreEqual(1, result.Attachments.Count);
+			Assert.AreEqual(resource.Name, result.Attachments.First().Name);
 		}
 	}
 }

@@ -14,6 +14,7 @@
 
 using AutoFixture;
 using Moq;
+using Transmitly.Channel.Configuration.Email;
 using Transmitly.Exceptions;
 using Transmitly.Tests;
 
@@ -67,7 +68,7 @@ namespace Transmitly.Channel.Email.Tests
 		[DataRow("Abc..123@example.com", false)]
 		public void MatchesEmailAddressesAsExpected(string email, bool expected)
 		{
-			var channel = new EmailChannel(fixture.Create<IIdentityAddress>());
+			var channel = new EmailChannel(new EmailChannelConfiguration(_ => fixture.Create<IIdentityAddress>()));
 
 			var result = channel.SupportsIdentityAddress(email.AsIdentityAddress());
 			Assert.AreEqual(expected, result, email);
@@ -76,14 +77,16 @@ namespace Transmitly.Channel.Email.Tests
 		[TestMethod]
 		public async Task GenerateCommunicationAsyncShouldGuardAgainstNullContext()
 		{
-			var channel = new EmailChannel(fixture.Create<IIdentityAddress>());
+			var channel = new EmailChannel(new EmailChannelConfiguration(_ => fixture.Create<IIdentityAddress>()));
 
 			await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => channel.GenerateCommunicationAsync(null!));
 		}
-		private EmailChannel NewEmailChannel()
+
+		private EmailChannelConfiguration NewEmailChannel()
 		{
-			return fixture.Build<EmailChannel>().FromFactory<IIdentityAddress>((from) => new EmailChannel(from)).Create();
+			return fixture.Build<EmailChannelConfiguration>().FromFactory<IIdentityAddress>(from => new EmailChannelConfiguration(_ => from)).Create();
 		}
+
 		[TestMethod]
 		public async Task GenerateCommunicationAsyncShouldGenerateValidSmsCommunication()
 		{
@@ -94,23 +97,27 @@ namespace Transmitly.Channel.Email.Tests
 			var body = fixture.Freeze<string>();
 			sut.HtmlBody.AddStringTemplate(body);
 
-			var result = await sut.GenerateCommunicationAsync(context);
+			var channel = new EmailChannel(sut);
+			var result = await channel.GenerateCommunicationAsync(context);
 
 			Assert.IsInstanceOfType(result, typeof(IEmail));
-			var email = (IEmail)result;
-			Assert.AreEqual(sut.FromAddress, email.From);
-			Assert.AreEqual(body, email.HtmlBody);
-			Assert.AreEqual(context.TransportPriority, email.TransportPriority);
-			Assert.AreEqual(sut.DeliveryReportCallbackUrl, email.DeliveryReportCallbackUrl);
-			Assert.AreEqual(sut.DeliveryReportCallbackUrlResolver, email.DeliveryReportCallbackUrlResolver);
-			CollectionAssert.AreEquivalent(mockContext.Object.PlatformIdentities.SelectMany(m => m.Addresses).ToArray(), email.To);
+			Assert.IsNotNull(sut.FromAddressResolver);
+			Assert.AreEqual(sut.FromAddressResolver(context), result.From);
+			Assert.AreEqual(body, result.HtmlBody);
+			Assert.AreEqual(context.TransportPriority, result.TransportPriority);
+			Assert.IsNotNull(sut.DeliveryReportCallbackUrlResolver);
+			Assert.IsNotNull(result.DeliveryReportCallbackUrlResolver);
+			Assert.AreEqual(await sut.DeliveryReportCallbackUrlResolver(context), await result.DeliveryReportCallbackUrlResolver(context));
+			CollectionAssert.AreEquivalent(mockContext.Object.PlatformIdentities.SelectMany(m => m.Addresses).ToArray(), result.To);
 		}
 
 		[TestMethod]
 		public void ShouldSetProvidedChannelProviderIds()
 		{
 			var list = fixture.Freeze<string[]>();
-			var sut = new EmailChannel(fixture.Create<IIdentityAddress>(), list);
+			var config = new EmailChannelConfiguration(_ => fixture.Create<IIdentityAddress>());
+			config.AddChannelProviderFilter(list);
+			var sut = new EmailChannel(config);
 			CollectionAssert.AreEquivalent(list, sut.AllowedChannelProviderIds.ToArray());
 		}
 
@@ -121,7 +128,7 @@ namespace Transmitly.Channel.Email.Tests
 			mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 
 			var context = mockContext.Object;
-			var sut = NewEmailChannel();
+			var sut = new EmailChannel(NewEmailChannel());
 
 			Assert.ThrowsExceptionAsync<CommunicationsException>(() => sut.GenerateCommunicationAsync(context));
 		}
@@ -131,12 +138,11 @@ namespace Transmitly.Channel.Email.Tests
 		{
 			var from = fixture.Create<IIdentityAddress>();
 			var channelProviderIds = fixture.Freeze<string[]>();
-
-			var sut = new EmailChannel(from, channelProviderIds);
-			Assert.AreSame(from, sut.FromAddress);
-
-			sut = new EmailChannel(from);
-			Assert.AreSame(from, sut.FromAddress);
+			var config = new EmailChannelConfiguration(_ => from);
+			config.AddChannelProviderFilter(channelProviderIds);
+			var sut = new EmailChannel(config);
+			Assert.IsNotNull(config.FromAddressResolver);
+			Assert.AreSame(from, config.FromAddressResolver(new Mock<IDispatchCommunicationContext>().Object));
 		}
 
 		[TestMethod]
@@ -148,12 +154,12 @@ namespace Transmitly.Channel.Email.Tests
 			var context = mockContext.Object;
 			var body = fixture.Freeze<string>();
 
+			var config = new EmailChannelConfiguration((_) => from);
+			config.Subject.AddStringTemplate(body);
+			var sut = new EmailChannel(config);
 
-			var sut = new EmailChannel((ctx) => from);
-			sut.Subject.AddStringTemplate(body);
 			var result = await sut.GenerateCommunicationAsync(context);
-			var email = (IEmail)result;
-			Assert.AreSame(from, email.From);
+			Assert.AreSame(from, result.From);
 		}
 
 		[TestMethod]
@@ -165,13 +171,14 @@ namespace Transmitly.Channel.Email.Tests
 			mockContext.Setup(x => x.ContentModel!.Resources).Returns([resource]);
 			var context = mockContext.Object;
 			var body = fixture.Freeze<string>();
-			var sut = new EmailChannel(from);
-			sut.Subject.AddStringTemplate(body);
+			var config = new EmailChannelConfiguration(_ => from);
+			config.Subject.AddStringTemplate(body);
+			var sut = new EmailChannel(config);
 
 			var result = await sut.GenerateCommunicationAsync(context);
-			var email = (IEmail)result;
-			Assert.AreEqual(1, email.Attachments.Count);
-			Assert.AreEqual(resource.Name, email.Attachments.First().Name);
+
+			Assert.AreEqual(1, result.Attachments.Count);
+			Assert.AreEqual(resource.Name, result.Attachments.First().Name);
 		}
 	}
 }

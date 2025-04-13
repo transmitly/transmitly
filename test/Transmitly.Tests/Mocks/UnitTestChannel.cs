@@ -13,14 +13,11 @@
 //  limitations under the License.
 
 using Transmitly.Channel.Configuration;
-using Transmitly.Template.Configuration;
 
 namespace Transmitly.Tests
 {
-	internal sealed class UnitTestChannel : IChannel
+	internal class UnitTestChannel : IChannel
 	{
-		private string _handlesAddressStartsWith = "unit-test-address";
-
 		public UnitTestChannel(string fromAddress, string channelId = "unit-test-channel", params string[] allowedChannelProviders)
 		{
 			if (allowedChannelProviders is null)
@@ -34,19 +31,12 @@ namespace Transmitly.Tests
 			FromAddress = Guard.AgainstNullOrWhiteSpace(fromAddress).AsIdentityAddress();
 
 			Id = channelId;
+			Configuration = new UnitTestChannelConfiguration();
 		}
-
-		public IIdentityAddress FromAddress { get; set; }
-
-		public IContentTemplateConfiguration Subject { get; } = new ContentTemplateConfiguration();
-
-		public string Id { get; }
-
+		public UnitTestChannelConfiguration Configuration { get; }
 		public IEnumerable<string> AllowedChannelProviderIds { get; }
 
-		public Type CommunicationType => typeof(UnitTestCommunication);
-
-		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
 		public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
 		{
@@ -59,7 +49,7 @@ namespace Transmitly.Tests
 		}
 		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 		{
-			var subjectTemplate = Subject.TemplateRegistrations.FirstOrDefault(f => f.CultureInfo == communicationContext.CultureInfo);
+			var subjectTemplate = Configuration.Subject.TemplateRegistrations.FirstOrDefault(f => f.CultureInfo == communicationContext.CultureInfo);
 			if (subjectTemplate == null)
 				return new UnitTestCommunication("NO TEMPLATE");
 
@@ -67,5 +57,13 @@ namespace Transmitly.Tests
 
 			return new UnitTestCommunication(subjectContent);
 		}
+
+		private string _handlesAddressStartsWith = "unit-test-address";
+
+		public IIdentityAddress FromAddress { get; set; }
+
+		public string Id { get; }
+
+		public Type CommunicationType => typeof(UnitTestCommunication);
 	}
 }

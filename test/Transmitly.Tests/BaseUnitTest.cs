@@ -12,8 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using AutoFixture.AutoMoq;
 using AutoFixture;
+using AutoFixture.AutoMoq;
 
 namespace Transmitly.Tests
 {
