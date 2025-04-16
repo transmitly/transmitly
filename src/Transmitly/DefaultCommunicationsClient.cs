@@ -74,9 +74,7 @@ namespace Transmitly
 						templateEngine,
 						_deliveryReportProvider,
 						culture,
-						pipelineName,
-						pipeline.MessagePriority,
-						pipeline.TransportPriority);
+						pipelineName);
 
 					var group = CreateChannelChannelProviderGroupsForPlatformIdentity(
 						pipeline.Category,

@@ -65,35 +65,3 @@ namespace Transmitly.Channel.Configuration.Push
 		}
 	}
 }
-
-//private static readonly string[] _supportedAddressTypes = [IdentityAddress.Types.DeviceToken(), IdentityAddress.Types.Topic()];
-
-//public string Id => Transmitly.Id.Channel.PushNotification();
-
-//public IEnumerable<string> AllowedChannelProviderIds { get; } = allowedChannelProviderIds ?? [];
-
-//public IContentTemplateConfiguration Title { get; } = new ContentTemplateConfiguration();
-
-//public IContentTemplateConfiguration Body { get; } = new ContentTemplateConfiguration();
-
-//public IContentTemplateConfiguration ImageUrl { get; } = new ContentTemplateConfiguration();
-
-//public Type CommunicationType => typeof(IPushNotification);
-
-//public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-
-//public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
-//{
-//	var title = await Title.RenderAsync(communicationContext);
-//	var body = await Body.RenderAsync(communicationContext);
-//	var imageUrl = await ImageUrl.RenderAsync(communicationContext);
-
-//	var recipients = communicationContext.PlatformIdentities.SelectMany(a => a.Addresses).ToList();
-
-//	return new PushNotificationCommunication(recipients, ExtendedProperties, title, body, imageUrl);
-//}
-
-//public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
-//{
-//	return _supportedAddressTypes.Contains(identityAddress.Type);
-//}

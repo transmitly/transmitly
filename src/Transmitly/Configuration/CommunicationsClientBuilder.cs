@@ -24,6 +24,7 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
+
 	/// <summary>
 	/// Builds an instance of a <see cref="ICommunicationsClient"/>.
 	/// </summary>
@@ -91,28 +92,6 @@ namespace Transmitly
 			TemplateEngine.Add(engine, id);
 
 		/// <summary>
-		/// Adds a template engine to the configuration.
-		/// </summary>
-		/// <typeparam name="TEngine">The type of the template engine.</typeparam>
-		/// <param name="id">The optional Id of the template engine.</param>
-		/// <returns>The configuration builder</returns>
-		public CommunicationsClientBuilder AddTemplateEngine<TEngine>(string? id = null)
-			where TEngine : ITemplateEngine, new() =>
-			TemplateEngine.Add(new TEngine(), id);
-
-		/// <summary>
-		/// Adds a pipeline to the configuration.
-		/// </summary>
-		/// <param name="name">The name of the pipeline.</param>
-		/// <param name="category">The optional category of the pipeline.</param>
-		/// <param name="transportPriority">The transport priority of the pipeline.</param>
-		/// <param name="messagePriority">The message priority of the pipeline.</param>
-		/// <param name="options">The configuration options for the pipeline.</param>
-		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options) =>
-			Pipeline.Add(name, category, transportPriority, messagePriority, options);
-
-		/// <summary>
 		/// Adds a pipeline to the configuration.
 		/// </summary>
 		/// <param name="name">The name of the pipeline.</param>
@@ -121,26 +100,6 @@ namespace Transmitly
 		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddPipeline(string name, string? category, Action<IPipelineConfiguration> options) =>
 			Pipeline.Add(name, category, options);
-
-		/// <summary>
-		/// Adds a pipeline to the configuration.
-		/// </summary>
-		/// <param name="name">The name of the pipeline.</param>
-		/// <param name="options">The configuration options for the pipeline.</param>
-		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, Action<IPipelineConfiguration> options) =>
-			Pipeline.Add(name, options);
-
-		/// <summary>
-		/// Adds a pipeline to the configuration.
-		/// </summary>
-		/// <param name="name">The name of the pipeline.</param>
-		/// <param name="transportPriority">The transport priority of the pipeline.</param>
-		/// <param name="messagePriority">The message priority of the pipeline.</param>
-		/// <param name="options">The configuration options for the pipeline.</param>
-		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddPipeline(string name, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options) =>
-			Pipeline.Add(name, transportPriority, messagePriority, options);
 
 		/// <summary>
 		/// Adds a pipeline configurator to the configuration.
@@ -170,24 +129,8 @@ namespace Transmitly
 		/// <param name="filterChannelProviderIds">List of channel provider ids to listen to. See <see cref="Id.ChannelProvider"/></param>
 		/// <param name="filterPipelineNames">List of pipeline names to listen to.</param>
 		/// <returns>The configuration builder</returns>
-		public CommunicationsClientBuilder AddDeliveryReportHandler(IObserver<DeliveryReport> reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
-		{
-			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
-		}
-
-		/// <summary>
-		/// Adds a delivery report handler to the configuration.
-		/// </summary>
-		/// <param name="reportHandler">The event handler to register.</param>
-		/// <param name="filterEventNames">List of events to listen to. See <see cref="DeliveryReport.Event"/></param>
-		/// <param name="filterChannelIds">List of channel ids to listen to. See <see cref="Id.Channel"/></param>
-		/// <param name="filterChannelProviderIds">List of channel provider ids to listen to. See <see cref="Id.ChannelProvider"/></param>
-		/// <param name="filterPipelineNames">List of pipeline names to listen to.</param>
-		/// <returns>The configuration builder.</returns>
-		public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
-		{
-			return DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
-		}
+		public CommunicationsClientBuilder AddDeliveryReportHandler(IObserver<DeliveryReport> reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null) =>
+			DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
 
 		/// <summary>
 		/// Adds a platform identity resolver to the configuration.
@@ -196,10 +139,8 @@ namespace Transmitly
 		/// <param name="platformIdentityType">Limit this resolver to only resolve platform identities to the provided type.</param>
 		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddPlatformIdentityResolver<TResolver>(string? platformIdentityType = null)
-			where TResolver : IPlatformIdentityResolver
-		{
-			return PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
-		}
+			where TResolver : IPlatformIdentityResolver =>
+			PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
 
 		/// <summary>
 		/// Add a persona filter to the configuration.
@@ -210,10 +151,8 @@ namespace Transmitly
 		/// <param name="personaCondition">Conditions that the <typeparamref name="TPersona"/> must meet.</param>
 		/// <returns>The configuration builder.</returns>
 		public CommunicationsClientBuilder AddPersona<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> personaCondition)
-			where TPersona : class
-		{
-			return Persona.Add(name, platformIdentityType, personaCondition);
-		}
+			where TPersona : class =>
+			Persona.Add(name, platformIdentityType, personaCondition);
 
 		/// <summary>
 		/// Creates an instance of the <see cref="ICommunicationsClient"/>.
@@ -242,34 +181,6 @@ namespace Transmitly
 			_clientCreated = true;
 
 			return client;
-		}
-
-		// <summary>
-		// Sets whether to assert that the configuration is valid at runtime
-		// </summary>
-		// <returns>The configuration builder</returns>
-		//public CommunicationsClientBuilder AssertConfiguration()
-		//{
-		//	_assertConfiguration = true;
-		//	return this;
-		//}
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override bool Equals(object? obj)
-		{
-			return base.Equals(obj);
-		}
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override int GetHashCode()
-		{
-			return base.GetHashCode();
-		}
-
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override string ToString()
-		{
-			return base.ToString() ?? string.Empty;
 		}
 	}
 }

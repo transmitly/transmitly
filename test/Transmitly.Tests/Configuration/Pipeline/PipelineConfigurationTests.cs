@@ -35,18 +35,6 @@ namespace Transmitly.Pipeline.Configuration.Tests
 		}
 
 		[TestMethod]
-		public void BlindCopy_Should_AddIdentityAddressToList()
-		{
-			var configuration = new DefaultPipelineProviderConfiguration();
-
-			configuration.BlindCopyIdentityAddress("Identity1", "Identity2");
-
-			Assert.AreEqual(2, configuration.BlindCopyIdentityAddresses.Count);
-			Assert.IsTrue(configuration.BlindCopyIdentityAddresses.Contains("Identity1"));
-			Assert.IsTrue(configuration.BlindCopyIdentityAddresses.Contains("Identity2"));
-		}
-
-		[TestMethod]
 		public void UseChannelSendingStrategy_Should_SetChannelSendingStrategyProvider()
 		{
 			var configuration = new DefaultPipelineProviderConfiguration();
@@ -64,18 +52,6 @@ namespace Transmitly.Pipeline.Configuration.Tests
 
 			Assert.IsNotNull(configuration.PipelineDeliveryStrategyProvider);
 			Assert.IsInstanceOfType(configuration.PipelineDeliveryStrategyProvider, typeof(FirstMatchPipelineDeliveryStrategy));
-		}
-
-		[TestMethod]
-		public void Copy_Should_AddIdentityAddressToList()
-		{
-			var configuration = new DefaultPipelineProviderConfiguration();
-
-			configuration.CopyIdentityAddress("Identity1", "Identity2");
-
-			Assert.AreEqual(2, configuration.CopyIdentityAddresses.Count);
-			Assert.IsTrue(configuration.CopyIdentityAddresses.Contains("Identity1"));
-			Assert.IsTrue(configuration.CopyIdentityAddresses.Contains("Identity2"));
 		}
 	}
 }

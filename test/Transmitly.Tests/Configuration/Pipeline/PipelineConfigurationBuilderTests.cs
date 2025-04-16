@@ -39,16 +39,12 @@ namespace Transmitly.Pipeline.Configuration.Tests
 			{
 				Assert.IsNotNull(config);
 				config.AddChannel(channel);
-				config.MessagePriority = MessagePriority.Highest;
-				config.TransportPriority = TransportPriority.Lowest;
 			}).Verifiable();
 
 			configurator.Object.Configure(config);
 
 			Assert.AreEqual(1, config.Channels.Count);
 			Assert.AreSame(channel, config.Channels.First());
-			Assert.AreEqual(MessagePriority.Highest, config.MessagePriority);
-			Assert.AreEqual(TransportPriority.Lowest, config.TransportPriority);
 		}
 
 		[TestMethod()]
@@ -71,8 +67,6 @@ namespace Transmitly.Pipeline.Configuration.Tests
 			{
 				Assert.IsNotNull(config);
 				config.AddChannel(new UnitTestChannel("unit-test-address"));
-				config.MessagePriority = MessagePriority.Highest;
-				config.TransportPriority = TransportPriority.Lowest;
 			}).Verifiable();
 
 

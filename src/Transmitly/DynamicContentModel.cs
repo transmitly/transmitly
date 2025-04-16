@@ -20,7 +20,7 @@ namespace Transmitly
 {
 	internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDictionary<string, object?>
 	{
-		private readonly Dictionary<string, object?> _bag = new Dictionary<string, object?>();
+		private readonly Dictionary<string, object?> _bag = [];
 
 		private const string TransactionPropertyKey = "trx";
 		private const string PlatformIdentityPropertyKey = "aud";
@@ -75,7 +75,7 @@ namespace Transmitly
 
 			//hack: as of today, we're going to only allow a single identity be used in a dynamic content model.
 			// the changes to the dispatch strategy will ensure we do not send the same communications to multiple recipients
-			// the change also means that to access audience info we will use aud.ProprtyName, instead of the previous aud[0].PropertyName
+			// the change also means that to access audience info we will use aud.PropertyName, instead of the previous aud[0].PropertyName
 			// in the future we should be able to do this in a more dynamic way by replacing tokens and managing the index for the developers.
 			// for example aud.PropertyName -> aud[index].PropertyName
 			if (platformIdentities.Count > 1)
@@ -164,7 +164,7 @@ namespace Transmitly
 			}
 
 			// Handle enumerables (except string).
-			if (input is IEnumerable enumerable && !(input is string))
+			if (input is IEnumerable enumerable && input is not string)
 			{
 				var list = new List<object?>();
 				foreach (var item in enumerable)

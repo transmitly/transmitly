@@ -38,28 +38,14 @@ namespace Transmitly.Pipeline.Configuration
 		/// </summary>
 		/// <param name="name">The name of the pipeline</param>
 		/// <param name="category">The category of the pipeline (optional)</param>
-		/// <param name="transportPriority">The transport priority of the pipeline</param>
-		/// <param name="messagePriority">The message priority of the pipeline</param>
-		/// <param name="options">The configuration options for the pipeline</param>
-		/// <returns>The updated communication configuration builder</returns>
-		public CommunicationsClientBuilder Add(string name, string? category, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options)
-		{
-			var detailConfig = new DefaultPipelineProviderConfiguration();
-			options(detailConfig);
-			_addPipeline(new PipelineRegistration(detailConfig, name, null, category, transportPriority, messagePriority));
-			return _communicationsConfiguration;
-		}
-
-		/// <summary>
-		/// Adds a pipeline to the communication configuration with the specified name, and category.
-		/// </summary>
-		/// <param name="name">The name of the pipeline</param>
-		/// <param name="category">The category of the pipeline (optional)</param>
 		/// <param name="options">The configuration options for the pipeline</param>
 		/// <returns>The updated communication configuration builder</returns>
 		public CommunicationsClientBuilder Add(string name, string? category, Action<IPipelineConfiguration> options)
 		{
-			return Add(name, category, TransportPriority.Normal, MessagePriority.Normal, options);
+			var detailConfig = new DefaultPipelineProviderConfiguration();
+			options(detailConfig);
+			_addPipeline(new PipelineRegistration(detailConfig, name, null, category));
+			return _communicationsConfiguration;
 		}
 
 		/// <summary>
@@ -72,20 +58,7 @@ namespace Transmitly.Pipeline.Configuration
 		{
 			return Add(name, null, options);
 		}
-
-		/// <summary>
-		/// Adds a pipeline to the communication configuration with the specified name, transport priority, message priority, and category.
-		/// </summary>
-		/// <param name="name">The name of the pipeline</param>
-		/// <param name="transportPriority">The transport priority of the pipeline</param>
-		/// <param name="messagePriority">The message priority of the pipeline</param>
-		/// <param name="options">The configuration options for the pipeline</param>
-		/// <returns>The updated communication configuration builder</returns>
-		public CommunicationsClientBuilder Add(string name, TransportPriority transportPriority, MessagePriority messagePriority, Action<IPipelineConfiguration> options)
-		{
-			return Add(name, null, transportPriority, messagePriority, options);
-		}
-
+	
 		/// <summary>
 		/// Configures a pipeline with a provided configurator.
 		/// </summary>
@@ -97,7 +70,7 @@ namespace Transmitly.Pipeline.Configuration
 
 			var config = new DefaultPipelineProviderConfiguration();
 			configurator.Configure(config);
-			_addPipeline(new PipelineRegistration(config, configurator.Name, null, configurator.Category, config.TransportPriority, config.MessagePriority));
+			_addPipeline(new PipelineRegistration(config, configurator.Name, null, configurator.Category));
 			return _communicationsConfiguration;
 		}
 	}

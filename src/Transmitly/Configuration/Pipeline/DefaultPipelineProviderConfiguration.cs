@@ -22,19 +22,11 @@ namespace Transmitly.Pipeline.Configuration
 		private readonly List<IChannel> _channels = [];
 		private readonly List<string> _personaFilters = [];
 
-		public TransportPriority TransportPriority { get; set; } = TransportPriority.Normal;
-
-		public MessagePriority MessagePriority { get; set; } = MessagePriority.Normal;
-
-		public ICollection<string> BlindCopyIdentityAddresses { get; } = [];
-
-		public ICollection<string> CopyIdentityAddresses { get; } = [];
-
+		public string? Id { get; private set; }
+		
 		public IReadOnlyCollection<string> PersonaFilters => _personaFilters.AsReadOnly();
 
 		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
-
-		public string? Description { get; set; }
 
 		public IReadOnlyCollection<IChannel> Channels => _channels.AsReadOnly();
 
@@ -44,21 +36,9 @@ namespace Transmitly.Pipeline.Configuration
 			return this;
 		}
 
-		public IPipelineConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType)
-		{
-			Array.ForEach(platformIdentityType, BlindCopyIdentityAddresses.Add);
-			return this;
-		}
-
 		public IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider)
 		{
 			PipelineDeliveryStrategyProvider = Guard.AgainstNull(deliveryStrategyProvider);
-			return this;
-		}
-
-		public IPipelineConfiguration CopyIdentityAddress(params string[] platformIdentityType)
-		{
-			Array.ForEach(platformIdentityType, CopyIdentityAddresses.Add);
 			return this;
 		}
 
@@ -69,6 +49,13 @@ namespace Transmitly.Pipeline.Configuration
 			if (!_personaFilters.Exists(a => a.Equals(personaName, StringComparison.OrdinalIgnoreCase)))
 				_personaFilters.Add(personaName);
 
+			return this;
+		}
+
+		public IPipelineConfiguration AddUniqueId(string id)
+		{
+			Guard.AgainstNullOrWhiteSpace(id);
+			Id = id;
 			return this;
 		}
 	}

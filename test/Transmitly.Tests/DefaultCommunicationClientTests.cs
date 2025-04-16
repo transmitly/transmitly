@@ -51,9 +51,10 @@ namespace Transmitly.Tests
 					.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, object>(ChannelProvider1, "unit-test-channel")
 					.AddPipeline("test-pipeline", options =>
 					{
-						options.AddChannel(new UnitTestChannel("c0-from", ChannelId, ChannelProvider0));
-						options.AddChannel(new UnitTestChannel("c1-from", ChannelId, ChannelProvider1));
-						options.AddChannel(new UnitTestChannel("c2-from", "channel-not-included", ChannelProvider0));
+						options
+							.AddChannel(new UnitTestChannel("c0-from", ChannelId, ChannelProvider0))
+							.AddChannel(new UnitTestChannel("c1-from", ChannelId, ChannelProvider1))
+							.AddChannel(new UnitTestChannel("c2-from", "channel-not-included", ChannelProvider0));
 					})
 					.BuildClient();
 			var result = await client.DispatchAsync("test-pipeline", "unit-test-address-0", new { });
@@ -61,7 +62,6 @@ namespace Transmitly.Tests
 			Assert.AreEqual(1, result.Results.Count);
 			Assert.AreEqual(ChannelId, result.Results?.First()?.ChannelId);
 			Assert.AreEqual(ChannelProvider0, result.Results?.First()?.ChannelProviderId);
-
 		}
 
 		private static (
@@ -122,15 +122,15 @@ namespace Transmitly.Tests
 				.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
 				.AddPipeline(PipelineName, options =>
 				{
-					options.AddSms(sms =>
-					{
-						sms.Message.AddStringTemplate("SmsText");
-					});
-
-					options.AddVoice(voice =>
-					{
-						voice.Message.AddStringTemplate("Voice");
-					});
+					options
+						.AddSms(sms =>
+						{
+							sms.Message.AddStringTemplate("SmsText");
+						})
+						.AddVoice(voice =>
+						{
+							voice.Message.AddStringTemplate("Voice");
+						});
 				})
 				.BuildClient();
 
@@ -167,16 +167,16 @@ namespace Transmitly.Tests
 				.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
 				.AddPipeline(PipelineName, options =>
 				{
-					options.AddSms(sms =>
-					{
-						sms.Message.AddStringTemplate("SmsText");
-					});
-
-					options.AddVoice(voice =>
-					{
-						voice.Message.AddStringTemplate("Voice");
-					});
-					options.UseAnyMatchPipelineDeliveryStrategy();
+					options
+						.AddSms(sms =>
+						{
+							sms.Message.AddStringTemplate("SmsText");
+						})
+						.AddVoice(voice =>
+						{
+							voice.Message.AddStringTemplate("Voice");
+						})
+						.UseAnyMatchPipelineDeliveryStrategy();
 				})
 				.BuildClient();
 

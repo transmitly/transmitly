@@ -23,6 +23,11 @@ namespace Transmitly.Pipeline.Configuration
 	public interface IPipelineConfiguration
 	{
 		/// <summary>
+		/// The unique identifier for the pipeline.
+		/// <para>To set value see <see cref="AddUniqueId(string)"/></para>
+		/// </summary>
+		string? Id { get; }
+		/// <summary>
 		/// Gets the list of available channels registered in the pipeline.
 		/// </summary>
 		/// <see cref="AddChannel(IChannel)"/>
@@ -35,26 +40,6 @@ namespace Transmitly.Pipeline.Configuration
 		/// Gets the registered channel sending strategy provider
 		/// </summary>
 		BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; }
-		/// <summary>
-		/// Priority of the transportation method.
-		/// </summary>
-		TransportPriority TransportPriority { get; set; }
-		/// <summary>
-		/// Priority of the message.
-		/// </summary>
-		MessagePriority MessagePriority { get; set; }
-		/// <summary>
-		/// Recipients to copy the message to (if supported).
-		/// </summary>
-		/// <param name="platformIdentityType"></param>
-		/// <returns>Pipeline configuration</returns>
-		IPipelineConfiguration CopyIdentityAddress(params string[] platformIdentityType);
-		/// <summary>
-		/// Recipients to blind copy the message to (if supported).
-		/// </summary>
-		/// <param name="platformIdentityType"></param>
-		/// <returns>Pipeline configuration</returns>
-		IPipelineConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType);
 		/// <summary>
 		/// Registers a communication channel with the pipeline.
 		/// </summary>
@@ -73,5 +58,11 @@ namespace Transmitly.Pipeline.Configuration
 		/// <param name="personaName">Name of the registered persona filter.</param>
 		/// <returns>Pipeline configuration.</returns>
 		IPipelineConfiguration AddPersonaFilter(string personaName);
+		/// <summary>
+		/// Adds an Id to a pipeline to uniquely identify it from other pipelines that may have the same intent name.
+		/// </summary>
+		/// <param name="id">Unique id of the pipeline.</param>
+		/// <returns>Pipeline configuration.</returns>
+		IPipelineConfiguration AddUniqueId(string id);
 	}
 }
