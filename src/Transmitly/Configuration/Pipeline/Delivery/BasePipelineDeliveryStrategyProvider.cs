@@ -23,11 +23,6 @@ namespace Transmitly.Delivery
 	public abstract class BasePipelineDeliveryStrategyProvider
 	{
 		/// <summary>
-		/// List of <see cref="DispatchStatus"/> that will evaluate to a successful result.
-		/// </summary>
-		protected virtual IReadOnlyCollection<DispatchStatus> SuccessfulStatuses { get; } = [DispatchStatus.Delivered, DispatchStatus.Dispatched, DispatchStatus.Pending];
-
-		/// <summary>
 		/// Dispatches the communications(s) through the provided channel channel provider groups.
 		/// </summary>
 		/// <param name="sendingGroups">Channel/Channel provider groupings.</param>
@@ -125,7 +120,7 @@ namespace Transmitly.Delivery
 							provider.Id,
 							context.PipelineName,
 							r!.ResourceId,
-							r.DispatchStatus,
+							r.Status,
 							communication,
 							contentModel,
 							r.Exception
@@ -133,7 +128,7 @@ namespace Transmitly.Delivery
 					).ToList();
 					context.DeliveryReportManager.DispatchReports(reports);
 				}
-				return [new DispatchResult(DispatchStatus.Exception, provider.Id, channel.Id) { Exception = ex }];
+				return [new DispatchResult(DispatchResultStatus.ClientError("Channel Provider Exception"), provider.Id, channel.Id) { Exception = ex }];
 			}
 		}
 
@@ -147,7 +142,7 @@ namespace Transmitly.Delivery
 			return allResults
 				.GroupBy(g => g?.ChannelId)
 				.All(a =>
-					a.Any(x => x != null && SuccessfulStatuses.Contains(x.DispatchStatus))
+					a.Any(x => x != null && x.Status.IsSuccess())
 				);
 		}
 

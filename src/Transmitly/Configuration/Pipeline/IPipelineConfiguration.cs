@@ -24,9 +24,9 @@ namespace Transmitly.Pipeline.Configuration
 	{
 		/// <summary>
 		/// The unique identifier for the pipeline.
-		/// <para>To set value see <see cref="AddUniqueId(string)"/></para>
+		/// <para>To set value see <see cref="Id(string)"/></para>
 		/// </summary>
-		string? Id { get; }
+		string? PipelineId { get; }
 		/// <summary>
 		/// Gets the list of available channels registered in the pipeline.
 		/// </summary>
@@ -40,6 +40,11 @@ namespace Transmitly.Pipeline.Configuration
 		/// Gets the registered channel sending strategy provider
 		/// </summary>
 		BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; }
+		/// <summary>
+		/// Whether the pipeline is forced to comply with the provided platform dispatch requirements.
+		/// <para>To set value see <see cref="AllowDispatchRequirements(bool)"/></para>
+		/// </summary>
+		bool IsDispatchRequirementsAllowed { get; }
 		/// <summary>
 		/// Registers a communication channel with the pipeline.
 		/// </summary>
@@ -63,6 +68,11 @@ namespace Transmitly.Pipeline.Configuration
 		/// </summary>
 		/// <param name="id">Unique id of the pipeline.</param>
 		/// <returns>Pipeline configuration.</returns>
-		IPipelineConfiguration AddUniqueId(string id);
+		IPipelineConfiguration Id(string id);
+		/// <summary>
+		/// Forces the pipeline to fail if it cannot comply to the provided platform dispatch requirements.
+		/// </summary>
+		/// <returns>Pipeline configuration.</returns>
+		IPipelineConfiguration AllowDispatchRequirements(bool allow = true);
 	}
 }

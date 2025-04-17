@@ -14,10 +14,20 @@
 
 namespace Transmitly.Channel.Configuration
 {
-	public sealed class DispatchCommunicationResult(IReadOnlyCollection<IDispatchResult?> results, bool isSuccessful) : IDispatchCommunicationResult
+	public sealed class DispatchCommunicationResult(IReadOnlyCollection<IDispatchResult?> results) : IDispatchCommunicationResult
 	{
 		public IReadOnlyCollection<IDispatchResult?> Results { get; } = Guard.AgainstNull(results);
 
-		public bool IsSuccessful { get; } = isSuccessful;
+		public bool IsSuccessful
+		{
+			get
+			{
+				return Results
+					.GroupBy(g => g?.ChannelId)
+					.All(a =>
+						a.Any(x => x != null && x.Status.IsSuccess())
+					);
+			}
+		}
 	}
 }

@@ -23,20 +23,14 @@ namespace Transmitly
 	public sealed class DeliveryReportEventName
 	{
 		private const string Prefix = "On";
-		private const string DispatchEventName = Prefix + "Dispatch";
-		private const string StatusChangedEventName = Prefix + "StatusChanged";
-		private const string DeliveredEventName = Prefix + nameof(DispatchStatus.Delivered);
-		private const string ErrorEventName = Prefix + nameof(DispatchStatus.Exception);
-		private const string DispatchedEventName = Prefix + nameof(DispatchStatus.Dispatched);
-
 
 		internal DeliveryReportEventName() { }
 #pragma warning disable CA1822 // Mark members as static
-		public string Delivered() => DeliveredEventName;
-		public string Error() => ErrorEventName;
-		public string Dispatched() => DispatchedEventName;
-		public string Dispatch() => DispatchEventName;
-		public string StatusChanged() => StatusChangedEventName;
+		public string Delivered() => Prefix + "Delivered";
+		public string Error() => Prefix + "Error";
+		public string Dispatched() => Prefix + "Dispatched";
+		public string Dispatch() => Prefix + "Dispatch";
+		public string StatusChanged() => Prefix + "StatusChanged";
 #pragma warning restore CA1822 // Mark members as static
 	}
 }

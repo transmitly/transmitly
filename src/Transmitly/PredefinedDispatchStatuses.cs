@@ -12,18 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.ChannelProvider;
-
-namespace Transmitly.Tests.Mocks
+namespace Transmitly
 {
-	internal sealed class SuccessChannelProviderDispatcher : IChannelProviderDispatcher<object>
+	public static class PredefinedDispatchStatuses
 	{
-		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
-
-		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
-		{
-			var result = new DispatchResult(DispatchResultStatus.Success("Dispatched"));
-			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
-		}
+		internal static readonly DispatchResultStatus PipelineNotFound = DispatchResultStatus.ClientError("Pipeline Not Found", 4);
+		internal static readonly DispatchResultStatus ChannelFiltersNotAllowed = DispatchResultStatus.ClientError("Channel Filters Not Allowed", 5);
+		internal static readonly DispatchResultStatus DispatchChannelFilterMismatch = DispatchResultStatus.ClientError("Dispatch Request Channel Filter Mismatch", 5);
+		internal static readonly DispatchResultStatus Unknown = DispatchResultStatus.ClientError("Unknown", 999);
 	}
 }

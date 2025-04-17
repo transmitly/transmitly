@@ -22,7 +22,7 @@ namespace Transmitly.Pipeline.Configuration
 		/// <summary>
 		/// Intent Name of the pipeline.
 		/// </summary>
-		string PipelineIntent { get; }
+		string Intent { get; }
 		/// <summary>
 		/// Category of the pipeline.
 		/// </summary>
@@ -30,10 +30,10 @@ namespace Transmitly.Pipeline.Configuration
 		/// <summary>
 		/// Pipeline channel configuration.
 		/// </summary>
-		IPipelineConfiguration ChannelConfiguration { get; }
+		IPipelineConfiguration Configuration { get; }
 		/// <summary>
 		/// Unique identifier for the pipeline.
 		/// </summary>
-		string? PipelineId { get; }
+		string? Id { get; }
 	}
 }

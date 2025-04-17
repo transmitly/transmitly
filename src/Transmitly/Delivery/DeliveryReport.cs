@@ -20,7 +20,7 @@ namespace Transmitly.Delivery
 		string? ChannelProviderId,
 		string? PipelineName,
 		string? ResourceId,
-		DispatchStatus DispatchStatus,
+		DispatchResultStatus Status,
 		object? ChannelCommunication,
 		IContentModel? ContentModel,
 		Exception? Exception

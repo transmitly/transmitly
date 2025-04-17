@@ -53,7 +53,8 @@ namespace Transmitly
 
 			var matchingPipelines = await _pipelineRegistrations.GetAsync(pipelineName).ConfigureAwait(false);
 			if (matchingPipelines.Count == 0)
-				throw new CommunicationsException($"A communication pipeline named, '{pipelineName}', has not been registered.");
+				return new DispatchCommunicationResult([new DispatchResult(PredefinedDispatchStatuses.PipelineNotFound)]);
+			//throw new CommunicationsException($"A communication pipeline named, '{pipelineName}', has not been registered.");
 
 			var allResults = new List<IDispatchCommunicationResult>();
 			var allRegisteredChannelProviders = await _channelProviderRegistrations.GetAllAsync().ConfigureAwait(false);
@@ -61,9 +62,9 @@ namespace Transmitly
 
 			foreach (var pipeline in matchingPipelines)
 			{
-				var pipelineConfiguration = pipeline.ChannelConfiguration;
+				var pipelineConfiguration = pipeline.Configuration;
 				var filteredPlatformIdentities = await FilterPlatformIdentityPersonas(platformIdentities, pipelineConfiguration).ConfigureAwait(false);
-				var deliveryStrategy = pipeline.ChannelConfiguration.PipelineDeliveryStrategyProvider;
+				var deliveryStrategy = pipeline.Configuration.PipelineDeliveryStrategyProvider;
 
 				var dispatchList = filteredPlatformIdentities.Select(identity =>
 				{
@@ -99,9 +100,9 @@ namespace Transmitly
 			}
 
 			var allDispatchResults = allResults.SelectMany(r => r.Results).ToList().AsReadOnly();
-			var allDispatchSuccessful = allResults.All(r => r.IsSuccessful);
+			//var allDispatchSuccessful = allResults.All(r => r.IsSuccessful);
 
-			return new DispatchCommunicationResult(allDispatchResults, allDispatchSuccessful);
+			return new DispatchCommunicationResult(allDispatchResults);
 		}
 
 		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)

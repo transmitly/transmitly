@@ -37,15 +37,15 @@ namespace Transmitly.Delivery
 						}
 
 						results.AddRange(result);
-						if (result.All(r => r != null && r.DispatchStatus == DispatchStatus.Exception))
+						if (result.All(r => r != null && r.Status.IsFailure()))
 						{
 							continue;
 						}
-						return new DispatchCommunicationResult(results.AsReadOnly(), true);
+						return new DispatchCommunicationResult(results.AsReadOnly());
 					}
 				}
 			}
-			return new DispatchCommunicationResult(results.AsReadOnly(), IsPipelineSuccessful(results));
+			return new DispatchCommunicationResult(results.AsReadOnly());
 		}
 	}
 }

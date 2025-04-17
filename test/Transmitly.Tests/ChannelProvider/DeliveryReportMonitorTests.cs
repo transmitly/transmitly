@@ -26,8 +26,8 @@ namespace Transmitly.ChannelProvider.Tests
 			var handler = new Mock<IObserver<DeliveryReport>>();
 			handler.Setup(s => s.OnNext(It.IsAny<DeliveryReport>())).Verifiable(Times.Exactly(1));
 			var monitor = new DeliveryReportMonitor(handler.Object, ["test"]);
-			monitor.OnNext(new DeliveryReport("test", null, null, null, null, DispatchStatus.Unknown, null, null, null));
-			monitor.OnNext(new DeliveryReport("test-2", null, null, null, null, DispatchStatus.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test", null, null, null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test-2", null, null, null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
 			await Task.Delay(10);//Delivery report calls are thrown out as tasks
 			handler.Verify();
 		}
@@ -38,8 +38,8 @@ namespace Transmitly.ChannelProvider.Tests
 			var handler = new Mock<IObserver<DeliveryReport>>();
 			handler.Setup(s => s.OnNext(It.IsAny<DeliveryReport>())).Verifiable(Times.Exactly(1));
 			var monitor = new DeliveryReportMonitor(handler.Object, null, ["channel"], null);
-			monitor.OnNext(new DeliveryReport("test", "channel", null, null, null, DispatchStatus.Unknown, null, null, null));
-			monitor.OnNext(new DeliveryReport("test", "channel-2", null, null, null, DispatchStatus.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test", "channel", null, null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test", "channel-2", null, null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
 			await Task.Delay(10);//Delivery report calls are thrown out as tasks
 			handler.Verify();
 		}
@@ -50,8 +50,8 @@ namespace Transmitly.ChannelProvider.Tests
 			var handler = new Mock<IObserver<DeliveryReport>>();
 			handler.Setup(s => s.OnNext(It.IsAny<DeliveryReport>())).Verifiable(Times.Exactly(1));
 			var monitor = new DeliveryReportMonitor(handler.Object, null, null, ["provider"]);
-			monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, DispatchStatus.Unknown, null, null, null));
-			monitor.OnNext(new DeliveryReport("test", "channel-2", "provider-2", null, null, DispatchStatus.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test", "channel-2", "provider-2", null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
 			await Task.Delay(10);//Delivery report calls are thrown out as tasks
 			handler.Verify();
 		}
@@ -62,8 +62,8 @@ namespace Transmitly.ChannelProvider.Tests
 			var handler = new Mock<IObserver<DeliveryReport>>();
 			handler.Setup(s => s.OnNext(It.IsAny<DeliveryReport>())).Verifiable(Times.Exactly(1));
 			var monitor = new DeliveryReportMonitor(handler.Object, ["test-2"], ["channel-2"], ["provider-2"]);
-			monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, DispatchStatus.Unknown, null, null, null));
-			monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-2", null, null, DispatchStatus.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-2", null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
 			await Task.Delay(10);//Delivery report calls are thrown out as tasks
 			handler.Verify();
 		}
@@ -74,9 +74,9 @@ namespace Transmitly.ChannelProvider.Tests
 			var handler = new Mock<IObserver<DeliveryReport>>();
 			handler.Setup(s => s.OnNext(It.IsAny<DeliveryReport>())).Verifiable(Times.Exactly(3));
 			var monitor = new DeliveryReportMonitor(handler.Object);
-			monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, DispatchStatus.Unknown, null, null, null));
-			monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-2", null, null, DispatchStatus.Unknown, null, null, null));
-			monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-3", null, null, DispatchStatus.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-2", null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
+			monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-3", null, null, PredefinedDispatchStatuses.Unknown, null, null, null));
 			await Task.Delay(10);//Delivery report calls are thrown out as tasks
 			handler.Verify();
 		}

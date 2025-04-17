@@ -34,7 +34,7 @@ namespace Transmitly.Pipeline.Configuration
 		{
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
 				_pipelineRegistrations
-				.Where(x => x.PipelineIntent == pipelineName).ToList().AsReadOnly()
+				.Where(x => x.Intent == pipelineName).ToList().AsReadOnly()
 			);
 		}
 	}

@@ -62,7 +62,7 @@ namespace Transmitly.Tests.Integration
 			Assert.IsNotNull(result.Results);
 			Assert.AreEqual(1, result.Results.Count);
 			var singleResult = result.Results.First();
-			Assert.AreEqual(DispatchStatus.Dispatched, singleResult?.DispatchStatus);
+			Assert.IsTrue(singleResult?.Status.IsSuccess());
 		}
 
 
@@ -115,7 +115,7 @@ namespace Transmitly.Tests.Integration
 			Assert.IsTrue(result.IsSuccessful);
 			Assert.AreEqual(1, result.Results.Count);
 			var singleResult = result.Results.First();
-			Assert.AreEqual(DispatchStatus.Dispatched, singleResult?.DispatchStatus);
+			Assert.IsTrue(singleResult?.Status?.IsSuccess());
 		}
 	}
 }

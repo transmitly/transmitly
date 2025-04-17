@@ -14,10 +14,11 @@
 
 namespace Transmitly
 {
+
 	public interface IDispatchResult
 	{
 		string? ResourceId { get; }
-		DispatchStatus DispatchStatus { get; }
+		DispatchResultStatus Status { get; }
 		string? ChannelProviderId { get; }
 		string? ChannelId { get; }
 		Exception? Exception { get; }

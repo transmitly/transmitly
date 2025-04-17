@@ -22,7 +22,7 @@ namespace Transmitly.Tests.Mocks
 
 		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 		{
-			var result = new DispatchResult(DispatchStatus.Exception);
+			var result = new DispatchResult(DispatchResultStatus.ClientError("Exception"));
 			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
 		}
 	}

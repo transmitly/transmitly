@@ -22,14 +22,14 @@ namespace Transmitly.Pipeline.Configuration
 		   string? category
 	) : IPipeline
 	{
-		public string? PipelineId => configuration.Id;
+		public string? Id => configuration.PipelineId;
 
-		public string PipelineIntent { get; } = Guard.AgainstNullOrWhiteSpace(pipelineIntent);
+		public string Intent { get; } = Guard.AgainstNullOrWhiteSpace(pipelineIntent);
 
 		public string? PlatformIdentityType { get; } = platformIdentityType;
 
 		public string? Category { get; } = category;
 
-		public IPipelineConfiguration ChannelConfiguration { get; } = Guard.AgainstNull(configuration);
+		public IPipelineConfiguration Configuration { get; } = Guard.AgainstNull(configuration);
 	}
 }

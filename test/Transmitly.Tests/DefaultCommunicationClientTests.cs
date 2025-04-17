@@ -52,6 +52,7 @@ namespace Transmitly.Tests
 					.AddPipeline("test-pipeline", options =>
 					{
 						options
+
 							.AddChannel(new UnitTestChannel("c0-from", ChannelId, ChannelProvider0))
 							.AddChannel(new UnitTestChannel("c1-from", ChannelId, ChannelProvider1))
 							.AddChannel(new UnitTestChannel("c2-from", "channel-not-included", ChannelProvider0));
@@ -106,7 +107,7 @@ namespace Transmitly.Tests
 			var result = await client.DispatchAsync("test-pipeline", "test@test.com", new { });
 			Assert.IsTrue(result.IsSuccessful);
 			Assert.AreEqual(1, result.Results.Count);
-			Assert.AreEqual(DispatchStatus.Dispatched, result.Results.First()?.DispatchStatus);
+			Assert.IsTrue(result.Results.First()?.Status.IsSuccess());
 			Assert.AreEqual("EmailCommunication", result.Results.First()?.ResourceId);
 		}
 

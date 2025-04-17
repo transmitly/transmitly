@@ -17,12 +17,15 @@ using Transmitly.Delivery;
 
 namespace Transmitly.Pipeline.Configuration
 {
-	internal class DefaultPipelineProviderConfiguration : IPipelineConfiguration
+	///<inheritdoc cref="IPipelineConfiguration"/>
+	internal sealed class DefaultPipelineProviderConfiguration : IPipelineConfiguration
 	{
 		private readonly List<IChannel> _channels = [];
 		private readonly List<string> _personaFilters = [];
 
-		public string? Id { get; private set; }
+		public string? PipelineId { get; private set; }
+
+		public bool IsDispatchRequirementsAllowed { get; private set; } = true;
 		
 		public IReadOnlyCollection<string> PersonaFilters => _personaFilters.AsReadOnly();
 
@@ -52,10 +55,16 @@ namespace Transmitly.Pipeline.Configuration
 			return this;
 		}
 
-		public IPipelineConfiguration AddUniqueId(string id)
+		public IPipelineConfiguration Id(string id)
 		{
 			Guard.AgainstNullOrWhiteSpace(id);
-			Id = id;
+			PipelineId = id;
+			return this;
+		}
+
+		public IPipelineConfiguration AllowDispatchRequirements(bool allow = false)
+		{
+			IsDispatchRequirementsAllowed = allow;
 			return this;
 		}
 	}

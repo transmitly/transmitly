@@ -16,23 +16,23 @@ namespace Transmitly
 {
 	public sealed class DispatchResult : IDispatchResult
 	{
-		internal DispatchResult(IDispatchResult result, string channelProviderId, string channelId, Exception? exception = null) : this(result.DispatchStatus, channelProviderId, channelId, exception)
+		internal DispatchResult(IDispatchResult result, string channelProviderId, string channelId, Exception? exception = null) : this(result.Status, channelProviderId, channelId, exception)
 		{
 			ResourceId = result.ResourceId;
-			DispatchStatus = result.DispatchStatus;
+			Status = result.Status;
 		}
 
-		internal DispatchResult(DispatchStatus status, string channelProviderId, string channelId, Exception? exception = null)
+		internal DispatchResult(DispatchResultStatus status, string channelProviderId, string channelId, Exception? exception = null)
 		{
-			DispatchStatus = status;
+			Status = status;
 			ChannelProviderId = channelProviderId;
 			ChannelId = channelId;
 			Exception = exception;
 		}
 
-		public DispatchResult(DispatchStatus status, string? id = null)
+		public DispatchResult(DispatchResultStatus status, string? id = null)
 		{
-			DispatchStatus = status;
+			Status = status;
 
 			if (string.IsNullOrWhiteSpace(id))
 				ResourceId = Guid.NewGuid().ToString();
@@ -46,7 +46,7 @@ namespace Transmitly
 
 		public string? ChannelId { get; }
 
-		public DispatchStatus DispatchStatus { get; internal set; }
+		public DispatchResultStatus Status { get; internal set; }
 
 		public Exception? Exception { get; internal set; }
 	}

@@ -44,14 +44,14 @@ namespace Transmitly.Delivery
 
 						results.AddRange(result);
 
-						if (result.Any(r => r != null && r.DispatchStatus == DispatchStatus.Exception))
+						if (result.Any(r => r != null && r.Status.IsFailure()))
 						{
-							return new DispatchCommunicationResult(results, false);
+							return new DispatchCommunicationResult(results);
 						}
 					}
 				}
 			}
-			return new DispatchCommunicationResult(results, IsPipelineSuccessful(results));
+			return new DispatchCommunicationResult(results);
 		}
 	}
 }

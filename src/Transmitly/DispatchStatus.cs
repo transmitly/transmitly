@@ -14,15 +14,27 @@
 
 namespace Transmitly
 {
-	public enum DispatchStatus
+	public static class DispatchResultStatusExtensions
 	{
-		Unknown,
-		Dispatched,
-		Delivered,
-		Pending,
-		Undeliverable,
-		Expired,
-		Rejected,
-		Exception
+		public static bool IsSuccess(this DispatchResultStatus status)
+		{
+			return (status.Code >= DispatchResultStatus.SuccessMin && status.Code <= DispatchResultStatus.SuccessMax) ||
+				(status.Code >= DispatchResultStatus.InfoMin && status.Code <= DispatchResultStatus.InfoMax);
+		}
+
+		public static bool IsClientError(this DispatchResultStatus status)
+		{
+			return status.Code >= DispatchResultStatus.ClientErrMin && status.Code <= DispatchResultStatus.ClientErrMax;
+		}
+
+		public static bool IsServerError(this DispatchResultStatus status)
+		{
+			return status.Code >= DispatchResultStatus.ServerErrMin && status.Code <= DispatchResultStatus.ServerErrMax;
+		}
+
+		public static bool IsFailure(this DispatchResultStatus status)
+		{
+			return IsClientError(status) || IsServerError(status);
+		}
 	}
 }

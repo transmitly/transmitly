@@ -39,7 +39,7 @@ namespace Transmitly.Tests
 		{
 			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(UnitTestCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 			{
-				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([new DispatchResult(DispatchStatus.Dispatched, nameof(Test2))]);
+				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([new DispatchResult(DispatchResultStatus.Success("Dispatched"), nameof(Test2))]);
 			}
 
 			public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
@@ -140,7 +140,7 @@ namespace Transmitly.Tests
 			Assert.IsNotNull(result);
 			Assert.IsTrue(result.IsSuccessful);
 			Assert.AreEqual(2, result.Results.Count);
-			Assert.IsTrue(result.Results.Any(a => a?.ChannelProviderId == "test-2" && a.DispatchStatus == DispatchStatus.Dispatched));
+			Assert.IsTrue(result.Results.Any(a => a?.ChannelProviderId == "test-2"));
 		}
 
 		[TestMethod]

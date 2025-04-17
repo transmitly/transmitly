@@ -78,7 +78,7 @@ namespace Transmitly.Pipeline.Configuration.Tests
 			var sentResult = await client.DispatchAsync(expectedPipelineName, "unit-test-address", new { });
 			Assert.AreEqual(1, sentResult.Results.Count);
 			Assert.IsTrue(sentResult.IsSuccessful);
-			Assert.IsTrue(sentResult.Results.All(x => x?.DispatchStatus == DispatchStatus.Dispatched));
+			Assert.IsTrue(sentResult.Results.All(x => x?.Status.IsSuccess() ?? false));
 			var deliveryResult = sentResult.Results.First();
 
 			Assert.AreEqual(expectedChannelId, sentResult.Results?.First()?.ChannelId);

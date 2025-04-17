@@ -51,7 +51,7 @@ namespace Transmitly.Tests.Identity
 			Assert.IsNotNull(result.Results);
 			Assert.AreEqual(1, result.Results.Count);
 			var singleResult = result.Results.First();
-			Assert.AreEqual(DispatchStatus.Dispatched, singleResult?.DispatchStatus);
+			Assert.IsTrue(singleResult?.Status.IsSuccess());
 		}
 	}
 }
