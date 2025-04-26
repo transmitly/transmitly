@@ -25,7 +25,6 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
-
 	public sealed class DefaultCommunicationsClient(
 		IPipelineFactory pipelineRegistrations,
 		IChannelProviderFactory channelProviderRegistrations,
@@ -54,7 +53,6 @@ namespace Transmitly
 			var matchingPipelines = await _pipelineRegistrations.GetAsync(pipelineName).ConfigureAwait(false);
 			if (matchingPipelines.Count == 0)
 				return new DispatchCommunicationResult([new DispatchResult(PredefinedDispatchStatuses.PipelineNotFound)]);
-			//throw new CommunicationsException($"A communication pipeline named, '{pipelineName}', has not been registered.");
 
 			var allResults = new List<IDispatchCommunicationResult>();
 			var allRegisteredChannelProviders = await _channelProviderRegistrations.GetAllAsync().ConfigureAwait(false);
@@ -107,6 +105,13 @@ namespace Transmitly
 
 		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
+			var resolvedIdentityProfiles = await ResolvePlatformIdentityProfiles(identityReferences).ConfigureAwait(false);
+
+			return await DispatchAsync(pipelineName, resolvedIdentityProfiles, transactionalModel, channelPreferences, cultureInfo, cancellationToken).ConfigureAwait(false);
+		}
+
+		private async Task<List<IPlatformIdentityProfile>> ResolvePlatformIdentityProfiles(IReadOnlyCollection<IPlatformIdentityReference> identityReferences)
+		{
 			var uniqueTypes = Guard.AgainstNullOrEmpty(identityReferences?.ToList()).Select(s => s.Type).Distinct().ToArray();
 
 			var resolvers = await _platformIdentityResolvers.GetAsync(uniqueTypes).ConfigureAwait(false);
@@ -132,7 +137,7 @@ namespace Transmitly
 					results.AddRange(resolvedIdentities);
 			}
 
-			return await DispatchAsync(pipelineName, results, transactionalModel, channelPreferences, cultureInfo, cancellationToken).ConfigureAwait(false);
+			return results;
 		}
 
 		private static IEnumerable<ChannelChannelProviderGroup> OrderProvidersByPlatformIdentityPreference(IEnumerable<ChannelChannelProviderGroup> groups, IReadOnlyCollection<string>? preferences)

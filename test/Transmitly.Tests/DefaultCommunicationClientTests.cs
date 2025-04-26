@@ -205,6 +205,28 @@ namespace Transmitly.Tests
 #pragma warning restore S2589 // Boolean expressions should not be gratuitous
 		}
 
+
+		[TestMethod]
+		public async Task ShouldReturnPipelineNotFoundResultCode()
+		{
+			const string PipelineName = "test-pipeline";
+			IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
+			var model = TransactionModel.Create(new { });
+
+			var tly = new CommunicationsClientBuilder()
+				.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
+				.AddPipeline(PipelineName, options => { })
+				.BuildClient();
+
+			var result = await tly.DispatchAsync("DoesNotExist", testRecipients, model, [Id.Channel.Voice()]);
+
+			Assert.IsFalse(result.IsSuccessful);
+			Assert.AreEqual(1, result.Results.Count);
+			var firstResult = result.Results.First();
+			Assert.IsNotNull(firstResult);
+			Assert.AreEqual(PredefinedDispatchStatuses.PipelineNotFound, firstResult.Status);
+		}
+
 		[TestMethod()]
 		public async Task ShouldThrowIfNullIdentityAddressCollection()
 		{
