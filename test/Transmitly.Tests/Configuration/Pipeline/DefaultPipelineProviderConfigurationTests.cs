@@ -16,7 +16,7 @@ using Moq;
 using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
 
-namespace Transmitly.Tests.Configuration.Pipeline
+namespace Transmitly.Tests.Pipeline.Configuration
 {
 	[TestClass]
 	public class DefaultPipelineProviderConfigurationTests
@@ -38,13 +38,13 @@ namespace Transmitly.Tests.Configuration.Pipeline
 			var sut = new DefaultPipelineProviderConfiguration();
 			Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			PipelineDeliveryStrategyConfigurationExtensions.UseDefaultPipelineDeliveryStrategy(sut);
+			sut.UseDefaultPipelineDeliveryStrategy();
 			Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			PipelineDeliveryStrategyConfigurationExtensions.UseAnyMatchPipelineDeliveryStrategy(sut);
+			sut.UseAnyMatchPipelineDeliveryStrategy();
 			Assert.AreEqual(expectedAnyMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			PipelineDeliveryStrategyConfigurationExtensions.UseDefaultPipelineDeliveryStrategy(sut);
+			sut.UseDefaultPipelineDeliveryStrategy();
 			Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
 			var customStrategy = new Mock<BasePipelineDeliveryStrategyProvider>();

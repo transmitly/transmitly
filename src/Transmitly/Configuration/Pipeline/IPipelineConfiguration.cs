@@ -41,7 +41,7 @@ namespace Transmitly.Pipeline.Configuration
 		/// </summary>
 		BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; }
 		/// <summary>
-		/// Whether the pipeline is forced to comply with the provided platform dispatch requirements.
+		/// Whether the pipeline is forced to comply with the provided platform dispatch requirements. (Default = True)
 		/// <para>To set value see <see cref="AllowDispatchRequirements(bool)"/></para>
 		/// </summary>
 		bool IsDispatchRequirementsAllowed { get; }
@@ -73,6 +73,6 @@ namespace Transmitly.Pipeline.Configuration
 		/// Forces the pipeline to fail if it cannot comply to the provided platform dispatch requirements.
 		/// </summary>
 		/// <returns>Pipeline configuration.</returns>
-		IPipelineConfiguration AllowDispatchRequirements(bool allow = true);
+		IPipelineConfiguration AllowDispatchRequirements(bool allowed);
 	}
 }

@@ -16,23 +16,23 @@ namespace Transmitly
 {
 	public static class DispatchResultStatusExtensions
 	{
-		public static bool IsSuccess(this DispatchResultStatus status)
+		public static bool IsSuccess(this CommunicationsStatus status)
 		{
-			return (status.Code >= DispatchResultStatus.SuccessMin && status.Code <= DispatchResultStatus.SuccessMax) ||
-				(status.Code >= DispatchResultStatus.InfoMin && status.Code <= DispatchResultStatus.InfoMax);
+			return (status.Code >= CommunicationsStatus.SuccessMin && status.Code <= CommunicationsStatus.SuccessMax) ||
+				(status.Code >= CommunicationsStatus.InfoMin && status.Code <= CommunicationsStatus.InfoMax);
 		}
 
-		public static bool IsClientError(this DispatchResultStatus status)
+		public static bool IsClientError(this CommunicationsStatus status)
 		{
-			return status.Code >= DispatchResultStatus.ClientErrMin && status.Code <= DispatchResultStatus.ClientErrMax;
+			return status.Code >= CommunicationsStatus.ClientErrMin && status.Code <= CommunicationsStatus.ClientErrMax;
 		}
 
-		public static bool IsServerError(this DispatchResultStatus status)
+		public static bool IsServerError(this CommunicationsStatus status)
 		{
-			return status.Code >= DispatchResultStatus.ServerErrMin && status.Code <= DispatchResultStatus.ServerErrMax;
+			return status.Code >= CommunicationsStatus.ServerErrMin && status.Code <= CommunicationsStatus.ServerErrMax;
 		}
 
-		public static bool IsFailure(this DispatchResultStatus status)
+		public static bool IsFailure(this CommunicationsStatus status)
 		{
 			return IsClientError(status) || IsServerError(status);
 		}

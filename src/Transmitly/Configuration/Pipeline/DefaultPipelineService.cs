@@ -12,13 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly.Pipeline.Configuration
 {
-	public static class PredefinedDispatchStatuses
+	sealed class DefaultPipelineService(IPipelineFactory pipelineFactory) : BasePipelineService(pipelineFactory)
 	{
-		internal static readonly DispatchResultStatus PipelineNotFound = DispatchResultStatus.ClientError("Pipeline Not Found", 4);
-		internal static readonly DispatchResultStatus ChannelFiltersNotAllowed = DispatchResultStatus.ClientError("Channel Filters Not Allowed", 5);
-		internal static readonly DispatchResultStatus DispatchChannelFilterMismatch = DispatchResultStatus.ClientError("Dispatch Request Channel Filter Mismatch", 5);
-		internal static readonly DispatchResultStatus Unknown = DispatchResultStatus.ClientError("Unknown", 999);
+		
 	}
 }

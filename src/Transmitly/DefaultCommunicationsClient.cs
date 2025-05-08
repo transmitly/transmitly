@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using System.Collections.ObjectModel;
+using System.Linq;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
@@ -25,8 +26,9 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
+
 	public sealed class DefaultCommunicationsClient(
-		IPipelineFactory pipelineRegistrations,
+		IPipelineService pipelineService,
 		IChannelProviderFactory channelProviderRegistrations,
 		ITemplateEngineFactory templateEngineRegistrations,
 		IPersonaFactory personaRegistrations,
@@ -35,24 +37,27 @@ namespace Transmitly
 		) :
 		ICommunicationsClient
 	{
-		private readonly IPipelineFactory _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations);
 		private readonly IChannelProviderFactory _channelProviderRegistrations = Guard.AgainstNull(channelProviderRegistrations);
 		private readonly ITemplateEngineFactory _templateEngineRegistrations = Guard.AgainstNull(templateEngineRegistrations);
 		private readonly IPersonaFactory _personaRegistrations = Guard.AgainstNull(personaRegistrations);
 		private readonly IDeliveryReportReporter _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
 		private readonly IPlatformIdentityResolverFactory _platformIdentityResolvers = Guard.AgainstNull(platformIdentityResolverRegistrations);
+		private readonly IPipelineService _pipelineLookupService = Guard.AgainstNull(pipelineService);
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineIntent, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
-			Guard.AgainstNullOrWhiteSpace(pipelineName);
+			Guard.AgainstNullOrWhiteSpace(pipelineIntent);
 			Guard.AgainstNull(transactionalModel);
 			Guard.AgainstNull(platformIdentities);
 
 			var culture = GuardCulture.AgainstNull(cultureInfo);
 
-			var matchingPipelines = await _pipelineRegistrations.GetAsync(pipelineName).ConfigureAwait(false);
-			if (matchingPipelines.Count == 0)
-				return new DispatchCommunicationResult([new DispatchResult(PredefinedDispatchStatuses.PipelineNotFound)]);
+			var findMatchingPipelinesResult = await _pipelineLookupService.FindAsync(pipelineIntent, null, dispatchChannelPreferences);
+
+			if (findMatchingPipelinesResult.Errors.Count > 0)
+				return new DispatchCommunicationResult(findMatchingPipelinesResult.Errors.Select(s => new DispatchResult(s)).ToList());
+
+			var matchingPipelines = findMatchingPipelinesResult.Pipelines;
 
 			var allResults = new List<IDispatchCommunicationResult>();
 			var allRegisteredChannelProviders = await _channelProviderRegistrations.GetAllAsync().ConfigureAwait(false);
@@ -73,7 +78,7 @@ namespace Transmitly
 						templateEngine,
 						_deliveryReportProvider,
 						culture,
-						pipelineName);
+						pipelineIntent);
 
 					var group = CreateChannelChannelProviderGroupsForPlatformIdentity(
 						pipeline.Category,
@@ -91,14 +96,14 @@ namespace Transmitly
 				})
 				.Where(result => result != null)
 				.Cast<RecipientDispatchCommunicationContext>()
-				.ToList().AsReadOnly();
+				.ToList()
+				.AsReadOnly();
 
 				var dispatchResult = await deliveryStrategy.DispatchAsync(dispatchList, cancellationToken).ConfigureAwait(false);
 				allResults.Add(dispatchResult);
 			}
 
 			var allDispatchResults = allResults.SelectMany(r => r.Results).ToList().AsReadOnly();
-			//var allDispatchSuccessful = allResults.All(r => r.IsSuccessful);
 
 			return new DispatchCommunicationResult(allDispatchResults);
 		}

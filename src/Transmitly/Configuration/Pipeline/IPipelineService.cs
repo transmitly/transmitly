@@ -14,24 +14,8 @@
 
 namespace Transmitly.Pipeline.Configuration
 {
-	/// <summary>
-	/// Represents a store for pipeline registrations.
-	/// </summary>
-	public interface IPipelineFactory
+	public interface IPipelineService
 	{
-		/// <summary>
-		/// Retrieves all pipelines asynchronously.
-		/// </summary>
-		/// <returns>A read-only list of pipelines.</returns>
-		Task<IReadOnlyCollection<IPipeline>> GetAllAsync();
-
-		/// <summary>
-		/// Retrieves a pipeline by pipeline intent and/or id.
-		/// </summary>
-		/// <param name="pipelineIntent">The pipeline intent name.</param>
-		/// <param name="pipelineId">Optional pipeline id.</param>
-		/// <returns>The pipeline, or null if not found.</returns>
-		Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineIntent, string? pipelineId = null);
+		Task<PipelineLookupResult> FindAsync(string pipelineIntent, string? pipelineId, IReadOnlyCollection<string> allowedChannelFilter);
 	}
-
 }

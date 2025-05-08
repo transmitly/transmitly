@@ -23,7 +23,7 @@ namespace Transmitly.Tests
 		[TestMethod]
 		public void IsSuccessReturnsTrueForSuccessCode()
 		{
-			var status = new DispatchResultStatus ("test", "test", 2000);
+			var status = new CommunicationsStatus ("test", "test", 2000);
 
 			var result = status.IsSuccess();
 
@@ -33,7 +33,7 @@ namespace Transmitly.Tests
 		[TestMethod]
 		public void IsSuccessReturnsTrueForInfoCode()
 		{
-			var status = new DispatchResultStatus ("test", "test", 1500);
+			var status = new CommunicationsStatus ("test", "test", 1500);
 
 			var result = status.IsSuccess();
 
@@ -43,7 +43,7 @@ namespace Transmitly.Tests
 		[TestMethod]
 		public void IsSuccessReturnsFalseForClientErrorCode()
 		{
-			var status = new DispatchResultStatus ("test", "test", 4000);
+			var status = new CommunicationsStatus ("test", "test", 4000);
 
 			var result = status.IsSuccess();
 
@@ -53,7 +53,7 @@ namespace Transmitly.Tests
 		[TestMethod]
 		public void IsClientErrorReturnsTrueForClientErrorCode()
 		{
-			var status = new DispatchResultStatus ("test", "test", 4500);
+			var status = new CommunicationsStatus ("test", "test", 4500);
 
 			var result = status.IsClientError();
 
@@ -63,7 +63,7 @@ namespace Transmitly.Tests
 		[TestMethod]
 		public void IsClientErrorReturnsFalseForServerErrorCode()
 		{
-			var status = new DispatchResultStatus ("test", "test", 5000);
+			var status = new CommunicationsStatus ("test", "test", 5000);
 
 			var result = status.IsClientError();
 
@@ -73,7 +73,7 @@ namespace Transmitly.Tests
 		[TestMethod]
 		public void IsServerErrorReturnsTrueForServerErrorCode()
 		{
-			var status = new DispatchResultStatus ("test", "test", 5500);
+			var status = new CommunicationsStatus ("test", "test", 5500);
 
 			var result = status.IsServerError();
 
@@ -83,7 +83,7 @@ namespace Transmitly.Tests
 		[TestMethod]
 		public void IsServerErrorReturnsFalseForClientErrorCode()
 		{
-			var status = new DispatchResultStatus ("test", "test", 4500);
+			var status = new CommunicationsStatus ("test", "test", 4500);
 
 			var result = status.IsServerError();
 
@@ -93,7 +93,7 @@ namespace Transmitly.Tests
 		[TestMethod]
 		public void IsFailureReturnsTrueForClientErrorCode()
 		{
-			var status = new DispatchResultStatus("test", "test", 4500);
+			var status = new CommunicationsStatus("test", "test", 4500);
 
 			var result = status.IsFailure();
 
@@ -103,7 +103,7 @@ namespace Transmitly.Tests
 		[TestMethod]
 		public void IsFailureReturnsTrueForServerErrorCode()
 		{
-			var status = new DispatchResultStatus("test", "test", 5500);
+			var status = new CommunicationsStatus("test", "test", 5500);
 
 			var result = status.IsFailure();
 
@@ -113,7 +113,7 @@ namespace Transmitly.Tests
 		[TestMethod]
 		public void IsFailureReturnsFalseForSuccessCode()
 		{
-			var status = new DispatchResultStatus("test","test", 2000);
+			var status = new CommunicationsStatus("test","test", 2000);
 
 			var result = status.IsFailure();
 

@@ -12,7 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System.ComponentModel;
 using System.Linq.Expressions;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
@@ -24,7 +23,6 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
-
 	/// <summary>
 	/// Builds an instance of a <see cref="ICommunicationsClient"/>.
 	/// </summary>
@@ -160,7 +158,8 @@ namespace Transmitly
 		/// <returns>The communications client.</returns>
 		public ICommunicationsClient BuildClient()
 		{
-			if (_clientCreated) throw new InvalidOperationException($"{nameof(BuildClient)}() can only be called once.");
+			if (_clientCreated) 
+				throw new InvalidOperationException($"{nameof(BuildClient)}() can only be called once.");
 
 			if (_templateEngines.Count == 0)
 				AddTemplateEngine(new NoopTemplatingEngine(), DefaultTemplateEngineId);

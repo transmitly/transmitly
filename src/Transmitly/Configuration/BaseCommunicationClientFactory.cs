@@ -25,7 +25,7 @@ namespace Transmitly
 		public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
 		{
 			return new DefaultCommunicationsClient(
-				new DefaultPipelineFactory(context.Pipelines),
+				new DefaultPipelineService(new DefaultPipelineFactory(context.Pipelines)),
 				new DefaultChannelProviderFactory(context.ChannelProviders),
 				new DefaultTemplateEngineFactory(context.TemplateEngines),
 				new DefaultPersonaFactory(context.Personas),

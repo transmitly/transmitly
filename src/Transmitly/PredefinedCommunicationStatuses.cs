@@ -14,15 +14,12 @@
 
 namespace Transmitly
 {
-
-	public interface IDispatchResult
+	public static class PredefinedCommunicationStatuses
 	{
-		string? ResourceId { get; }
-		CommunicationsStatus Status { get; }
-		string? ChannelProviderId { get; }
-		string? ChannelId { get; }
-		string? PipelineId { get; }
-		string? PipelineName { get; }
-		Exception? Exception { get; }
+		internal static readonly CommunicationsStatus PipelineNotFound = CommunicationsStatus.ClientError("Pipeline Not Found", 4);
+		internal static readonly CommunicationsStatus DispatchRequirementsNotAllowed = CommunicationsStatus.ClientError("Pipeline Does Not Allow Channel Filters", 5);
+		internal static readonly CommunicationsStatus DispatchChannelFilterMismatch = CommunicationsStatus.ClientError("Dispatch Request Channel Filter Mismatch", 6);
+		internal static readonly CommunicationsStatus Unknown = CommunicationsStatus.ClientError("Unknown", 999);
+
 	}
 }

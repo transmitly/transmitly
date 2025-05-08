@@ -26,8 +26,6 @@ namespace Transmitly.Tests
 	[TestClass]
 	public class DefaultCommunicationClientTests : BaseUnitTest
 	{
-
-
 		[TestMethod]
 		[DataRow("")]
 		[DataRow(" ")]
@@ -66,7 +64,7 @@ namespace Transmitly.Tests
 		}
 
 		private static (
-			Mock<IPipelineFactory> pipeline,
+			Mock<IPipelineService> pipeline,
 			Mock<IChannelProviderFactory> channelProvider,
 			Mock<ITemplateEngineFactory> template,
 			Mock<IDeliveryReportReporter> deliveryReportHandler,
@@ -75,7 +73,7 @@ namespace Transmitly.Tests
 			) GetStores()
 		{
 			return (
-				new Mock<IPipelineFactory>(),
+				new Mock<IPipelineService>(),
 				new Mock<IChannelProviderFactory>(),
 				new Mock<ITemplateEngineFactory>(),
 				new Mock<IDeliveryReportReporter>(),
@@ -218,13 +216,35 @@ namespace Transmitly.Tests
 				.AddPipeline(PipelineName, options => { })
 				.BuildClient();
 
+
 			var result = await tly.DispatchAsync("DoesNotExist", testRecipients, model, [Id.Channel.Voice()]);
 
 			Assert.IsFalse(result.IsSuccessful);
 			Assert.AreEqual(1, result.Results.Count);
 			var firstResult = result.Results.First();
 			Assert.IsNotNull(firstResult);
-			Assert.AreEqual(PredefinedDispatchStatuses.PipelineNotFound, firstResult.Status);
+			Assert.AreEqual(PredefinedCommunicationStatuses.PipelineNotFound, firstResult.Status);
+		}
+
+		[TestMethod]
+		public async Task ShouldReturnChannelFiltersNotAllowedWhenChannelFiltersDisabled()
+		{
+			const string PipelineName = "test-pipeline";
+			IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
+			var model = TransactionModel.Create(new { });
+
+			var tly = new CommunicationsClientBuilder()
+				.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
+				.AddPipeline(PipelineName, options => { options.AllowDispatchRequirements(false); })
+				.BuildClient();
+
+			var result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Voice()]);
+
+			Assert.IsFalse(result.IsSuccessful);
+			Assert.AreEqual(1, result.Results.Count);
+			var firstResult = result.Results.First();
+			Assert.IsNotNull(firstResult);
+			Assert.AreEqual(4005, firstResult.Status.Code);
 		}
 
 		[TestMethod()]

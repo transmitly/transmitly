@@ -62,9 +62,9 @@ namespace Transmitly.Pipeline.Configuration
 			return this;
 		}
 
-		public IPipelineConfiguration AllowDispatchRequirements(bool allow = false)
+		public IPipelineConfiguration AllowDispatchRequirements(bool allowed)
 		{
-			IsDispatchRequirementsAllowed = allow;
+			IsDispatchRequirementsAllowed = allowed;
 			return this;
 		}
 	}

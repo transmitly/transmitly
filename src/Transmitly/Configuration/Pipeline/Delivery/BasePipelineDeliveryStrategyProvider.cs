@@ -128,7 +128,7 @@ namespace Transmitly.Delivery
 					).ToList();
 					context.DeliveryReportManager.DispatchReports(reports);
 				}
-				return [new DispatchResult(DispatchResultStatus.ClientError("Channel Provider Exception"), provider.Id, channel.Id) { Exception = ex }];
+				return [new DispatchResult(CommunicationsStatus.ClientError("Channel Provider Exception"), provider.Id, channel.Id) { Exception = ex }];
 			}
 		}
 

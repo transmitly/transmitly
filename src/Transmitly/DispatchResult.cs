@@ -22,7 +22,7 @@ namespace Transmitly
 			Status = result.Status;
 		}
 
-		internal DispatchResult(DispatchResultStatus status, string channelProviderId, string channelId, Exception? exception = null)
+		internal DispatchResult(CommunicationsStatus status, string channelProviderId, string channelId, Exception? exception = null)
 		{
 			Status = status;
 			ChannelProviderId = channelProviderId;
@@ -30,7 +30,7 @@ namespace Transmitly
 			Exception = exception;
 		}
 
-		public DispatchResult(DispatchResultStatus status, string? id = null)
+		public DispatchResult(CommunicationsStatus status, string? id = null)
 		{
 			Status = status;
 
@@ -46,8 +46,12 @@ namespace Transmitly
 
 		public string? ChannelId { get; }
 
-		public DispatchResultStatus Status { get; internal set; }
+		public CommunicationsStatus Status { get; internal set; }
 
 		public Exception? Exception { get; internal set; }
+
+		public string? PipelineId {get;internal set; }
+
+		public string? PipelineName { get; internal set; }
 	}
 }

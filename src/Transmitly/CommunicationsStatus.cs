@@ -14,7 +14,7 @@
 
 namespace Transmitly
 {
-	public sealed record DispatchResultStatus
+	public sealed record CommunicationsStatus
 	{
 		public const int InfoMin = 1000, InfoMax = 1999;
 		public const int SuccessMin = 2000, SuccessMax = 2999;
@@ -26,38 +26,38 @@ namespace Transmitly
 		public int Code { get; }
 		public string Detail { get; }
 
-		internal DispatchResultStatus(string ownerId, string reasonPhrase, int code = 0)
+		internal CommunicationsStatus(string ownerId, string reasonPhrase, int code = 0)
 		{
 			OwnerId = ownerId;
 			Code = code;
 			Detail = reasonPhrase;
 		}
 
-		internal static DispatchResultStatus Info(string reasonPhrase, int subCode = 0)
+		internal static CommunicationsStatus Info(string reasonPhrase, int subCode = 0)
 		  => Create(TransmitlyCallerId, InfoMin, InfoMax, subCode, reasonPhrase, true);
 
-		internal static DispatchResultStatus Success(string reasonPhrase, int subCode = 0)
+		internal static CommunicationsStatus Success(string reasonPhrase, int subCode = 0)
 		  => Create(TransmitlyCallerId, SuccessMin, SuccessMax, subCode, reasonPhrase, true);
 
-		internal static DispatchResultStatus ClientError(string reasonPhrase, int subCode = 0)
+		internal static CommunicationsStatus ClientError(string reasonPhrase, int subCode = 0)
 		  => Create(TransmitlyCallerId, ClientErrMin, ClientErrMax, subCode, reasonPhrase, true);
 
-		internal static DispatchResultStatus ServerError(string reasonPhrase, int subCode = 0)
+		internal static CommunicationsStatus ServerError(string reasonPhrase, int subCode = 0)
 		  => Create(TransmitlyCallerId, ServerErrMin, ServerErrMax, subCode, reasonPhrase, true);
 
-		public static DispatchResultStatus Info(string callerId, string reasonPhrase, int subCode = 0)
+		public static CommunicationsStatus Info(string callerId, string reasonPhrase, int subCode = 0)
 		  => Create(TransmitlyCallerId, InfoMin, InfoMax, subCode, reasonPhrase);
 
-		public static DispatchResultStatus Success(string callerId, string reasonPhrase, int subCode = 0)
+		public static CommunicationsStatus Success(string callerId, string reasonPhrase, int subCode = 0)
 		  => Create(callerId, SuccessMin, SuccessMax, subCode, reasonPhrase);
 
-		public static DispatchResultStatus ClientError(string callerId, string reasonPhrase, int subCode = 0)
+		public static CommunicationsStatus ClientError(string callerId, string reasonPhrase, int subCode = 0)
 		  => Create(callerId, ClientErrMin, ClientErrMax, subCode, reasonPhrase);
 
-		public static DispatchResultStatus ServerError(string callerId, string reasonPhrase, int subCode = 0)
+		public static CommunicationsStatus ServerError(string callerId, string reasonPhrase, int subCode = 0)
 		  => Create(callerId, ServerErrMin, ServerErrMax, subCode, reasonPhrase);
 
-		private static DispatchResultStatus Create(
+		private static CommunicationsStatus Create(
 			string ownerId,
 			int min,
 			int max,
@@ -76,7 +76,7 @@ namespace Transmitly
 					$"OwnerId '{ownerId}' cannot contain '{TransmitlyCallerId}' as it is reserved for Transmitly's internal use.",
 					nameof(ownerId));
 
-			var status = new DispatchResultStatus(ownerId, reasonPhrase, code);
+			var status = new CommunicationsStatus(ownerId, reasonPhrase, code);
 			return status;
 		}
 
