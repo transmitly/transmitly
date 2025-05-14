@@ -18,9 +18,12 @@ namespace Transmitly.Pipeline.Configuration
 	{
 		private readonly IPipelineFactory _pipelineFactory = Guard.AgainstNull(pipelineFactory);
 
-		public virtual async Task<PipelineLookupResult> FindAsync(string pipelineIntent, string? pipelineId, IReadOnlyCollection<string> allowedChannelFilter)
+		public virtual async Task<PipelineLookupResult> GetMatchingPipelinesAsync(string pipelineIntent, string? pipelineId, IReadOnlyCollection<string> allowedChannelFilter)
 		{
-			var pipelines = await _pipelineFactory.GetAsync(pipelineIntent).ConfigureAwait(false);
+			Guard.AgainstNullOrWhiteSpace(pipelineIntent);
+
+			var pipelines = await _pipelineFactory.GetAsync(pipelineIntent, pipelineId).ConfigureAwait(false);
+
 			if (pipelines.Count == 0)
 				return new PipelineLookupResult(Array.Empty<IPipeline>(), [PredefinedCommunicationStatuses.PipelineNotFound]);
 
@@ -36,6 +39,7 @@ namespace Transmitly.Pipeline.Configuration
 						PredefinedCommunicationStatuses.DispatchRequirementsNotAllowed.Detail,
 						PredefinedCommunicationStatuses.DispatchRequirementsNotAllowed.Code))
 					.ToList().AsReadOnly();
+
 				return new PipelineLookupResult(Array.Empty<IPipeline>(), results);
 			}
 

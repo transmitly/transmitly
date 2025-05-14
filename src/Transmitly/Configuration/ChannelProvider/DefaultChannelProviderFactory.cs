@@ -32,7 +32,7 @@ namespace Transmitly.Channel.Configuration
 
 			if (channelProvider.Configuration == null)
 			{
-				resolvedDispatcherInstance = Activator.CreateInstance(channelProviderDispatcherRegistration.DispatcherType, channelProviderDispatcherRegistration.DispatcherType.GetConstructors()[0].GetParameters().Select(x => Activator.CreateInstance(x.ParameterType)).ToArray()) as IChannelProviderDispatcher;
+				resolvedDispatcherInstance = Activator.CreateInstance(channelProviderDispatcherRegistration.DispatcherType, [.. channelProviderDispatcherRegistration.DispatcherType.GetConstructors()[0].GetParameters().Select(x => Activator.CreateInstance(x.ParameterType))]) as IChannelProviderDispatcher;
 			}
 			else
 			{

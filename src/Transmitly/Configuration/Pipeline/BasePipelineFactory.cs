@@ -28,8 +28,10 @@ namespace Transmitly.Pipeline.Configuration
 
 		public virtual Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string? pipelineId = null)
 		{
+			Guard.AgainstNullOrWhiteSpace(pipelineName);
+
 			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
-				_pipelines.Where(x => 
+				_pipelines.Where(x =>
 					x.Intent == pipelineName &&
 					(
 						string.IsNullOrEmpty(pipelineId) ||

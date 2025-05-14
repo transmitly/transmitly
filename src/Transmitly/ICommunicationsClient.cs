@@ -28,10 +28,11 @@ namespace Transmitly
 		/// <param name="platformIdentities">Potential recipients of communications.</param>
 		/// <param name="transactionalModel">Model for the communications</param>
 		/// <param name="channelPreferences">Ids of channels preferences to use with channel and channel provider decisioning.</param>
+		/// <param name="pipelineId"></param>
 		/// <param name="cultureInfo">Culture ISO.</param>
-		/// <param name="cancellationToken">Cancellation token.</param>
 		/// <returns>Dispatch results</returns>
-		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default);
+		/// <param name="cancellationToken">Cancellation token.</param>
+		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default);
 		/// <summary>
 		/// Dispatches the communications for the provided pipeline name.
 		/// </summary>
@@ -39,10 +40,11 @@ namespace Transmitly
 		/// <param name="identityReferences">Potential recipients of communications.</param>
 		/// <param name="transactionalModel">Model for the communications</param>
 		/// <param name="channelPreferences">Ids of channels preferences to use with channel and channel provider decisioning.</param>
+		/// <param name="pipelineId"></param>
 		/// <param name="cultureInfo">Culture ISO.</param>
-		/// <param name="cancellationToken">Cancellation token.</param>
 		/// <returns>Dispatch results</returns>
-		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default);
+		/// <param name="cancellationToken">Cancellation token.</param>
+		Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default);
 		/// <summary>
 		/// Delivers a single delivery report.
 		/// </summary>

@@ -21,7 +21,7 @@ namespace Transmitly.Template.Configuration
 
 		protected BaseTemplateEngineRegistrationFactory(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations)
 		{
-			_registrations = Guard.AgainstNull(templateEngineRegistrations).ToList();
+			_registrations = [.. Guard.AgainstNull(templateEngineRegistrations)];
 			if (templateEngineRegistrations.Count() != 1)
 			{
 				throw new NotSupportedException("Only a single template engine is supported.");

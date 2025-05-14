@@ -24,7 +24,7 @@ namespace Transmitly.ChannelProvider.Configuration
 	/// 
 	public abstract class BaseChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations) : IChannelProviderFactory
 	{
-		private readonly List<IChannelProviderRegistration> _registrations = Guard.AgainstNull(registrations).ToList();
+		private readonly List<IChannelProviderRegistration> _registrations = [.. Guard.AgainstNull(registrations)];
 		protected IReadOnlyCollection<IChannelProviderRegistration> Registrations => _registrations.AsReadOnly();
 
 		///<inheritdoc/>

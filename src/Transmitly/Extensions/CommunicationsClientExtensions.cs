@@ -34,7 +34,7 @@ namespace Transmitly
 		/// <returns>Dispatch results</returns>
 		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
-			return client.DispatchAsync(pipelineName, platformIdentities, transactionalModel, [], cultureInfo, cancellationToken);
+			return client.DispatchAsync(pipelineName, platformIdentities, transactionalModel, [], null, cultureInfo, cancellationToken);
 		}
 
 		/// <summary>
@@ -117,7 +117,7 @@ namespace Transmitly
 		/// <returns>Dispatch results</returns>
 		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
-			return client.DispatchAsync(pipelineName, [identityAddresses.AsPlatformIdentity()], transactionalModel, channelPreferences, cultureInfo, cancellationToken);
+			return client.DispatchAsync(pipelineName, [identityAddresses.AsPlatformIdentity()], transactionalModel, channelPreferences, null, cultureInfo, cancellationToken);
 		}
 
 		/// <summary>
@@ -132,7 +132,7 @@ namespace Transmitly
 		/// <returns>Dispatch results</returns>
 		public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
-			return client.DispatchAsync(pipelineName, identityReferences, transactionalModel, [], cultureInfo, cancellationToken);
+			return client.DispatchAsync(pipelineName, identityReferences, transactionalModel, [], null, cultureInfo, cancellationToken);
 		}
 	}
 }

@@ -46,7 +46,7 @@ namespace Transmitly
 		  => Create(TransmitlyCallerId, ServerErrMin, ServerErrMax, subCode, reasonPhrase, true);
 
 		public static CommunicationsStatus Info(string callerId, string reasonPhrase, int subCode = 0)
-		  => Create(TransmitlyCallerId, InfoMin, InfoMax, subCode, reasonPhrase);
+		  => Create(callerId, InfoMin, InfoMax, subCode, reasonPhrase);
 
 		public static CommunicationsStatus Success(string callerId, string reasonPhrase, int subCode = 0)
 		  => Create(callerId, SuccessMin, SuccessMax, subCode, reasonPhrase);

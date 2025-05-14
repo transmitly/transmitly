@@ -17,9 +17,8 @@ namespace Transmitly
 	public static class PredefinedCommunicationStatuses
 	{
 		internal static readonly CommunicationsStatus PipelineNotFound = CommunicationsStatus.ClientError("Pipeline Not Found", 4);
-		internal static readonly CommunicationsStatus DispatchRequirementsNotAllowed = CommunicationsStatus.ClientError("Pipeline Does Not Allow Channel Filters", 5);
-		internal static readonly CommunicationsStatus DispatchChannelFilterMismatch = CommunicationsStatus.ClientError("Dispatch Request Channel Filter Mismatch", 6);
+		internal static readonly CommunicationsStatus DispatchRequirementsNotAllowed = CommunicationsStatus.ClientError("Pipeline does not allow channel filters", 5);
+		internal static readonly CommunicationsStatus DispatchChannelFilterMismatch = CommunicationsStatus.ClientError("Dispatch request channel filter mismatch", 6);
 		internal static readonly CommunicationsStatus Unknown = CommunicationsStatus.ClientError("Unknown", 999);
-
 	}
 }

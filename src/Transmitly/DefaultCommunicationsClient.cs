@@ -44,7 +44,7 @@ namespace Transmitly
 		private readonly IPlatformIdentityResolverFactory _platformIdentityResolvers = Guard.AgainstNull(platformIdentityResolverRegistrations);
 		private readonly IPipelineService _pipelineLookupService = Guard.AgainstNull(pipelineService);
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineIntent, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineIntent, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			Guard.AgainstNullOrWhiteSpace(pipelineIntent);
 			Guard.AgainstNull(transactionalModel);
@@ -52,7 +52,7 @@ namespace Transmitly
 
 			var culture = GuardCulture.AgainstNull(cultureInfo);
 
-			var findMatchingPipelinesResult = await _pipelineLookupService.FindAsync(pipelineIntent, null, dispatchChannelPreferences);
+			var findMatchingPipelinesResult = await _pipelineLookupService.GetMatchingPipelinesAsync(pipelineIntent, pipelineId, dispatchChannelPreferences);
 
 			if (findMatchingPipelinesResult.Errors.Count > 0)
 				return new DispatchCommunicationResult(findMatchingPipelinesResult.Errors.Select(s => new DispatchResult(s)).ToList());
@@ -108,11 +108,11 @@ namespace Transmitly
 			return new DispatchCommunicationResult(allDispatchResults);
 		}
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			var resolvedIdentityProfiles = await ResolvePlatformIdentityProfiles(identityReferences).ConfigureAwait(false);
 
-			return await DispatchAsync(pipelineName, resolvedIdentityProfiles, transactionalModel, channelPreferences, cultureInfo, cancellationToken).ConfigureAwait(false);
+			return await DispatchAsync(pipelineName, resolvedIdentityProfiles, transactionalModel, channelPreferences, pipelineId, cultureInfo, cancellationToken).ConfigureAwait(false);
 		}
 
 		private async Task<List<IPlatformIdentityProfile>> ResolvePlatformIdentityProfiles(IReadOnlyCollection<IPlatformIdentityReference> identityReferences)

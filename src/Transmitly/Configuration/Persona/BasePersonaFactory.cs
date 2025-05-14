@@ -16,7 +16,7 @@ namespace Transmitly.Persona.Configuration
 {
 	public abstract class BasePersonaFactory(IEnumerable<IPersonaRegistration> personaRegistrations) : IPersonaFactory
 	{
-		private readonly List<IPersonaRegistration> _personaRegistrations = personaRegistrations.ToList();
+		private readonly List<IPersonaRegistration> _personaRegistrations = [.. personaRegistrations];
 
 		public Task<IReadOnlyCollection<IPersonaRegistration>> GetAllAsync()
 		{
