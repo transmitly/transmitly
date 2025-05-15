@@ -62,7 +62,7 @@ namespace Transmitly
 		/// <summary>
 		/// Gets the delivery report handler instance.
 		/// </summary>
-		IDeliveryReportReporter DeliveryReportManager { get; }
+		IDeliveryReportService DeliveryReportManager { get; }
 
 		/// <summary>
 		/// Gets the channel Id 

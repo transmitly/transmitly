@@ -28,7 +28,7 @@ namespace Transmitly
 		IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
 		IReadOnlyCollection<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations,
 		IReadOnlyCollection<IPersonaRegistration> personaRegistrations,
-		IDeliveryReportReporter deliveryReportProvider
+		IReadOnlyCollection<IObserver<DeliveryReport>> deliveryReportObservers
 	) : ICreateCommunicationsClientContext
 	{
 		public IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; } = channelProviders;
@@ -41,6 +41,6 @@ namespace Transmitly
 
 		public IReadOnlyCollection<IPersonaRegistration> Personas { get; } = personaRegistrations;
 
-		public IDeliveryReportReporter DeliveryReportProvider { get; } = deliveryReportProvider;
+		public IReadOnlyCollection<IObserver<DeliveryReport>> DeliveryReportObservers { get; } = deliveryReportObservers;
 	}
 }

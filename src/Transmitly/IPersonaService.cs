@@ -12,18 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.PlatformIdentity.Configuration
+namespace Transmitly
 {
-	/// <summary>
-	/// Resolves a <see cref="IPlatformIdentityProfile"/>.
-	/// </summary>
-	public interface IPlatformIdentityResolver
+	public interface IPersonaService
 	{
-		/// <summary>
-		/// Resolves a <see cref="IPlatformIdentityProfile"/>
-		/// </summary>
-		/// <param name="identityReferences">Identity references to get resolvers for.</param>
-		/// <returns>Collection of matching identity reference resolvers.</returns>
-		Task<IReadOnlyCollection<IPlatformIdentityProfile>?> ResolveIdentityProfiles(IReadOnlyCollection<IPlatformIdentityReference> identityReferences);
+		Task<IReadOnlyCollection<IPlatformIdentityProfile>> FilterPlatformIdentityPersonasAsync(IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, IReadOnlyCollection<string> personas);
 	}
 }

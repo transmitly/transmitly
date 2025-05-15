@@ -14,16 +14,7 @@
 
 namespace Transmitly.PlatformIdentity.Configuration
 {
-	/// <summary>
-	/// Resolves a <see cref="IPlatformIdentityProfile"/>.
-	/// </summary>
-	public interface IPlatformIdentityResolver
+	sealed class DefaultPlatformIdentityService(IPlatformIdentityResolverFactory platformIdentityResolverRegistrations) : BasePlatformIdentityService(platformIdentityResolverRegistrations)
 	{
-		/// <summary>
-		/// Resolves a <see cref="IPlatformIdentityProfile"/>
-		/// </summary>
-		/// <param name="identityReferences">Identity references to get resolvers for.</param>
-		/// <returns>Collection of matching identity reference resolvers.</returns>
-		Task<IReadOnlyCollection<IPlatformIdentityProfile>?> ResolveIdentityProfiles(IReadOnlyCollection<IPlatformIdentityReference> identityReferences);
 	}
 }

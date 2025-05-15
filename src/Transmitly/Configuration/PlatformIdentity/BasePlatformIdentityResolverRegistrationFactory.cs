@@ -20,12 +20,12 @@ namespace Transmitly.PlatformIdentity.Configuration
 		private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolverRegistrations = [.. Guard.AgainstNull(resolvers)];
 		protected IReadOnlyCollection<IPlatformIdentityResolverRegistration> Registrations => _platformIdentityResolverRegistrations.AsReadOnly();
 
-		public virtual Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAllAsync()
+		public virtual Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAllResolversAsync()
 		{
 			return Task.FromResult<IReadOnlyList<IPlatformIdentityResolverRegistration>>(_platformIdentityResolverRegistrations);
 		}
 
-		public Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAsync(IReadOnlyCollection<string> platformIdentityTypes)
+		public Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetPlatformIdentityResolversByTypes(params string[] platformIdentityTypes)
 		{
 			return Task.FromResult<IReadOnlyList<IPlatformIdentityResolverRegistration>>(
 				_platformIdentityResolverRegistrations
@@ -34,7 +34,7 @@ namespace Transmitly.PlatformIdentity.Configuration
 			);
 		}
 
-		public virtual Task<IPlatformIdentityResolver?> ResolveResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration)
+		public virtual Task<IPlatformIdentityResolver?> GetPlatformIdentityResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration)
 		{
 			Guard.AgainstNull(platformIdentityResolverRegistration);
 

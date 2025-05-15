@@ -12,22 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.ChannelProvider.Configuration;
-using Transmitly.Delivery;
 using Transmitly.Persona.Configuration;
-using Transmitly.Pipeline.Configuration;
-using Transmitly.PlatformIdentity.Configuration;
-using Transmitly.Template.Configuration;
 
 namespace Transmitly
 {
-	public interface ICreateCommunicationsClientContext
+	sealed class DefaultPersonaService(IPersonaFactory personaFactory) : BasePersonaService(Guard.AgainstNull(personaFactory))
 	{
-		IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; }
-		IReadOnlyCollection<IPipeline> Pipelines { get; }
-		IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
-		IReadOnlyCollection<IObserver<DeliveryReport>> DeliveryReportObservers { get; }
-		IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; }
-		IReadOnlyCollection<IPersonaRegistration> Personas { get; }
+
 	}
 }

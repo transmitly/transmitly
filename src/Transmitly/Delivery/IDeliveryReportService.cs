@@ -12,18 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.PlatformIdentity.Configuration
+namespace Transmitly.Delivery
 {
-	/// <summary>
-	/// Resolves a <see cref="IPlatformIdentityProfile"/>.
-	/// </summary>
-	public interface IPlatformIdentityResolver
+	public interface IDeliveryReportService : IObservable<DeliveryReport>
 	{
-		/// <summary>
-		/// Resolves a <see cref="IPlatformIdentityProfile"/>
-		/// </summary>
-		/// <param name="identityReferences">Identity references to get resolvers for.</param>
-		/// <returns>Collection of matching identity reference resolvers.</returns>
-		Task<IReadOnlyCollection<IPlatformIdentityProfile>?> ResolveIdentityProfiles(IReadOnlyCollection<IPlatformIdentityReference> identityReferences);
+		Task DispatchAsync(DeliveryReport deliveryReport);
+		Task DispatchAsync(IReadOnlyCollection<DeliveryReport> deliveryReports);
 	}
 }

@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using Transmitly.Channel.Configuration;
+using Transmitly.Delivery;
 using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
@@ -24,13 +25,17 @@ namespace Transmitly
 	{
 		public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
 		{
+			var deliveryReportService = new DefaultDeliveryReportService(context.DeliveryReportObservers);
 			return new DefaultCommunicationsClient(
 				new DefaultPipelineService(new DefaultPipelineFactory(context.Pipelines)),
-				new DefaultChannelProviderFactory(context.ChannelProviders),
-				new DefaultTemplateEngineFactory(context.TemplateEngines),
-				new DefaultPersonaFactory(context.Personas),
-				new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers),
-				context.DeliveryReportProvider
+				new DefaultDispatchCoordinatorService(
+					new DefaultChannelChannelProviderService(new DefaultChannelProviderFactory(context.ChannelProviders)),
+					new DefaultPersonaService(new DefaultPersonaFactory(context.Personas)),
+					new DefaultTemplateEngineFactory(context.TemplateEngines),
+					deliveryReportService
+				),
+				new DefaultPlatformIdentityService(new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers)),
+				deliveryReportService
 			);
 		}
 	}

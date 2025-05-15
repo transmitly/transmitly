@@ -49,11 +49,11 @@ namespace Transmitly
 		/// Delivers a single delivery report.
 		/// </summary>
 		/// <param name="report">The delivery report to deliver.</param>
-		void DeliverReport(DeliveryReport report);
+		Task DispatchAsync(DeliveryReport report);
 		/// <summary>
 		/// Delivers multiple delivery reports.
 		/// </summary>
 		/// <param name="reports">The collection of delivery reports to deliver.</param>
-		void DeliverReports(IReadOnlyCollection<DeliveryReport> reports);
+		Task DispatchAsync(IReadOnlyCollection<DeliveryReport> reports);
 	}
 }

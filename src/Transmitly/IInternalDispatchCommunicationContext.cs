@@ -21,6 +21,7 @@ namespace Transmitly
 {
 	internal interface IInternalDispatchCommunicationContext
 	{
+		BasePipelineDeliveryStrategyProvider StrategyProvider { get; }
 		/// <summary>
 		/// Gets or sets the content model.
 		/// </summary>
@@ -59,7 +60,7 @@ namespace Transmitly
 		/// <summary>
 		/// Gets the delivery report handler instance.
 		/// </summary>
-		IDeliveryReportReporter DeliveryReportManager { get; }
+		IDeliveryReportService DeliveryReportManager { get; }
 
 		/// <summary>
 		/// Gets the template engine

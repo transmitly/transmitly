@@ -12,11 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery
+using Transmitly.Delivery;
+using Transmitly.Template.Configuration;
+
+namespace Transmitly
 {
-	public interface IDeliveryReportReporter : IObservable<DeliveryReport>
+	sealed class DefaultDispatchCoordinatorService(IChannelChannelProviderService channelChannelProviderService, IPersonaService personaService, ITemplateEngineFactory templateEngineFactory, IDeliveryReportService deliveryReportService)
+		: BaseDispatchCoordinatorService(Guard.AgainstNull(channelChannelProviderService), Guard.AgainstNull(personaService), Guard.AgainstNull(templateEngineFactory), Guard.AgainstNull(deliveryReportService))
 	{
-		void DispatchReport(DeliveryReport deliveryReport);
-		void DispatchReports(IReadOnlyCollection<DeliveryReport> deliveryReports);
+
 	}
 }

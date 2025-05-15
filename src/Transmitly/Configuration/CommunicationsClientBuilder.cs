@@ -36,18 +36,19 @@ namespace Transmitly
 		private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolvers = [];
 		private readonly List<ITemplateEngineRegistration> _templateEngines = [];
 		private readonly List<IPersonaRegistration> _personaRegistrations = [];
+		private readonly List<IObserver<DeliveryReport>> _deliveryReportObservers = [];
 
 		/// <summary>
 		/// Creates an instance of the class
 		/// </summary>
 		public CommunicationsClientBuilder()
 		{
-			ChannelProvider = new(this, cp => _channelProviders.Add(cp));
-			Pipeline = new(this, p => _pipelines.Add(p));
-			PlatformIdentityResolver = new(this, ar => _platformIdentityResolvers.Add(ar));
-			TemplateEngine = new(this, te => _templateEngines.Add(te));
-			DeliveryReport = new(this);
-			Persona = new(this, pf => _personaRegistrations.Add(pf));
+			ChannelProvider = new(this, _channelProviders.Add);
+			Pipeline = new(this, _pipelines.Add);
+			PlatformIdentityResolver = new(this, _platformIdentityResolvers.Add);
+			TemplateEngine = new(this, _templateEngines.Add);
+			DeliveryReport = new(this, _deliveryReportObservers.Add);
+			Persona = new(this, _personaRegistrations.Add);
 		}
 
 		/// <summary>
@@ -158,13 +159,11 @@ namespace Transmitly
 		/// <returns>The communications client.</returns>
 		public ICommunicationsClient BuildClient()
 		{
-			if (_clientCreated) 
+			if (_clientCreated)
 				throw new InvalidOperationException($"{nameof(BuildClient)}() can only be called once.");
 
 			if (_templateEngines.Count == 0)
 				AddTemplateEngine(new NoopTemplatingEngine(), DefaultTemplateEngineId);
-
-			IDeliveryReportReporter deliveryReportProvider = DeliveryReport.BuildHandler();
 
 			var client = _clientFactory.CreateClient(
 				new CreateCommunicationsClientContext(
@@ -173,7 +172,7 @@ namespace Transmitly
 					_templateEngines,
 					_platformIdentityResolvers,
 					_personaRegistrations,
-					deliveryReportProvider
+					_deliveryReportObservers
 				)
 			);
 

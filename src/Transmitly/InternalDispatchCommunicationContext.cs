@@ -23,9 +23,10 @@ namespace Transmitly.Channel.Configuration
 		IPipelineConfiguration channelConfiguration,
 		IReadOnlyCollection<IPlatformIdentityProfile> recipients,
 		ITemplateEngine templateEngine,
-		IDeliveryReportReporter deliveryReportManager,
+		IDeliveryReportService deliveryReportManager,
 		CultureInfo cultureInfo,
 		string pipelineName,
+		BasePipelineDeliveryStrategyProvider strategyProvider,
 		MessagePriority messagePriority = MessagePriority.Normal,
 		TransportPriority transportPriority = TransportPriority.Normal) : IInternalDispatchCommunicationContext
 	{
@@ -45,8 +46,10 @@ namespace Transmitly.Channel.Configuration
 
 		public ICollection<IDispatchResult> DispatchResults { get; } = [];
 
-		public IDeliveryReportReporter DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
+		public IDeliveryReportService DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
 
 		public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);
+
+		public BasePipelineDeliveryStrategyProvider StrategyProvider { get; } = Guard.AgainstNull(strategyProvider);
 	}
 }

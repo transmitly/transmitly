@@ -16,9 +16,14 @@ using Transmitly.ChannelProvider;
 
 namespace Transmitly.Delivery
 {
-	internal sealed class DefaultDeliveryReportsReporter : IDeliveryReportReporter
+	public abstract class BaseDeliveryReportService : IDeliveryReportService
 	{
 		private readonly HashSet<IObserver<DeliveryReport>> _observers = [];
+
+		public BaseDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers)
+		{
+			Subscribe(observers);
+		}
 
 		public IDisposable Subscribe(IObserver<DeliveryReport> observer)
 		{
@@ -37,22 +42,30 @@ namespace Transmitly.Delivery
 			return cancels;
 		}
 
-		public void DispatchReport(DeliveryReport deliveryReport)
+		public Task DispatchAsync(DeliveryReport deliveryReport)
 		{
 			Guard.AgainstNull(deliveryReport);
 			foreach (IObserver<DeliveryReport> observer in _observers)
 			{
 				observer.OnNext(deliveryReport);
 			}
+			return Task.CompletedTask;
 		}
 
-		public void DispatchReports(IReadOnlyCollection<DeliveryReport> deliveryReports)
+		public Task DispatchAsync(IReadOnlyCollection<DeliveryReport> deliveryReports)
 		{
-			Guard.AgainstNull(deliveryReports);
-			foreach (var report in deliveryReports)
+			foreach (var report in Guard.AgainstNull(deliveryReports))
 			{
-				DispatchReport(report);
+				DispatchAsync(report);
 			}
+			return Task.CompletedTask;
 		}
+	}
+
+	internal sealed class DefaultDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers) : BaseDeliveryReportService(observers)
+	{
+
+
+
 	}
 }
