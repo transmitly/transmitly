@@ -15,7 +15,7 @@
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Transmitly
+namespace Transmitly.Util
 {
 	/// <summary>
 	/// Provides methods for guarding against null values and invalid culture names.

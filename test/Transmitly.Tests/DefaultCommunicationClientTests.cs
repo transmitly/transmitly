@@ -14,12 +14,9 @@
 
 using AutoFixture;
 using Moq;
-using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
-using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
-using Transmitly.Template.Configuration;
 using Transmitly.Tests.Integration;
 namespace Transmitly.Tests
 {

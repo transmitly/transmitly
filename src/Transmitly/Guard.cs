@@ -16,7 +16,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace Transmitly
+namespace Transmitly.Util
 {
 	/// <summary>
 	/// Provides a set of guard methods for validating arguments.

@@ -13,6 +13,7 @@
 //  limitations under the License.
 
 using Moq;
+using Transmitly.Util;
 
 namespace Transmitly.Template.Configuration.Tests
 {

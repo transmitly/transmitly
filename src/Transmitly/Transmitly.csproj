@@ -84,4 +84,7 @@
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
+	<ItemGroup>
+		<Using Include="Transmitly.Util"/>
+	</ItemGroup>
 </Project>
