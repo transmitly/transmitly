@@ -14,24 +14,23 @@
 
 using System.Collections.ObjectModel;
 
-namespace Transmitly
+namespace Transmitly;
+
+public sealed class PlatformIdentityProfile : IPlatformIdentityProfile
 {
-	public sealed class PlatformIdentityProfile : IPlatformIdentityProfile
+	private ReadOnlyCollection<IIdentityAddress> _addresses;
+
+	public PlatformIdentityProfile(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses, IEnumerable<IChannelPreference>? channelPreferences = null)
 	{
-		private ReadOnlyCollection<IIdentityAddress> _addresses;
-
-		public PlatformIdentityProfile(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses, IEnumerable<IChannelPreference>? channelPreferences = null)
-		{
-			Id = id;
-			Type = type;
-			Guard.AgainstNull(identityAddresses);
-			_addresses = new ReadOnlyCollection<IIdentityAddress>([.. identityAddresses]);
-			ChannelPreferences = [.. (channelPreferences ?? [])];
-		}
-
-		public string? Id { get; set; }
-		public string? Type { get; set; }
-		public IReadOnlyCollection<IIdentityAddress> Addresses { get => _addresses; set => _addresses = new ReadOnlyCollection<IIdentityAddress>([.. value]); }
-		public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
+		Id = id;
+		Type = type;
+		Guard.AgainstNull(identityAddresses);
+		_addresses = new ReadOnlyCollection<IIdentityAddress>([.. identityAddresses]);
+		ChannelPreferences = [.. (channelPreferences ?? [])];
 	}
+
+	public string? Id { get; set; }
+	public string? Type { get; set; }
+	public IReadOnlyCollection<IIdentityAddress> Addresses { get => _addresses; set => _addresses = new ReadOnlyCollection<IIdentityAddress>([.. value]); }
+	public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
 }

@@ -14,14 +14,13 @@
 
 using Transmitly.Channel.Configuration;
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+internal sealed class UnitTestChannel<T>(string fromAddress, string channelId = "unit-test-channel", params string[] allowedChannelProviders) :
+	UnitTestChannel(fromAddress, channelId, allowedChannelProviders), IChannel<T>
 {
-	internal sealed class UnitTestChannel<T>(string fromAddress, string channelId = "unit-test-channel", params string[] allowedChannelProviders) :
-		UnitTestChannel(fromAddress, channelId, allowedChannelProviders), IChannel<T>
+	async Task<T> IChannel<T>.GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 	{
-		async Task<T> IChannel<T>.GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
-		{
-			return (T)(await base.GenerateCommunicationAsync(communicationContext));
-		}
+		return (T)(await base.GenerateCommunicationAsync(communicationContext));
 	}
 }

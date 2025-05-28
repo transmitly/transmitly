@@ -16,41 +16,40 @@ using Moq;
 using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
 
-namespace Transmitly.Tests.Pipeline.Configuration
+namespace Transmitly.Tests.Pipeline.Configuration;
+
+[TestClass]
+public class DefaultPipelineProviderConfigurationTests
 {
-	[TestClass]
-	public class DefaultPipelineProviderConfigurationTests
+	[TestMethod]
+	public void DefaultPipelineStrategyShouldBeFirstMatch()
 	{
-		[TestMethod]
-		public void DefaultPipelineStrategyShouldBeFirstMatch()
-		{
-			var expectedType = typeof(FirstMatchPipelineDeliveryStrategy);
-			var sut = new DefaultPipelineProviderConfiguration();
-			Assert.AreEqual(expectedType, sut.PipelineDeliveryStrategyProvider.GetType());
-		}
+		var expectedType = typeof(FirstMatchPipelineDeliveryStrategy);
+		var sut = new DefaultPipelineProviderConfiguration();
+		Assert.AreEqual(expectedType, sut.PipelineDeliveryStrategyProvider.GetType());
+	}
 
-		[TestMethod]
-		public void ExtensionsShouldSetExpectedStrategyProvider()
-		{
-			var expectedFirstMatchType = typeof(FirstMatchPipelineDeliveryStrategy);
-			var expectedAnyMatchType = typeof(AnyMatchPipelineDeliveryStrategy);
+	[TestMethod]
+	public void ExtensionsShouldSetExpectedStrategyProvider()
+	{
+		var expectedFirstMatchType = typeof(FirstMatchPipelineDeliveryStrategy);
+		var expectedAnyMatchType = typeof(AnyMatchPipelineDeliveryStrategy);
 
-			var sut = new DefaultPipelineProviderConfiguration();
-			Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
+		var sut = new DefaultPipelineProviderConfiguration();
+		Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			sut.UseDefaultPipelineDeliveryStrategy();
-			Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
+		sut.UseDefaultPipelineDeliveryStrategy();
+		Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			sut.UseAnyMatchPipelineDeliveryStrategy();
-			Assert.AreEqual(expectedAnyMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
+		sut.UseAnyMatchPipelineDeliveryStrategy();
+		Assert.AreEqual(expectedAnyMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			sut.UseDefaultPipelineDeliveryStrategy();
-			Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
+		sut.UseDefaultPipelineDeliveryStrategy();
+		Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			var customStrategy = new Mock<BasePipelineDeliveryStrategyProvider>();
-			var customStrategyType = customStrategy.Object.GetType();
-			PipelineDeliveryStrategyConfigurationExtensions.UsePipelineDeliveryStrategy(sut, customStrategy.Object);
-			Assert.AreEqual(customStrategyType, sut.PipelineDeliveryStrategyProvider.GetType());
-		}
+		var customStrategy = new Mock<BasePipelineDeliveryStrategyProvider>();
+		var customStrategyType = customStrategy.Object.GetType();
+		PipelineDeliveryStrategyConfigurationExtensions.UsePipelineDeliveryStrategy(sut, customStrategy.Object);
+		Assert.AreEqual(customStrategyType, sut.PipelineDeliveryStrategyProvider.GetType());
 	}
 }

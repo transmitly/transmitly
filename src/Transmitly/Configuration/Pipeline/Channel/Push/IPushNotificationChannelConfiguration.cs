@@ -14,12 +14,11 @@
 
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Channel.Configuration.Push
+namespace Transmitly.Channel.Configuration.Push;
+
+public interface IPushNotificationChannelConfiguration : IChannelConfiguration
 {
-	public interface IPushNotificationChannelConfiguration : IChannelConfiguration
-	{
-		IContentTemplateConfiguration Title { get; }
-		IContentTemplateConfiguration Body { get; }
-		IContentTemplateConfiguration ImageUrl { get; }
-	}
+	IContentTemplateConfiguration Title { get; }
+	IContentTemplateConfiguration Body { get; }
+	IContentTemplateConfiguration ImageUrl { get; }
 }

@@ -16,41 +16,40 @@ using Transmitly.Channel.Configuration;
 using Transmitly.Channel.Configuration.Push;
 using Transmitly.Channel.Push;
 
-namespace Transmitly
+namespace Transmitly;
+
+sealed class PushNotificationChannel(IPushNotificationChannelConfiguration configuration) : IChannel<IPushNotification>
 {
-	sealed class PushNotificationChannel(IPushNotificationChannelConfiguration configuration) : IChannel<IPushNotification>
+	//const string pushTokenPattern = @"\b(?:[A-Fa-f0-9]{64}|[A-Za-z0-9_-]{20,})\b";
+	private readonly IPushNotificationChannelConfiguration _configuration = Guard.AgainstNull(configuration);
+	private static readonly string[] _supportedAddressTypes = [IdentityAddress.Types.DeviceToken(), IdentityAddress.Types.Topic()];
+
+	public Type CommunicationType => typeof(IPushNotification);
+
+	public string Id => Transmitly.Id.Channel.PushNotification();
+
+	public IEnumerable<string> AllowedChannelProviderIds => _configuration.ChannelProviderFilter ?? Array.Empty<string>();
+
+	public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+
+	public async Task<IPushNotification> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 	{
-		//const string pushTokenPattern = @"\b(?:[A-Fa-f0-9]{64}|[A-Za-z0-9_-]{20,})\b";
-		private readonly IPushNotificationChannelConfiguration _configuration = Guard.AgainstNull(configuration);
-		private static readonly string[] _supportedAddressTypes = [IdentityAddress.Types.DeviceToken(), IdentityAddress.Types.Topic()];
+		var title = await _configuration.Title.RenderAsync(communicationContext);
+		var body = await _configuration.Body.RenderAsync(communicationContext);
+		var imageUrl = await _configuration.ImageUrl.RenderAsync(communicationContext);
 
-		public Type CommunicationType => typeof(IPushNotification);
+		var recipients = communicationContext.PlatformIdentities.SelectMany(a => a.Addresses).ToList();
 
-		public string Id => Transmitly.Id.Channel.PushNotification();
+		return new PushNotificationCommunication(recipients, ExtendedProperties, title, body, imageUrl);
+	}
 
-		public IEnumerable<string> AllowedChannelProviderIds => _configuration.ChannelProviderFilter ?? Array.Empty<string>();
+	public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
+	{
+		return _supportedAddressTypes.Contains(identityAddress.Type);
+	}
 
-		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-
-		public async Task<IPushNotification> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
-		{
-			var title = await _configuration.Title.RenderAsync(communicationContext);
-			var body = await _configuration.Body.RenderAsync(communicationContext);
-			var imageUrl = await _configuration.ImageUrl.RenderAsync(communicationContext);
-
-			var recipients = communicationContext.PlatformIdentities.SelectMany(a => a.Addresses).ToList();
-
-			return new PushNotificationCommunication(recipients, ExtendedProperties, title, body, imageUrl);
-		}
-
-		public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
-		{
-			return _supportedAddressTypes.Contains(identityAddress.Type);
-		}
-
-		async Task<object> IChannel.GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
-		{
-			return await GenerateCommunicationAsync(communicationContext);
-		}
+	async Task<object> IChannel.GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
+	{
+		return await GenerateCommunicationAsync(communicationContext);
 	}
 }

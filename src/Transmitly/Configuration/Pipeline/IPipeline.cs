@@ -12,28 +12,27 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.Pipeline.Configuration;
+
+/// <summary>
+/// A dispatch pipeline.
+/// </summary>
+public interface IPipeline
 {
 	/// <summary>
-	/// A dispatch pipeline.
+	/// Intent Name of the pipeline.
 	/// </summary>
-	public interface IPipeline
-	{
-		/// <summary>
-		/// Intent Name of the pipeline.
-		/// </summary>
-		string Intent { get; }
-		/// <summary>
-		/// Category of the pipeline.
-		/// </summary>
-		string? Category { get; }
-		/// <summary>
-		/// Pipeline channel configuration.
-		/// </summary>
-		IPipelineConfiguration Configuration { get; }
-		/// <summary>
-		/// Unique identifier for the pipeline.
-		/// </summary>
-		string? Id { get; }
-	}
+	string Intent { get; }
+	/// <summary>
+	/// Category of the pipeline.
+	/// </summary>
+	string? Category { get; }
+	/// <summary>
+	/// Pipeline channel configuration.
+	/// </summary>
+	IPipelineConfiguration Configuration { get; }
+	/// <summary>
+	/// Unique identifier for the pipeline.
+	/// </summary>
+	string? Id { get; }
 }

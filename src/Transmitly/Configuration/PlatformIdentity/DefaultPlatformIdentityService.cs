@@ -12,9 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.PlatformIdentity.Configuration
+namespace Transmitly.PlatformIdentity.Configuration;
+
+sealed class DefaultPlatformIdentityService(IPlatformIdentityResolverFactory platformIdentityResolverRegistrations) : BasePlatformIdentityService(platformIdentityResolverRegistrations)
 {
-	sealed class DefaultPlatformIdentityService(IPlatformIdentityResolverFactory platformIdentityResolverRegistrations) : BasePlatformIdentityService(platformIdentityResolverRegistrations)
-	{
-	}
 }

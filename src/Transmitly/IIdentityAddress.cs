@@ -12,15 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IIdentityAddress
 {
-	public interface IIdentityAddress
-	{
-		IDictionary<string, string?> AddressParts { get; set; }
-		IDictionary<string, string?> Attributes { get; set; }
-		string Value { get; set; }
-		string? Display { get; set; }
-		string? Type { get; set; }
-		IReadOnlyCollection<string>? Purposes { get; set; }
-	}
+	IDictionary<string, string?> AddressParts { get; set; }
+	IDictionary<string, string?> Attributes { get; set; }
+	string Value { get; set; }
+	string? Display { get; set; }
+	string? Type { get; set; }
+	IReadOnlyCollection<string>? Purposes { get; set; }
 }

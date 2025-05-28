@@ -19,60 +19,59 @@ using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 
-namespace Transmitly
+namespace Transmitly;
+
+public abstract class BaseDispatchCoordinatorService(
+	IChannelChannelProviderService channelChannelProviderService,
+	IPersonaService personaService,
+	ITemplateEngineFactory templateEngineFactory,
+	IDeliveryReportService deliveryReportService) : IDispatchCoordinatorService
 {
-	public abstract class BaseDispatchCoordinatorService(
-		IChannelChannelProviderService channelChannelProviderService,
-		IPersonaService personaService,
-		ITemplateEngineFactory templateEngineFactory,
-		IDeliveryReportService deliveryReportService) : IDispatchCoordinatorService
+	private readonly IChannelChannelProviderService _channelChannelProviderService = channelChannelProviderService;
+	private readonly IPersonaService _personaService = personaService;
+	private readonly ITemplateEngineFactory _templateEngineFactory = templateEngineFactory;
+	private readonly IDeliveryReportService _deliveryReportProvider = deliveryReportService;
+
+	public virtual async Task<IReadOnlyCollection<RecipientDispatchCommunicationContext>> CreateRecipientContexts(
+		IReadOnlyCollection<IPipeline> pipelines,
+		IReadOnlyCollection<IPlatformIdentityProfile> platformIdentityProfiles,
+		ITransactionModel transactionalModel,
+		IReadOnlyCollection<string> dispatchChannelPreferences
+		)
 	{
-		private readonly IChannelChannelProviderService _channelChannelProviderService = channelChannelProviderService;
-		private readonly IPersonaService _personaService = personaService;
-		private readonly ITemplateEngineFactory _templateEngineFactory = templateEngineFactory;
-		private readonly IDeliveryReportService _deliveryReportProvider = deliveryReportService;
+		var recipientContexts = new List<RecipientDispatchCommunicationContext>();
+		var templateEngine = _templateEngineFactory.Get();
 
-		public virtual async Task<IReadOnlyCollection<RecipientDispatchCommunicationContext>> CreateRecipientContexts(
-			IReadOnlyCollection<IPipeline> pipelines,
-			IReadOnlyCollection<IPlatformIdentityProfile> platformIdentityProfiles,
-			ITransactionModel transactionalModel,
-			IReadOnlyCollection<string> dispatchChannelPreferences
-			)
+		foreach (var pipeline in pipelines)
 		{
-			var recipientContexts = new List<RecipientDispatchCommunicationContext>();
-			var templateEngine = _templateEngineFactory.Get();
+			var pipelineConfiguration = pipeline.Configuration;
+			var filteredPlatformIdentities = await _personaService.FilterPlatformIdentityPersonasAsync(platformIdentityProfiles, pipelineConfiguration.PersonaFilters).ConfigureAwait(false);
 
-			foreach (var pipeline in pipelines)
+			foreach (var platformIdentity in filteredPlatformIdentities)
 			{
-				var pipelineConfiguration = pipeline.Configuration;
-				var filteredPlatformIdentities = await _personaService.FilterPlatformIdentityPersonasAsync(platformIdentityProfiles, pipelineConfiguration.PersonaFilters).ConfigureAwait(false);
+				var context = new InternalDispatchCommunicationContext(
+					transactionalModel,
+					pipelineConfiguration,
+					new[] { platformIdentity },
+					templateEngine,
+					_deliveryReportProvider,
+					CultureInfo.InvariantCulture,//todo
+					pipeline.Intent,
+					pipelineConfiguration.PipelineDeliveryStrategyProvider);
 
-				foreach (var platformIdentity in filteredPlatformIdentities)
+				var group = await _channelChannelProviderService.CreateGroupingsForPlatformIdentityAsync(
+					pipeline.Category,
+					pipelineConfiguration.Channels,
+					dispatchChannelPreferences,
+					platformIdentity).ConfigureAwait(false);
+
+				if (group.Count > 0)
 				{
-					var context = new InternalDispatchCommunicationContext(
-						transactionalModel,
-						pipelineConfiguration,
-						new[] { platformIdentity },
-						templateEngine,
-						_deliveryReportProvider,
-						CultureInfo.InvariantCulture,//todo
-						pipeline.Intent,
-						pipelineConfiguration.PipelineDeliveryStrategyProvider);
-
-					var group = await _channelChannelProviderService.CreateGroupingsForPlatformIdentityAsync(
-						pipeline.Category,
-						pipelineConfiguration.Channels,
-						dispatchChannelPreferences,
-						platformIdentity).ConfigureAwait(false);
-
-					if (group.Count > 0)
-					{
-						recipientContexts.Add(new RecipientDispatchCommunicationContext(context, group));
-					}
+					recipientContexts.Add(new RecipientDispatchCommunicationContext(context, group));
 				}
 			}
-
-			return recipientContexts.AsReadOnly();
 		}
+
+		return recipientContexts.AsReadOnly();
 	}
 }

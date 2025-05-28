@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.Pipeline.Configuration;
+
+public interface IPipelineService
 {
-	public interface IPipelineService
-	{
-		Task<PipelineLookupResult> GetMatchingPipelinesAsync(string pipelineIntent, string? pipelineId, IReadOnlyCollection<string> allowedChannelFilter);
-	}
+	Task<PipelineLookupResult> GetMatchingPipelinesAsync(string pipelineIntent, string? pipelineId, IReadOnlyCollection<string> allowedChannelFilter);
 }

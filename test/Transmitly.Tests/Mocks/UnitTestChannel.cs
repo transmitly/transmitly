@@ -15,56 +15,55 @@
 using Transmitly.Channel.Configuration;
 using Transmitly.Util;
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+internal class UnitTestChannel : IChannel
 {
-	internal class UnitTestChannel : IChannel
+	public UnitTestChannel(string fromAddress, string channelId = "unit-test-channel", params string[] allowedChannelProviders)
 	{
-		public UnitTestChannel(string fromAddress, string channelId = "unit-test-channel", params string[] allowedChannelProviders)
+		if (allowedChannelProviders is null)
 		{
-			if (allowedChannelProviders is null)
-			{
-				AllowedChannelProviderIds = [];
-			}
-			else
-			{
-				AllowedChannelProviderIds = allowedChannelProviders;
-			}
-			FromAddress = Guard.AgainstNullOrWhiteSpace(fromAddress).AsIdentityAddress();
-
-			Id = channelId;
-			Configuration = new UnitTestChannelConfiguration();
+			AllowedChannelProviderIds = [];
 		}
-		public UnitTestChannelConfiguration Configuration { get; }
-		public IEnumerable<string> AllowedChannelProviderIds { get; }
-
-		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-
-		public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
+		else
 		{
-			return identityAddress.Value?.StartsWith(_handlesAddressStartsWith) ?? false;
+			AllowedChannelProviderIds = allowedChannelProviders;
 		}
-		public UnitTestChannel HandlesAddressStartsWith(string handlingAddressStarts)
-		{
-			_handlesAddressStartsWith = Guard.AgainstNullOrWhiteSpace(handlingAddressStarts);
-			return this;
-		}
-		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
-		{
-			var subjectTemplate = Configuration.Subject.TemplateRegistrations.FirstOrDefault(f => f.CultureInfo == communicationContext.CultureInfo);
-			if (subjectTemplate == null)
-				return new UnitTestCommunication("NO TEMPLATE");
+		FromAddress = Guard.AgainstNullOrWhiteSpace(fromAddress).AsIdentityAddress();
 
-			var subjectContent = await communicationContext.TemplateEngine.RenderAsync(subjectTemplate, communicationContext) ?? string.Empty;
-
-			return new UnitTestCommunication(subjectContent);
-		}
-
-		private string _handlesAddressStartsWith = "unit-test-address";
-
-		public IIdentityAddress FromAddress { get; set; }
-
-		public string Id { get; }
-
-		public Type CommunicationType => typeof(UnitTestCommunication);
+		Id = channelId;
+		Configuration = new UnitTestChannelConfiguration();
 	}
+	public UnitTestChannelConfiguration Configuration { get; }
+	public IEnumerable<string> AllowedChannelProviderIds { get; }
+
+	public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+
+	public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
+	{
+		return identityAddress.Value?.StartsWith(_handlesAddressStartsWith) ?? false;
+	}
+	public UnitTestChannel HandlesAddressStartsWith(string handlingAddressStarts)
+	{
+		_handlesAddressStartsWith = Guard.AgainstNullOrWhiteSpace(handlingAddressStarts);
+		return this;
+	}
+	public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
+	{
+		var subjectTemplate = Configuration.Subject.TemplateRegistrations.FirstOrDefault(f => f.CultureInfo == communicationContext.CultureInfo);
+		if (subjectTemplate == null)
+			return new UnitTestCommunication("NO TEMPLATE");
+
+		var subjectContent = await communicationContext.TemplateEngine.RenderAsync(subjectTemplate, communicationContext) ?? string.Empty;
+
+		return new UnitTestCommunication(subjectContent);
+	}
+
+	private string _handlesAddressStartsWith = "unit-test-address";
+
+	public IIdentityAddress FromAddress { get; set; }
+
+	public string Id { get; }
+
+	public Type CommunicationType => typeof(UnitTestCommunication);
 }

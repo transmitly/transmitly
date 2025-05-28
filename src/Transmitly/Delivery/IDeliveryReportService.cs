@@ -12,11 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery
+namespace Transmitly.Delivery;
+
+public interface IDeliveryReportService : IObservable<DeliveryReport>
 {
-	public interface IDeliveryReportService : IObservable<DeliveryReport>
-	{
-		Task DispatchAsync(DeliveryReport deliveryReport);
-		Task DispatchAsync(IReadOnlyCollection<DeliveryReport> deliveryReports);
-	}
+	Task DispatchAsync(DeliveryReport deliveryReport);
+	Task DispatchAsync(IReadOnlyCollection<DeliveryReport> deliveryReports);
 }

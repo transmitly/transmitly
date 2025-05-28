@@ -14,40 +14,39 @@
 
 using Transmitly.Exceptions;
 
-namespace Transmitly.PlatformIdentity.Configuration
+namespace Transmitly.PlatformIdentity.Configuration;
+
+public abstract class BasePlatformIdentityService(IPlatformIdentityResolverFactory identityResolverFactory) : IPlatformIdentityService
 {
-	public abstract class BasePlatformIdentityService(IPlatformIdentityResolverFactory identityResolverFactory) : IPlatformIdentityService
+	private readonly IPlatformIdentityResolverFactory _platformIdentityResolverRegistrations = Guard.AgainstNull(identityResolverFactory);
+
+	public virtual async Task<IReadOnlyCollection<IPlatformIdentityProfile>> ResolveIdentityProfilesAsync(IReadOnlyCollection<IPlatformIdentityReference> identityReferences)
 	{
-		private readonly IPlatformIdentityResolverFactory _platformIdentityResolverRegistrations = Guard.AgainstNull(identityResolverFactory);
+		var uniqueTypes = Guard.AgainstNullOrEmpty(identityReferences?.ToList()).Select(s => s.Type).Distinct().ToArray();
 
-		public virtual async Task<IReadOnlyCollection<IPlatformIdentityProfile>> ResolveIdentityProfilesAsync(IReadOnlyCollection<IPlatformIdentityReference> identityReferences)
+		var resolvers = await _platformIdentityResolverRegistrations.GetPlatformIdentityResolversByTypes(uniqueTypes).ConfigureAwait(false);
+
+		List<IPlatformIdentityProfile> results = [];
+
+		foreach (var resolver in resolvers)
 		{
-			var uniqueTypes = Guard.AgainstNullOrEmpty(identityReferences?.ToList()).Select(s => s.Type).Distinct().ToArray();
+			var resolverInstance = await _platformIdentityResolverRegistrations.GetPlatformIdentityResolver(resolver).ConfigureAwait(false)
+				?? throw new CommunicationsException("Unable to get an instance of platform identity resolver");
 
-			var resolvers = await _platformIdentityResolverRegistrations.GetPlatformIdentityResolversByTypes(uniqueTypes).ConfigureAwait(false);
+			var filteredByTypeReferences = identityReferences
+				.Where(x =>
+					string.IsNullOrEmpty(resolver.PlatformIdentityType) ||
+					string.Equals(resolver.PlatformIdentityType, x.Type, StringComparison.OrdinalIgnoreCase)
+				)
+				.ToList()
+				.AsReadOnly();
 
-			List<IPlatformIdentityProfile> results = [];
+			var resolvedIdentities = await resolverInstance.ResolveIdentityProfiles(filteredByTypeReferences).ConfigureAwait(false);
 
-			foreach (var resolver in resolvers)
-			{
-				var resolverInstance = await _platformIdentityResolverRegistrations.GetPlatformIdentityResolver(resolver).ConfigureAwait(false)
-					?? throw new CommunicationsException("Unable to get an instance of platform identity resolver");
-
-				var filteredByTypeReferences = identityReferences
-					.Where(x =>
-						string.IsNullOrEmpty(resolver.PlatformIdentityType) ||
-						string.Equals(resolver.PlatformIdentityType, x.Type, StringComparison.OrdinalIgnoreCase)
-					)
-					.ToList()
-					.AsReadOnly();
-
-				var resolvedIdentities = await resolverInstance.ResolveIdentityProfiles(filteredByTypeReferences).ConfigureAwait(false);
-
-				if (resolvedIdentities != null)
-					results.AddRange(resolvedIdentities);
-			}
-
-			return results;
+			if (resolvedIdentities != null)
+				results.AddRange(resolvedIdentities);
 		}
+
+		return results;
 	}
 }

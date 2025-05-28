@@ -14,23 +14,22 @@
 
 using Transmitly.Exceptions;
 
-namespace Transmitly.Channel.Sms
+namespace Transmitly.Channel.Sms;
+
+internal class SmsAttachment : ISmsAttachment
 {
-	internal class SmsAttachment : ISmsAttachment
+	public SmsAttachment(Resource resource)
 	{
-		public SmsAttachment(Resource resource)
-		{
-			Name = Guard.AgainstNullOrWhiteSpace(resource.Name);
-			ContentType = Guard.AgainstNullOrWhiteSpace(resource.ContentType);
-			ContentStream = Guard.AgainstNull(resource.ContentStream);
-			if (!ContentStream.CanRead)
-				throw new CommunicationsException($"Attachment ContentStream is not readable");
-		}
-
-		public string? Name { get; set; }
-
-		public string? ContentType { get; set; }
-
-		public Stream? ContentStream { get; set; }
+		Name = Guard.AgainstNullOrWhiteSpace(resource.Name);
+		ContentType = Guard.AgainstNullOrWhiteSpace(resource.ContentType);
+		ContentStream = Guard.AgainstNull(resource.ContentStream);
+		if (!ContentStream.CanRead)
+			throw new CommunicationsException($"Attachment ContentStream is not readable");
 	}
+
+	public string? Name { get; set; }
+
+	public string? ContentType { get; set; }
+
+	public Stream? ContentStream { get; set; }
 }

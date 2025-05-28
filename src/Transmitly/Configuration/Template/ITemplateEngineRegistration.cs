@@ -12,11 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+public interface ITemplateEngineRegistration
 {
-	public interface ITemplateEngineRegistration
-	{
-		string? Id { get; set; }
-		ITemplateEngine Instance { get; }
-	}
+	string? Id { get; set; }
+	ITemplateEngine Instance { get; }
 }

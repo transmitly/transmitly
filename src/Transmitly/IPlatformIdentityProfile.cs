@@ -12,28 +12,27 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+/// <summary>
+/// An identity of an entity in your platform.
+/// </summary>
+public interface IPlatformIdentityProfile
 {
 	/// <summary>
-	/// An identity of an entity in your platform.
+	/// Identity's identifier.
 	/// </summary>
-	public interface IPlatformIdentityProfile
-	{
-		/// <summary>
-		/// Identity's identifier.
-		/// </summary>
-		string? Id { get; }
-		/// <summary>
-		/// Identity's type.
-		/// </summary>
-		string? Type { get; }
-		/// <summary>
-		/// Collections of addresses.
-		/// </summary>
-		IReadOnlyCollection<IIdentityAddress> Addresses { get; }
-		/// <summary>
-		/// Channel preferences for the platform identity.
-		/// </summary>
-		IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; }
-	}
+	string? Id { get; }
+	/// <summary>
+	/// Identity's type.
+	/// </summary>
+	string? Type { get; }
+	/// <summary>
+	/// Collections of addresses.
+	/// </summary>
+	IReadOnlyCollection<IIdentityAddress> Addresses { get; }
+	/// <summary>
+	/// Channel preferences for the platform identity.
+	/// </summary>
+	IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; }
 }

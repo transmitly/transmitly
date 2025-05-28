@@ -12,33 +12,32 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+internal sealed class ContentModel : IContentModel
 {
-	internal sealed class ContentModel : IContentModel
+	public ContentModel(IContentModel? contentModel, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities)
+		: this(contentModel?.Model, platformIdentities, contentModel?.Resources, contentModel?.LinkedResources)
 	{
-		public ContentModel(IContentModel? contentModel, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities)
-			: this(contentModel?.Model, platformIdentities, contentModel?.Resources, contentModel?.LinkedResources)
-		{
 
-		}
-
-		public ContentModel(ITransactionModel? transactionModel, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities)
-			: this(transactionModel?.Model, platformIdentities, transactionModel?.Resources, transactionModel?.LinkedResources)
-		{
-
-		}
-
-		private ContentModel(object? model, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, IReadOnlyList<Resource>? resources, IReadOnlyList<LinkedResource>? linkedResources)
-		{
-			Resources = resources ?? [];
-			LinkedResources = linkedResources ?? [];
-			Model = new DynamicContentModel(model, platformIdentities, resources, linkedResources);
-		}
-
-		public object Model { get; }
-
-		public IReadOnlyList<Resource> Resources { get; }
-
-		public IReadOnlyList<LinkedResource> LinkedResources { get; }
 	}
+
+	public ContentModel(ITransactionModel? transactionModel, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities)
+		: this(transactionModel?.Model, platformIdentities, transactionModel?.Resources, transactionModel?.LinkedResources)
+	{
+
+	}
+
+	private ContentModel(object? model, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, IReadOnlyList<Resource>? resources, IReadOnlyList<LinkedResource>? linkedResources)
+	{
+		Resources = resources ?? [];
+		LinkedResources = linkedResources ?? [];
+		Model = new DynamicContentModel(model, platformIdentities, resources, linkedResources);
+	}
+
+	public object Model { get; }
+
+	public IReadOnlyList<Resource> Resources { get; }
+
+	public IReadOnlyList<LinkedResource> LinkedResources { get; }
 }

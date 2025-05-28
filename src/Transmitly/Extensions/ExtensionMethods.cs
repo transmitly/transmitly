@@ -12,53 +12,52 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+///Source=https://stackoverflow.com/a/39597587
+static class AsyncLinqExtensions
 {
-	///Source=https://stackoverflow.com/a/39597587
-	static class AsyncLinqExtensions
+	public static async Task<bool> AllAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> predicate)
 	{
-		public static async Task<bool> AllAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> predicate)
-		{
 
 #if NET6_0_OR_GREATER
-			ArgumentNullException.ThrowIfNull(nameof(source));
-			ArgumentNullException.ThrowIfNull(nameof(predicate));
+		ArgumentNullException.ThrowIfNull(nameof(source));
+		ArgumentNullException.ThrowIfNull(nameof(predicate));
 #else
-			if (source == null)
-				throw new ArgumentNullException(nameof(source));
-			if (predicate == null)
-				throw new ArgumentNullException(nameof(predicate));
+		if (source == null)
+			throw new ArgumentNullException(nameof(source));
+		if (predicate == null)
+			throw new ArgumentNullException(nameof(predicate));
 #endif
 
-			foreach (var item in source)
-			{
-				var result = await predicate(item);
-				if (!result)
-					return false;
-			}
-			return true;
-		}
-
-		// This is for synchronous predicates with an async source.
-		public static async Task<bool> AllAsync<TSource>(this IEnumerable<Task<TSource>> source, Func<TSource, bool> predicate)
+		foreach (var item in source)
 		{
+			var result = await predicate(item);
+			if (!result)
+				return false;
+		}
+		return true;
+	}
+
+	// This is for synchronous predicates with an async source.
+	public static async Task<bool> AllAsync<TSource>(this IEnumerable<Task<TSource>> source, Func<TSource, bool> predicate)
+	{
 #if NET6_0_OR_GREATER
-			ArgumentNullException.ThrowIfNull(nameof(source));
-			ArgumentNullException.ThrowIfNull(nameof(predicate));
+		ArgumentNullException.ThrowIfNull(nameof(source));
+		ArgumentNullException.ThrowIfNull(nameof(predicate));
 #else
-			if (source == null)
-				throw new ArgumentNullException(nameof(source));
-			if (predicate == null)
-				throw new ArgumentNullException(nameof(predicate));
+		if (source == null)
+			throw new ArgumentNullException(nameof(source));
+		if (predicate == null)
+			throw new ArgumentNullException(nameof(predicate));
 #endif
 
-			foreach (var item in source)
-			{
-				var awaitedItem = await item;
-				if (!predicate(awaitedItem))
-					return false;
-			}
-			return true;
+		foreach (var item in source)
+		{
+			var awaitedItem = await item;
+			if (!predicate(awaitedItem))
+				return false;
 		}
+		return true;
 	}
 }

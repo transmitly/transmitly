@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+public interface IContentTemplateConfiguration
 {
-	public interface IContentTemplateConfiguration
-	{
-		ICollection<IContentTemplateRegistration> TemplateRegistrations { get; }
-	}
+	ICollection<IContentTemplateRegistration> TemplateRegistrations { get; }
 }

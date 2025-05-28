@@ -12,31 +12,30 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.PlatformIdentity.Configuration
+namespace Transmitly.PlatformIdentity.Configuration;
+
+/// <summary>
+/// Represents a store for registering platform identity resolvers.
+/// </summary>
+public interface IPlatformIdentityResolverFactory
 {
 	/// <summary>
-	/// Represents a store for registering platform identity resolvers.
+	/// Gets all the registered platform identity resolvers.
 	/// </summary>
-	public interface IPlatformIdentityResolverFactory
-	{
-		/// <summary>
-		/// Gets all the registered platform identity resolvers.
-		/// </summary>
-		/// <returns>A read-only list of platform identity resolvers.</returns>
-		Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAllResolversAsync();
+	/// <returns>A read-only list of platform identity resolvers.</returns>
+	Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAllResolversAsync();
 
-		/// <summary>
-		/// Gets the platform identity resolvers based on the specified platform identity type.
-		/// </summary>
-		/// <param name="platformIdentityTypes">The platformIdentityType.</param>
-		/// <returns>A read-only list of platform identity resolvers.</returns>
-		Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetPlatformIdentityResolversByTypes(params string[] platformIdentityTypes);
+	/// <summary>
+	/// Gets the platform identity resolvers based on the specified platform identity type.
+	/// </summary>
+	/// <param name="platformIdentityTypes">The platformIdentityType.</param>
+	/// <returns>A read-only list of platform identity resolvers.</returns>
+	Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetPlatformIdentityResolversByTypes(params string[] platformIdentityTypes);
 
-		/// <summary>
-		/// Resolves the registered platform identity resolver.
-		/// </summary>
-		/// <param name="platformIdentityResolverRegistration">Registration of the resolver to instantiate.</param>
-		/// <returns>Resolver, if found. Otherwise; null.</returns>
-		Task<IPlatformIdentityResolver?> GetPlatformIdentityResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration);
-	}
+	/// <summary>
+	/// Resolves the registered platform identity resolver.
+	/// </summary>
+	/// <param name="platformIdentityResolverRegistration">Registration of the resolver to instantiate.</param>
+	/// <returns>Resolver, if found. Otherwise; null.</returns>
+	Task<IPlatformIdentityResolver?> GetPlatformIdentityResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration);
 }

@@ -14,15 +14,14 @@
 
 using System.Globalization;
 
-namespace Transmitly
+namespace Transmitly;
+
+public static class CultureInfoExtensions
 {
-	public static class CultureInfoExtensions
+	public static string DefaultTwoLetterIsoLanguageName { get; set; } = "en";
+	public static string TwoLetterISOLanguageNameDefault(this CultureInfo culture)
 	{
-		public static string DefaultTwoLetterIsoLanguageName { get; set; } = "en";
-		public static string TwoLetterISOLanguageNameDefault(this CultureInfo culture)
-		{
-			var info = GuardCulture.AgainstNull(culture);
-			return info == CultureInfo.InvariantCulture ? DefaultTwoLetterIsoLanguageName : culture.TwoLetterISOLanguageName;
-		}
+		var info = GuardCulture.AgainstNull(culture);
+		return info == CultureInfo.InvariantCulture ? DefaultTwoLetterIsoLanguageName : culture.TwoLetterISOLanguageName;
 	}
 }

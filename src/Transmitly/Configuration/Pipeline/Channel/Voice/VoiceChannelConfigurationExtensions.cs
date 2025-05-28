@@ -16,65 +16,64 @@ using Transmitly.Channel.Configuration.Voice;
 using Transmitly.Channel.Voice;
 using Transmitly.Pipeline.Configuration;
 
-namespace Transmitly
+namespace Transmitly;
+
+/// <summary>
+/// Extension methods related to the voice channel
+/// </summary>
+public static class VoiceChannelConfigurationExtensions
 {
+
+	private const string VoiceId = "Voice";
 	/// <summary>
-	/// Extension methods related to the voice channel
+	/// Gets the 'Voice' channel Id
 	/// </summary>
-	public static class VoiceChannelConfigurationExtensions
+	/// <param name="channelId">The extension Id of the channel</param>
+	/// <param name="channel">Channel object.</param>
+	/// <returns></returns>
+	public static string Voice(this Channels channel, string channelId = "")
 	{
+		return Guard.AgainstNull(channel).GetId(VoiceId, channelId);
+	}
 
-		private const string VoiceId = "Voice";
-		/// <summary>
-		/// Gets the 'Voice' channel Id
-		/// </summary>
-		/// <param name="channelId">The extension Id of the channel</param>
-		/// <param name="channel">Channel object.</param>
-		/// <returns></returns>
-		public static string Voice(this Channels channel, string channelId = "")
-		{
-			return Guard.AgainstNull(channel).GetId(VoiceId, channelId);
-		}
+	/// <summary>
+	/// Adds the 'Voice' communication channel to provider pipeline.
+	/// </summary>
+	/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
+	/// <param name="voiceChannelConfiguration">Voice Channel configuration options.</param>
+	/// <param name="fromAddressResolver">Resolves the Address the communication will appear to be sent from.</param>
+	/// <returns></returns>
+	public static IPipelineConfiguration AddVoice(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress?>? fromAddressResolver, Action<IVoiceChannelConfiguration> voiceChannelConfiguration)
+	{
+		Guard.AgainstNull(voiceChannelConfiguration);
+		Guard.AgainstNull(pipelineChannelConfiguration);
 
-		/// <summary>
-		/// Adds the 'Voice' communication channel to provider pipeline.
-		/// </summary>
-		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
-		/// <param name="voiceChannelConfiguration">Voice Channel configuration options.</param>
-		/// <param name="fromAddressResolver">Resolves the Address the communication will appear to be sent from.</param>
-		/// <returns></returns>
-		public static IPipelineConfiguration AddVoice(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress?>? fromAddressResolver, Action<IVoiceChannelConfiguration> voiceChannelConfiguration)
-		{
-			Guard.AgainstNull(voiceChannelConfiguration);
-			Guard.AgainstNull(pipelineChannelConfiguration);
+		var voiceOptions = new VoiceChannelConfiguration(fromAddressResolver);
+		voiceChannelConfiguration(voiceOptions);
+		pipelineChannelConfiguration.AddChannel(new VoiceChannel(voiceOptions));
+		return pipelineChannelConfiguration;
+	}
 
-			var voiceOptions = new VoiceChannelConfiguration(fromAddressResolver);
-			voiceChannelConfiguration(voiceOptions);
-			pipelineChannelConfiguration.AddChannel(new VoiceChannel(voiceOptions));
-			return pipelineChannelConfiguration;
-		}
+	/// <summary>
+	/// Adds the 'Voice' communication channel to provider pipeline.
+	/// </summary>
+	/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
+	/// <param name="voiceChannelConfiguration">Voice Channel configuration options.</param>
+	/// <param name="fromAddress">Address the communication will appear to be sent from.</param>
+	/// <returns></returns>
+	public static IPipelineConfiguration AddVoice(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress? fromAddress, Action<IVoiceChannelConfiguration> voiceChannelConfiguration)
+	{
+		return AddVoice(pipelineChannelConfiguration, (ctx) => fromAddress, voiceChannelConfiguration);
+	}
 
-		/// <summary>
-		/// Adds the 'Voice' communication channel to provider pipeline.
-		/// </summary>
-		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
-		/// <param name="voiceChannelConfiguration">Voice Channel configuration options.</param>
-		/// <param name="fromAddress">Address the communication will appear to be sent from.</param>
-		/// <returns></returns>
-		public static IPipelineConfiguration AddVoice(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress? fromAddress, Action<IVoiceChannelConfiguration> voiceChannelConfiguration)
-		{
-			return AddVoice(pipelineChannelConfiguration, (ctx) => fromAddress, voiceChannelConfiguration);
-		}
-
-		/// <summary>
-		/// Adds the 'Voice' communication channel to provider pipeline.
-		/// </summary>
-		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
-		/// <param name="voiceChannelConfiguration">Voice Channel configuration options.</param>
-		/// <returns></returns>
-		public static IPipelineConfiguration AddVoice(this IPipelineConfiguration pipelineChannelConfiguration, Action<IVoiceChannelConfiguration> voiceChannelConfiguration)
-		{
-			return AddVoice(pipelineChannelConfiguration, fromAddressResolver: null, voiceChannelConfiguration);
-		}
+	/// <summary>
+	/// Adds the 'Voice' communication channel to provider pipeline.
+	/// </summary>
+	/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline.</param>
+	/// <param name="voiceChannelConfiguration">Voice Channel configuration options.</param>
+	/// <returns></returns>
+	public static IPipelineConfiguration AddVoice(this IPipelineConfiguration pipelineChannelConfiguration, Action<IVoiceChannelConfiguration> voiceChannelConfiguration)
+	{
+		return AddVoice(pipelineChannelConfiguration, fromAddressResolver: null, voiceChannelConfiguration);
 	}
 }

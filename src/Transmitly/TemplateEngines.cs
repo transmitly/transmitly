@@ -14,24 +14,23 @@
 
 using System.Diagnostics;
 
-namespace Transmitly
-{
-	/// <summary>
-	/// See <see cref="Id"/>
-	/// </summary>
-	[DebuggerStepThrough]
-	public sealed class TemplateEngines
-	{
-		private const string DefaultProviderId = "Default";
+namespace Transmitly;
 
-		internal TemplateEngines() { }
+/// <summary>
+/// See <see cref="Id"/>
+/// </summary>
+[DebuggerStepThrough]
+public sealed class TemplateEngines
+{
+	private const string DefaultProviderId = "Default";
+
+	internal TemplateEngines() { }
 
 #pragma warning disable CA1822 // Mark members as static
-		public string GetId(string providerId, string? clientId = DefaultProviderId)
+	public string GetId(string providerId, string? clientId = DefaultProviderId)
 #pragma warning restore CA1822 // Mark members as static
-		{
-			Guard.AgainstNullOrWhiteSpace(providerId);
-			return $"{providerId}.{(!string.IsNullOrWhiteSpace(clientId) ? clientId : DefaultProviderId)}";
-		}
+	{
+		Guard.AgainstNullOrWhiteSpace(providerId);
+		return $"{providerId}.{(!string.IsNullOrWhiteSpace(clientId) ? clientId : DefaultProviderId)}";
 	}
 }

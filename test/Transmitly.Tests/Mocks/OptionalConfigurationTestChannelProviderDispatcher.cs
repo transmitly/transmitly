@@ -14,24 +14,23 @@
 
 using Transmitly.ChannelProvider;
 
-namespace Transmitly.Tests.Integration
+namespace Transmitly.Tests.Integration;
+
+internal sealed class OptionalConfigurationTestChannelProviderDispatcher : IChannelProviderDispatcher<UnitTestCommunication>
 {
-	internal sealed class OptionalConfigurationTestChannelProviderDispatcher : IChannelProviderDispatcher<UnitTestCommunication>
+	public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
+
+	public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(UnitTestCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 	{
-		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
+		if (communication.Subject == "Skip me!")
+			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);//ie, I don't handle this kind of message.
+		var result = new DispatchResult(CommunicationsStatus.Success("Dispatched"));
 
-		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(UnitTestCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
-		{
-			if (communication.Subject == "Skip me!")
-				return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);//ie, I don't handle this kind of message.
-			var result = new DispatchResult(CommunicationsStatus.Success("Dispatched"));
+		return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
+	}
 
-			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([result]);
-		}
-
-		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
-		{
-			return DispatchAsync((UnitTestCommunication)communication, communicationContext, cancellationToken);
-		}
+	public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+	{
+		return DispatchAsync((UnitTestCommunication)communication, communicationContext, cancellationToken);
 	}
 }

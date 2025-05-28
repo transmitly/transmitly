@@ -12,29 +12,28 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery.Configuration
+namespace Transmitly.Delivery.Configuration;
+
+public sealed class DeliveryReportConfigurationBuilder
 {
-	public sealed class DeliveryReportConfigurationBuilder
+	private readonly CommunicationsClientBuilder _communicationsClientBuilder;
+	private readonly Action<IObserver<DeliveryReport>> _addDeliveryReportMonitor;
+
+	internal DeliveryReportConfigurationBuilder(CommunicationsClientBuilder communicationsClientBuilder, Action<IObserver<DeliveryReport>> addDeliveryReportObserver)
 	{
-		private readonly CommunicationsClientBuilder _communicationsClientBuilder;
-		private readonly Action<IObserver<DeliveryReport>> _addDeliveryReportMonitor;
+		_communicationsClientBuilder = Guard.AgainstNull(communicationsClientBuilder);
+		_addDeliveryReportMonitor = Guard.AgainstNull(addDeliveryReportObserver);
+	}
 
-		internal DeliveryReportConfigurationBuilder(CommunicationsClientBuilder communicationsClientBuilder, Action<IObserver<DeliveryReport>> addDeliveryReportObserver)
-		{
-			_communicationsClientBuilder = Guard.AgainstNull(communicationsClientBuilder);
-			_addDeliveryReportMonitor = Guard.AgainstNull(addDeliveryReportObserver);
-		}
+	public CommunicationsClientBuilder AddDeliveryReportHandler(IObserver<DeliveryReport> reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? channelIds = null, IReadOnlyCollection<string>? channelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
+	{
+		_addDeliveryReportMonitor(new DeliveryReportMonitor(reportHandler, filterEventNames, channelIds, channelProviderIds, filterPipelineNames));
+		return _communicationsClientBuilder;
+	}
 
-		public CommunicationsClientBuilder AddDeliveryReportHandler(IObserver<DeliveryReport> reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? channelIds = null, IReadOnlyCollection<string>? channelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
-		{
-			_addDeliveryReportMonitor(new DeliveryReportMonitor(reportHandler, filterEventNames, channelIds, channelProviderIds, filterPipelineNames));
-			return _communicationsClientBuilder;
-		}
-
-		public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
-		{
-			_addDeliveryReportMonitor(new DeliveryReportMonitor(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames));
-			return _communicationsClientBuilder;
-		}
+	public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
+	{
+		_addDeliveryReportMonitor(new DeliveryReportMonitor(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames));
+		return _communicationsClientBuilder;
 	}
 }

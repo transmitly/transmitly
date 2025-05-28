@@ -14,23 +14,22 @@
 
 using System.Diagnostics;
 
-namespace Transmitly
-{
-	///<summary>
-	/// See <see cref="Delivery.DeliveryReport.Event"/>
-	///</summary>
-	[DebuggerStepThrough]
-	public sealed class DeliveryReportEventName
-	{
-		private const string Prefix = "On";
+namespace Transmitly;
 
-		internal DeliveryReportEventName() { }
+///<summary>
+/// See <see cref="Delivery.DeliveryReport.Event"/>
+///</summary>
+[DebuggerStepThrough]
+public sealed class DeliveryReportEventName
+{
+	private const string Prefix = "On";
+
+	internal DeliveryReportEventName() { }
 #pragma warning disable CA1822 // Mark members as static
-		public string Delivered() => Prefix + "Delivered";
-		public string Error() => Prefix + "Error";
-		public string Dispatched() => Prefix + "Dispatched";
-		public string Dispatch() => Prefix + "Dispatch";
-		public string StatusChanged() => Prefix + "StatusChanged";
+	public string Delivered() => Prefix + "Delivered";
+	public string Error() => Prefix + "Error";
+	public string Dispatched() => Prefix + "Dispatched";
+	public string Dispatch() => Prefix + "Dispatch";
+	public string StatusChanged() => Prefix + "StatusChanged";
 #pragma warning restore CA1822 // Mark members as static
-	}
 }

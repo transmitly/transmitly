@@ -12,38 +12,37 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.Pipeline.Configuration;
+
+public abstract class BasePipelineService(IPipelineFactory pipelineFactory) : IPipelineService
 {
-	public abstract class BasePipelineService(IPipelineFactory pipelineFactory) : IPipelineService
+	private readonly IPipelineFactory _pipelineFactory = Guard.AgainstNull(pipelineFactory);
+
+	public virtual async Task<PipelineLookupResult> GetMatchingPipelinesAsync(string pipelineIntent, string? pipelineId, IReadOnlyCollection<string> allowedChannelFilter)
 	{
-		private readonly IPipelineFactory _pipelineFactory = Guard.AgainstNull(pipelineFactory);
+		Guard.AgainstNullOrWhiteSpace(pipelineIntent);
 
-		public virtual async Task<PipelineLookupResult> GetMatchingPipelinesAsync(string pipelineIntent, string? pipelineId, IReadOnlyCollection<string> allowedChannelFilter)
+		var pipelines = await _pipelineFactory.GetAsync(pipelineIntent, pipelineId).ConfigureAwait(false);
+
+		if (pipelines.Count == 0)
+			return new PipelineLookupResult(Array.Empty<IPipeline>(), [PredefinedCommunicationStatuses.PipelineNotFound]);
+
+		var pipelinesWithDispatchRequirementsDisabled = pipelines
+			.Where(p => !p.Configuration.IsDispatchRequirementsAllowed)
+			.ToList();
+
+		if (pipelinesWithDispatchRequirementsDisabled.Count > 0 && allowedChannelFilter.Count > 0)
 		{
-			Guard.AgainstNullOrWhiteSpace(pipelineIntent);
+			var results = pipelinesWithDispatchRequirementsDisabled
+				.Select(p => new CommunicationsStatus(
+					p.Id ?? p.Intent,
+					PredefinedCommunicationStatuses.DispatchRequirementsNotAllowed.Detail,
+					PredefinedCommunicationStatuses.DispatchRequirementsNotAllowed.Code))
+				.ToList().AsReadOnly();
 
-			var pipelines = await _pipelineFactory.GetAsync(pipelineIntent, pipelineId).ConfigureAwait(false);
-
-			if (pipelines.Count == 0)
-				return new PipelineLookupResult(Array.Empty<IPipeline>(), [PredefinedCommunicationStatuses.PipelineNotFound]);
-
-			var pipelinesWithDispatchRequirementsDisabled = pipelines
-				.Where(p => !p.Configuration.IsDispatchRequirementsAllowed)
-				.ToList();
-
-			if (pipelinesWithDispatchRequirementsDisabled.Count > 0 && allowedChannelFilter.Count > 0)
-			{
-				var results = pipelinesWithDispatchRequirementsDisabled
-					.Select(p => new CommunicationsStatus(
-						p.Id ?? p.Intent,
-						PredefinedCommunicationStatuses.DispatchRequirementsNotAllowed.Detail,
-						PredefinedCommunicationStatuses.DispatchRequirementsNotAllowed.Code))
-					.ToList().AsReadOnly();
-
-				return new PipelineLookupResult(Array.Empty<IPipeline>(), results);
-			}
-
-			return new PipelineLookupResult(pipelines, Array.Empty<CommunicationsStatus>());
+			return new PipelineLookupResult(Array.Empty<IPipeline>(), results);
 		}
+
+		return new PipelineLookupResult(pipelines, Array.Empty<CommunicationsStatus>());
 	}
 }

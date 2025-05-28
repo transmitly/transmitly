@@ -14,13 +14,12 @@
 
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+internal sealed class MockTemplateEngine2 : ITemplateEngine
 {
-	internal sealed class MockTemplateEngine2 : ITemplateEngine
+	public Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
 	{
-		public Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
-		{
-			throw new NotImplementedException();
-		}
+		throw new NotImplementedException();
 	}
 }

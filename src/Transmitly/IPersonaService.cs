@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IPersonaService
 {
-	public interface IPersonaService
-	{
-		Task<IReadOnlyCollection<IPlatformIdentityProfile>> FilterPlatformIdentityPersonasAsync(IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, IReadOnlyCollection<string> personas);
-	}
+	Task<IReadOnlyCollection<IPlatformIdentityProfile>> FilterPlatformIdentityPersonasAsync(IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, IReadOnlyCollection<string> personas);
 }

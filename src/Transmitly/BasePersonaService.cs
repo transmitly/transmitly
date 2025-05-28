@@ -14,34 +14,33 @@
 
 using Transmitly.Persona.Configuration;
 
-namespace Transmitly
+namespace Transmitly;
+
+public abstract class BasePersonaService(IPersonaFactory? personaFactory) : IPersonaService
 {
-	public abstract class BasePersonaService(IPersonaFactory? personaFactory) : IPersonaService
+	private readonly IPersonaFactory? _personaFactory = personaFactory;
+
+	public async Task<IReadOnlyCollection<IPlatformIdentityProfile>> FilterPlatformIdentityPersonasAsync(IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, IReadOnlyCollection<string> personas)
 	{
-		private readonly IPersonaFactory? _personaFactory = personaFactory;
-
-		public async Task<IReadOnlyCollection<IPlatformIdentityProfile>> FilterPlatformIdentityPersonasAsync(IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, IReadOnlyCollection<string> personas)
+		if (personas.Count == 0 || _personaFactory == null)
 		{
-			if (personas.Count == 0 || _personaFactory == null)
-			{
-				return platformIdentities;
-			}
-
-			var tasks = platformIdentities.Select(async identity =>
-			{
-				foreach (var personaFilter in personas)
-				{
-					if (await _personaFactory.AnyMatch(personaFilter, new[] { identity }).ConfigureAwait(false))
-					{
-						return identity;
-					}
-				}
-				return null;
-			});
-
-			var results = await Task.WhenAll(tasks).ConfigureAwait(false);
-			platformIdentities = new List<IPlatformIdentityProfile>(results.OfType<IPlatformIdentityProfile>());
-			return platformIdentities.ToList().AsReadOnly();
+			return platformIdentities;
 		}
+
+		var tasks = platformIdentities.Select(async identity =>
+		{
+			foreach (var personaFilter in personas)
+			{
+				if (await _personaFactory.AnyMatch(personaFilter, new[] { identity }).ConfigureAwait(false))
+				{
+					return identity;
+				}
+			}
+			return null;
+		});
+
+		var results = await Task.WhenAll(tasks).ConfigureAwait(false);
+		platformIdentities = new List<IPlatformIdentityProfile>(results.OfType<IPlatformIdentityProfile>());
+		return platformIdentities.ToList().AsReadOnly();
 	}
 }

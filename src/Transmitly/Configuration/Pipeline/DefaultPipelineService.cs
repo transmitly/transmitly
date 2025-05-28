@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.Pipeline.Configuration;
+
+sealed class DefaultPipelineService(IPipelineFactory pipelineFactory) : BasePipelineService(pipelineFactory)
 {
-	sealed class DefaultPipelineService(IPipelineFactory pipelineFactory) : BasePipelineService(pipelineFactory)
-	{
-		
-	}
+	
 }

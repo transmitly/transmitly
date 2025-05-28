@@ -14,46 +14,45 @@
 
 using Moq;
 
-namespace Transmitly.Template.Configuration.Tests
+namespace Transmitly.Template.Configuration.Tests;
+
+[TestClass()]
+public class LocalFileContentTemplateRegistrationTests
 {
-	[TestClass()]
-	public class LocalFileContentTemplateRegistrationTests
+	[TestMethod()]
+	[DataRow("")]
+	[DataRow(" ")]
+	[DataRow(null)]
+	public void ShouldThrowIfResourceIdIsEmpty(string? value)
 	{
-		[TestMethod()]
-		[DataRow("")]
-		[DataRow(" ")]
-		[DataRow(null)]
-		public void ShouldThrowIfResourceIdIsEmpty(string? value)
-		{
 #pragma warning disable CS8604 // Possible null reference argument.
-			Assert.ThrowsException<ArgumentNullException>(() => new LocalFileContentTemplateRegistration(value));
+		Assert.ThrowsException<ArgumentNullException>(() => new LocalFileContentTemplateRegistration(value));
 #pragma warning restore CS8604 // Possible null reference argument.
-		}
-
-		[TestMethod]
-		public void ShouldThrowIfResourceCannotBeFound()
-		{
-			Assert.ThrowsException<FileNotFoundException>(() => new LocalFileContentTemplateRegistration("not-exist.txt"));
-		}
-
-		[TestMethod]
-		public async Task ShouldNotThrowIfResourceCannotBeFound()
-		{
-			var template = new LocalFileContentTemplateRegistration("not-exist.txt", false);
-			var context = new Mock<IDispatchCommunicationContext>();
-			Assert.IsNull(await template.GetContentAsync(context.Object));
-		}
-
-		//#if !NETFRAMEWORK //todo: look into why this isn't working for NETFramework
-		//		[TestMethod()]
-		//		[DeploymentItem(@"FileResource/file-content.txt")]
-		//		[DeploymentItem(@"FileResource\file-content.txt")]
-		//		public async Task ShouldReturnFileResourceContent()
-		//		{
-		//			var template = new LocalFileContentTemplateRegistration($"FileResource{Path.DirectorySeparatorChar}file-content.txt");
-		//			var context = new Mock<IDispatchCommunicationContext>();
-		//			Assert.AreEqual("OK", await template.GetContentAsync(context.Object));
-		//		}
-		//#endif
 	}
+
+	[TestMethod]
+	public void ShouldThrowIfResourceCannotBeFound()
+	{
+		Assert.ThrowsException<FileNotFoundException>(() => new LocalFileContentTemplateRegistration("not-exist.txt"));
+	}
+
+	[TestMethod]
+	public async Task ShouldNotThrowIfResourceCannotBeFound()
+	{
+		var template = new LocalFileContentTemplateRegistration("not-exist.txt", false);
+		var context = new Mock<IDispatchCommunicationContext>();
+		Assert.IsNull(await template.GetContentAsync(context.Object));
+	}
+
+	//#if !NETFRAMEWORK //todo: look into why this isn't working for NETFramework
+	//		[TestMethod()]
+	//		[DeploymentItem(@"FileResource/file-content.txt")]
+	//		[DeploymentItem(@"FileResource\file-content.txt")]
+	//		public async Task ShouldReturnFileResourceContent()
+	//		{
+	//			var template = new LocalFileContentTemplateRegistration($"FileResource{Path.DirectorySeparatorChar}file-content.txt");
+	//			var context = new Mock<IDispatchCommunicationContext>();
+	//			Assert.AreEqual("OK", await template.GetContentAsync(context.Object));
+	//		}
+	//#endif
 }

@@ -12,12 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Persona.Configuration
+namespace Transmitly.Persona.Configuration;
+
+public interface IPersonaFactory
 {
-	public interface IPersonaFactory
-	{
-		Task<bool> AnyMatch<TPersona>(string personaName, IReadOnlyCollection<TPersona> personas) where TPersona : class;
-		Task<IReadOnlyCollection<IPersonaRegistration>> GetAllAsync();
-		Task<IPersonaRegistration?> GetAsync(string personaName);
-	}
+	Task<bool> AnyMatch<TPersona>(string personaName, IReadOnlyCollection<TPersona> personas) where TPersona : class;
+	Task<IReadOnlyCollection<IPersonaRegistration>> GetAllAsync();
+	Task<IPersonaRegistration?> GetAsync(string personaName);
 }

@@ -12,12 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.Pipeline.Configuration;
+
+public interface IPipelineConfigurator
 {
-	public interface IPipelineConfigurator
-	{
-		string Name { get; }
-		string? Category { get; }
-		void Configure(IPipelineConfiguration configuration);
-	}
+	string Name { get; }
+	string? Category { get; }
+	void Configure(IPipelineConfiguration configuration);
 }

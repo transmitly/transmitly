@@ -12,11 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IPlatformIdentityReference
 {
-	public interface IPlatformIdentityReference
-	{
-		string Id { get; }
-		string Type { get; }
-	}
+	string Id { get; }
+	string Type { get; }
 }

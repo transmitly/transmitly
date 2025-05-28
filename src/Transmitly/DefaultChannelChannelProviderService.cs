@@ -14,10 +14,9 @@
 
 using Transmitly.ChannelProvider.Configuration;
 
-namespace Transmitly
-{
-	sealed class DefaultChannelChannelProviderService(IChannelProviderFactory channelProviderFactory) : BaseChannelChannelProviderService(channelProviderFactory)
-	{
+namespace Transmitly;
 
-	}
+sealed class DefaultChannelChannelProviderService(IChannelProviderFactory channelProviderFactory) : BaseChannelChannelProviderService(channelProviderFactory)
+{
+
 }

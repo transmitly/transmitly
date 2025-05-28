@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Persona.Configuration
+namespace Transmitly.Persona.Configuration;
+
+public interface IPersonaRegistration<in TPersona> : IPersonaRegistration
 {
-	public interface IPersonaRegistration<in TPersona> : IPersonaRegistration
-	{
-		bool IsMatch(TPersona persona);
-	}
+	bool IsMatch(TPersona persona);
 }

@@ -14,54 +14,53 @@
 
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Channel.Configuration.Push
+namespace Transmitly.Channel.Configuration.Push;
+
+internal sealed class PushNotificationChannelConfiguration() : IPushNotificationChannelConfiguration
 {
-	internal sealed class PushNotificationChannelConfiguration() : IPushNotificationChannelConfiguration
+	public IContentTemplateConfiguration Title { get; } = new ContentTemplateConfiguration();
+
+	public IContentTemplateConfiguration Body { get; } = new ContentTemplateConfiguration();
+
+	public IContentTemplateConfiguration ImageUrl { get; } = new ContentTemplateConfiguration();
+
+	public IReadOnlyCollection<string>? RecipientAddressPurposes { get; private set; }
+
+	public IReadOnlyCollection<string>? BlindCopyRecipientPurposes { get; private set; }
+
+	public IReadOnlyCollection<string>? CopyRecipientPurposes { get; private set; }
+
+	public IReadOnlyCollection<string>? ChannelProviderFilter { get; private set; }
+
+	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; private set; }
+
+	public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
 	{
-		public IContentTemplateConfiguration Title { get; } = new ContentTemplateConfiguration();
+		BlindCopyRecipientPurposes = purposes;
+		return this;
+	}
 
-		public IContentTemplateConfiguration Body { get; } = new ContentTemplateConfiguration();
+	public IChannelConfiguration AddChannelProviderFilter(params string[] channelProviderIds)
+	{
+		ChannelProviderFilter = channelProviderIds;
+		return this;
+	}
 
-		public IContentTemplateConfiguration ImageUrl { get; } = new ContentTemplateConfiguration();
+	public IChannelConfiguration AddCopyRecipientAddressPurpose(params string[] purposes)
+	{
+		CopyRecipientPurposes = purposes;
+		return this;
+	}
 
-		public IReadOnlyCollection<string>? RecipientAddressPurposes { get; private set; }
+	public IChannelConfiguration AddDeliveryReportCallbackUrlResolver(Func<IDispatchCommunicationContext, Task<string?>> callbackResolver)
+	{
+		DeliveryReportCallbackUrlResolver = Guard.AgainstNull(callbackResolver);
+		return this;
+	}
 
-		public IReadOnlyCollection<string>? BlindCopyRecipientPurposes { get; private set; }
-
-		public IReadOnlyCollection<string>? CopyRecipientPurposes { get; private set; }
-
-		public IReadOnlyCollection<string>? ChannelProviderFilter { get; private set; }
-
-		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; private set; }
-
-		public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
-		{
-			BlindCopyRecipientPurposes = purposes;
-			return this;
-		}
-
-		public IChannelConfiguration AddChannelProviderFilter(params string[] channelProviderIds)
-		{
-			ChannelProviderFilter = channelProviderIds;
-			return this;
-		}
-
-		public IChannelConfiguration AddCopyRecipientAddressPurpose(params string[] purposes)
-		{
-			CopyRecipientPurposes = purposes;
-			return this;
-		}
-
-		public IChannelConfiguration AddDeliveryReportCallbackUrlResolver(Func<IDispatchCommunicationContext, Task<string?>> callbackResolver)
-		{
-			DeliveryReportCallbackUrlResolver = Guard.AgainstNull(callbackResolver);
-			return this;
-		}
-
-		public IChannelConfiguration AddRecipientAddressPurpose(params string[] purposes)
-		{
-			RecipientAddressPurposes = purposes;
-			return this;
-		}
+	public IChannelConfiguration AddRecipientAddressPurpose(params string[] purposes)
+	{
+		RecipientAddressPurposes = purposes;
+		return this;
 	}
 }

@@ -14,36 +14,35 @@
 
 using System.Collections.ObjectModel;
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.Pipeline.Configuration;
+
+public abstract class BasePipelineFactory(IEnumerable<IPipeline> pipelines) : IPipelineFactory
 {
-	public abstract class BasePipelineFactory(IEnumerable<IPipeline> pipelines) : IPipelineFactory
+	private readonly ReadOnlyCollection<IPipeline> _pipelines = Guard.AgainstNull(pipelines).ToList().AsReadOnly();
+	protected IReadOnlyCollection<IPipeline> Registrations => _pipelines;
+
+	public virtual Task<IReadOnlyCollection<IPipeline>> GetAllAsync()
 	{
-		private readonly ReadOnlyCollection<IPipeline> _pipelines = Guard.AgainstNull(pipelines).ToList().AsReadOnly();
-		protected IReadOnlyCollection<IPipeline> Registrations => _pipelines;
+		return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelines);
+	}
 
-		public virtual Task<IReadOnlyCollection<IPipeline>> GetAllAsync()
-		{
-			return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelines);
-		}
+	public virtual Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string? pipelineId = null)
+	{
+		Guard.AgainstNullOrWhiteSpace(pipelineName);
 
-		public virtual Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string? pipelineId = null)
-		{
-			Guard.AgainstNullOrWhiteSpace(pipelineName);
-
-			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
-				_pipelines.Where(x =>
-					x.Intent == pipelineName &&
+		return Task.FromResult<IReadOnlyCollection<IPipeline>>(
+			_pipelines.Where(x =>
+				x.Intent == pipelineName &&
+				(
+					string.IsNullOrEmpty(pipelineId) ||
 					(
-						string.IsNullOrEmpty(pipelineId) ||
-						(
-							!string.IsNullOrWhiteSpace(pipelineId) &&
-							x.Id == pipelineId
-						)
+						!string.IsNullOrWhiteSpace(pipelineId) &&
+						x.Id == pipelineId
 					)
 				)
-				.ToList()
-				.AsReadOnly()
-			);
-		}
+			)
+			.ToList()
+			.AsReadOnly()
+		);
 	}
 }

@@ -15,14 +15,13 @@
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IChannelChannelProviderService
 {
-	public interface IChannelChannelProviderService
-	{
-		Task<IReadOnlyCollection<ChannelChannelProviderGroup>> CreateGroupingsForPlatformIdentityAsync(
-			string? pipelineCategory,
-			IReadOnlyCollection<IChannel> pipelineChannels,
-			IReadOnlyCollection<string> dispatchChannelPreferences,
-			IPlatformIdentityProfile platformIdentity);
-	}
+	Task<IReadOnlyCollection<ChannelChannelProviderGroup>> CreateGroupingsForPlatformIdentityAsync(
+		string? pipelineCategory,
+		IReadOnlyCollection<IChannel> pipelineChannels,
+		IReadOnlyCollection<string> dispatchChannelPreferences,
+		IPlatformIdentityProfile platformIdentity);
 }

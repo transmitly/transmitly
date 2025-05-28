@@ -14,69 +14,68 @@
 
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Channel.Configuration.Voice
+namespace Transmitly.Channel.Configuration.Voice;
+
+sealed class VoiceChannelConfiguration(Func<IDispatchCommunicationContext, IIdentityAddress?>? fromAddressResolver) : IVoiceChannelConfiguration
 {
-	sealed class VoiceChannelConfiguration(Func<IDispatchCommunicationContext, IIdentityAddress?>? fromAddressResolver) : IVoiceChannelConfiguration
+	public Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver => fromAddressResolver;
+
+	public IVoiceType? VoiceType { get; private set; }
+
+	public IContentTemplateConfiguration Message { get; } = new ContentTemplateConfiguration();
+
+	public MachineDetection MachineDetection { get; private set; }
+
+	public IReadOnlyCollection<string>? RecipientAddressPurposes { get; private set; }
+
+	public IReadOnlyCollection<string>? BlindCopyRecipientPurposes { get; private set; }
+
+	public IReadOnlyCollection<string>? CopyRecipientPurposes { get; private set; }
+
+	public IReadOnlyCollection<string>? ChannelProviderFilter { get; private set; }
+
+	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; private set; }
+
+	public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
 	{
-		public Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver => fromAddressResolver;
+		BlindCopyRecipientPurposes = purposes;
+		return this;
+	}
 
-		public IVoiceType? VoiceType { get; private set; }
+	public IChannelConfiguration AddChannelProviderFilter(params string[] channelProviderIds)
+	{
+		ChannelProviderFilter = channelProviderIds;
+		return this;
+	}
 
-		public IContentTemplateConfiguration Message { get; } = new ContentTemplateConfiguration();
+	public IChannelConfiguration AddCopyRecipientAddressPurpose(params string[] purposes)
+	{
+		CopyRecipientPurposes = purposes;
+		return this;
+	}
 
-		public MachineDetection MachineDetection { get; private set; }
+	public IChannelConfiguration AddDeliveryReportCallbackUrlResolver(Func<IDispatchCommunicationContext, Task<string?>> callbackResolver)
+	{
+		DeliveryReportCallbackUrlResolver = Guard.AgainstNull(callbackResolver);
+		return this;
+	}
 
-		public IReadOnlyCollection<string>? RecipientAddressPurposes { get; private set; }
+	public IChannelConfiguration AddRecipientAddressPurpose(params string[] purposes)
+	{
+		RecipientAddressPurposes = purposes;
+		return this;
+	}
 
-		public IReadOnlyCollection<string>? BlindCopyRecipientPurposes { get; private set; }
+	public IChannelConfiguration AddVoiceType(IVoiceType voiceType)
+	{
+		Guard.AgainstNull(voiceType);
+		VoiceType = voiceType;
+		return this;
+	}
 
-		public IReadOnlyCollection<string>? CopyRecipientPurposes { get; private set; }
-
-		public IReadOnlyCollection<string>? ChannelProviderFilter { get; private set; }
-
-		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; private set; }
-
-		public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
-		{
-			BlindCopyRecipientPurposes = purposes;
-			return this;
-		}
-
-		public IChannelConfiguration AddChannelProviderFilter(params string[] channelProviderIds)
-		{
-			ChannelProviderFilter = channelProviderIds;
-			return this;
-		}
-
-		public IChannelConfiguration AddCopyRecipientAddressPurpose(params string[] purposes)
-		{
-			CopyRecipientPurposes = purposes;
-			return this;
-		}
-
-		public IChannelConfiguration AddDeliveryReportCallbackUrlResolver(Func<IDispatchCommunicationContext, Task<string?>> callbackResolver)
-		{
-			DeliveryReportCallbackUrlResolver = Guard.AgainstNull(callbackResolver);
-			return this;
-		}
-
-		public IChannelConfiguration AddRecipientAddressPurpose(params string[] purposes)
-		{
-			RecipientAddressPurposes = purposes;
-			return this;
-		}
-
-		public IChannelConfiguration AddVoiceType(IVoiceType voiceType)
-		{
-			Guard.AgainstNull(voiceType);
-			VoiceType = voiceType;
-			return this;
-		}
-
-		public IChannelConfiguration AddMachineDetection(MachineDetection machineDetection)
-		{
-			MachineDetection = machineDetection;
-			return this;
-		}
+	public IChannelConfiguration AddMachineDetection(MachineDetection machineDetection)
+	{
+		MachineDetection = machineDetection;
+		return this;
 	}
 }

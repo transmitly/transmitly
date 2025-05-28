@@ -14,10 +14,9 @@
 
 using Transmitly.Channel;
 
-namespace Transmitly
-{
-	public interface IEmailAttachment : IAttachment
-	{
+namespace Transmitly;
 
-	}
+public interface IEmailAttachment : IAttachment
+{
+
 }

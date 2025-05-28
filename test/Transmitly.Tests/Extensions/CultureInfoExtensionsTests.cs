@@ -14,27 +14,26 @@
 
 using System.Globalization;
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+[TestClass()]
+public class CultureInfoExtensionsTests
 {
-	[TestClass()]
-	public class CultureInfoExtensionsTests
+	[TestMethod()]
+	public void DefaultIsoLanguageNameShouldBeEn()
 	{
-		[TestMethod()]
-		public void DefaultIsoLanguageNameShouldBeEn()
-		{
-			Assert.AreEqual("en", CultureInfoExtensions.DefaultTwoLetterIsoLanguageName);
-		}
+		Assert.AreEqual("en", CultureInfoExtensions.DefaultTwoLetterIsoLanguageName);
+	}
 
-		[TestMethod]
-		public void ShouldReturnDefaultIfCultureIsNullOrInvariant()
-		{
-			var expected = CultureInfoExtensions.DefaultTwoLetterIsoLanguageName;
-			Assert.AreEqual(expected, CultureInfoExtensions.TwoLetterISOLanguageNameDefault(null!));
-			Assert.AreEqual(expected, CultureInfoExtensions.TwoLetterISOLanguageNameDefault(CultureInfo.InvariantCulture));
-			var expectedOther = CultureInfo.GetCultureInfo("es-mx");
-			Assert.AreEqual(expectedOther.TwoLetterISOLanguageName, CultureInfoExtensions.TwoLetterISOLanguageNameDefault(expectedOther));
-			Assert.AreNotEqual(expected, CultureInfoExtensions.TwoLetterISOLanguageNameDefault(expectedOther));
+	[TestMethod]
+	public void ShouldReturnDefaultIfCultureIsNullOrInvariant()
+	{
+		var expected = CultureInfoExtensions.DefaultTwoLetterIsoLanguageName;
+		Assert.AreEqual(expected, CultureInfoExtensions.TwoLetterISOLanguageNameDefault(null!));
+		Assert.AreEqual(expected, CultureInfoExtensions.TwoLetterISOLanguageNameDefault(CultureInfo.InvariantCulture));
+		var expectedOther = CultureInfo.GetCultureInfo("es-mx");
+		Assert.AreEqual(expectedOther.TwoLetterISOLanguageName, CultureInfoExtensions.TwoLetterISOLanguageNameDefault(expectedOther));
+		Assert.AreNotEqual(expected, CultureInfoExtensions.TwoLetterISOLanguageNameDefault(expectedOther));
 
-		}
 	}
 }

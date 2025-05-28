@@ -14,41 +14,40 @@
 
 using System.Diagnostics;
 
-namespace Transmitly
+namespace Transmitly;
+
+/// <summary>
+/// Transactional Model for Dispatching data related to dispatching communications using a <see cref="ICommunicationsClient"/>
+/// </summary>
+[DebuggerStepThrough]
+public class TransactionModel : ITransactionModel
 {
-	/// <summary>
-	/// Transactional Model for Dispatching data related to dispatching communications using a <see cref="ICommunicationsClient"/>
-	/// </summary>
-	[DebuggerStepThrough]
-	public class TransactionModel : ITransactionModel
+	private readonly object _model;
+	private readonly Resource[]? _attachments;
+	private readonly LinkedResource[]? _linkedResource;
+
+	private TransactionModel(object model, Resource[]? attachments, LinkedResource[]? linkedResources)
 	{
-		private readonly object _model;
-		private readonly Resource[]? _attachments;
-		private readonly LinkedResource[]? _linkedResource;
+		_model = model;
+		_attachments = attachments;
+		_linkedResource = linkedResources;
+	}
 
-		private TransactionModel(object model, Resource[]? attachments, LinkedResource[]? linkedResources)
-		{
-			_model = model;
-			_attachments = attachments;
-			_linkedResource = linkedResources;
-		}
+	public object Model => _model;
 
-		public object Model => _model;
+	public IReadOnlyList<Resource> Resources => _attachments ?? [];
 
-		public IReadOnlyList<Resource> Resources => _attachments ?? [];
+	public IReadOnlyList<LinkedResource> LinkedResources => _linkedResource ?? [];
 
-		public IReadOnlyList<LinkedResource> LinkedResources => _linkedResource ?? [];
+	public static ITransactionModel Create(object model)
+	{
+		return new TransactionModel(model, null, null);
+	}
 
-		public static ITransactionModel Create(object model)
-		{
-			return new TransactionModel(model, null, null);
-		}
-
-		public static ITransactionModel Create(object model, params Resource[] resources)
-		{
-			var linkedResources = resources.OfType<LinkedResource>().ToArray();
-			var attachments = resources.Where(x => x is not LinkedResource).ToArray();
-			return new TransactionModel(model, attachments, linkedResources);
-		}
+	public static ITransactionModel Create(object model, params Resource[] resources)
+	{
+		var linkedResources = resources.OfType<LinkedResource>().ToArray();
+		var attachments = resources.Where(x => x is not LinkedResource).ToArray();
+		return new TransactionModel(model, attachments, linkedResources);
 	}
 }

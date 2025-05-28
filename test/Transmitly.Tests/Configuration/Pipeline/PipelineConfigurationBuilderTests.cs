@@ -15,74 +15,73 @@
 using Moq;
 using Transmitly.Tests;
 
-namespace Transmitly.Pipeline.Configuration.Tests
+namespace Transmitly.Pipeline.Configuration.Tests;
+
+[TestClass()]
+public class PipelineConfiguratorTests
 {
-	[TestClass()]
-	public class PipelineConfiguratorTests
+	[TestMethod]
+	public void PipelineConfiguratorShouldConfigureChannelConfig()
 	{
-		[TestMethod]
-		public void PipelineConfiguratorShouldConfigureChannelConfig()
+		const string expectedPipelineName = "test-name";
+		const string expectedPipelineCategory = "test-category";
+
+		var config = new DefaultPipelineProviderConfiguration();
+		var configurator = new Mock<BasePipelineConfigurator>()
 		{
-			const string expectedPipelineName = "test-name";
-			const string expectedPipelineCategory = "test-category";
+			CallBase = true
+		};
+		configurator.Setup(x => x.Name).Returns(expectedPipelineName);
+		configurator.Setup(x => x.Category).Returns(expectedPipelineCategory);
 
-			var config = new DefaultPipelineProviderConfiguration();
-			var configurator = new Mock<BasePipelineConfigurator>()
-			{
-				CallBase = true
-			};
-			configurator.Setup(x => x.Name).Returns(expectedPipelineName);
-			configurator.Setup(x => x.Category).Returns(expectedPipelineCategory);
-
-			var channel = new UnitTestChannel("unit-test-address");
-			configurator.Setup(x => x.Configure(It.IsAny<IPipelineConfiguration>())).Callback<IPipelineConfiguration>((config) =>
-			{
-				Assert.IsNotNull(config);
-				config.AddChannel(channel);
-			}).Verifiable();
-
-			configurator.Object.Configure(config);
-
-			Assert.AreEqual(1, config.Channels.Count);
-			Assert.AreSame(channel, config.Channels.First());
-		}
-
-		[TestMethod()]
-		public async Task ShouldAddPipelineConfigurator()
+		var channel = new UnitTestChannel("unit-test-address");
+		configurator.Setup(x => x.Configure(It.IsAny<IPipelineConfiguration>())).Callback<IPipelineConfiguration>((config) =>
 		{
-			const string expectedPipelineName = "test-name";
-			const string expectedPipelineCategory = "test-category";
-			const string expectedChannelProviderId = "test-channel-provider";
-			const string expectedChannelId = "unit-test-channel";
+			Assert.IsNotNull(config);
+			config.AddChannel(channel);
+		}).Verifiable();
 
-			var configurator = new Mock<BasePipelineConfigurator>()
-			{
-				CallBase = true
-			};
+		configurator.Object.Configure(config);
 
-			configurator.Setup(x => x.Name).Returns(expectedPipelineName);
+		Assert.AreEqual(1, config.Channels.Count);
+		Assert.AreSame(channel, config.Channels.First());
+	}
 
-			configurator.Setup(x => x.Category).Returns(expectedPipelineCategory);
-			configurator.Setup(x => x.Configure(It.IsAny<IPipelineConfiguration>())).Callback<IPipelineConfiguration>((config) =>
-			{
-				Assert.IsNotNull(config);
-				config.AddChannel(new UnitTestChannel("unit-test-address"));
-			}).Verifiable();
+	[TestMethod()]
+	public async Task ShouldAddPipelineConfigurator()
+	{
+		const string expectedPipelineName = "test-name";
+		const string expectedPipelineCategory = "test-category";
+		const string expectedChannelProviderId = "test-channel-provider";
+		const string expectedChannelId = "unit-test-channel";
+
+		var configurator = new Mock<BasePipelineConfigurator>()
+		{
+			CallBase = true
+		};
+
+		configurator.Setup(x => x.Name).Returns(expectedPipelineName);
+
+		configurator.Setup(x => x.Category).Returns(expectedPipelineCategory);
+		configurator.Setup(x => x.Configure(It.IsAny<IPipelineConfiguration>())).Callback<IPipelineConfiguration>((config) =>
+		{
+			Assert.IsNotNull(config);
+			config.AddChannel(new UnitTestChannel("unit-test-address"));
+		}).Verifiable();
 
 
-			var builder = new CommunicationsClientBuilder().ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, object>(expectedChannelProviderId);
-			var result = builder.AddPipelineConfigurator(configurator.Object);
-			Assert.IsNotNull(result);
-			Assert.AreSame(builder, result);
-			var client = result.BuildClient();
-			var sentResult = await client.DispatchAsync(expectedPipelineName, "unit-test-address", new { });
-			Assert.AreEqual(1, sentResult.Results.Count);
-			Assert.IsTrue(sentResult.IsSuccessful);
-			Assert.IsTrue(sentResult.Results.All(x => x?.Status.IsSuccess() ?? false));
-			var deliveryResult = sentResult.Results.First();
+		var builder = new CommunicationsClientBuilder().ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, object>(expectedChannelProviderId);
+		var result = builder.AddPipelineConfigurator(configurator.Object);
+		Assert.IsNotNull(result);
+		Assert.AreSame(builder, result);
+		var client = result.BuildClient();
+		var sentResult = await client.DispatchAsync(expectedPipelineName, "unit-test-address", new { });
+		Assert.AreEqual(1, sentResult.Results.Count);
+		Assert.IsTrue(sentResult.IsSuccessful);
+		Assert.IsTrue(sentResult.Results.All(x => x?.Status.IsSuccess() ?? false));
+		var deliveryResult = sentResult.Results.First();
 
-			Assert.AreEqual(expectedChannelId, sentResult.Results?.First()?.ChannelId);
-			Assert.AreEqual(expectedChannelProviderId, deliveryResult?.ChannelProviderId);
-		}
+		Assert.AreEqual(expectedChannelId, sentResult.Results?.First()?.ChannelId);
+		Assert.AreEqual(expectedChannelProviderId, deliveryResult?.ChannelProviderId);
 	}
 }

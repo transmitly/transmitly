@@ -12,21 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Email
+namespace Transmitly.Channel.Email;
+
+/// <summary>
+/// Defines the Email specific identity address types
+/// </summary>
+public static class IdentityAddressEmailNotificationExtensions
 {
-	/// <summary>
-	/// Defines the Email specific identity address types
-	/// </summary>
-	public static class IdentityAddressEmailNotificationExtensions
-	{
 #pragma warning disable IDE0060 // Remove unused parameter
-		/// <summary>
-		/// General Email type
-		/// </summary>
-		/// <param name="identityAddress"></param>
-		/// <returns>Device Token Identifier</returns>
-		public static string Email(this IIdentityAddressType? identityAddress) => "email";
+	/// <summary>
+	/// General Email type
+	/// </summary>
+	/// <param name="identityAddress"></param>
+	/// <returns>Device Token Identifier</returns>
+	public static string Email(this IIdentityAddressType? identityAddress) => "email";
 
 #pragma warning restore IDE0060 // Remove unused parameter
-	}
 }

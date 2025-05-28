@@ -14,11 +14,10 @@
 
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Channel.Configuration.Sms
+namespace Transmitly.Channel.Configuration.Sms;
+
+public interface ISmsChannelConfiguration : IChannelConfiguration
 {
-	public interface ISmsChannelConfiguration : IChannelConfiguration
-	{
-		Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver { get; }
-		IContentTemplateConfiguration Message { get; }
-	}
+	Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver { get; }
+	IContentTemplateConfiguration Message { get; }
 }

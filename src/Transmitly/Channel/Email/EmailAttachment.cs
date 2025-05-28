@@ -14,21 +14,20 @@
 
 using Transmitly.Exceptions;
 
-namespace Transmitly.Channel.Email
-{
-	internal class EmailAttachment : IEmailAttachment
-	{
-		public EmailAttachment(Resource resource)
-		{
-			Name = Guard.AgainstNullOrWhiteSpace(resource.Name);
-			ContentType = Guard.AgainstNullOrWhiteSpace(resource.ContentType);
-			ContentStream = Guard.AgainstNull(resource.ContentStream);
-			if (!ContentStream.CanRead)
-				throw new CommunicationsException("Attachment ContentStream is not readable.");
-		}
+namespace Transmitly.Channel.Email;
 
-		public string? Name { get; }
-		public string? ContentType { get; }
-		public Stream? ContentStream { get; }
+internal class EmailAttachment : IEmailAttachment
+{
+	public EmailAttachment(Resource resource)
+	{
+		Name = Guard.AgainstNullOrWhiteSpace(resource.Name);
+		ContentType = Guard.AgainstNullOrWhiteSpace(resource.ContentType);
+		ContentStream = Guard.AgainstNull(resource.ContentStream);
+		if (!ContentStream.CanRead)
+			throw new CommunicationsException("Attachment ContentStream is not readable.");
 	}
+
+	public string? Name { get; }
+	public string? ContentType { get; }
+	public Stream? ContentStream { get; }
 }

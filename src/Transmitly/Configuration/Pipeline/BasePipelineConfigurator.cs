@@ -12,13 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration
-{
-	public abstract class BasePipelineConfigurator : IPipelineConfigurator
-	{
-		public abstract string Name { get; }
-		public virtual string? Category { get; }
+namespace Transmitly.Pipeline.Configuration;
 
-		public abstract void Configure(IPipelineConfiguration configuration);
-	}
+public abstract class BasePipelineConfigurator : IPipelineConfigurator
+{
+	public abstract string Name { get; }
+	public virtual string? Category { get; }
+
+	public abstract void Configure(IPipelineConfiguration configuration);
 }

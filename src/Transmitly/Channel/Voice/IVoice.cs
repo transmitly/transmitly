@@ -12,20 +12,19 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IVoice
 {
-	public interface IVoice
-	{
-		IIdentityAddress? From { get; }
-		IIdentityAddress[]? To { get; }
-		IVoiceType? VoiceType { get; }
-		string Message { get; }
-		MachineDetection MachineDetection { get; }
-		TransportPriority TransportPriority { get; }
-		IExtendedProperties ExtendedProperties { get; }
-		/// <summary>
-		/// A resolver that will return The URL to call for status updates for the dispatched communication.
-		/// </summary>
-		Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
-	}
+	IIdentityAddress? From { get; }
+	IIdentityAddress[]? To { get; }
+	IVoiceType? VoiceType { get; }
+	string Message { get; }
+	MachineDetection MachineDetection { get; }
+	TransportPriority TransportPriority { get; }
+	IExtendedProperties ExtendedProperties { get; }
+	/// <summary>
+	/// A resolver that will return The URL to call for status updates for the dispatched communication.
+	/// </summary>
+	Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 }

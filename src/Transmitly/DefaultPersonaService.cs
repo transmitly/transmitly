@@ -14,10 +14,9 @@
 
 using Transmitly.Persona.Configuration;
 
-namespace Transmitly
-{
-	sealed class DefaultPersonaService(IPersonaFactory personaFactory) : BasePersonaService(Guard.AgainstNull(personaFactory))
-	{
+namespace Transmitly;
 
-	}
+sealed class DefaultPersonaService(IPersonaFactory personaFactory) : BasePersonaService(Guard.AgainstNull(personaFactory))
+{
+
 }

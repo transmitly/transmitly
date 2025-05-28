@@ -14,31 +14,30 @@
 
 using Transmitly.Delivery;
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly.ChannelProvider;
+
+public abstract class ChannelProviderDispatcher<TCommunication> : IChannelProviderDispatcher<TCommunication>
 {
-	public abstract class ChannelProviderDispatcher<TCommunication> : IChannelProviderDispatcher<TCommunication>
+	public virtual Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken) =>
+		DispatchAsync((TCommunication)communication, communicationContext, cancellationToken);
+
+	public abstract Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(TCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken);
+
+	public virtual void DispatchReport(string eventName, IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults)
 	{
-		public virtual Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken) =>
-			DispatchAsync((TCommunication)communication, communicationContext, cancellationToken);
-
-		public abstract Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(TCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken);
-
-		public virtual void DispatchReport(string eventName, IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults)
-		{
-			foreach (var result in dispatchResults.Where(r => r != null))
-				context.DeliveryReportManager.DispatchAsync(new DeliveryReport(eventName, context.ChannelId, context.ChannelProviderId, context.PipelineName, result!.ResourceId, result.Status, communication, context.ContentModel, result.Exception));
-		}
-
-		public virtual void Dispatch(IDispatchCommunicationContext context, TCommunication communication) =>
-			DispatchReport(DeliveryReport.Event.Dispatch(), context, communication, []);
-
-		public virtual void Delivered(IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults) =>
-			DispatchReport(DeliveryReport.Event.Delivered(), context, communication, dispatchResults);
-
-		public virtual void Error(IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults) =>
-			DispatchReport(DeliveryReport.Event.Error(), context, communication, dispatchResults);
-
-		public virtual void Dispatched(IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults) =>
-			DispatchReport(DeliveryReport.Event.Dispatched(), context, communication, dispatchResults);
+		foreach (var result in dispatchResults.Where(r => r != null))
+			context.DeliveryReportManager.DispatchAsync(new DeliveryReport(eventName, context.ChannelId, context.ChannelProviderId, context.PipelineName, result!.ResourceId, result.Status, communication, context.ContentModel, result.Exception));
 	}
+
+	public virtual void Dispatch(IDispatchCommunicationContext context, TCommunication communication) =>
+		DispatchReport(DeliveryReport.Event.Dispatch(), context, communication, []);
+
+	public virtual void Delivered(IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults) =>
+		DispatchReport(DeliveryReport.Event.Delivered(), context, communication, dispatchResults);
+
+	public virtual void Error(IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults) =>
+		DispatchReport(DeliveryReport.Event.Error(), context, communication, dispatchResults);
+
+	public virtual void Dispatched(IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults) =>
+		DispatchReport(DeliveryReport.Event.Dispatched(), context, communication, dispatchResults);
 }

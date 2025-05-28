@@ -15,72 +15,71 @@
 using Transmitly.Channel.Configuration.Email;
 using Transmitly.Pipeline.Configuration;
 
-namespace Transmitly
+namespace Transmitly;
+
+/// <summary>
+/// Extension methods related to the email channel
+/// </summary>
+public static class EmailChannelConfigurationExtensions
 {
+	private const string EmailId = "Email";
 	/// <summary>
-	/// Extension methods related to the email channel
+	/// Gets the 'Email' channel Id
 	/// </summary>
-	public static class EmailChannelConfigurationExtensions
+	/// <param name="channelId">The extension Id of the channel</param>
+	/// <param name="channel">Channel object.</param>
+	/// <returns></returns>
+	public static string Email(this Channels channel, string channelId = "")
 	{
-		private const string EmailId = "Email";
-		/// <summary>
-		/// Gets the 'Email' channel Id
-		/// </summary>
-		/// <param name="channelId">The extension Id of the channel</param>
-		/// <param name="channel">Channel object.</param>
-		/// <returns></returns>
-		public static string Email(this Channels channel, string channelId = "")
-		{
-			return Guard.AgainstNull(channel).GetId(EmailId, channelId);
-		}
+		return Guard.AgainstNull(channel).GetId(EmailId, channelId);
+	}
 
-		/// <summary>
-		/// Adds the 'Email' communication channel to provider pipeline
-		/// </summary>
-		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
-		/// <param name="fromAddress">Address used as the 'from' address</param>
-		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
-		/// <returns></returns>
-		public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, string fromAddress, Action<IEmailChannelConfiguration> emailChannelConfiguration)
-		{
-			return AddEmail(pipelineChannelConfiguration, fromAddress.AsIdentityAddress(), emailChannelConfiguration);
-		}
+	/// <summary>
+	/// Adds the 'Email' communication channel to provider pipeline
+	/// </summary>
+	/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
+	/// <param name="fromAddress">Address used as the 'from' address</param>
+	/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
+	/// <returns></returns>
+	public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, string fromAddress, Action<IEmailChannelConfiguration> emailChannelConfiguration)
+	{
+		return AddEmail(pipelineChannelConfiguration, fromAddress.AsIdentityAddress(), emailChannelConfiguration);
+	}
 
 
-		/// <summary>
-		/// Adds the 'Email' communication channel to provider pipeline
-		/// </summary>
-		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
-		/// <param name="fromAddress">Address used as the 'from' address</param>
-		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
-		/// <returns></returns>
-		public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<IEmailChannelConfiguration> emailChannelConfiguration)
-		{
-			return AddEmail(pipelineChannelConfiguration, (ctx) => fromAddress, emailChannelConfiguration);
-		}
+	/// <summary>
+	/// Adds the 'Email' communication channel to provider pipeline
+	/// </summary>
+	/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
+	/// <param name="fromAddress">Address used as the 'from' address</param>
+	/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
+	/// <returns></returns>
+	public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<IEmailChannelConfiguration> emailChannelConfiguration)
+	{
+		return AddEmail(pipelineChannelConfiguration, (ctx) => fromAddress, emailChannelConfiguration);
+	}
 
-		/// <summary>
-		/// Adds the 'Email' communication channel to provider pipeline
-		/// </summary>
-		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
-		/// <param name="fromAddressResolver">Resolver that will return a <see cref="IIdentityAddress"/></param>
-		/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
-		/// <returns></returns>
-		public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, Action<IEmailChannelConfiguration> emailChannelConfiguration)
-		{
-			var emailOptions = new EmailChannelConfiguration(fromAddressResolver);
-			emailChannelConfiguration(emailOptions);
-			pipelineChannelConfiguration.AddChannel(new EmailChannel(emailOptions));
-			return pipelineChannelConfiguration;
-		}
+	/// <summary>
+	/// Adds the 'Email' communication channel to provider pipeline
+	/// </summary>
+	/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
+	/// <param name="fromAddressResolver">Resolver that will return a <see cref="IIdentityAddress"/></param>
+	/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
+	/// <returns></returns>
+	public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, Action<IEmailChannelConfiguration> emailChannelConfiguration)
+	{
+		var emailOptions = new EmailChannelConfiguration(fromAddressResolver);
+		emailChannelConfiguration(emailOptions);
+		pipelineChannelConfiguration.AddChannel(new EmailChannel(emailOptions));
+		return pipelineChannelConfiguration;
+	}
 
-		public static string ToEmailAddress(this IIdentityAddress identityAddress)
-		{
-			Guard.AgainstNull(identityAddress);
-			Guard.AgainstNullOrWhiteSpace(identityAddress.Value);
-			return string.IsNullOrEmpty(identityAddress.Display)
-				? identityAddress.Value
-				: $"{identityAddress.Display} <{identityAddress.Display}>";
-		}
+	public static string ToEmailAddress(this IIdentityAddress identityAddress)
+	{
+		Guard.AgainstNull(identityAddress);
+		Guard.AgainstNullOrWhiteSpace(identityAddress.Value);
+		return string.IsNullOrEmpty(identityAddress.Display)
+			? identityAddress.Value
+			: $"{identityAddress.Display} <{identityAddress.Display}>";
 	}
 }

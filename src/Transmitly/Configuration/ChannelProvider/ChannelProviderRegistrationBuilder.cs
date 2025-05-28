@@ -14,43 +14,42 @@
 
 using Transmitly.Delivery;
 
-namespace Transmitly.ChannelProvider.Configuration
+namespace Transmitly.ChannelProvider.Configuration;
+
+public sealed class ChannelProviderRegistrationBuilder
 {
-	public sealed class ChannelProviderRegistrationBuilder
+	private readonly ChannelProviderConfigurationBuilder _communicationsClientBuilder;
+	private readonly List<IChannelProviderDispatcherRegistration> _channelProviderDispatcherRegistrations = [];
+	private readonly List<IDeliveryReportRequestAdaptorRegistration> _channelProviderDeliveryReportRequestAdaptorRegistrations = [];
+
+	internal IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRegistrationAdaptorRegistrations => _channelProviderDeliveryReportRequestAdaptorRegistrations.AsReadOnly();
+	internal IReadOnlyCollection<IChannelProviderDispatcherRegistration> DispatcherRegistration => _channelProviderDispatcherRegistrations.AsReadOnly();
+	internal string ProviderId { get; }
+	internal object? Configuration { get; }
+
+	internal ChannelProviderRegistrationBuilder(ChannelProviderConfigurationBuilder builder, string providerId, object? configuration)
 	{
-		private readonly ChannelProviderConfigurationBuilder _communicationsClientBuilder;
-		private readonly List<IChannelProviderDispatcherRegistration> _channelProviderDispatcherRegistrations = [];
-		private readonly List<IDeliveryReportRequestAdaptorRegistration> _channelProviderDeliveryReportRequestAdaptorRegistrations = [];
+		_communicationsClientBuilder = builder;
+		ProviderId = providerId;
+		Configuration = configuration;
+	}
 
-		internal IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRegistrationAdaptorRegistrations => _channelProviderDeliveryReportRequestAdaptorRegistrations.AsReadOnly();
-		internal IReadOnlyCollection<IChannelProviderDispatcherRegistration> DispatcherRegistration => _channelProviderDispatcherRegistrations.AsReadOnly();
-		internal string ProviderId { get; }
-		internal object? Configuration { get; }
+	public ChannelProviderRegistrationBuilder AddDispatcher<TDispatcher, TCommunication>(params string[] supportedChannelIds)
+		where TDispatcher : IChannelProviderDispatcher<TCommunication>
+	{
+		_channelProviderDispatcherRegistrations.Add(new ChannelProviderDispatcherRegistration<TDispatcher, TCommunication>(supportedChannelIds));
+		return this;
+	}
 
-		internal ChannelProviderRegistrationBuilder(ChannelProviderConfigurationBuilder builder, string providerId, object? configuration)
-		{
-			_communicationsClientBuilder = builder;
-			ProviderId = providerId;
-			Configuration = configuration;
-		}
+	public ChannelProviderRegistrationBuilder AddDeliveryReportRequestAdaptor<TAdaptor>()
+		where TAdaptor : IChannelProviderDeliveryReportRequestAdaptor
+	{
+		_channelProviderDeliveryReportRequestAdaptorRegistrations.Add(new DeliveryReportRequestAdaptorRegistration(typeof(TAdaptor)));
+		return this;
+	}
 
-		public ChannelProviderRegistrationBuilder AddDispatcher<TDispatcher, TCommunication>(params string[] supportedChannelIds)
-			where TDispatcher : IChannelProviderDispatcher<TCommunication>
-		{
-			_channelProviderDispatcherRegistrations.Add(new ChannelProviderDispatcherRegistration<TDispatcher, TCommunication>(supportedChannelIds));
-			return this;
-		}
-
-		public ChannelProviderRegistrationBuilder AddDeliveryReportRequestAdaptor<TAdaptor>()
-			where TAdaptor : IChannelProviderDeliveryReportRequestAdaptor
-		{
-			_channelProviderDeliveryReportRequestAdaptorRegistrations.Add(new DeliveryReportRequestAdaptorRegistration(typeof(TAdaptor)));
-			return this;
-		}
-
-		public void Register()
-		{
-			_communicationsClientBuilder.Add(ProviderId, _channelProviderDispatcherRegistrations, _channelProviderDeliveryReportRequestAdaptorRegistrations, Configuration);
-		}
+	public void Register()
+	{
+		_communicationsClientBuilder.Add(ProviderId, _channelProviderDispatcherRegistrations, _channelProviderDeliveryReportRequestAdaptorRegistrations, Configuration);
 	}
 }

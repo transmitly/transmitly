@@ -16,30 +16,29 @@ using System.Globalization;
 using System.Reflection;
 using Transmitly.Exceptions;
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+internal sealed class EmbeddedResourceContentTemplateRegistration : IContentTemplateRegistration
 {
-	internal sealed class EmbeddedResourceContentTemplateRegistration : IContentTemplateRegistration
+	private readonly Assembly _assembly;
+	private readonly string _resourceId;
+
+	public EmbeddedResourceContentTemplateRegistration(string resourceId, string? cultureInfo = null, Assembly? resourceAssembly = null)
 	{
-		private readonly Assembly _assembly;
-		private readonly string _resourceId;
+		_assembly = Guard.AgainstNull(resourceAssembly ?? Assembly.GetEntryAssembly());
+		_resourceId = Guard.AgainstNullOrWhiteSpace(resourceId);
+		CultureInfo = GuardCulture.AgainstNull(cultureInfo);
 
-		public EmbeddedResourceContentTemplateRegistration(string resourceId, string? cultureInfo = null, Assembly? resourceAssembly = null)
-		{
-			_assembly = Guard.AgainstNull(resourceAssembly ?? Assembly.GetEntryAssembly());
-			_resourceId = Guard.AgainstNullOrWhiteSpace(resourceId);
-			CultureInfo = GuardCulture.AgainstNull(cultureInfo);
+		if (!Array.Exists(_assembly.GetManifestResourceNames(), r => r == _resourceId))
+			throw new CommunicationsException($"Embedded Content Template cannot find resource '{_resourceId}' in assembly '{_assembly.FullName}'.");
+	}
 
-			if (!Array.Exists(_assembly.GetManifestResourceNames(), r => r == _resourceId))
-				throw new CommunicationsException($"Embedded Content Template cannot find resource '{_resourceId}' in assembly '{_assembly.FullName}'.");
-		}
+	public CultureInfo CultureInfo { get; }
 
-		public CultureInfo CultureInfo { get; }
-
-		public Task<string?> GetContentAsync(IDispatchCommunicationContext context)
-		{
-			using var stream = _assembly.GetManifestResourceStream(_resourceId);
-			using var reader = new StreamReader(stream!);
-			return Task.FromResult<string?>(reader.ReadToEnd());
-		}
+	public Task<string?> GetContentAsync(IDispatchCommunicationContext context)
+	{
+		using var stream = _assembly.GetManifestResourceStream(_resourceId);
+		using var reader = new StreamReader(stream!);
+		return Task.FromResult<string?>(reader.ReadToEnd());
 	}
 }

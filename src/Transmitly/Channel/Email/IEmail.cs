@@ -12,61 +12,60 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IEmail
 {
-	public interface IEmail
-	{
-		/// <summary>
-		/// Email subject.
-		/// </summary>
-		string? Subject { get; }
-		/// <summary>
-		/// Email html body.
-		/// </summary>
-		string? HtmlBody { get; }
-		/// <summary>
-		/// Email plain text body.
-		/// </summary>
-		string? TextBody { get; }
-		/// <summary>
-		/// Email priority.
-		/// </summary>
-		MessagePriority Priority { get; }
-		/// <summary>
-		/// Email transport priority.
-		/// </summary>
-		TransportPriority TransportPriority { get; }
-		/// <summary>
-		/// The sender of the email.
-		/// </summary>
-		IIdentityAddress From { get; }
-		/// <summary>
-		/// The reply to address of the email.
-		/// </summary>
-		IIdentityAddress[]? ReplyTo { get; }
-		/// <summary>
-		/// The recipient of the email.
-		/// </summary>
-		IIdentityAddress[]? To { get; }
-		/// <summary>
-		/// The carbon copy recipient of the email.
-		/// </summary>
-		IIdentityAddress[]? Cc { get; }
-		/// <summary>
-		/// The blind carbon copy recipient of the email.
-		/// </summary>
-		IIdentityAddress[]? Bcc { get; }
-		/// <summary>
-		/// The attachments of the email.
-		/// </summary>
-		IReadOnlyCollection<IEmailAttachment> Attachments { get; }
-		/// <summary>
-		/// Extended properties of the email.
-		/// </summary>
-		IExtendedProperties ExtendedProperties { get; }
-		/// <summary>
-		/// A resolver that will return The URL to call for status updates for the dispatched communication.
-		/// </summary>
-		Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; }
-	}
+	/// <summary>
+	/// Email subject.
+	/// </summary>
+	string? Subject { get; }
+	/// <summary>
+	/// Email html body.
+	/// </summary>
+	string? HtmlBody { get; }
+	/// <summary>
+	/// Email plain text body.
+	/// </summary>
+	string? TextBody { get; }
+	/// <summary>
+	/// Email priority.
+	/// </summary>
+	MessagePriority Priority { get; }
+	/// <summary>
+	/// Email transport priority.
+	/// </summary>
+	TransportPriority TransportPriority { get; }
+	/// <summary>
+	/// The sender of the email.
+	/// </summary>
+	IIdentityAddress From { get; }
+	/// <summary>
+	/// The reply to address of the email.
+	/// </summary>
+	IIdentityAddress[]? ReplyTo { get; }
+	/// <summary>
+	/// The recipient of the email.
+	/// </summary>
+	IIdentityAddress[]? To { get; }
+	/// <summary>
+	/// The carbon copy recipient of the email.
+	/// </summary>
+	IIdentityAddress[]? Cc { get; }
+	/// <summary>
+	/// The blind carbon copy recipient of the email.
+	/// </summary>
+	IIdentityAddress[]? Bcc { get; }
+	/// <summary>
+	/// The attachments of the email.
+	/// </summary>
+	IReadOnlyCollection<IEmailAttachment> Attachments { get; }
+	/// <summary>
+	/// Extended properties of the email.
+	/// </summary>
+	IExtendedProperties ExtendedProperties { get; }
+	/// <summary>
+	/// A resolver that will return The URL to call for status updates for the dispatched communication.
+	/// </summary>
+	Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; }
 }

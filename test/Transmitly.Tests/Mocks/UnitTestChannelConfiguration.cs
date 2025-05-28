@@ -15,52 +15,51 @@
 using Transmitly.Channel.Configuration;
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+
+internal sealed class UnitTestChannelConfiguration : IChannelConfiguration
 {
+	public IContentTemplateConfiguration Subject { get; } = new ContentTemplateConfiguration();
+	public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
-	internal sealed class UnitTestChannelConfiguration : IChannelConfiguration
+	public IReadOnlyCollection<string>? RecipientAddressPurposes { get; set; }
+
+	public IReadOnlyCollection<string>? BlindCopyRecipientPurposes { get; set; }
+
+	public IReadOnlyCollection<string>? CopyRecipientPurposes { get; set; }
+
+	public IReadOnlyCollection<string>? ChannelProviderFilter { get; private set; }
+
+	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; private set; }
+
+	public IChannelConfiguration AddRecipientAddressPurpose(params string[] purposes)
 	{
-		public IContentTemplateConfiguration Subject { get; } = new ContentTemplateConfiguration();
-		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+		RecipientAddressPurposes = purposes;
+		return this;
+	}
 
-		public IReadOnlyCollection<string>? RecipientAddressPurposes { get; set; }
+	public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
+	{
+		BlindCopyRecipientPurposes = purposes;
+		return this;
+	}
 
-		public IReadOnlyCollection<string>? BlindCopyRecipientPurposes { get; set; }
+	public IChannelConfiguration AddCopyRecipientAddressPurpose(params string[] purposes)
+	{
+		CopyRecipientPurposes = purposes;
+		return this;
+	}
 
-		public IReadOnlyCollection<string>? CopyRecipientPurposes { get; set; }
+	public IChannelConfiguration AddDeliveryReportCallbackUrlResolver(Func<IDispatchCommunicationContext, Task<string?>> callbackResolver)
+	{
+		DeliveryReportCallbackUrlResolver = callbackResolver;
+		return this;
+	}
 
-		public IReadOnlyCollection<string>? ChannelProviderFilter { get; private set; }
-
-		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; private set; }
-
-		public IChannelConfiguration AddRecipientAddressPurpose(params string[] purposes)
-		{
-			RecipientAddressPurposes = purposes;
-			return this;
-		}
-
-		public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
-		{
-			BlindCopyRecipientPurposes = purposes;
-			return this;
-		}
-
-		public IChannelConfiguration AddCopyRecipientAddressPurpose(params string[] purposes)
-		{
-			CopyRecipientPurposes = purposes;
-			return this;
-		}
-
-		public IChannelConfiguration AddDeliveryReportCallbackUrlResolver(Func<IDispatchCommunicationContext, Task<string?>> callbackResolver)
-		{
-			DeliveryReportCallbackUrlResolver = callbackResolver;
-			return this;
-		}
-
-		public IChannelConfiguration AddChannelProviderFilter(params string[] channelProviderIds)
-		{
-			ChannelProviderFilter = channelProviderIds;
-			return this;
-		}
+	public IChannelConfiguration AddChannelProviderFilter(params string[] channelProviderIds)
+	{
+		ChannelProviderFilter = channelProviderIds;
+		return this;
 	}
 }

@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.PlatformIdentity.Configuration
+namespace Transmitly.PlatformIdentity.Configuration;
+
+public interface IPlatformIdentityService
 {
-	public interface IPlatformIdentityService
-	{
-		Task<IReadOnlyCollection<IPlatformIdentityProfile>> ResolveIdentityProfilesAsync(IReadOnlyCollection<IPlatformIdentityReference> identityReferences);
-	}
+	Task<IReadOnlyCollection<IPlatformIdentityProfile>> ResolveIdentityProfilesAsync(IReadOnlyCollection<IPlatformIdentityReference> identityReferences);
 }

@@ -16,42 +16,41 @@ using Moq;
 using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
 
-namespace Transmitly.Pipeline.Configuration.Tests
+namespace Transmitly.Pipeline.Configuration.Tests;
+
+[TestClass]
+public class DefaultPipelineProviderConfigurationTests
 {
-	[TestClass]
-	public class DefaultPipelineProviderConfigurationTests
+	[TestMethod]
+	public void AddChannel_Should_AddChannelToList()
 	{
-		[TestMethod]
-		public void AddChannel_Should_AddChannelToList()
-		{
 
-			var configuration = new DefaultPipelineProviderConfiguration();
-			var channel = new Mock<IChannel>();
+		var configuration = new DefaultPipelineProviderConfiguration();
+		var channel = new Mock<IChannel>();
 
-			configuration.AddChannel(channel.Object);
+		configuration.AddChannel(channel.Object);
 
-			Assert.AreEqual(1, configuration.Channels.Count);
-			Assert.AreEqual(channel.Object, configuration.Channels.First());
-		}
+		Assert.AreEqual(1, configuration.Channels.Count);
+		Assert.AreEqual(channel.Object, configuration.Channels.First());
+	}
 
-		[TestMethod]
-		public void UseChannelSendingStrategy_Should_SetChannelSendingStrategyProvider()
-		{
-			var configuration = new DefaultPipelineProviderConfiguration();
-			var sendingStrategy = new Mock<BasePipelineDeliveryStrategyProvider>() { CallBase = true };
+	[TestMethod]
+	public void UseChannelSendingStrategy_Should_SetChannelSendingStrategyProvider()
+	{
+		var configuration = new DefaultPipelineProviderConfiguration();
+		var sendingStrategy = new Mock<BasePipelineDeliveryStrategyProvider>() { CallBase = true };
 
-			configuration.UsePipelineDeliveryStrategy(sendingStrategy.Object);
+		configuration.UsePipelineDeliveryStrategy(sendingStrategy.Object);
 
-			Assert.AreEqual(sendingStrategy.Object, configuration.PipelineDeliveryStrategyProvider);
-		}
+		Assert.AreEqual(sendingStrategy.Object, configuration.PipelineDeliveryStrategyProvider);
+	}
 
-		[TestMethod]
-		public void UseChannelSendingStrategy_Should_HaveDefaultChannelSendingStrategyProvider()
-		{
-			var configuration = new DefaultPipelineProviderConfiguration();
+	[TestMethod]
+	public void UseChannelSendingStrategy_Should_HaveDefaultChannelSendingStrategyProvider()
+	{
+		var configuration = new DefaultPipelineProviderConfiguration();
 
-			Assert.IsNotNull(configuration.PipelineDeliveryStrategyProvider);
-			Assert.IsInstanceOfType(configuration.PipelineDeliveryStrategyProvider, typeof(FirstMatchPipelineDeliveryStrategy));
-		}
+		Assert.IsNotNull(configuration.PipelineDeliveryStrategyProvider);
+		Assert.IsInstanceOfType(configuration.PipelineDeliveryStrategyProvider, typeof(FirstMatchPipelineDeliveryStrategy));
 	}
 }

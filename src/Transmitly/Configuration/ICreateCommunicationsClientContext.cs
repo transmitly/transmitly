@@ -19,15 +19,14 @@ using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Template.Configuration;
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface ICreateCommunicationsClientContext
 {
-	public interface ICreateCommunicationsClientContext
-	{
-		IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; }
-		IReadOnlyCollection<IPipeline> Pipelines { get; }
-		IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
-		IReadOnlyCollection<IObserver<DeliveryReport>> DeliveryReportObservers { get; }
-		IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; }
-		IReadOnlyCollection<IPersonaRegistration> Personas { get; }
-	}
+	IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; }
+	IReadOnlyCollection<IPipeline> Pipelines { get; }
+	IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
+	IReadOnlyCollection<IObserver<DeliveryReport>> DeliveryReportObservers { get; }
+	IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; }
+	IReadOnlyCollection<IPersonaRegistration> Personas { get; }
 }

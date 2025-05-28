@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Sms
-{
-	public interface ISmsAttachment : IAttachment
-	{
+namespace Transmitly.Channel.Sms;
 
-	}
+public interface ISmsAttachment : IAttachment
+{
+
 }

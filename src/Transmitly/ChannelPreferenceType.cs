@@ -12,24 +12,23 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+/// <summary>
+/// Describes how to apply channel preferences.
+/// </summary>
+public enum ChannelPreferenceType
 {
 	/// <summary>
-	/// Describes how to apply channel preferences.
+	/// All of the channels are allowed but order is prioritized by the preferred order of the platform identity.
 	/// </summary>
-	public enum ChannelPreferenceType
-	{
-		/// <summary>
-		/// All of the channels are allowed but order is prioritized by the preferred order of the platform identity.
-		/// </summary>
-		Priority,
-		/// <summary>
-		/// Only the channels explicitly preferred by the platform identity are allowed.
-		/// </summary>
-		Filter,
-		/// <summary>
-		/// All of the channels are allowed but order is prioritized by the preferred order of the platform identity.
-		/// </summary>
-		Default = Priority
-	}
+	Priority,
+	/// <summary>
+	/// Only the channels explicitly preferred by the platform identity are allowed.
+	/// </summary>
+	Filter,
+	/// <summary>
+	/// All of the channels are allowed but order is prioritized by the preferred order of the platform identity.
+	/// </summary>
+	Default = Priority
 }

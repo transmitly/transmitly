@@ -12,17 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
-{
-	public sealed record IdentityReference : IPlatformIdentityReference
-	{
-		public IdentityReference(string type, string id)
-		{
-			Id = Guard.AgainstNullOrWhiteSpace(id);
-			Type = Guard.AgainstNullOrWhiteSpace(type);
-		}
+namespace Transmitly;
 
-		public string Id { get; init; }
-		public string Type { get; init; }
+public sealed record IdentityReference : IPlatformIdentityReference
+{
+	public IdentityReference(string type, string id)
+	{
+		Id = Guard.AgainstNullOrWhiteSpace(id);
+		Type = Guard.AgainstNullOrWhiteSpace(type);
 	}
+
+	public string Id { get; init; }
+	public string Type { get; init; }
 }

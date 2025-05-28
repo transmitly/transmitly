@@ -12,25 +12,24 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Configuration
+namespace Transmitly.Channel.Configuration;
+
+public record CommunicationContextMessage
 {
-	public record CommunicationContextMessage
+	internal CommunicationContextMessage(string? message, bool isError)
 	{
-		internal CommunicationContextMessage(string? message, bool isError)
-		{
-			Content = Guard.AgainstNullOrWhiteSpace(message);
-			IsError = isError;
-		}
-
-		public CommunicationContextMessage(Exception exception)
-		{
-			Content = exception.ToString();
-			IsError = true;
-			Exception = exception;
-		}
-
-		public Exception? Exception { get; }
-		public string Content { get; }
-		public bool IsError { get; }
+		Content = Guard.AgainstNullOrWhiteSpace(message);
+		IsError = isError;
 	}
+
+	public CommunicationContextMessage(Exception exception)
+	{
+		Content = exception.ToString();
+		IsError = true;
+		Exception = exception;
+	}
+
+	public Exception? Exception { get; }
+	public string Content { get; }
+	public bool IsError { get; }
 }

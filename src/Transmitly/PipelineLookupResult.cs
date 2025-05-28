@@ -14,10 +14,9 @@
 
 using Transmitly.Pipeline.Configuration;
 
-namespace Transmitly
-{
-	public sealed record PipelineLookupResult(IReadOnlyCollection<IPipeline> Pipelines, IReadOnlyCollection<CommunicationsStatus> Errors)
-	{
+namespace Transmitly;
 
-	}
+public sealed record PipelineLookupResult(IReadOnlyCollection<IPipeline> Pipelines, IReadOnlyCollection<CommunicationsStatus> Errors)
+{
+
 }

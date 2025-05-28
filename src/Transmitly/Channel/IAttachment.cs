@@ -12,12 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel
+namespace Transmitly.Channel;
+
+public interface IAttachment
 {
-	public interface IAttachment
-	{
-		string? Name { get; }
-		string? ContentType { get; }
-		Stream? ContentStream { get; }
-	}
+	string? Name { get; }
+	string? ContentType { get; }
+	Stream? ContentStream { get; }
 }

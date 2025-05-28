@@ -16,24 +16,23 @@ using AutoFixture;
 using Transmitly.Exceptions;
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Tests
-{
-	[TestClass()]
-	public class TemplateConfigurationExtensionsTests : BaseUnitTest
-	{
-		[TestMethod()]
-		public void ShouldThrowIfCultureSpecificConfigurationIsRequired()
-		{
-			var config = fixture.Create<IContentTemplateConfiguration>();
-			Assert.ThrowsException<CommunicationsException>(() => TemplateConfigurationExtensions.GetTemplateRegistration(config, System.Globalization.CultureInfo.GetCultureInfo("en-es"), true));
-		}
+namespace Transmitly.Tests;
 
-		[TestMethod]
-		public void ShouldThrowIfTemplateConfigIsNull()
-		{
-			Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddStringTemplate(null!, string.Empty));
-			Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddEmbeddedResourceTemplate(null!, string.Empty));
-			Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddTemplateResolver(null!, (ctx) => Task.FromResult<string?>(string.Empty)));
-		}
+[TestClass()]
+public class TemplateConfigurationExtensionsTests : BaseUnitTest
+{
+	[TestMethod()]
+	public void ShouldThrowIfCultureSpecificConfigurationIsRequired()
+	{
+		var config = fixture.Create<IContentTemplateConfiguration>();
+		Assert.ThrowsException<CommunicationsException>(() => TemplateConfigurationExtensions.GetTemplateRegistration(config, System.Globalization.CultureInfo.GetCultureInfo("en-es"), true));
+	}
+
+	[TestMethod]
+	public void ShouldThrowIfTemplateConfigIsNull()
+	{
+		Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddStringTemplate(null!, string.Empty));
+		Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddEmbeddedResourceTemplate(null!, string.Empty));
+		Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddTemplateResolver(null!, (ctx) => Task.FromResult<string?>(string.Empty)));
 	}
 }

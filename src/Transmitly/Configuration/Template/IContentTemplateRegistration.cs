@@ -14,11 +14,10 @@
 
 using System.Globalization;
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+public interface IContentTemplateRegistration
 {
-	public interface IContentTemplateRegistration
-	{
-		CultureInfo CultureInfo { get; }
-		Task<string?> GetContentAsync(IDispatchCommunicationContext context);
-	}
+	CultureInfo CultureInfo { get; }
+	Task<string?> GetContentAsync(IDispatchCommunicationContext context);
 }

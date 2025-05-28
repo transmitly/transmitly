@@ -15,42 +15,41 @@
 using Transmitly.Channel.Configuration.Push;
 using Transmitly.Pipeline.Configuration;
 
-namespace Transmitly
+namespace Transmitly;
+
+/// <summary>
+/// Extension methods related to the Push channel
+/// </summary>
+public static class PushChannelConfigurationExtensions
 {
+	private const string PushNotificationId = "Push";
 	/// <summary>
-	/// Extension methods related to the Push channel
+	/// Gets the 'PushNotification' channel Id
 	/// </summary>
-	public static class PushChannelConfigurationExtensions
+	/// <param name="channelId">The extension Id of the channel</param>
+	/// <param name="channel">Channel object.</param>
+	/// <returns></returns>
+	public static string PushNotification(this Channels channel, string channelId = "")
 	{
-		private const string PushNotificationId = "Push";
-		/// <summary>
-		/// Gets the 'PushNotification' channel Id
-		/// </summary>
-		/// <param name="channelId">The extension Id of the channel</param>
-		/// <param name="channel">Channel object.</param>
-		/// <returns></returns>
-		public static string PushNotification(this Channels channel, string channelId = "")
-		{
-			return Guard.AgainstNull(channel).GetId(PushNotificationId, channelId);
-		}
+		return Guard.AgainstNull(channel).GetId(PushNotificationId, channelId);
+	}
 
-		/// <summary>
-		/// Adds the 'Push Notification' communication channel to provider pipeline
-		/// </summary>
-		/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
-		/// <param name="pushChannelConfiguration">Push Notification Channel configuration options</param>
-		/// <returns></returns>
-		public static IPipelineConfiguration AddPushNotification(this IPipelineConfiguration pipelineChannelConfiguration, Action<IPushNotificationChannelConfiguration> pushChannelConfiguration)
-		{
-			var pushOptions = new PushNotificationChannelConfiguration();
-			pushChannelConfiguration(pushOptions);
-			pipelineChannelConfiguration.AddChannel(new PushNotificationChannel(pushOptions));
-			return pipelineChannelConfiguration;
-		}
+	/// <summary>
+	/// Adds the 'Push Notification' communication channel to provider pipeline
+	/// </summary>
+	/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
+	/// <param name="pushChannelConfiguration">Push Notification Channel configuration options</param>
+	/// <returns></returns>
+	public static IPipelineConfiguration AddPushNotification(this IPipelineConfiguration pipelineChannelConfiguration, Action<IPushNotificationChannelConfiguration> pushChannelConfiguration)
+	{
+		var pushOptions = new PushNotificationChannelConfiguration();
+		pushChannelConfiguration(pushOptions);
+		pipelineChannelConfiguration.AddChannel(new PushNotificationChannel(pushOptions));
+		return pipelineChannelConfiguration;
+	}
 
-		public static IPipelineConfiguration AddPushNotification(this IPipelineConfiguration pipelineChannelConfiguration)
-		{
-			return AddPushNotification(pipelineChannelConfiguration, (opts) => { });
-		}
+	public static IPipelineConfiguration AddPushNotification(this IPipelineConfiguration pipelineChannelConfiguration)
+	{
+		return AddPushNotification(pipelineChannelConfiguration, (opts) => { });
 	}
 }

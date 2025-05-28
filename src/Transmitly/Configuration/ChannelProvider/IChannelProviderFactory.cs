@@ -13,20 +13,19 @@
 //  limitations under the License.
 
 using Transmitly.Delivery;
-namespace Transmitly.ChannelProvider.Configuration
+namespace Transmitly.ChannelProvider.Configuration;
+
+public interface IChannelProviderFactory
 {
-	public interface IChannelProviderFactory
-	{
-		/// <summary>
-		/// Retrieves all channel providers.
-		/// </summary>
-		/// <returns>A read-only list of channel providers.</returns>
-		Task<IReadOnlyCollection<IChannelProviderRegistration>> GetAllAsync();
+	/// <summary>
+	/// Retrieves all channel providers.
+	/// </summary>
+	/// <returns>A read-only list of channel providers.</returns>
+	Task<IReadOnlyCollection<IChannelProviderRegistration>> GetAllAsync();
 
-		Task<IChannelProviderDispatcher?> ResolveDispatcherAsync(IChannelProviderRegistration channelProvider, IChannelProviderDispatcherRegistration channelProviderDispatcherRegistration);
+	Task<IChannelProviderDispatcher?> ResolveDispatcherAsync(IChannelProviderRegistration channelProvider, IChannelProviderDispatcherRegistration channelProviderDispatcherRegistration);
 
-		Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor);
+	Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor);
 
-		Task<IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>> GetAllDeliveryReportRequestAdaptorsAsync();
-	}
+	Task<IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>> GetAllDeliveryReportRequestAdaptorsAsync();
 }

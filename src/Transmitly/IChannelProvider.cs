@@ -13,13 +13,12 @@
 //  limitations under the License.
 using Transmitly.ChannelProvider;
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IChannelProvider
 {
-	public interface IChannelProvider
-	{
-		string Id { get; }
-		bool SupportsChannel(string channel);
-		Type CommunicationType { get; }
-		Func<Task<IChannelProviderDispatcher?>> DispatcherInstance { get; }
-	}
+	string Id { get; }
+	bool SupportsChannel(string channel);
+	Type CommunicationType { get; }
+	Func<Task<IChannelProviderDispatcher?>> DispatcherInstance { get; }
 }

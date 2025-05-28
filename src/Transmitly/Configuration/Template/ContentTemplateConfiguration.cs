@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+public sealed class ContentTemplateConfiguration : IContentTemplateConfiguration
 {
-	public sealed class ContentTemplateConfiguration : IContentTemplateConfiguration
-	{
-		public ICollection<IContentTemplateRegistration> TemplateRegistrations { get; } = new List<IContentTemplateRegistration>(1);
-	}
+	public ICollection<IContentTemplateRegistration> TemplateRegistrations { get; } = new List<IContentTemplateRegistration>(1);
 }

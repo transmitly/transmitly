@@ -14,48 +14,47 @@
 
 using Transmitly.Util;
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+internal sealed class TestChannelPreferences : IChannelPreference
 {
-	internal sealed class TestChannelPreferences : IChannelPreference
+	public ChannelPreferenceType Type { get; set; } = ChannelPreferenceType.Default;
+
+	public string? Category { get; set; }
+
+	public IReadOnlyCollection<string> Channels { get; set; } = [];
+}
+
+
+internal sealed record TestPlatformIdentity1 : IPlatformIdentityProfile
+{
+	public string SomeValue => Id + "_Test";
+	public const string DefaultPlatformIdentityType = "test-identity-type";
+
+	public TestPlatformIdentity1(string? id, string platformIdentityAddressType = DefaultPlatformIdentityType, IEnumerable<string>? channelPreferences = null)
 	{
-		public ChannelPreferenceType Type { get; set; } = ChannelPreferenceType.Default;
+		Id = id ?? Guid.Empty.ToString();
+		Type = Guard.AgainstNullOrWhiteSpace(platformIdentityAddressType);
 
-		public string? Category { get; set; }
-
-		public IReadOnlyCollection<string> Channels { get; set; } = [];
+		ChannelPreferences = [new TestChannelPreferences { Channels = [.. (channelPreferences ?? [])] }];
 	}
 
 
-	internal sealed record TestPlatformIdentity1 : IPlatformIdentityProfile
+	public TestPlatformIdentity1() : this(Guid.NewGuid(), DefaultPlatformIdentityType)
 	{
-		public string SomeValue => Id + "_Test";
-		public const string DefaultPlatformIdentityType = "test-identity-type";
 
-		public TestPlatformIdentity1(string? id, string platformIdentityAddressType = DefaultPlatformIdentityType, IEnumerable<string>? channelPreferences = null)
-		{
-			Id = id ?? Guid.Empty.ToString();
-			Type = Guard.AgainstNullOrWhiteSpace(platformIdentityAddressType);
-
-			ChannelPreferences = [new TestChannelPreferences { Channels = [.. (channelPreferences ?? [])] }];
-		}
-
-
-		public TestPlatformIdentity1() : this(Guid.NewGuid(), DefaultPlatformIdentityType)
-		{
-
-		}
-
-
-		public TestPlatformIdentity1(Guid? id, string platformIdentityType = DefaultPlatformIdentityType) : this(id?.ToString(), platformIdentityType, null)
-		{
-
-		}
-
-		public IReadOnlyCollection<IIdentityAddress> Addresses { get; set; } = new List<IIdentityAddress>();
-		public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
-		public string? Id { get; set; }
-		public string? Type { get; set; }
-		public bool IsPersona { get; set; }
-		public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
 	}
+
+
+	public TestPlatformIdentity1(Guid? id, string platformIdentityType = DefaultPlatformIdentityType) : this(id?.ToString(), platformIdentityType, null)
+	{
+
+	}
+
+	public IReadOnlyCollection<IIdentityAddress> Addresses { get; set; } = new List<IIdentityAddress>();
+	public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
+	public string? Id { get; set; }
+	public string? Type { get; set; }
+	public bool IsPersona { get; set; }
+	public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
 }

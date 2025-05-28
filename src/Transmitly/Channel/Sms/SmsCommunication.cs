@@ -12,25 +12,24 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Sms
+namespace Transmitly.Channel.Sms;
+
+/// <inheritdoc cref="ISms"/>
+internal class SmsCommunication(IExtendedProperties extendedProperties) : ISms
 {
-	/// <inheritdoc cref="ISms"/>
-	internal class SmsCommunication(IExtendedProperties extendedProperties) : ISms
-	{
-		public IIdentityAddress[]? To { get; set; }
+	public IIdentityAddress[]? To { get; set; }
 
-		public string? Message { get; set; }
+	public string? Message { get; set; }
 
-		public MessagePriority Priority { get; set; }
+	public MessagePriority Priority { get; set; }
 
-		public TransportPriority TransportPriority { get; set; }
+	public TransportPriority TransportPriority { get; set; }
 
-		public IReadOnlyCollection<ISmsAttachment> Attachments { get; set; } = [];
+	public IReadOnlyCollection<ISmsAttachment> Attachments { get; set; } = [];
 
-		public IIdentityAddress? From { get; set; }
+	public IIdentityAddress? From { get; set; }
 
-		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
+	public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 
-		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
-	}
+	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 }

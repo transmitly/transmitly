@@ -14,17 +14,16 @@
 
 using Transmitly.Channel.Sms;
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface ISms
 {
-	public interface ISms
-	{
-		IIdentityAddress[]? To { get; }
-		IIdentityAddress? From { get; }
-		string? Message { get; }
-		MessagePriority Priority { get; }
-		TransportPriority TransportPriority { get; }
-		IReadOnlyCollection<ISmsAttachment> Attachments { get; }
-		IExtendedProperties ExtendedProperties { get; }
-		Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
-	}
+	IIdentityAddress[]? To { get; }
+	IIdentityAddress? From { get; }
+	string? Message { get; }
+	MessagePriority Priority { get; }
+	TransportPriority TransportPriority { get; }
+	IReadOnlyCollection<ISmsAttachment> Attachments { get; }
+	IExtendedProperties ExtendedProperties { get; }
+	Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 }

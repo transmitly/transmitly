@@ -12,35 +12,34 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Email
+namespace Transmitly.Channel.Email;
+
+/// <inheritdoc cref="IEmail" />
+internal sealed class EmailCommunication(IIdentityAddress from, IExtendedProperties extendedProperties) : IEmail
 {
-	/// <inheritdoc cref="IEmail" />
-	internal sealed class EmailCommunication(IIdentityAddress from, IExtendedProperties extendedProperties) : IEmail
-	{
-		public string? Subject { get; internal set; }
+	public string? Subject { get; internal set; }
 
-		public string? HtmlBody { get; internal set; }
+	public string? HtmlBody { get; internal set; }
 
-		public string? TextBody { get; internal set; }
+	public string? TextBody { get; internal set; }
 
-		public MessagePriority Priority { get; internal set; } = MessagePriority.Normal;
+	public MessagePriority Priority { get; internal set; } = MessagePriority.Normal;
 
-		public TransportPriority TransportPriority { get; internal set; } = TransportPriority.Normal;
+	public TransportPriority TransportPriority { get; internal set; } = TransportPriority.Normal;
 
-		public IIdentityAddress From { get; } = Guard.AgainstNull(from);
+	public IIdentityAddress From { get; } = Guard.AgainstNull(from);
 
-		public IIdentityAddress[]? ReplyTo { get; internal set; } = [from];
+	public IIdentityAddress[]? ReplyTo { get; internal set; } = [from];
 
-		public IIdentityAddress[]? To { get; internal set; }
+	public IIdentityAddress[]? To { get; internal set; }
 
-		public IIdentityAddress[]? Cc { get; internal set; }
+	public IIdentityAddress[]? Cc { get; internal set; }
 
-		public IIdentityAddress[]? Bcc { get; internal set; }
+	public IIdentityAddress[]? Bcc { get; internal set; }
 
-		public IReadOnlyCollection<IEmailAttachment> Attachments { get; internal set; } = [];
+	public IReadOnlyCollection<IEmailAttachment> Attachments { get; internal set; } = [];
 
-		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
+	public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 
-		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
-	}
+	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 }

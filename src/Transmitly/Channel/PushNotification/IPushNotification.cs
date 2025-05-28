@@ -12,14 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IPushNotification
 {
-	public interface IPushNotification
-	{
-		string? Title { get; }
-		string? Body { get; }
-		string? ImageUrl { get; }
-		IReadOnlyCollection<IIdentityAddress> Recipient { get; }
-		IExtendedProperties ExtendedProperties { get; }
-	}
+	string? Title { get; }
+	string? Body { get; }
+	string? ImageUrl { get; }
+	IReadOnlyCollection<IIdentityAddress> Recipient { get; }
+	IExtendedProperties ExtendedProperties { get; }
 }

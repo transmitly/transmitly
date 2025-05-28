@@ -12,22 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider.Configuration
+namespace Transmitly.ChannelProvider.Configuration;
+
+
+/// <summary>
+/// Represents a channel provider.
+/// </summary>
+public interface IChannelProviderRegistration
 {
-
 	/// <summary>
-	/// Represents a channel provider.
+	/// Gets the Id of the channel provider.
 	/// </summary>
-	public interface IChannelProviderRegistration
-	{
-		/// <summary>
-		/// Gets the Id of the channel provider.
-		/// </summary>
-		string Id { get; }
+	string Id { get; }
 
-		object? Configuration { get; }
+	object? Configuration { get; }
 
-		IReadOnlyCollection<IChannelProviderDispatcherRegistration> DispatcherRegistrations { get; }
-		IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRequestAdaptorRegistrations { get; }
-	}
+	IReadOnlyCollection<IChannelProviderDispatcherRegistration> DispatcherRegistrations { get; }
+	IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRequestAdaptorRegistrations { get; }
 }

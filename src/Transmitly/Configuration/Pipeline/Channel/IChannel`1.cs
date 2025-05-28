@@ -12,15 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Configuration
+namespace Transmitly.Channel.Configuration;
+
+public interface IChannel<T> : IChannel
 {
-	public interface IChannel<T> : IChannel
-	{
-		/// <summary>
-		/// Generates a channel communication given the provided dispatch context.
-		/// </summary>
-		/// <param name="communicationContext">Context of the operation.</param>
-		/// <returns>Channel communication</returns>
-		new Task<T> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
-	}
+	/// <summary>
+	/// Generates a channel communication given the provided dispatch context.
+	/// </summary>
+	/// <param name="communicationContext">Context of the operation.</param>
+	/// <returns>Channel communication</returns>
+	new Task<T> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
 }

@@ -12,14 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public sealed class ChannelPreference(IReadOnlyCollection<string> channels, string? category = null, ChannelPreferenceType type = ChannelPreferenceType.Default) : IChannelPreference
 {
-	public sealed class ChannelPreference(IReadOnlyCollection<string> channels, string? category = null, ChannelPreferenceType type = ChannelPreferenceType.Default) : IChannelPreference
-	{
-		public ChannelPreferenceType Type { get; set; } = type;
+	public ChannelPreferenceType Type { get; set; } = type;
 
-		public string? Category { get; set; } = category;
+	public string? Category { get; set; } = category;
 
-		public IReadOnlyCollection<string> Channels { get; set; } = Guard.AgainstNull(channels);
-	}
+	public IReadOnlyCollection<string> Channels { get; set; } = Guard.AgainstNull(channels);
 }

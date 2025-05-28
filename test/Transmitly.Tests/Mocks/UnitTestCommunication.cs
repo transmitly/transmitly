@@ -12,22 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+
+public class UnitTestCommunication
 {
-
-	public class UnitTestCommunication
+	public UnitTestCommunication(string subject)
 	{
-		public UnitTestCommunication(string subject)
+		if (string.IsNullOrWhiteSpace(subject))
 		{
-			if (string.IsNullOrWhiteSpace(subject))
-			{
-				throw new ArgumentException($"'{nameof(subject)}' cannot be null or whitespace.", nameof(subject));
-			}
-
-			Subject = subject;
+			throw new ArgumentException($"'{nameof(subject)}' cannot be null or whitespace.", nameof(subject));
 		}
 
-		public string Subject { get; }
+		Subject = subject;
 	}
 
+	public string Subject { get; }
 }

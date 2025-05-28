@@ -12,35 +12,34 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+[TestClass()]
+public class IdentityAddressExtensionsTests
 {
-	[TestClass()]
-	public class IdentityAddressExtensionsTests
+	[TestMethod()]
+	public void ShouldThrowIfAddressIsnNull()
 	{
-		[TestMethod()]
-		public void ShouldThrowIfAddressIsnNull()
-		{
-			Assert.ThrowsException<ArgumentNullException>(() => ((IIdentityAddress?)null!).IsType("fail"));
-		}
+		Assert.ThrowsException<ArgumentNullException>(() => ((IIdentityAddress?)null!).IsType("fail"));
+	}
 
-		[TestMethod()]
-		public void MatchShouldBeCaseInsensitive()
-		{
-			var expectedType = "unit-test";
-			var sut = new IdentityAddress("test", type: expectedType);
-			Assert.IsTrue(sut.IsType(expectedType));
-			Assert.IsTrue(sut.IsType(expectedType.ToUpper()));
-			Assert.IsTrue(sut.IsType(expectedType.ToLower()));
-		}
+	[TestMethod()]
+	public void MatchShouldBeCaseInsensitive()
+	{
+		var expectedType = "unit-test";
+		var sut = new IdentityAddress("test", type: expectedType);
+		Assert.IsTrue(sut.IsType(expectedType));
+		Assert.IsTrue(sut.IsType(expectedType.ToUpper()));
+		Assert.IsTrue(sut.IsType(expectedType.ToLower()));
+	}
 
-		[TestMethod]
-		public void ShouldReturnDefaultValue()
-		{
-			var expectedType = "unit-test";
-			var expectedValue = "pass";
-			var sut = new IdentityAddress("test", type: expectedType);
-			Assert.AreEqual(expectedValue, sut.IfType(expectedType, expectedValue));
-			Assert.AreNotEqual("anything-else", sut.IfType(expectedType, expectedValue));
-		}
+	[TestMethod]
+	public void ShouldReturnDefaultValue()
+	{
+		var expectedType = "unit-test";
+		var expectedValue = "pass";
+		var sut = new IdentityAddress("test", type: expectedType);
+		Assert.AreEqual(expectedValue, sut.IfType(expectedType, expectedValue));
+		Assert.AreNotEqual("anything-else", sut.IfType(expectedType, expectedValue));
 	}
 }

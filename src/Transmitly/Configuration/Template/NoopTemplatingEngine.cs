@@ -12,15 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+internal class NoopTemplatingEngine : ITemplateEngine
 {
-	internal class NoopTemplatingEngine : ITemplateEngine
+	public async Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
 	{
-		public async Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
-		{
-			if (registration == null)
-				return null;
-			return await registration.GetContentAsync(context);
-		}
+		if (registration == null)
+			return null;
+		return await registration.GetContentAsync(context);
 	}
 }

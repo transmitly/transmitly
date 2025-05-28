@@ -12,22 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider.Configuration
+namespace Transmitly.ChannelProvider.Configuration;
+
+internal class ChannelProviderDispatcherRegistration<TDispatcher, TCommunication>(params string[]? supportedChannelIds) : IChannelProviderDispatcherRegistration
+	where TDispatcher : IChannelProviderDispatcher<TCommunication>
 {
-	internal class ChannelProviderDispatcherRegistration<TDispatcher, TCommunication>(params string[]? supportedChannelIds) : IChannelProviderDispatcherRegistration
-		where TDispatcher : IChannelProviderDispatcher<TCommunication>
+	public Type DispatcherType => typeof(TDispatcher);
+
+	public Type CommunicationType => typeof(TCommunication);
+
+	readonly string[] _supportedChannelIds = supportedChannelIds ?? [];
+
+	public bool SupportsChannel(string channel)
 	{
-		public Type DispatcherType => typeof(TDispatcher);
-
-		public Type CommunicationType => typeof(TCommunication);
-
-		readonly string[] _supportedChannelIds = supportedChannelIds ?? [];
-
-		public bool SupportsChannel(string channel)
-		{
-			if (_supportedChannelIds.Length == 0)
-				return true;
-			return Array.Exists(_supportedChannelIds, x => x.Equals(channel, StringComparison.InvariantCultureIgnoreCase));
-		}
+		if (_supportedChannelIds.Length == 0)
+			return true;
+		return Array.Exists(_supportedChannelIds, x => x.Equals(channel, StringComparison.InvariantCultureIgnoreCase));
 	}
 }

@@ -12,21 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public enum MachineDetection
 {
-	public enum MachineDetection
-	{
-		/// <summary>
-		/// Do not detect answering machine.
-		/// </summary>
-		Disabled,
-		/// <summary>
-		/// End the call if machine is detected.
-		/// </summary>
-		Enabled,
-		/// <summary>
-		/// Continue after message end.
-		/// </summary>
-		MessageEnd
-	}
+	/// <summary>
+	/// Do not detect answering machine.
+	/// </summary>
+	Disabled,
+	/// <summary>
+	/// End the call if machine is detected.
+	/// </summary>
+	Enabled,
+	/// <summary>
+	/// Continue after message end.
+	/// </summary>
+	MessageEnd
 }

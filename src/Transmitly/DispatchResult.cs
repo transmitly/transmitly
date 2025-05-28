@@ -12,46 +12,45 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public sealed class DispatchResult : IDispatchResult
 {
-	public sealed class DispatchResult : IDispatchResult
+	internal DispatchResult(IDispatchResult result, string channelProviderId, string channelId, Exception? exception = null) : this(result.Status, channelProviderId, channelId, exception)
 	{
-		internal DispatchResult(IDispatchResult result, string channelProviderId, string channelId, Exception? exception = null) : this(result.Status, channelProviderId, channelId, exception)
-		{
-			ResourceId = result.ResourceId;
-			Status = result.Status;
-		}
-
-		internal DispatchResult(CommunicationsStatus status, string channelProviderId, string channelId, Exception? exception = null)
-		{
-			Status = status;
-			ChannelProviderId = channelProviderId;
-			ChannelId = channelId;
-			Exception = exception;
-		}
-
-		public DispatchResult(CommunicationsStatus status, string? id = null)
-		{
-			Status = status;
-
-			if (string.IsNullOrWhiteSpace(id))
-				ResourceId = Guid.NewGuid().ToString();
-			else
-				ResourceId = id;
-		}
-
-		public string? ResourceId { get; }
-
-		public string? ChannelProviderId { get; }
-
-		public string? ChannelId { get; }
-
-		public CommunicationsStatus Status { get; internal set; }
-
-		public Exception? Exception { get; internal set; }
-
-		public string? PipelineId {get;internal set; }
-
-		public string? PipelineName { get; internal set; }
+		ResourceId = result.ResourceId;
+		Status = result.Status;
 	}
+
+	internal DispatchResult(CommunicationsStatus status, string channelProviderId, string channelId, Exception? exception = null)
+	{
+		Status = status;
+		ChannelProviderId = channelProviderId;
+		ChannelId = channelId;
+		Exception = exception;
+	}
+
+	public DispatchResult(CommunicationsStatus status, string? id = null)
+	{
+		Status = status;
+
+		if (string.IsNullOrWhiteSpace(id))
+			ResourceId = Guid.NewGuid().ToString();
+		else
+			ResourceId = id;
+	}
+
+	public string? ResourceId { get; }
+
+	public string? ChannelProviderId { get; }
+
+	public string? ChannelId { get; }
+
+	public CommunicationsStatus Status { get; internal set; }
+
+	public Exception? Exception { get; internal set; }
+
+	public string? PipelineId {get;internal set; }
+
+	public string? PipelineName { get; internal set; }
 }

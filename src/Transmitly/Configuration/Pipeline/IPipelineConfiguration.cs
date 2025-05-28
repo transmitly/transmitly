@@ -15,64 +15,63 @@
 using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.Pipeline.Configuration;
+
+/// <summary>
+/// Configuration of a pipeline
+/// </summary>
+public interface IPipelineConfiguration
 {
 	/// <summary>
-	/// Configuration of a pipeline
+	/// The unique identifier for the pipeline.
+	/// <para>To set value see <see cref="Id(string)"/></para>
 	/// </summary>
-	public interface IPipelineConfiguration
-	{
-		/// <summary>
-		/// The unique identifier for the pipeline.
-		/// <para>To set value see <see cref="Id(string)"/></para>
-		/// </summary>
-		string? PipelineId { get; }
-		/// <summary>
-		/// Gets the list of available channels registered in the pipeline.
-		/// </summary>
-		/// <see cref="AddChannel(IChannel)"/>
-		IReadOnlyCollection<IChannel> Channels { get; }
-		/// <summary>
-		/// Gets the list of persona filters registered in the pipeline.
-		/// </summary>
-		IReadOnlyCollection<string> PersonaFilters { get; }
-		/// <summary>
-		/// Gets the registered channel sending strategy provider
-		/// </summary>
-		BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; }
-		/// <summary>
-		/// Whether the pipeline is forced to comply with the provided platform dispatch requirements. (Default = True)
-		/// <para>To set value see <see cref="AllowDispatchRequirements(bool)"/></para>
-		/// </summary>
-		bool IsDispatchRequirementsAllowed { get; }
-		/// <summary>
-		/// Registers a communication channel with the pipeline.
-		/// </summary>
-		/// <param name="channel"><see cref="IChannelConfiguration"/> to register.</param>
-		/// <returns>Pipeline configuration</returns>
-		IPipelineConfiguration AddChannel(IChannel channel);
-		/// <summary>
-		/// Sets the pipeline sending strategy provider.
-		/// </summary>
-		/// <param name="deliveryStrategyProvider">Sending strategy provider.</param>
-		/// <returns>Pipeline configuration.</returns>
-		IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider);
-		/// <summary>
-		/// Adds a persona filter to the pipeline configuration.
-		/// </summary>
-		/// <param name="personaName">Name of the registered persona filter.</param>
-		/// <returns>Pipeline configuration.</returns>
-		IPipelineConfiguration AddPersonaFilter(string personaName);
-		/// <summary>
-		/// Adds an Id to a pipeline to uniquely identify it from other pipelines that may have the same intent name.
-		/// </summary>
-		/// <param name="id">Unique id of the pipeline.</param>
-		/// <returns>Pipeline configuration.</returns>
-		IPipelineConfiguration Id(string id);
-		/// <summary>
-		/// Forces the pipeline to fail if it cannot comply to the provided platform dispatch requirements.
-		/// </summary>
-		/// <returns>Pipeline configuration.</returns>
-		IPipelineConfiguration AllowDispatchRequirements(bool allowed);
-	}
+	string? PipelineId { get; }
+	/// <summary>
+	/// Gets the list of available channels registered in the pipeline.
+	/// </summary>
+	/// <see cref="AddChannel(IChannel)"/>
+	IReadOnlyCollection<IChannel> Channels { get; }
+	/// <summary>
+	/// Gets the list of persona filters registered in the pipeline.
+	/// </summary>
+	IReadOnlyCollection<string> PersonaFilters { get; }
+	/// <summary>
+	/// Gets the registered channel sending strategy provider
+	/// </summary>
+	BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; }
+	/// <summary>
+	/// Whether the pipeline is forced to comply with the provided platform dispatch requirements. (Default = True)
+	/// <para>To set value see <see cref="AllowDispatchRequirements(bool)"/></para>
+	/// </summary>
+	bool IsDispatchRequirementsAllowed { get; }
+	/// <summary>
+	/// Registers a communication channel with the pipeline.
+	/// </summary>
+	/// <param name="channel"><see cref="IChannelConfiguration"/> to register.</param>
+	/// <returns>Pipeline configuration</returns>
+	IPipelineConfiguration AddChannel(IChannel channel);
+	/// <summary>
+	/// Sets the pipeline sending strategy provider.
+	/// </summary>
+	/// <param name="deliveryStrategyProvider">Sending strategy provider.</param>
+	/// <returns>Pipeline configuration.</returns>
+	IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider);
+	/// <summary>
+	/// Adds a persona filter to the pipeline configuration.
+	/// </summary>
+	/// <param name="personaName">Name of the registered persona filter.</param>
+	/// <returns>Pipeline configuration.</returns>
+	IPipelineConfiguration AddPersonaFilter(string personaName);
+	/// <summary>
+	/// Adds an Id to a pipeline to uniquely identify it from other pipelines that may have the same intent name.
+	/// </summary>
+	/// <param name="id">Unique id of the pipeline.</param>
+	/// <returns>Pipeline configuration.</returns>
+	IPipelineConfiguration Id(string id);
+	/// <summary>
+	/// Forces the pipeline to fail if it cannot comply to the provided platform dispatch requirements.
+	/// </summary>
+	/// <returns>Pipeline configuration.</returns>
+	IPipelineConfiguration AllowDispatchRequirements(bool allowed);
 }

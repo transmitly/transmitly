@@ -14,25 +14,24 @@
 
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Channel.Configuration.Email
+namespace Transmitly.Channel.Configuration.Email;
+
+public interface IEmailChannelConfiguration : IChannelConfiguration
 {
-	public interface IEmailChannelConfiguration : IChannelConfiguration
-	{
-		/// <summary>
-		/// Email's subject templates.
-		/// </summary>
-		IContentTemplateConfiguration Subject { get; }
-		/// <summary>
-		/// Email's HtmlBody templates.
-		/// </summary>
-		IContentTemplateConfiguration HtmlBody { get; }
-		/// <summary>
-		/// Email's TextBody templates.
-		/// </summary>
-		IContentTemplateConfiguration TextBody { get; }
-		/// <summary>
-		/// The address used as the 'from' address.
-		/// </summary>
-		Func<IDispatchCommunicationContext, IIdentityAddress>? FromAddressResolver { get; }
-	}
+	/// <summary>
+	/// Email's subject templates.
+	/// </summary>
+	IContentTemplateConfiguration Subject { get; }
+	/// <summary>
+	/// Email's HtmlBody templates.
+	/// </summary>
+	IContentTemplateConfiguration HtmlBody { get; }
+	/// <summary>
+	/// Email's TextBody templates.
+	/// </summary>
+	IContentTemplateConfiguration TextBody { get; }
+	/// <summary>
+	/// The address used as the 'from' address.
+	/// </summary>
+	Func<IDispatchCommunicationContext, IIdentityAddress>? FromAddressResolver { get; }
 }

@@ -14,58 +14,57 @@
 
 using Transmitly.ChannelProvider;
 
-namespace Transmitly.Delivery
+namespace Transmitly.Delivery;
+
+public abstract class BaseDeliveryReportService : IDeliveryReportService
 {
-	public abstract class BaseDeliveryReportService : IDeliveryReportService
+	private readonly HashSet<IObserver<DeliveryReport>> _observers = [];
+
+	public BaseDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers)
 	{
-		private readonly HashSet<IObserver<DeliveryReport>> _observers = [];
-
-		public BaseDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers)
-		{
-			Subscribe(observers);
-		}
-
-		public IDisposable Subscribe(IObserver<DeliveryReport> observer)
-		{
-			_observers.Add(observer);
-
-			return new Unsubscriber<DeliveryReport>(_observers, observer);
-		}
-
-		public IReadOnlyCollection<IDisposable> Subscribe(IReadOnlyCollection<IObserver<DeliveryReport>> observers)
-		{
-			var cancels = new List<IDisposable>(observers.Count);
-			foreach (var observer in observers)
-			{
-				cancels.Add(Subscribe(observer));
-			}
-			return cancels;
-		}
-
-		public Task DispatchAsync(DeliveryReport deliveryReport)
-		{
-			Guard.AgainstNull(deliveryReport);
-			foreach (IObserver<DeliveryReport> observer in _observers)
-			{
-				observer.OnNext(deliveryReport);
-			}
-			return Task.CompletedTask;
-		}
-
-		public Task DispatchAsync(IReadOnlyCollection<DeliveryReport> deliveryReports)
-		{
-			foreach (var report in Guard.AgainstNull(deliveryReports))
-			{
-				DispatchAsync(report);
-			}
-			return Task.CompletedTask;
-		}
+		Subscribe(observers);
 	}
 
-	internal sealed class DefaultDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers) : BaseDeliveryReportService(observers)
+	public IDisposable Subscribe(IObserver<DeliveryReport> observer)
 	{
+		_observers.Add(observer);
 
-
-
+		return new Unsubscriber<DeliveryReport>(_observers, observer);
 	}
+
+	public IReadOnlyCollection<IDisposable> Subscribe(IReadOnlyCollection<IObserver<DeliveryReport>> observers)
+	{
+		var cancels = new List<IDisposable>(observers.Count);
+		foreach (var observer in observers)
+		{
+			cancels.Add(Subscribe(observer));
+		}
+		return cancels;
+	}
+
+	public Task DispatchAsync(DeliveryReport deliveryReport)
+	{
+		Guard.AgainstNull(deliveryReport);
+		foreach (IObserver<DeliveryReport> observer in _observers)
+		{
+			observer.OnNext(deliveryReport);
+		}
+		return Task.CompletedTask;
+	}
+
+	public Task DispatchAsync(IReadOnlyCollection<DeliveryReport> deliveryReports)
+	{
+		foreach (var report in Guard.AgainstNull(deliveryReports))
+		{
+			DispatchAsync(report);
+		}
+		return Task.CompletedTask;
+	}
+}
+
+internal sealed class DefaultDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers) : BaseDeliveryReportService(observers)
+{
+
+
+
 }

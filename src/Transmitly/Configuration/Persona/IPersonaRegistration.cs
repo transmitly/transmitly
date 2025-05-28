@@ -12,15 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Persona.Configuration
+namespace Transmitly.Persona.Configuration;
+
+public interface IPersonaRegistration
 {
-	public interface IPersonaRegistration
-	{
-		string PlatformIdentityType { get; }
-		string Name { get; }
-		Type PersonaType { get; }
-		bool IsMatch(object persona);
-	}
-
-
+	string PlatformIdentityType { get; }
+	string Name { get; }
+	Type PersonaType { get; }
+	bool IsMatch(object persona);
 }

@@ -12,17 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
-{
+namespace Transmitly;
 
-	public interface IDispatchResult
-	{
-		string? ResourceId { get; }
-		CommunicationsStatus Status { get; }
-		string? ChannelProviderId { get; }
-		string? ChannelId { get; }
-		string? PipelineId { get; }
-		string? PipelineName { get; }
-		Exception? Exception { get; }
-	}
+
+public interface IDispatchResult
+{
+	string? ResourceId { get; }
+	CommunicationsStatus Status { get; }
+	string? ChannelProviderId { get; }
+	string? ChannelId { get; }
+	string? PipelineId { get; }
+	string? PipelineName { get; }
+	Exception? Exception { get; }
 }

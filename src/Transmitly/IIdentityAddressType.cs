@@ -12,12 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+/// <summary>
+/// Marker interface for allowing <see cref="Channel.Configuration.IChannelConfiguration"/>'s to define address types programmatically.
+/// </summary>
+public interface IIdentityAddressType
 {
-	/// <summary>
-	/// Marker interface for allowing <see cref="Channel.Configuration.IChannelConfiguration"/>'s to define address types programmatically.
-	/// </summary>
-	public interface IIdentityAddressType
-	{
-	}
 }

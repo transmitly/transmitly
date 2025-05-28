@@ -12,24 +12,23 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.Pipeline.Configuration;
+
+///<inheritdoc cref="IPipeline"/>
+internal class PipelineRegistration(
+	   IPipelineConfiguration configuration,
+	   string pipelineIntent,
+	   string? platformIdentityType,
+	   string? category
+) : IPipeline
 {
-	///<inheritdoc cref="IPipeline"/>
-	internal class PipelineRegistration(
-		   IPipelineConfiguration configuration,
-		   string pipelineIntent,
-		   string? platformIdentityType,
-		   string? category
-	) : IPipeline
-	{
-		public string? Id => configuration.PipelineId;
+	public string? Id => configuration.PipelineId;
 
-		public string Intent { get; } = Guard.AgainstNullOrWhiteSpace(pipelineIntent);
+	public string Intent { get; } = Guard.AgainstNullOrWhiteSpace(pipelineIntent);
 
-		public string? PlatformIdentityType { get; } = platformIdentityType;
+	public string? PlatformIdentityType { get; } = platformIdentityType;
 
-		public string? Category { get; } = category;
+	public string? Category { get; } = category;
 
-		public IPipelineConfiguration Configuration { get; } = Guard.AgainstNull(configuration);
-	}
+	public IPipelineConfiguration Configuration { get; } = Guard.AgainstNull(configuration);
 }

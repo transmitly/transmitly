@@ -15,14 +15,13 @@
 using Transmitly.ChannelProvider;
 using Transmitly.Pipeline.Configuration;
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IDispatchCoordinatorService
 {
-	public interface IDispatchCoordinatorService
-	{
-		Task<IReadOnlyCollection<RecipientDispatchCommunicationContext>> CreateRecipientContexts(
-			IReadOnlyCollection<IPipeline> pipelines,
-			IReadOnlyCollection<IPlatformIdentityProfile> platformIdentityProfiles,
-			ITransactionModel transactionalModel,
-			IReadOnlyCollection<string> dispatchChannelPreferences);
-	}
+	Task<IReadOnlyCollection<RecipientDispatchCommunicationContext>> CreateRecipientContexts(
+		IReadOnlyCollection<IPipeline> pipelines,
+		IReadOnlyCollection<IPlatformIdentityProfile> platformIdentityProfiles,
+		ITransactionModel transactionalModel,
+		IReadOnlyCollection<string> dispatchChannelPreferences);
 }

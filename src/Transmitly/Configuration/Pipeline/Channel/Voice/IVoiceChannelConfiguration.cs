@@ -14,28 +14,27 @@
 
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Channel.Configuration.Voice
+namespace Transmitly.Channel.Configuration.Voice;
+
+/// <summary>
+/// Voice Communications Channel
+/// </summary>
+public interface IVoiceChannelConfiguration : IChannelConfiguration
 {
 	/// <summary>
-	/// Voice Communications Channel
+	/// From Address
 	/// </summary>
-	public interface IVoiceChannelConfiguration : IChannelConfiguration
-	{
-		/// <summary>
-		/// From Address
-		/// </summary>
-		Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver { get; }
-		/// <summary>
-		/// Details of the voice to use.
-		/// </summary>
-		IVoiceType? VoiceType { get; }
-		/// <summary>
-		/// SSML voice message 
-		/// </summary>
-		IContentTemplateConfiguration Message { get; }
-		/// <summary>
-		/// Level of machine detection.
-		/// </summary>
-		MachineDetection MachineDetection { get; }
-	}
+	Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver { get; }
+	/// <summary>
+	/// Details of the voice to use.
+	/// </summary>
+	IVoiceType? VoiceType { get; }
+	/// <summary>
+	/// SSML voice message 
+	/// </summary>
+	IContentTemplateConfiguration Message { get; }
+	/// <summary>
+	/// Level of machine detection.
+	/// </summary>
+	MachineDetection MachineDetection { get; }
 }
