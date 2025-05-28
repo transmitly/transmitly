@@ -52,8 +52,8 @@ public class BasePersonaFactoryTests : BaseUnitTest
 		var registrations = fixture.Create<IEnumerable<IPersonaRegistration>>();
 		fixture.Inject(registrations);
 		var sut = fixture.Create<BasePersonaFactory>();
-		await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => sut.AnyMatch<UnitTestPersona>(null!, []));
-		await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => sut.AnyMatch<UnitTestPersona>(fixture.Create<string>(), null!));
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => sut.AnyMatch<UnitTestPersona>(null!, []));
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => sut.AnyMatch<UnitTestPersona>(fixture.Create<string>(), null!));
 	}
 
 	class UnitTestPersona

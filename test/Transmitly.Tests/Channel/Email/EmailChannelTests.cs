@@ -79,7 +79,7 @@ public class EmailChannelTests : BaseUnitTest
 	{
 		var channel = new EmailChannel(new EmailChannelConfiguration(_ => fixture.Create<IIdentityAddress>()));
 
-		await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => channel.GenerateCommunicationAsync(null!));
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => channel.GenerateCommunicationAsync(null!));
 	}
 
 	private EmailChannelConfiguration NewEmailChannel()
@@ -130,7 +130,7 @@ public class EmailChannelTests : BaseUnitTest
 		var context = mockContext.Object;
 		var sut = new EmailChannel(NewEmailChannel());
 
-		Assert.ThrowsExceptionAsync<CommunicationsException>(() => sut.GenerateCommunicationAsync(context));
+		Assert.ThrowsExactlyAsync<CommunicationsException>(() => sut.GenerateCommunicationAsync(context));
 	}
 
 	[TestMethod]

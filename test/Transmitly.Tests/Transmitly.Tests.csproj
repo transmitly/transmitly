@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net472;net48</TargetFrameworks>
-		<TargetFrameworks>$(TargetFrameworks);net6.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>$(TargetFrameworks);net6.0;net8.0;net9.0</TargetFrameworks>
 		<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -22,6 +22,7 @@
 
 	<ItemGroup>
 	  <None Include="..\..\.editorconfig" Link=".editorconfig" />
+	  <None Include="Configuration\Template\TemplateRegistration\LocalFileContentTemplateRegistrationTests.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -45,7 +46,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="FileResource\file-content.txt">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net462' ">

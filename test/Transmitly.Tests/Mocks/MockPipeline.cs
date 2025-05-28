@@ -12,8 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery;
+using Transmitly.Pipeline.Configuration;
 
-internal sealed class DefaultDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers) : BaseDeliveryReportService(observers)
+namespace Transmitly.Tests.Mocks
 {
+	sealed class MockPipeline : IPipeline
+	{
+		public string Intent { get; set; } = string.Empty;
+		public string? Category { get; set; }
+		public IPipelineConfiguration Configuration { get; set; } = null!;
+		public string? Id { get; set; }
+	}
 }

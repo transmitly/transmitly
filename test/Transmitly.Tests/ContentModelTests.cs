@@ -40,11 +40,11 @@ public class ContentModelTests
 			}
 		});
 
-		IReadOnlyCollection<IPlatformIdentityProfile> identities = [new TestPlatformIdentity1(expectedId)];
+		IReadOnlyCollection<IPlatformIdentityProfile> identities = [new MockPlatformIdentity1(expectedId)];
 
 		ContentModel contentModel = new(transModel, identities);
 		dynamic model = contentModel.Model;
-		Assert.IsNotNull(contentModel.Model);
+
 		Assert.AreEqual(expectedCode, model.OtpCode);
 		Assert.AreEqual(expectedCode, model.trx.OtpCode);
 		Assert.IsTrue(model.Level0.Level1.Level1Value);
@@ -98,6 +98,30 @@ public class ContentModelTests
 	[TestMethod]
 	public void DynamicContentModel_PreventMoreThanOnePlatformIdentity()
 	{
-		Assert.ThrowsException<NotSupportedException>(() => new DynamicContentModel(new ObjWithIndexer(), [new TestPlatformIdentity1("123"), new TestPlatformIdentity1("234")], null, null));
+		DynamicContentModel? instance = null;
+		void create() => instance = new DynamicContentModel(new ObjWithIndexer(), [new MockPlatformIdentity1("123"), new MockPlatformIdentity1("234")], null, null);
+		Assert.ThrowsExactly<NotSupportedException>(create);
+	}
+
+	[TestMethod]
+	public void Create_WithResources_SplitsAttachmentsAndLinkedResources()
+	{
+		var attachment1 = new Resource("file1.txt", "text/plain", new MemoryStream());
+		var attachment2 = new Resource("file2.txt", "text/plain", new MemoryStream());
+		var linkedResource1 = new LinkedResource("cid:img1", new MemoryStream());
+		var linkedResource2 = new LinkedResource("cid:img2", new MemoryStream());
+		var model = new { Name = "Test" };
+
+		var transaction = TransactionModel.Create(model, attachment1, linkedResource1, attachment2, linkedResource2);
+
+		Assert.AreEqual(model, transaction.Model);
+
+		Assert.AreEqual(2, transaction.Resources.Count);
+		CollectionAssert.Contains(transaction.Resources.ToList(), attachment1);
+		CollectionAssert.Contains(transaction.Resources.ToList(), attachment2);
+
+		Assert.AreEqual(2, transaction.LinkedResources.Count);
+		CollectionAssert.Contains(transaction.LinkedResources.ToList(), linkedResource1);
+		CollectionAssert.Contains(transaction.LinkedResources.ToList(), linkedResource2);
 	}
 }

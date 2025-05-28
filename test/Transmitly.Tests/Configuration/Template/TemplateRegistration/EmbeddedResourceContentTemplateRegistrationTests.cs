@@ -27,14 +27,17 @@ public class EmbeddedResourceContentTemplateRegistrationTests
 	[DataRow(null)]
 	public void ShouldThrowIfResourceIdIsEmpty(string? value)
 	{
-
-		Assert.ThrowsException<ArgumentNullException>(() => new EmbeddedResourceContentTemplateRegistration(value));
+		EmbeddedResourceContentTemplateRegistration? instance = null;
+		void create() => instance = new EmbeddedResourceContentTemplateRegistration(value);
+		Assert.ThrowsExactly<ArgumentNullException>(create);
 	}
 
 	[TestMethod]
 	public void ShouldThrowIfResourceCannotBeFound()
 	{
-		Assert.ThrowsException<CommunicationsException>(() => new EmbeddedResourceContentTemplateRegistration("test", resourceAssembly: typeof(EmbeddedResourceContentTemplateRegistrationTests).Assembly));
+		EmbeddedResourceContentTemplateRegistration? instance = null;
+		void create() => instance = new EmbeddedResourceContentTemplateRegistration("test", resourceAssembly: typeof(EmbeddedResourceContentTemplateRegistrationTests).Assembly);
+		Assert.ThrowsExactly<CommunicationsException>(create);
 	}
 
 #pragma warning restore CS8604 // Possible null reference argument.

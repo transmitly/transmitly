@@ -30,6 +30,6 @@ public class DictionaryExtensionsTests
 	public void GetShouldGetKey()
 	{
 		IDictionary<string, object> dict = new Dictionary<string, object> { { "key", true } };
-		Assert.AreEqual(true, DictionaryExtensions.Get<bool>(dict, "key"));
+		Assert.IsTrue(DictionaryExtensions.Get<bool>(dict, "key"));
 	}
 }

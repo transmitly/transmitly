@@ -49,7 +49,7 @@ public class VoiceChannelTests : BaseUnitTest
 	{
 		var channel = fixture.Create<VoiceChannel>();
 
-		await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => channel.GenerateCommunicationAsync(null!));
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => channel.GenerateCommunicationAsync(null!));
 	}
 
 	[TestMethod]
@@ -94,7 +94,7 @@ public class VoiceChannelTests : BaseUnitTest
 		var sut = fixture.Create<VoiceChannel>();
 		var body = fixture.Freeze<string>();
 
-		Assert.ThrowsExceptionAsync<CommunicationsException>(() => sut.GenerateCommunicationAsync(context));
+		Assert.ThrowsExactlyAsync<CommunicationsException>(() => sut.GenerateCommunicationAsync(context));
 	}
 
 	[TestMethod]

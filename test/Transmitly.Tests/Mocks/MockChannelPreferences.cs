@@ -12,8 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery;
+namespace Transmitly.Tests;
 
-internal sealed class DefaultDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers) : BaseDeliveryReportService(observers)
+internal sealed class MockChannelPreferences : IChannelPreference
 {
+	public ChannelPreferenceType Type { get; set; } = ChannelPreferenceType.Default;
+
+	public string? Category { get; set; }
+
+	public IReadOnlyCollection<string> Channels { get; set; } = [];
 }

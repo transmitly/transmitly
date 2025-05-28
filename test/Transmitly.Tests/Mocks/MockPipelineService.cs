@@ -11,18 +11,9 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
+using Transmitly.Pipeline.Configuration;
+namespace Transmitly.Tests.Mocks;
 
-
-using Transmitly.Util;
-
-namespace Transmitly.Tests;
-
-internal sealed record TestIdentityAddressAddress(string Value) : IIdentityAddress
+sealed class MockPipelineService(IPipelineFactory pipelineFactory) : BasePipelineService(pipelineFactory)
 {
-	public string Value { get; set; } = Guard.AgainstNullOrWhiteSpace(Value);
-	public string? Type { get; set; }
-	public string? Display { get; set; }
-	public IDictionary<string, string?> AddressParts { get; set; } = new Dictionary<string, string?> { { "value", Value }, { "display", null } };
-	public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
-	public IReadOnlyCollection<string>? Purposes { get; set; }
 }

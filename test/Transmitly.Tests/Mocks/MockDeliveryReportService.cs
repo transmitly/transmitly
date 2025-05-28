@@ -12,8 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery;
+using Transmitly.Delivery;
 
-internal sealed class DefaultDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers) : BaseDeliveryReportService(observers)
+namespace Transmitly.Tests.Mocks
 {
+	class MockDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers) : BaseDeliveryReportService(observers)
+	{
+	}
 }

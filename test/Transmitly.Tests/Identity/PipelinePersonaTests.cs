@@ -44,9 +44,9 @@ public class PipelinePersonaTests
 				options.AddChannel(channel);
 				options.AddPersonaFilter(ExpectedPersona);
 			})
-			.AddPersona<TestPlatformIdentity1>(ExpectedPersona, PlatformIdentityType, x => x.IsPersona)
-			.AddPersona<TestPlatformIdentity1>("OtherPersona", PlatformIdentityType, x => !x.IsPersona)
-			.AddPlatformIdentityResolver<TestPlatformIdentityRepository>();
+			.AddPersona<MockPlatformIdentity1>(ExpectedPersona, PlatformIdentityType, x => x.IsPersona)
+			.AddPersona<MockPlatformIdentity1>("OtherPersona", PlatformIdentityType, x => !x.IsPersona)
+			.AddPlatformIdentityResolver<MockPlatformIdentityRepository>();
 
 		var client = builder.BuildClient();
 
@@ -54,7 +54,7 @@ public class PipelinePersonaTests
 
 		Assert.IsNotNull(result);
 		Assert.IsTrue(result.IsSuccessful);
-		Assert.IsNotNull(result.Results);
+		
 		Assert.AreEqual(1, result.Results.Count);
 		var singleResult = result.Results.First();
 		Assert.IsTrue(singleResult?.Status.IsSuccess());

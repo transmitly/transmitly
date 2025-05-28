@@ -25,15 +25,20 @@ public class LocalFileContentTemplateRegistrationTests
 	[DataRow(null)]
 	public void ShouldThrowIfResourceIdIsEmpty(string? value)
 	{
+		LocalFileContentTemplateRegistration? instance = null;
 #pragma warning disable CS8604 // Possible null reference argument.
-		Assert.ThrowsException<ArgumentNullException>(() => new LocalFileContentTemplateRegistration(value));
+		void create() => instance = new LocalFileContentTemplateRegistration(value);
 #pragma warning restore CS8604 // Possible null reference argument.
+		Assert.ThrowsExactly<ArgumentNullException>(create);
+
 	}
 
 	[TestMethod]
 	public void ShouldThrowIfResourceCannotBeFound()
 	{
-		Assert.ThrowsException<FileNotFoundException>(() => new LocalFileContentTemplateRegistration("not-exist.txt"));
+		LocalFileContentTemplateRegistration? instance = null;
+		void create() => instance = new LocalFileContentTemplateRegistration("not-exist.txt");
+		Assert.ThrowsExactly<FileNotFoundException>(create);
 	}
 
 	[TestMethod]
@@ -44,15 +49,24 @@ public class LocalFileContentTemplateRegistrationTests
 		Assert.IsNull(await template.GetContentAsync(context.Object));
 	}
 
-	//#if !NETFRAMEWORK //todo: look into why this isn't working for NETFramework
-	//		[TestMethod()]
-	//		[DeploymentItem(@"FileResource/file-content.txt")]
-	//		[DeploymentItem(@"FileResource\file-content.txt")]
-	//		public async Task ShouldReturnFileResourceContent()
-	//		{
-	//			var template = new LocalFileContentTemplateRegistration($"FileResource{Path.DirectorySeparatorChar}file-content.txt");
-	//			var context = new Mock<IDispatchCommunicationContext>();
-	//			Assert.AreEqual("OK", await template.GetContentAsync(context.Object));
-	//		}
-	//#endif
+	[TestMethod()]
+	[DeploymentItem(@"FileResource/file-content.txt")]
+	[DeploymentItem(@"FileResource\file-content.txt")]
+	public async Task ShouldReturnFileResourceContent()
+	{
+		var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FileResource", "file-content.txt");
+#if NETFRAMEWORK
+		// Some .NET Framework test runners may not honor DeploymentItem.
+		// Create file manually if not present.
+
+		if (!File.Exists(filePath))
+		{
+			Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+			File.WriteAllText(filePath, "OK");
+		}
+#endif
+		var template = new LocalFileContentTemplateRegistration(filePath);
+		var context = new Mock<IDispatchCommunicationContext>();
+		Assert.AreEqual("OK", await template.GetContentAsync(context.Object));
+	}
 }

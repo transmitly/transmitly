@@ -32,7 +32,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 		var (pipeline, coordinator, identity, reportHandler) = GetStores();
 
 		var client = new DefaultCommunicationsClient(pipeline.Object, coordinator.Object, identity.Object, reportHandler.Object);
-		Assert.ThrowsExceptionAsync<ArgumentNullException>(() => client.DispatchAsync(value, "test", new { }));
+		Assert.ThrowsExactlyAsync<ArgumentNullException>(() => client.DispatchAsync(value, "test", new { }));
 	}
 
 	[TestMethod]
@@ -246,15 +246,15 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	{
 		var sut = fixture.Create<DefaultCommunicationsClient>();
 
-		await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() =>
 			sut.DispatchAsync("test", (IReadOnlyCollection<IIdentityAddress>)null!, null!, null!, CancellationToken.None)
 		);
 
-		await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() =>
 			sut.DispatchAsync("test", (string)null!, (object)null!, null, CancellationToken.None)
 		);
 
-		await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() =>
 			sut.DispatchAsync("test", (string)null!, (object)null!, null, CancellationToken.None)
 		);
 	}

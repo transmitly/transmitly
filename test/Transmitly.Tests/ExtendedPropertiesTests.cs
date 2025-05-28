@@ -22,9 +22,9 @@ public class ExtendedPropertiesTests
 	{
 		IExtendedProperties props = new ExtendedProperties();
 		props.Add("unit", "test", true);
-		Assert.AreEqual(true, props.GetValue<bool>("unit", "test"));
-		Assert.AreEqual(null, props.GetValue<bool?>("fake", "test"));
-		Assert.AreEqual(false, props.GetValue<bool>("fake", "test"));
+		Assert.IsTrue(props.GetValue<bool>("unit", "test"));
+		Assert.IsNull(props.GetValue<bool?>("fake", "test"));
+		Assert.IsFalse(props.GetValue<bool>("fake", "test"));
 	}
 
 	[TestMethod()]
@@ -32,8 +32,8 @@ public class ExtendedPropertiesTests
 	{
 		IExtendedProperties props = new ExtendedProperties();
 		props.Add("unit", "test", true);
-		Assert.AreEqual(true, props.GetValue("unit", "test"));
-		Assert.AreEqual(null, props.GetValue("fake", "test"));
+		Assert.IsTrue((bool?)props.GetValue("unit", "test"));
+		Assert.IsNull(props.GetValue("fake", "test"));
 	}
 
 	[TestMethod()]
@@ -41,11 +41,11 @@ public class ExtendedPropertiesTests
 	{
 		IExtendedProperties props = new ExtendedProperties();
 		props.Add("unit", "test", true);
-		Assert.AreEqual(true, props.GetValue("unit", "test", false));
-		Assert.AreEqual(true, props.GetValue("fake", "test", true));
-		Assert.AreEqual(null, props.GetValue<bool?>("fake", "test", null));
-		Assert.AreEqual(false, props.GetValue<bool?>("fake", "test", false));
-		Assert.AreEqual(true, props.GetValue<bool?>("fake", "test", true));
+		Assert.IsTrue(props.GetValue("unit", "test", false));
+		Assert.IsTrue(props.GetValue("fake", "test", true));
+		Assert.IsNull(props.GetValue<bool?>("fake", "test", null));
+		Assert.IsFalse(props.GetValue<bool?>("fake", "test", false));
+		Assert.IsTrue(props.GetValue<bool?>("fake", "test", true));
 	}
 
 	[TestMethod()]
@@ -54,14 +54,14 @@ public class ExtendedPropertiesTests
 		IExtendedProperties props = new ExtendedProperties();
 		props.Add("unit", "test", true);
 
-		Assert.AreEqual(true, props.TryGetValue<bool?>("unit", "test", out var result1));
-		Assert.AreEqual(true, result1);
+		Assert.IsTrue(props.TryGetValue<bool?>("unit", "test", out var result1));
+		Assert.IsTrue(result1);
 
-		Assert.AreEqual(false, props.TryGetValue<bool?>("fake", "test", out var result2));
-		Assert.AreEqual(null, result2);
+		Assert.IsFalse(props.TryGetValue<bool?>("fake", "test", out var result2));
+		Assert.IsNull(result2);
 
-		Assert.AreEqual(false, props.TryGetValue<bool>("fake", "test", out var result3));
-		Assert.AreEqual(false, result3);
+		Assert.IsFalse(props.TryGetValue<bool>("fake", "test", out var result3));
+		Assert.IsFalse(result3);
 	}
 
 	[TestMethod()]
@@ -106,6 +106,6 @@ public class ExtendedPropertiesTests
 		props.AddOrUpdate("unit", "test", null);
 
 		Assert.AreEqual(0, props.GetValue<int>("unit", "test"));
-		Assert.AreEqual(null, props.GetValue<int?>("unit", "test"));
+		Assert.IsNull(props.GetValue<int?>("unit", "test"));
 	}
 }

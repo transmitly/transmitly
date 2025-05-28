@@ -30,13 +30,17 @@ public class ChannelProviderConfigurationBuilderTests
 	[TestMethod]
 	public void NewShouldRequireConfigurationBuilder()
 	{
-		Assert.ThrowsException<ArgumentNullException>(() => new ChannelProviderConfigurationBuilder(null, (opt) => { }));
+		ChannelProviderConfigurationBuilder? instance = null;
+		void builder() => instance = new ChannelProviderConfigurationBuilder(null, (opt) => { });
+		Assert.ThrowsExactly<ArgumentNullException>(builder);
 	}
 
 	[TestMethod]
 	public void NewShouldRequireAddMethod()
 	{
-		Assert.ThrowsException<ArgumentNullException>(() => new ChannelProviderConfigurationBuilder(new CommunicationsClientBuilder(), null));
+		ChannelProviderConfigurationBuilder? instance = null;
+		void builder() => instance = new ChannelProviderConfigurationBuilder(new CommunicationsClientBuilder(), null);
+		Assert.ThrowsExactly<ArgumentNullException>(builder);
 	}
 
 	[TestMethod()]
@@ -48,7 +52,7 @@ public class ChannelProviderConfigurationBuilderTests
 		var dispatcher = new Mock<IChannelProviderDispatcher<object>>();
 		var builder = new CommunicationsClientBuilder();
 		var providerBuilder = new ChannelProviderConfigurationBuilder(builder, fail_addConfirm);
-		Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add(value, dispatcher.Object.GetType(), typeof(object)));
+		Assert.ThrowsExactly<ArgumentNullException>(() => providerBuilder.Add(value, dispatcher.Object.GetType(), typeof(object)));
 	}
 
 	[TestMethod]
@@ -56,7 +60,7 @@ public class ChannelProviderConfigurationBuilderTests
 	{
 		var builder = new CommunicationsClientBuilder();
 		var providerBuilder = new ChannelProviderConfigurationBuilder(builder, fail_addConfirm);
-		Assert.ThrowsException<ArgumentNullException>(() => providerBuilder.Add("test", null, typeof(object)));
+		Assert.ThrowsExactly<ArgumentNullException>(() => providerBuilder.Add("test", null, typeof(object)));
 	}
 
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.

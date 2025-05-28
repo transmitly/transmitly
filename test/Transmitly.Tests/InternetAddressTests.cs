@@ -23,7 +23,7 @@ public class InternetAddressTests
 	[DataRow(null)]
 	public void ShouldRequireValue(string input)
 	{
-		Assert.ThrowsException<ArgumentNullException>(() => new IdentityAddress(input, "notnull"));
+		Assert.ThrowsExactly<ArgumentNullException>(() => new IdentityAddress(input, "notnull"));
 	}
 
 	[TestMethod()]
@@ -44,7 +44,7 @@ public class InternetAddressTests
 		const string expectedValue = "test";
 		IdentityAddress address = expectedValue;
 		Assert.AreEqual(expectedValue, address.Value);
-		Assert.AreEqual(null, address.Display);
+		Assert.IsNull(address.Display);
 	}
 
 	[TestMethod()]

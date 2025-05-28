@@ -51,7 +51,7 @@ public class SmsChannelTests : BaseUnitTest
 	{
 		var channel = fixture.Create<SmsChannel>();
 
-		await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => channel.GenerateCommunicationAsync(null!));
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => channel.GenerateCommunicationAsync(null!));
 	}
 
 	[TestMethod]
@@ -97,7 +97,7 @@ public class SmsChannelTests : BaseUnitTest
 		var sut = fixture.Create<SmsChannel>();
 		var body = fixture.Freeze<string>();
 
-		Assert.ThrowsExceptionAsync<CommunicationsException>(() => sut.GenerateCommunicationAsync(context));
+		Assert.ThrowsExactlyAsync<CommunicationsException>(() => sut.GenerateCommunicationAsync(context));
 	}
 
 	[TestMethod]

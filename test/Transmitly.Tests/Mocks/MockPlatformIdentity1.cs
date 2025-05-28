@@ -16,37 +16,27 @@ using Transmitly.Util;
 
 namespace Transmitly.Tests;
 
-internal sealed class TestChannelPreferences : IChannelPreference
-{
-	public ChannelPreferenceType Type { get; set; } = ChannelPreferenceType.Default;
-
-	public string? Category { get; set; }
-
-	public IReadOnlyCollection<string> Channels { get; set; } = [];
-}
-
-
-internal sealed record TestPlatformIdentity1 : IPlatformIdentityProfile
+internal sealed record MockPlatformIdentity1 : IPlatformIdentityProfile
 {
 	public string SomeValue => Id + "_Test";
 	public const string DefaultPlatformIdentityType = "test-identity-type";
 
-	public TestPlatformIdentity1(string? id, string platformIdentityAddressType = DefaultPlatformIdentityType, IEnumerable<string>? channelPreferences = null)
+	public MockPlatformIdentity1(string? id, string platformIdentityAddressType = DefaultPlatformIdentityType, IEnumerable<string>? channelPreferences = null)
 	{
 		Id = id ?? Guid.Empty.ToString();
 		Type = Guard.AgainstNullOrWhiteSpace(platformIdentityAddressType);
 
-		ChannelPreferences = [new TestChannelPreferences { Channels = [.. (channelPreferences ?? [])] }];
+		ChannelPreferences = [new MockChannelPreferences { Channels = [.. (channelPreferences ?? [])] }];
 	}
 
 
-	public TestPlatformIdentity1() : this(Guid.NewGuid(), DefaultPlatformIdentityType)
+	public MockPlatformIdentity1() : this(Guid.NewGuid(), DefaultPlatformIdentityType)
 	{
 
 	}
 
 
-	public TestPlatformIdentity1(Guid? id, string platformIdentityType = DefaultPlatformIdentityType) : this(id?.ToString(), platformIdentityType, null)
+	public MockPlatformIdentity1(Guid? id, string platformIdentityType = DefaultPlatformIdentityType) : this(id?.ToString(), platformIdentityType, null)
 	{
 
 	}

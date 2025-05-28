@@ -24,7 +24,7 @@ public class DelegateContentTemplateRegistrationTests
 	public void ShouldThrowIfDelegateNull()
 	{
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-		Assert.ThrowsException<ArgumentNullException>(() => new DelegateContentTemplateRegistration(null));
+		Assert.ThrowsExactly<ArgumentNullException>(() => new DelegateContentTemplateRegistration(null));
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 	}
 

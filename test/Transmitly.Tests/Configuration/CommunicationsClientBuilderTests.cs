@@ -26,7 +26,7 @@ public class CommunicationsClientBuilderTests
 	{
 		var configuration = new CommunicationsClientBuilder();
 		configuration.BuildClient();
-		Assert.ThrowsException<InvalidOperationException>(() => configuration.BuildClient());
+		Assert.ThrowsExactly<InvalidOperationException>(() => configuration.BuildClient());
 	}
 	class Test1 : IChannelProviderDispatcher<object>
 	{

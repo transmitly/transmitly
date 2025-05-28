@@ -12,8 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery;
+using Transmitly.PlatformIdentity.Configuration;
 
-internal sealed class DefaultDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers) : BaseDeliveryReportService(observers)
+namespace Transmitly.Tests.Identity;
+
+sealed class MockPlatformIdentityResolverRegistration : IPlatformIdentityResolverRegistration
 {
+	public string? PlatformIdentityType { get; set; }
+	public Type ResolverType { get; set; } = typeof(object);
 }
+

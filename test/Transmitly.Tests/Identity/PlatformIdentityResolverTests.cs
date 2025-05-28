@@ -12,15 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Tests.Integration;
 
 namespace Transmitly.Tests.Identity;
 
 [TestClass]
-public class PlatformIdentityResolverTests
+public partial class PlatformIdentityResolverTests
 {
 	[TestMethod]
-	public async Task MyTestMethod()
+	public async Task IdentityShouldBeResolved()
 	{
 		const string FromAddress = "unit-test-address-from";
 		const string PipelineName = "unit-test-pipeline";
@@ -40,7 +41,7 @@ public class PlatformIdentityResolverTests
 			options.AddChannel(channel);
 
 		}).
-		 AddPlatformIdentityResolver<TestPlatformIdentityRepository>();
+		 AddPlatformIdentityResolver<MockPlatformIdentityRepository>();
 
 		var client = builder.BuildClient();
 
@@ -48,9 +49,27 @@ public class PlatformIdentityResolverTests
 
 		Assert.IsNotNull(result);
 		Assert.IsTrue(result.IsSuccessful);
-		Assert.IsNotNull(result.Results);
+
 		Assert.AreEqual(1, result.Results.Count);
 		var singleResult = result.Results.First();
 		Assert.IsTrue(singleResult?.Status.IsSuccess());
+	}
+
+	[TestMethod]
+	public async Task GetAllResolversAsyncReturnsAllRegistrations()
+	{
+		var registrations = new List<IPlatformIdentityResolverRegistration>
+			{
+				new MockPlatformIdentityResolverRegistration { PlatformIdentityType = "TypeA" },
+				new MockPlatformIdentityResolverRegistration { PlatformIdentityType = "TypeB" }
+			};
+		var factory = new MockPlatformIdentityResolverRegistrationFactory(registrations);
+
+		var result = await factory.GetAllResolversAsync();
+
+		Assert.IsNotNull(result);
+		Assert.AreEqual(2, result.Count);
+		Assert.AreEqual("TypeA", result[0].PlatformIdentityType);
+		Assert.AreEqual("TypeB", result[1].PlatformIdentityType);
 	}
 }

@@ -16,7 +16,7 @@ using Transmitly.PlatformIdentity.Configuration;
 
 namespace Transmitly.Tests;
 
-internal sealed class TestPlatformIdentityRepository : IPlatformIdentityResolver
+internal sealed class MockPlatformIdentityRepository : IPlatformIdentityResolver
 {
 	private static bool _isFirst = true;
 	public Task<IReadOnlyCollection<IPlatformIdentityProfile>?> ResolveIdentityProfiles(IReadOnlyCollection<IPlatformIdentityReference> identityReferences)
@@ -26,7 +26,7 @@ internal sealed class TestPlatformIdentityRepository : IPlatformIdentityResolver
 		{
 			if (Guid.TryParse(refs.Id, out var parsedId))
 			{
-				results.Add(new TestPlatformIdentity1(parsedId) { IsPersona = _isFirst, Addresses = new List<IdentityAddress>() { new("unit-test-address"), new("unit-test-address2"), new("xxx") } });
+				results.Add(new MockPlatformIdentity1(parsedId) { IsPersona = _isFirst, Addresses = new List<IdentityAddress>() { new("unit-test-address"), new("unit-test-address2"), new("xxx") } });
 				_isFirst = false;
 			}
 		}

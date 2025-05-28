@@ -12,17 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly;
+namespace Transmitly.Extensions;
 
 ///Source=https://stackoverflow.com/a/39597587
 static class AsyncLinqExtensions
 {
 	public static async Task<bool> AllAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> predicate)
 	{
-
 #if NET6_0_OR_GREATER
-		ArgumentNullException.ThrowIfNull(nameof(source));
-		ArgumentNullException.ThrowIfNull(nameof(predicate));
+		ArgumentNullException.ThrowIfNull(source);
+		ArgumentNullException.ThrowIfNull(predicate);
 #else
 		if (source == null)
 			throw new ArgumentNullException(nameof(source));
@@ -43,8 +42,8 @@ static class AsyncLinqExtensions
 	public static async Task<bool> AllAsync<TSource>(this IEnumerable<Task<TSource>> source, Func<TSource, bool> predicate)
 	{
 #if NET6_0_OR_GREATER
-		ArgumentNullException.ThrowIfNull(nameof(source));
-		ArgumentNullException.ThrowIfNull(nameof(predicate));
+		ArgumentNullException.ThrowIfNull(source);
+		ArgumentNullException.ThrowIfNull(predicate);
 #else
 		if (source == null)
 			throw new ArgumentNullException(nameof(source));
