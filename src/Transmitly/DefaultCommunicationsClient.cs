@@ -60,7 +60,9 @@ public sealed class DefaultCommunicationsClient(
 
 	private async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<IPipeline> pipelines, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, CultureInfo? cultureInfo = null, CancellationToken cancellationToken = default)
 	{
-		var recipientContexts = await _dispatchCoordinatorService.CreateRecipientContexts(pipelines, platformIdentities, transactionalModel, dispatchChannelPreferences).ConfigureAwait(false);
+		var cultureInfoSafe = GuardCulture.AgainstNull(cultureInfo);
+
+		var recipientContexts = await _dispatchCoordinatorService.CreateRecipientContexts(pipelines, platformIdentities, transactionalModel, dispatchChannelPreferences, cultureInfoSafe).ConfigureAwait(false);
 
 		var allResults = new List<IDispatchCommunicationResult>(recipientContexts.Count);
 		foreach (var context in recipientContexts)

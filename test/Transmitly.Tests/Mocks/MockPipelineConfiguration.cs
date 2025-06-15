@@ -25,10 +25,14 @@ namespace Transmitly.Tests.Mocks
 		public IReadOnlyCollection<string> PersonaFilters => new List<string>();
 		public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider => null!;
 		public bool IsDispatchRequirementsAllowed => true;
+		public bool IsDispatchChannelPriorityPreferenceAllowed => true;
+
 		public IPipelineConfiguration AddChannel(IChannel channel) => this;
 		public IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider) => this;
 		public IPipelineConfiguration AddPersonaFilter(string personaName) => this;
 		public IPipelineConfiguration Id(string id) => this;
 		public IPipelineConfiguration AllowDispatchRequirements(bool allowed) => this;
+
+		public IPipelineConfiguration AllowDispatchChannelPriorityPreference(bool allowed) => this;
 	}
 }

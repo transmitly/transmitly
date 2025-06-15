@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Globalization;
 using Transmitly.ChannelProvider;
 using Transmitly.Pipeline.Configuration;
 
@@ -23,5 +24,6 @@ public interface IDispatchCoordinatorService
 		IReadOnlyCollection<IPipeline> pipelines,
 		IReadOnlyCollection<IPlatformIdentityProfile> platformIdentityProfiles,
 		ITransactionModel transactionalModel,
-		IReadOnlyCollection<string> dispatchChannelPreferences);
+		IReadOnlyCollection<string> dispatchChannelPreferences, 
+		CultureInfo cultureInfo);
 }

@@ -46,6 +46,11 @@ public interface IPipelineConfiguration
 	/// </summary>
 	bool IsDispatchRequirementsAllowed { get; }
 	/// <summary>
+	/// Whether the pipeline allows dispatch channel priority preference. (Default = True)
+	/// <para>To set value see <see cref="AllowDispatchChannelPriorityPreference(bool)"/></para>
+	/// </summary>
+	bool IsDispatchChannelPriorityPreferenceAllowed {get; } 
+	/// <summary>
 	/// Registers a communication channel with the pipeline.
 	/// </summary>
 	/// <param name="channel"><see cref="IChannelConfiguration"/> to register.</param>
@@ -74,4 +79,8 @@ public interface IPipelineConfiguration
 	/// </summary>
 	/// <returns>Pipeline configuration.</returns>
 	IPipelineConfiguration AllowDispatchRequirements(bool allowed);
+	/// <summary>
+	/// Allows the pipeline to use the dispatch channel priority preference when dispatching communications.
+	/// </summary>
+	IPipelineConfiguration AllowDispatchChannelPriorityPreference(bool allowed);
 }

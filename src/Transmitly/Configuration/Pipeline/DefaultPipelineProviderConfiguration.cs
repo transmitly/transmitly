@@ -26,7 +26,9 @@ internal sealed class DefaultPipelineProviderConfiguration : IPipelineConfigurat
 	public string? PipelineId { get; private set; }
 
 	public bool IsDispatchRequirementsAllowed { get; private set; } = true;
-	
+
+	public bool IsDispatchChannelPriorityPreferenceAllowed { get; private set; } = true;
+
 	public IReadOnlyCollection<string> PersonaFilters => _personaFilters.AsReadOnly();
 
 	public BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; private set; } = new FirstMatchPipelineDeliveryStrategy();
@@ -65,6 +67,12 @@ internal sealed class DefaultPipelineProviderConfiguration : IPipelineConfigurat
 	public IPipelineConfiguration AllowDispatchRequirements(bool allowed)
 	{
 		IsDispatchRequirementsAllowed = allowed;
+		return this;
+	}
+
+	public IPipelineConfiguration AllowDispatchChannelPriorityPreference(bool allowed)
+	{
+		IsDispatchChannelPriorityPreferenceAllowed = allowed;
 		return this;
 	}
 }

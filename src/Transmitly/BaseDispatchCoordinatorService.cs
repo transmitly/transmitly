@@ -36,8 +36,8 @@ public abstract class BaseDispatchCoordinatorService(
 		IReadOnlyCollection<IPipeline> pipelines,
 		IReadOnlyCollection<IPlatformIdentityProfile> platformIdentityProfiles,
 		ITransactionModel transactionalModel,
-		IReadOnlyCollection<string> dispatchChannelPreferences
-		)
+		IReadOnlyCollection<string> dispatchChannelPreferences,
+		CultureInfo cultureInfo)
 	{
 		var recipientContexts = new List<RecipientDispatchCommunicationContext>();
 		var templateEngine = _templateEngineFactory.Get();
@@ -55,14 +55,16 @@ public abstract class BaseDispatchCoordinatorService(
 					new[] { platformIdentity },
 					templateEngine,
 					_deliveryReportProvider,
-					CultureInfo.InvariantCulture,//todo
+					cultureInfo,
 					pipeline.Intent,
 					pipeline.Id,
 					pipelineConfiguration.PipelineDeliveryStrategyProvider);
 
+				var orderedChannels = SetPipelineChannelOrderPreference(dispatchChannelPreferences, pipelineConfiguration);
+
 				var group = await _channelChannelProviderService.CreateGroupingsForPlatformIdentityAsync(
 					pipeline.Category,
-					pipelineConfiguration.Channels,
+					orderedChannels,
 					dispatchChannelPreferences,
 					platformIdentity).ConfigureAwait(false);
 
@@ -74,5 +76,24 @@ public abstract class BaseDispatchCoordinatorService(
 		}
 
 		return recipientContexts.AsReadOnly();
+	}
+
+	private static IReadOnlyCollection<IChannel> SetPipelineChannelOrderPreference(IReadOnlyCollection<string> dispatchChannelPreferences, IPipelineConfiguration pipelineConfiguration)
+	{
+		var orderedChannels = pipelineConfiguration.Channels;
+
+		if (pipelineConfiguration.IsDispatchChannelPriorityPreferenceAllowed)
+		{
+			//order the pipeline channels by the order of the provided dispatchChannelPreferences
+			var preferenceIndexLookup = dispatchChannelPreferences
+				.Select((id, index) => new { id, index })
+				.ToDictionary(x => x.id, x => x.index, StringComparer.OrdinalIgnoreCase);
+
+			orderedChannels = pipelineConfiguration.Channels
+				.OrderBy(c => preferenceIndexLookup.TryGetValue(c.Id, out var index) ? index : int.MaxValue)
+				.ToList()
+				.AsReadOnly();
+		}
+		return orderedChannels;
 	}
 }

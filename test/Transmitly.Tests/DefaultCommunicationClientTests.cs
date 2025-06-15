@@ -144,6 +144,51 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(1, result.Results.Count);
+		Assert.AreEqual(Id.Channel.Voice(), result.Results?.First()?.ChannelId);
+	}
+
+	[TestMethod]
+	public async Task ShouldRestrictAllowedChannelProviderPreference()
+	{
+		const string PipelineIntent = "test-pipeline";
+		IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
+		var model = TransactionModel.Create(new { });
+
+		var tly = new CommunicationsClientBuilder()
+			.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, ISms>("sms-provider")
+			.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
+			.AddPipeline(PipelineIntent, options =>
+			{
+				options
+					.AllowDispatchChannelPriorityPreference(false)
+					.AddSms(sms =>
+					{
+						sms.Message.AddStringTemplate("SmsText");
+					})
+					.AddVoice(voice =>
+					{
+						voice.Message.AddStringTemplate("Voice");
+					});
+			})
+			.BuildClient();
+
+		var result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice()]);
+
+		Assert.IsTrue(result.IsSuccessful);
+		Assert.AreEqual(1, result.Results.Count);
+		Assert.AreEqual(Id.Channel.Voice(), result.Results?.First()?.ChannelId);
+
+		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Sms()]);
+		Assert.IsTrue(result.IsSuccessful);
+		Assert.AreEqual(1, result.Results.Count);
+		Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
+
+		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Email()]);
+		Assert.IsFalse(result.IsSuccessful);
+
+		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
+		Assert.IsTrue(result.IsSuccessful);
+		Assert.AreEqual(1, result.Results.Count);
 		Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
 	}
 
@@ -189,12 +234,9 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(2, result.Results.Count);
-		Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
-#pragma warning disable S2589 // Boolean expressions should not be gratuitous
-		Assert.AreEqual(Id.Channel.Voice(), result.Results?.Skip(1)?.First()?.ChannelId);
-#pragma warning restore S2589 // Boolean expressions should not be gratuitous
+		Assert.AreEqual(Id.Channel.Voice(), result.Results?.First()?.ChannelId);
+		Assert.AreEqual(Id.Channel.Sms(), result.Results?.Skip(1)?.First()?.ChannelId);
 	}
-
 
 	[TestMethod]
 	public async Task ShouldReturnPipelineNotFoundResultCode()
