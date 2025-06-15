@@ -139,8 +139,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 		Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
 
 		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Email()]);
-		Assert.IsTrue(result.IsSuccessful);
-		Assert.AreEqual(0, result.Results.Count);
+		Assert.IsFalse(result.IsSuccessful);
 
 		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
 		Assert.IsTrue(result.IsSuccessful);
@@ -185,8 +184,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 		Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
 
 		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Email()]);
-		Assert.IsTrue(result.IsSuccessful);
-		Assert.AreEqual(0, result.Results.Count);
+		Assert.IsFalse(result.IsSuccessful);
 
 		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
 		Assert.IsTrue(result.IsSuccessful);

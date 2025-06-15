@@ -16,5 +16,5 @@ namespace Transmitly.Pipeline.Configuration;
 
 public interface IPipelineService
 {
-	Task<PipelineLookupResult> GetMatchingPipelinesAsync(string pipelineIntent, string? pipelineId, IReadOnlyCollection<string> allowedChannelFilter);
+	Task<PipelineLookupResult> GetMatchingPipelinesAsync(string pipelineIntent, string? pipelineId, IReadOnlyCollection<string> allowedChannelFilter, CancellationToken cancellationToken = default);
 }

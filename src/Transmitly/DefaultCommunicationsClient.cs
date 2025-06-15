@@ -66,9 +66,10 @@ public sealed class DefaultCommunicationsClient(
 		foreach (var context in recipientContexts)
 		{
 			allResults.Add(await context.Context.StrategyProvider.DispatchAsync([context], cancellationToken).ConfigureAwait(false));
+
 			if (cancellationToken.IsCancellationRequested)
 			{
-				// If cancellation is requested, we stop processing further contexts.
+				allResults.Add(new DispatchCommunicationResult([new DispatchResult(PredefinedCommunicationStatuses.OperationCancelled)]));
 				break;
 			}
 		}
