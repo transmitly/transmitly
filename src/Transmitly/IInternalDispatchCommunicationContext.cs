@@ -63,12 +63,17 @@ internal interface IInternalDispatchCommunicationContext
 	IDeliveryReportService DeliveryReportManager { get; }
 
 	/// <summary>
-	/// Gets the template engine
+	/// Gets the template engine.
 	/// </summary>
 	ITemplateEngine TemplateEngine { get; }
 
 	/// <summary>
-	/// Gets the current pipeline name
+	/// Gets the current pipeline intent.
 	/// </summary>
-	string PipelineName { get; }
+	string PipelineIntent { get; }
+
+	/// <summary>
+	/// Gets the unique identifier of the pipeline.
+	/// </summary>
+	string? PipelineId { get; }
 }

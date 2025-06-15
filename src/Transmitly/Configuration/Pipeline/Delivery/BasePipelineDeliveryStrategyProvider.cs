@@ -51,7 +51,8 @@ public abstract class BasePipelineDeliveryStrategyProvider
 			context.TemplateEngine,
 			context.DeliveryReportManager,
 			context.CultureInfo,
-			context.PipelineName,
+			context.PipelineIntent,
+			context.PipelineId,
 			context.MessagePriority,
 			context.TransportPriority,
 			channel.Id,
@@ -107,7 +108,11 @@ public abstract class BasePipelineDeliveryStrategyProvider
 			if (results == null || results.Count == 0)
 				return [];
 
-			return results.Where(r => r != null).Select(r => new DispatchResult(r!, provider.Id, channel.Id)).ToList();
+			return results.Where(r => r != null).Select(r => new DispatchResult(r!, provider.Id, channel.Id)
+			{
+				PipelineIntent = context.PipelineIntent,
+				PipelineId = context.PipelineId
+			}).ToList();
 		}
 		catch (Exception ex)
 		{
@@ -118,7 +123,8 @@ public abstract class BasePipelineDeliveryStrategyProvider
 						DeliveryReport.Event.Error(),
 						channel.Id,
 						provider.Id,
-						context.PipelineName,
+						context.PipelineIntent,
+						context.PipelineId,
 						r!.ResourceId,
 						r.Status,
 						communication,

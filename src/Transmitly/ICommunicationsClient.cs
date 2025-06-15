@@ -22,9 +22,9 @@ namespace Transmitly;
 public interface ICommunicationsClient
 {
 	/// <summary>
-	/// Dispatches the communications for the provided pipeline name.
+	/// Dispatches the communications for the provided pipeline intent.
 	/// </summary>
-	/// <param name="pipelineName">Name of the pipeline.</param>
+	/// <param name="pipelineIntent">Intent of the pipeline.</param>
 	/// <param name="platformIdentities">Potential recipients of communications.</param>
 	/// <param name="transactionalModel">Model for the communications</param>
 	/// <param name="channelPreferences">Ids of channels preferences to use with channel and channel provider decisioning.</param>
@@ -32,11 +32,11 @@ public interface ICommunicationsClient
 	/// <param name="cultureInfo">Culture ISO.</param>
 	/// <returns>Dispatch results</returns>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default);
+	Task<IDispatchCommunicationResult> DispatchAsync(string pipelineIntent, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default);
 	/// <summary>
-	/// Dispatches the communications for the provided pipeline name.
+	/// Dispatches the communications for the provided pipeline intent.
 	/// </summary>
-	/// <param name="pipelineName">Name of the pipeline.</param>
+	/// <param name="pipelineIntent">Intent of the pipeline.</param>
 	/// <param name="identityReferences">Potential recipients of communications.</param>
 	/// <param name="transactionalModel">Model for the communications</param>
 	/// <param name="channelPreferences">Ids of channels preferences to use with channel and channel provider decisioning.</param>
@@ -44,7 +44,7 @@ public interface ICommunicationsClient
 	/// <param name="cultureInfo">Culture ISO.</param>
 	/// <returns>Dispatch results</returns>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default);
+	Task<IDispatchCommunicationResult> DispatchAsync(string pipelineIntent, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default);
 	/// <summary>
 	/// Delivers a single delivery report.
 	/// </summary>

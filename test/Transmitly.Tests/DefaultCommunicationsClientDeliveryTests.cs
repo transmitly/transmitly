@@ -12,11 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Transmitly;
 using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
@@ -49,7 +45,7 @@ public class DefaultCommunicationsDeliveryClientTests
 	public async Task DispatchAsyncSingleReportCallsDeliveryReportService()
 	{
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-		var report = new DeliveryReport("Event", null, null, null, null, null, null, null, null);
+		var report = new DeliveryReport("Event", null, null, null, null, null, null, null, null, null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 		_deliveryReportServiceMock!
 			.Setup(s => s.DispatchAsync(report))
@@ -67,8 +63,8 @@ public class DefaultCommunicationsDeliveryClientTests
 		var reports = new List<DeliveryReport>
 			{
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-				new("Event1", null, null, null, null, null, null, null, null),
-				new("Event2", null, null, null, null, null, null, null, null)
+				new("Event1", null, null, null, null, null, null, null, null, null),
+				new("Event2", null, null, null, null, null, null, null, null, null)
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 			};
 		_deliveryReportServiceMock!

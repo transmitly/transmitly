@@ -26,7 +26,7 @@ public abstract class ChannelProviderDispatcher<TCommunication> : IChannelProvid
 	public virtual void DispatchReport(string eventName, IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults)
 	{
 		foreach (var result in dispatchResults.Where(r => r != null))
-			context.DeliveryReportManager.DispatchAsync(new DeliveryReport(eventName, context.ChannelId, context.ChannelProviderId, context.PipelineName, result!.ResourceId, result.Status, communication, context.ContentModel, result.Exception));
+			context.DeliveryReportManager.DispatchAsync(new DeliveryReport(eventName, context.ChannelId, context.ChannelProviderId, context.PipelineIntent, context.PipelineId, result!.ResourceId, result.Status, communication, context.ContentModel, result.Exception));
 	}
 
 	public virtual void Dispatch(IDispatchCommunicationContext context, TCommunication communication) =>

@@ -100,7 +100,7 @@ public class EmailChannelTests : BaseUnitTest
 		var channel = new EmailChannel(sut);
 		var result = await channel.GenerateCommunicationAsync(context);
 
-		Assert.IsInstanceOfType(result, typeof(IEmail));
+		Assert.IsInstanceOfType<IEmail>(result);
 		Assert.IsNotNull(sut.FromAddressResolver);
 		Assert.AreEqual(sut.FromAddressResolver(context), result.From);
 		Assert.AreEqual(body, result.HtmlBody);

@@ -57,6 +57,7 @@ public abstract class BaseDispatchCoordinatorService(
 					_deliveryReportProvider,
 					CultureInfo.InvariantCulture,//todo
 					pipeline.Intent,
+					pipeline.Id,
 					pipelineConfiguration.PipelineDeliveryStrategyProvider);
 
 				var group = await _channelChannelProviderService.CreateGroupingsForPlatformIdentityAsync(

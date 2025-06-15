@@ -27,7 +27,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	[DataRow("")]
 	[DataRow(" ")]
 	[DataRow(null)]
-	public void ShouldGuardEmptyPipelineName(string value)
+	public void ShouldGuardEmptyPipelineIntent(string value)
 	{
 		var (pipeline, coordinator, identity, reportHandler) = GetStores();
 
@@ -106,14 +106,14 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	[TestMethod]
 	public async Task ShouldRespectAllowedChannelProviderPreference()
 	{
-		const string PipelineName = "test-pipeline";
+		const string PipelineIntent = "test-pipeline";
 		IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 		var model = TransactionModel.Create(new { });
 
 		var tly = new CommunicationsClientBuilder()
 			.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, ISms>("sms-provider")
 			.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
-			.AddPipeline(PipelineName, options =>
+			.AddPipeline(PipelineIntent, options =>
 			{
 				options
 					.AddSms(sms =>
@@ -127,22 +127,22 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 			})
 			.BuildClient();
 
-		var result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Voice()]);
+		var result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice()]);
 
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(1, result.Results.Count);
 		Assert.AreEqual(Id.Channel.Voice(), result.Results?.First()?.ChannelId);
 
-		result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Sms()]);
+		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Sms()]);
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(1, result.Results.Count);
 		Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
 
-		result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Email()]);
+		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Email()]);
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(0, result.Results.Count);
 
-		result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
+		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(1, result.Results.Count);
 		Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
@@ -151,14 +151,14 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	[TestMethod]
 	public async Task ShouldRespectAllowedChannelProviderPreferenceAnyDeliveryStrategy()
 	{
-		const string PipelineName = "test-pipeline";
+		const string PipelineIntent = "test-pipeline";
 		IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 		var model = TransactionModel.Create(new { });
 
 		var tly = new CommunicationsClientBuilder()
 			.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, ISms>("sms-provider")
 			.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
-			.AddPipeline(PipelineName, options =>
+			.AddPipeline(PipelineIntent, options =>
 			{
 				options
 					.AddSms(sms =>
@@ -173,22 +173,22 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 			})
 			.BuildClient();
 
-		var result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Voice()]);
+		var result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice()]);
 
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(1, result.Results.Count);
 		Assert.AreEqual(Id.Channel.Voice(), result.Results?.First()?.ChannelId);
 
-		result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Sms()]);
+		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Sms()]);
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(1, result.Results.Count);
 		Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
 
-		result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Email()]);
+		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Email()]);
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(0, result.Results.Count);
 
-		result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
+		result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice(), Id.Channel.Sms()]);
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(2, result.Results.Count);
 		Assert.AreEqual(Id.Channel.Sms(), result.Results?.First()?.ChannelId);
@@ -201,13 +201,13 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	[TestMethod]
 	public async Task ShouldReturnPipelineNotFoundResultCode()
 	{
-		const string PipelineName = "test-pipeline";
+		const string PipelineIntent = "test-pipeline";
 		IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 		var model = TransactionModel.Create(new { });
 
 		var tly = new CommunicationsClientBuilder()
 			.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
-			.AddPipeline(PipelineName, options => { })
+			.AddPipeline(PipelineIntent, options => { })
 			.BuildClient();
 
 
@@ -223,16 +223,16 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	[TestMethod]
 	public async Task ShouldReturnChannelFiltersNotAllowedWhenChannelFiltersDisabled()
 	{
-		const string PipelineName = "test-pipeline";
+		const string PipelineIntent = "test-pipeline";
 		IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 		var model = TransactionModel.Create(new { });
 
 		var tly = new CommunicationsClientBuilder()
 			.ChannelProvider.Add<MinimalConfigurationTestChannelProviderDispatcher, IVoice>("voice-provider")
-			.AddPipeline(PipelineName, options => { options.AllowDispatchRequirements(false); })
+			.AddPipeline(PipelineIntent, options => { options.AllowDispatchRequirements(false); })
 			.BuildClient();
 
-		var result = await tly.DispatchAsync(PipelineName, testRecipients, model, [Id.Channel.Voice()]);
+		var result = await tly.DispatchAsync(PipelineIntent, testRecipients, model, [Id.Channel.Voice()]);
 
 		Assert.IsFalse(result.IsSuccessful);
 		Assert.AreEqual(1, result.Results.Count);

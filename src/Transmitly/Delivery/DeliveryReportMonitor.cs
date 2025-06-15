@@ -19,7 +19,7 @@ internal class DeliveryReportMonitor : IObserver<DeliveryReport>
 	private readonly IReadOnlyCollection<string> _restrictedToEventNames;
 	private readonly IReadOnlyCollection<string> _restrictedToChannelIds;
 	private readonly IReadOnlyCollection<string> _restrictedToChannelProviderIds;
-	private readonly IReadOnlyCollection<string> _restrictedToPipelineNames;
+	private readonly IReadOnlyCollection<string> _restrictedToPipelineIntents;
 
 	private readonly IObserver<DeliveryReport>? _observer;
 	private IDisposable? _cancellation;
@@ -28,8 +28,8 @@ internal class DeliveryReportMonitor : IObserver<DeliveryReport>
 		IReadOnlyCollection<string>? restrictedToEventNames = null,
 		IReadOnlyCollection<string>? restrictedToChannelIds = null,
 		IReadOnlyCollection<string>? restrictedToChannelProviderIds = null,
-		IReadOnlyCollection<string>? restrictedToPipelineNames = null)
-			: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineNames)
+		IReadOnlyCollection<string>? restrictedToPipelineIntents = null)
+			: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineIntents)
 	{
 		_observer = Guard.AgainstNull(reportObservable);
 	}
@@ -39,8 +39,8 @@ internal class DeliveryReportMonitor : IObserver<DeliveryReport>
 		IReadOnlyCollection<string>? restrictedToEventNames = null,
 		IReadOnlyCollection<string>? restrictedToChannelIds = null,
 		IReadOnlyCollection<string>? restrictedToChannelProviderIds = null,
-		IReadOnlyCollection<string>? restrictedToPipelineNames = null)
-			: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineNames)
+		IReadOnlyCollection<string>? restrictedToPipelineIntents = null)
+			: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineIntents)
 	{
 
 		_observer = new DeliveryReportAsyncHandlerObserver(Guard.AgainstNull(reportHandler));
@@ -50,12 +50,12 @@ internal class DeliveryReportMonitor : IObserver<DeliveryReport>
 		IReadOnlyCollection<string>? restrictedToEventNames,
 		IReadOnlyCollection<string>? restrictedToChannelIds,
 		IReadOnlyCollection<string>? restrictedToChannelProviderIds,
-		IReadOnlyCollection<string>? restrictedToPipelineNames)
+		IReadOnlyCollection<string>? restrictedToPipelineIntents)
 	{
 		_restrictedToEventNames = restrictedToEventNames ?? [];//Empty = Any
 		_restrictedToChannelIds = restrictedToChannelIds ?? [];
 		_restrictedToChannelProviderIds = restrictedToChannelProviderIds ?? [];
-		_restrictedToPipelineNames = restrictedToPipelineNames ?? [];
+		_restrictedToPipelineIntents = restrictedToPipelineIntents ?? [];
 	}
 
 	public virtual void Subscribe(IObservable<DeliveryReport> provider) =>
@@ -96,7 +96,7 @@ internal class DeliveryReportMonitor : IObserver<DeliveryReport>
 		if (_restrictedToChannelProviderIds.Count != 0 && value.ChannelProviderId != null && !_restrictedToChannelProviderIds.Any(c => c.Equals(value.ChannelProviderId, StringComparison.OrdinalIgnoreCase)))
 			return false;
 
-		if (_restrictedToPipelineNames.Count != 0 && !string.IsNullOrWhiteSpace(value.PipelineName) && !_restrictedToPipelineNames.Any(e => e.Equals(value.PipelineName, StringComparison.OrdinalIgnoreCase)))
+		if (_restrictedToPipelineIntents.Count != 0 && !string.IsNullOrWhiteSpace(value.PipelineIntent) && !_restrictedToPipelineIntents.Any(e => e.Equals(value.PipelineIntent, StringComparison.OrdinalIgnoreCase)))
 			return false;
 
 		return true;

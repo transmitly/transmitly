@@ -12,8 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Diagnostics;
+
 namespace Transmitly;
 
+[DebuggerStepThrough]
 public sealed record IdentityReference : IPlatformIdentityReference
 {
 	public IdentityReference(string type, string id)

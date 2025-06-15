@@ -12,11 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Transmitly.Delivery;
 using Transmitly.Tests.Mocks;
@@ -34,6 +29,7 @@ namespace Transmitly.Tests.Delivery
 				"ChannelId",
 				"ProviderId",
 				"Pipeline",
+				"PipelineId",
 				"ResourceId",
 				CommunicationsStatus.Info("Test", "Info"),
 				null,

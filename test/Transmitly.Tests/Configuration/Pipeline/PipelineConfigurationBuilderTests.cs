@@ -23,7 +23,7 @@ public class PipelineConfiguratorTests
 	[TestMethod]
 	public void PipelineConfiguratorShouldConfigureChannelConfig()
 	{
-		const string expectedPipelineName = "test-name";
+		const string expectedPipelineIntent = "test-name";
 		const string expectedPipelineCategory = "test-category";
 
 		var config = new DefaultPipelineProviderConfiguration();
@@ -31,7 +31,7 @@ public class PipelineConfiguratorTests
 		{
 			CallBase = true
 		};
-		configurator.Setup(x => x.Name).Returns(expectedPipelineName);
+		configurator.Setup(x => x.Name).Returns(expectedPipelineIntent);
 		configurator.Setup(x => x.Category).Returns(expectedPipelineCategory);
 
 		var channel = new UnitTestChannel("unit-test-address");
@@ -50,7 +50,7 @@ public class PipelineConfiguratorTests
 	[TestMethod()]
 	public async Task ShouldAddPipelineConfigurator()
 	{
-		const string expectedPipelineName = "test-name";
+		const string expectedPipelineIntent = "test-name";
 		const string expectedPipelineCategory = "test-category";
 		const string expectedChannelProviderId = "test-channel-provider";
 		const string expectedChannelId = "unit-test-channel";
@@ -60,7 +60,7 @@ public class PipelineConfiguratorTests
 			CallBase = true
 		};
 
-		configurator.Setup(x => x.Name).Returns(expectedPipelineName);
+		configurator.Setup(x => x.Name).Returns(expectedPipelineIntent);
 
 		configurator.Setup(x => x.Category).Returns(expectedPipelineCategory);
 		configurator.Setup(x => x.Configure(It.IsAny<IPipelineConfiguration>())).Callback<IPipelineConfiguration>((config) =>
@@ -75,7 +75,7 @@ public class PipelineConfiguratorTests
 		Assert.IsNotNull(result);
 		Assert.AreSame(builder, result);
 		var client = result.BuildClient();
-		var sentResult = await client.DispatchAsync(expectedPipelineName, "unit-test-address", new { });
+		var sentResult = await client.DispatchAsync(expectedPipelineIntent, "unit-test-address", new { });
 		Assert.AreEqual(1, sentResult.Results.Count);
 		Assert.IsTrue(sentResult.IsSuccessful);
 		Assert.IsTrue(sentResult.Results.All(x => x?.Status.IsSuccess() ?? false));

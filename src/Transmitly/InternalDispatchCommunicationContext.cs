@@ -25,7 +25,8 @@ internal class InternalDispatchCommunicationContext(ITransactionModel? transacti
 	ITemplateEngine templateEngine,
 	IDeliveryReportService deliveryReportManager,
 	CultureInfo cultureInfo,
-	string pipelineName,
+	string pipelineIntent,
+	string? pipelineId,
 	BasePipelineDeliveryStrategyProvider strategyProvider,
 	MessagePriority messagePriority = MessagePriority.Normal,
 	TransportPriority transportPriority = TransportPriority.Normal) : IInternalDispatchCommunicationContext
@@ -48,7 +49,9 @@ internal class InternalDispatchCommunicationContext(ITransactionModel? transacti
 
 	public IDeliveryReportService DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
 
-	public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);
+	public string PipelineIntent { get; } = Guard.AgainstNullOrWhiteSpace(pipelineIntent);
+
+	public string? PipelineId => pipelineId;
 
 	public BasePipelineDeliveryStrategyProvider StrategyProvider { get; } = Guard.AgainstNull(strategyProvider);
 }

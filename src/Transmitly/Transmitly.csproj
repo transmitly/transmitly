@@ -51,6 +51,10 @@
 		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD;FEATURE_SOURCE_GEN</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
+		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD;FEATURE_SOURCE_GEN</DefineConstants>
+	</PropertyGroup>
+
 	<PropertyGroup>
 		<NoWarn>1701;1702;1591</NoWarn>
 	</PropertyGroup>
@@ -61,6 +65,7 @@
 		<Reference Include="System.Net.Http" />
 		<Reference Include="System.Web" />
 		<Reference Include="Microsoft.CSharp" />
+		<Using Remove="System.Net.Http" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />

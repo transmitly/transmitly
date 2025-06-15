@@ -25,15 +25,15 @@ public sealed class DeliveryReportConfigurationBuilder
 		_addDeliveryReportMonitor = Guard.AgainstNull(addDeliveryReportObserver);
 	}
 
-	public CommunicationsClientBuilder AddDeliveryReportHandler(IObserver<DeliveryReport> reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? channelIds = null, IReadOnlyCollection<string>? channelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
+	public CommunicationsClientBuilder AddDeliveryReportHandler(IObserver<DeliveryReport> reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? channelIds = null, IReadOnlyCollection<string>? channelProviderIds = null, IReadOnlyCollection<string>? filterPipelineIntents = null)
 	{
-		_addDeliveryReportMonitor(new DeliveryReportMonitor(reportHandler, filterEventNames, channelIds, channelProviderIds, filterPipelineNames));
+		_addDeliveryReportMonitor(new DeliveryReportMonitor(reportHandler, filterEventNames, channelIds, channelProviderIds, filterPipelineIntents));
 		return _communicationsClientBuilder;
 	}
 
-	public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
+	public CommunicationsClientBuilder AddDeliveryReportHandler(DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineIntents = null)
 	{
-		_addDeliveryReportMonitor(new DeliveryReportMonitor(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames));
+		_addDeliveryReportMonitor(new DeliveryReportMonitor(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineIntents));
 		return _communicationsClientBuilder;
 	}
 }

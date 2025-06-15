@@ -65,21 +65,26 @@ public interface IDispatchCommunicationContext
 	IDeliveryReportService DeliveryReportManager { get; }
 
 	/// <summary>
-	/// Gets the channel Id 
+	/// Gets the channel Id. 
 	/// </summary>
 	string? ChannelId { get; }
 	/// <summary>
-	/// Gets the channel provider Id 
+	/// Gets the channel provider Id. 
 	/// </summary>
 	string? ChannelProviderId { get; }
 
 	/// <summary>
-	/// Gets the template engine
+	/// Gets the template engine.
 	/// </summary>
 	ITemplateEngine TemplateEngine { get; }
 
 	/// <summary>
-	/// Gets the current pipeline name
+	/// Gets the current pipeline intent.
 	/// </summary>
-	string PipelineName { get; }
+	string PipelineIntent { get; }
+
+	/// <summary>
+	/// Gets the unique identifier for the pipeline.
+	/// </summary>
+	string? PipelineId { get; }
 }

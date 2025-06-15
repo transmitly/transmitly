@@ -19,16 +19,16 @@ namespace Transmitly.Delivery;
 public static class DeliveryUtil
 {
 	public const string ResourceIdKey = "tlyr";
-	public const string PipelineNameKey = "tlyp";
+	public const string PipelineIntentKey = "tlyp";
 	public const string ChannelIdKey = "tlyc";
 	public const string ChannelProviderIdKey = "tlycp";
 	public const string EventIdKey = "tlye";
 
-	public static Uri AddPipelineContext(this Uri url, string resourceId, string pipelineName, string channel, string channelProvider)
+	public static Uri AddPipelineContext(this Uri url, string resourceId, string pipelineIntent, string channel, string channelProvider)
 	{
 		return Guard.AgainstNull(url)
 			.AddParameter(ResourceIdKey, resourceId)
-			.AddParameter(PipelineNameKey, pipelineName)
+			.AddParameter(PipelineIntentKey, pipelineIntent)
 			.AddParameter(ChannelIdKey, channel)
 			.AddParameter(ChannelProviderIdKey, channelProvider)
 			.AddParameter(EventIdKey, Guid.NewGuid().ToString("N"));

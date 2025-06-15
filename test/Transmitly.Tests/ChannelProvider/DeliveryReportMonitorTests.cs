@@ -26,8 +26,8 @@ public class DeliveryReportMonitorTests
 		var handler = new Mock<IObserver<DeliveryReport>>();
 		handler.Setup(s => s.OnNext(It.IsAny<DeliveryReport>())).Verifiable(Times.Exactly(1));
 		var monitor = new DeliveryReportMonitor(handler.Object, ["test"]);
-		monitor.OnNext(new DeliveryReport("test", null, null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
-		monitor.OnNext(new DeliveryReport("test-2", null, null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		monitor.OnNext(new DeliveryReport("test", null, null, null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		monitor.OnNext(new DeliveryReport("test-2", null, null, null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
 		await Task.Delay(10);//Delivery report calls are thrown out as tasks
 		handler.Verify();
 	}
@@ -38,8 +38,8 @@ public class DeliveryReportMonitorTests
 		var handler = new Mock<IObserver<DeliveryReport>>();
 		handler.Setup(s => s.OnNext(It.IsAny<DeliveryReport>())).Verifiable(Times.Exactly(1));
 		var monitor = new DeliveryReportMonitor(handler.Object, null, ["channel"], null);
-		monitor.OnNext(new DeliveryReport("test", "channel", null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
-		monitor.OnNext(new DeliveryReport("test", "channel-2", null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		monitor.OnNext(new DeliveryReport("test", "channel", null, null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		monitor.OnNext(new DeliveryReport("test", "channel-2", null, null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
 		await Task.Delay(10);//Delivery report calls are thrown out as tasks
 		handler.Verify();
 	}
@@ -50,8 +50,8 @@ public class DeliveryReportMonitorTests
 		var handler = new Mock<IObserver<DeliveryReport>>();
 		handler.Setup(s => s.OnNext(It.IsAny<DeliveryReport>())).Verifiable(Times.Exactly(1));
 		var monitor = new DeliveryReportMonitor(handler.Object, null, null, ["provider"]);
-		monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
-		monitor.OnNext(new DeliveryReport("test", "channel-2", "provider-2", null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		monitor.OnNext(new DeliveryReport("test", "channel-2", "provider-2", null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
 		await Task.Delay(10);//Delivery report calls are thrown out as tasks
 		handler.Verify();
 	}
@@ -62,8 +62,8 @@ public class DeliveryReportMonitorTests
 		var handler = new Mock<IObserver<DeliveryReport>>();
 		handler.Setup(s => s.OnNext(It.IsAny<DeliveryReport>())).Verifiable(Times.Exactly(1));
 		var monitor = new DeliveryReportMonitor(handler.Object, ["test-2"], ["channel-2"], ["provider-2"]);
-		monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
-		monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-2", null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-2", null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
 		await Task.Delay(10);//Delivery report calls are thrown out as tasks
 		handler.Verify();
 	}
@@ -74,10 +74,10 @@ public class DeliveryReportMonitorTests
 		var handler = new Mock<IObserver<DeliveryReport>>();
 		handler.Setup(s => s.OnNext(It.IsAny<DeliveryReport>())).Verifiable(Times.Exactly(3));
 		var monitor = new DeliveryReportMonitor(handler.Object);
-		monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
-		monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-2", null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
-		monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-3", null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
-		await Task.Delay(10);//Delivery report calls are thrown out as tasks
+		monitor.OnNext(new DeliveryReport("test", "channel", "provider", null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-2", null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		monitor.OnNext(new DeliveryReport("test-2", "channel-2", "provider-3", null, null, null, PredefinedCommunicationStatuses.Unknown, null, null, null));
+		await Task.Delay(25);//Delivery report calls are thrown out as tasks
 		handler.Verify();
 	}
 }

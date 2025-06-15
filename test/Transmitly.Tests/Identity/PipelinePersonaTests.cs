@@ -25,7 +25,7 @@ public class PipelinePersonaTests
 	public async Task PipelineShouldOnlyFireForMatchingPersonas()
 	{
 		const string FromAddress = "unit-test-address-from";
-		const string PipelineName = "unit-test-pipeline";
+		const string PipelineIntent = "unit-test-pipeline";
 		const string ChannelProviderId = "unit-test-channel-provider";
 		const string ExpectedMessage = "Your OTP Code: {{Code}}";
 		const string ChannelId = "unit-test-channel";
@@ -37,7 +37,7 @@ public class PipelinePersonaTests
 				ChannelProviderId,
 				ChannelId, ChannelId
 			 ).
-			AddPipeline(PipelineName, options =>
+			AddPipeline(PipelineIntent, options =>
 			{
 				var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
 				channel.Configuration.Subject.AddStringTemplate(ExpectedMessage);
@@ -50,7 +50,7 @@ public class PipelinePersonaTests
 
 		var client = builder.BuildClient();
 
-		var result = await client.DispatchAsync(PipelineName, [new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString()), new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
+		var result = await client.DispatchAsync(PipelineIntent, [new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString()), new IdentityReference(PlatformIdentityType, Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
 
 		Assert.IsNotNull(result);
 		Assert.IsTrue(result.IsSuccessful);

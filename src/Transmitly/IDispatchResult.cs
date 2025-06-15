@@ -22,6 +22,6 @@ public interface IDispatchResult
 	string? ChannelProviderId { get; }
 	string? ChannelId { get; }
 	string? PipelineId { get; }
-	string? PipelineName { get; }
+	string? PipelineIntent { get; }
 	Exception? Exception { get; }
 }

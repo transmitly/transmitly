@@ -24,7 +24,7 @@ public partial class PlatformIdentityResolverTests
 	public async Task IdentityShouldBeResolved()
 	{
 		const string FromAddress = "unit-test-address-from";
-		const string PipelineName = "unit-test-pipeline";
+		const string PipelineIntent = "unit-test-pipeline";
 		const string ChannelProviderId = "unit-test-channel-provider";
 		const string ExpectedMessage = "Your OTP Code: {{Code}}";
 		const string ChannelId = "unit-test-channel";
@@ -34,7 +34,7 @@ public partial class PlatformIdentityResolverTests
 			ChannelProviderId,
 			ChannelId, ChannelId
 		 ).
-		AddPipeline(PipelineName, options =>
+		AddPipeline(PipelineIntent, options =>
 		{
 			var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
 			channel.Configuration.Subject.AddStringTemplate(ExpectedMessage);
@@ -45,7 +45,7 @@ public partial class PlatformIdentityResolverTests
 
 		var client = builder.BuildClient();
 
-		var result = await client.DispatchAsync(PipelineName, [new IdentityReference("test-identity", Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
+		var result = await client.DispatchAsync(PipelineIntent, [new IdentityReference("test-identity", Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
 
 		Assert.IsNotNull(result);
 		Assert.IsTrue(result.IsSuccessful);

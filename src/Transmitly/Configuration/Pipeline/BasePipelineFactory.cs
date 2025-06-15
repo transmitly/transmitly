@@ -26,19 +26,16 @@ public abstract class BasePipelineFactory(IEnumerable<IPipeline> pipelines) : IP
 		return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelines);
 	}
 
-	public virtual Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string? pipelineId = null)
+	public virtual Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineIntent, string? pipelineId = null)
 	{
-		Guard.AgainstNullOrWhiteSpace(pipelineName);
+		Guard.AgainstNullOrWhiteSpace(pipelineIntent);
 
 		return Task.FromResult<IReadOnlyCollection<IPipeline>>(
 			_pipelines.Where(x =>
-				x.Intent == pipelineName &&
+				x.Intent == pipelineIntent &&
 				(
-					string.IsNullOrEmpty(pipelineId) ||
-					(
-						!string.IsNullOrWhiteSpace(pipelineId) &&
-						x.Id == pipelineId
-					)
+					string.IsNullOrEmpty(pipelineId) || 
+					x.Id == pipelineId
 				)
 			)
 			.ToList()

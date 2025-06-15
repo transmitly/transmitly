@@ -44,10 +44,10 @@ public class PipelineFactoryTests
 	public async Task GetAsync_ReturnsPipelineRegistrationByName()
 	{
 		// Arrange
-		var pipelineName = "example";
+		var pipelineIntent = "example";
 
 		// Act
-		var result = await _pipelineRegistrationStore.GetAsync(pipelineName);
+		var result = await _pipelineRegistrationStore.GetAsync(pipelineIntent);
 
 		// Assert
 		Assert.IsNotNull(result);

@@ -49,11 +49,11 @@ public static class CommunicationClientBuilderExtensions
 	/// <param name="filterEventNames">List of events to listen to. See <see cref="DeliveryReport.Event"/></param>
 	/// <param name="filterChannelIds">List of channel ids to listen to. See <see cref="Id.Channel"/></param>
 	/// <param name="filterChannelProviderIds">List of channel provider ids to listen to. See <see cref="Id.ChannelProvider"/></param>
-	/// <param name="filterPipelineNames">List of pipeline names to listen to.</param>
+	/// <param name="filterPipelineIntents">List of pipeline intents to listen to.</param>
 	/// <returns>The configuration builder.</returns>
-	public static CommunicationsClientBuilder AddDeliveryReportHandler(this CommunicationsClientBuilder builder, DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineNames = null)
+	public static CommunicationsClientBuilder AddDeliveryReportHandler(this CommunicationsClientBuilder builder, DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineIntents = null)
 	{
-		return builder.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineNames);
+		return builder.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineIntents);
 	}
 
 }

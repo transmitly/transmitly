@@ -52,5 +52,5 @@ public sealed class DispatchResult : IDispatchResult
 
 	public string? PipelineId {get;internal set; }
 
-	public string? PipelineName { get; internal set; }
+	public string? PipelineIntent { get; internal set; }
 }

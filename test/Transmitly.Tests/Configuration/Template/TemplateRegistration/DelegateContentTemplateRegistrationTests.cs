@@ -23,15 +23,11 @@ public class DelegateContentTemplateRegistrationTests
 	[TestMethod()]
 	public void ShouldThrowIfDelegateNull()
 	{
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-		Assert.ThrowsExactly<ArgumentNullException>(() => new DelegateContentTemplateRegistration(null));
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+		Assert.ThrowsExactly<ArgumentNullException>(() => _ = new DelegateContentTemplateRegistration(null!));
 	}
 
-#pragma warning restore CS8604 // Possible null reference argument.
-
 	[TestMethod()]
-	public async Task ShouldReturnesourceContent()
+	public async Task ShouldReturnResourceContent()
 	{
 		const string expected = "OK";
 		var template = new DelegateContentTemplateRegistration((context) =>

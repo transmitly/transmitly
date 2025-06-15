@@ -27,14 +27,15 @@ internal class DispatchCommunicationContext(
 	ITemplateEngine templateEngine,
 	IDeliveryReportService deliveryReportManager,
 	CultureInfo cultureInfo,
-	string pipelineName,
+	string pipelineIntent,
+	string? pipelineId,
 	MessagePriority messagePriority = MessagePriority.Normal,
 	TransportPriority transportPriority = TransportPriority.Normal,
 	string? ChannelId = null, string? ChannelProviderId = null) : IDispatchCommunicationContext
 {
 	public DispatchCommunicationContext(IDispatchCommunicationContext context, IChannel channel, IChannelProvider channelProvider)
 		: this(context.ContentModel, context.ChannelConfiguration, context.PlatformIdentities, context.TemplateEngine, context.DeliveryReportManager,
-			  context.CultureInfo, context.PipelineName, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
+			  context.CultureInfo, context.PipelineIntent, context.PipelineId, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
 	{
 
 	}
@@ -59,7 +60,9 @@ internal class DispatchCommunicationContext(
 
 	public IDeliveryReportService DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
 
-	public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);
+	public string PipelineIntent { get; } = Guard.AgainstNullOrWhiteSpace(pipelineIntent);
+
+	public string? PipelineId { get; } = pipelineId;
 
 	public IContentModel? ContentModel { get; set; } = contentModel;
 }

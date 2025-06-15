@@ -23,7 +23,7 @@ public class InternetAddressTests
 	[DataRow(null)]
 	public void ShouldRequireValue(string input)
 	{
-		Assert.ThrowsExactly<ArgumentNullException>(() => new IdentityAddress(input, "notnull"));
+		Assert.ThrowsExactly<ArgumentNullException>(() => _ = new IdentityAddress(input, "notnull"));
 	}
 
 	[TestMethod()]

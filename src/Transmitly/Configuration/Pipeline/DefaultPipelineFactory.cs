@@ -30,18 +30,14 @@ public sealed class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegist
 		return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelineRegistrations);
 	}
 
-	public Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName, string? pipelineId = null)
+	public Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineIntent, string? pipelineId = null)
 	{
 		return Task.FromResult<IReadOnlyCollection<IPipeline>>(
 			_pipelineRegistrations
 			.Where(x =>
-				x.Intent == pipelineName &&
+				x.Intent == pipelineIntent &&
 				(
-					string.IsNullOrWhiteSpace(pipelineId) ||
-					(
-						!string.IsNullOrWhiteSpace(pipelineId) &&
-						x.Id == pipelineId
-					)
+					string.IsNullOrWhiteSpace(pipelineId) || x.Id == pipelineId
 				)
 			)
 			.ToList()

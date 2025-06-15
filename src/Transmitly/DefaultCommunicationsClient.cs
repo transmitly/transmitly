@@ -12,6 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Globalization;
 using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
@@ -37,32 +38,53 @@ public sealed class DefaultCommunicationsClient(
 		Guard.AgainstNull(transactionalModel);
 		Guard.AgainstNull(platformIdentities);
 
-		var culture = GuardCulture.AgainstNull(cultureInfo);
+		var (matchingPipelines, errors) = await LookupPipelinesAsync(pipelineIntent, pipelineId, dispatchChannelPreferences).ConfigureAwait(false);
 
-		var findMatchingPipelinesResult = await _pipelineLookupService.GetMatchingPipelinesAsync(pipelineIntent, pipelineId, dispatchChannelPreferences);
+		if (errors.Count > 0)
+			return new DispatchCommunicationResult(errors.Select(s => new DispatchResult(s)).ToList());
 
-		if (findMatchingPipelinesResult.Errors.Count > 0)
-			return new DispatchCommunicationResult(findMatchingPipelinesResult.Errors.Select(s => new DispatchResult(s)).ToList());
+		return await DispatchAsync(matchingPipelines, platformIdentities, transactionalModel, dispatchChannelPreferences, GuardCulture.AgainstNull(cultureInfo), cancellationToken);
+	}
 
-		var matchingPipelines = findMatchingPipelinesResult.Pipelines;
+	public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineIntent, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default)
+	{
+		var resolvedIdentityProfiles = await _platformIdentityResolvers.ResolveIdentityProfilesAsync(identityReferences).ConfigureAwait(false);
 
-		var allResults = new List<IDispatchCommunicationResult>();
+		var (matchingPipelines, errors) = await LookupPipelinesAsync(pipelineIntent, pipelineId, dispatchChannelPreferences).ConfigureAwait(false);
 
-		var recipientContexts = await _dispatchCoordinatorService.CreateRecipientContexts(matchingPipelines, platformIdentities, transactionalModel, dispatchChannelPreferences).ConfigureAwait(false);
+		if (errors.Count > 0)
+			return new DispatchCommunicationResult(errors.Select(s => new DispatchResult(s)).ToList());
 
+		return await DispatchAsync(matchingPipelines, resolvedIdentityProfiles, transactionalModel, dispatchChannelPreferences, GuardCulture.AgainstNull(cultureInfo), cancellationToken).ConfigureAwait(false);
+	}
+
+	private async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<IPipeline> pipelines, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, CultureInfo? cultureInfo = null, CancellationToken cancellationToken = default)
+	{
+		var recipientContexts = await _dispatchCoordinatorService.CreateRecipientContexts(pipelines, platformIdentities, transactionalModel, dispatchChannelPreferences).ConfigureAwait(false);
+
+		var allResults = new List<IDispatchCommunicationResult>(recipientContexts.Count);
 		foreach (var context in recipientContexts)
+		{
 			allResults.Add(await context.Context.StrategyProvider.DispatchAsync([context], cancellationToken).ConfigureAwait(false));
+			if (cancellationToken.IsCancellationRequested)
+			{
+				// If cancellation is requested, we stop processing further contexts.
+				break;
+			}
+		}
 
 		var allDispatchResults = allResults.SelectMany(r => r.Results).ToList().AsReadOnly();
 
 		return new DispatchCommunicationResult(allDispatchResults);
 	}
 
-	public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default)
+	private async Task<PipelineLookupResult> LookupPipelinesAsync(
+		string pipelineIntent,
+		string? pipelineId,
+		IReadOnlyCollection<string> dispatchChannelPreferences)
 	{
-		var resolvedIdentityProfiles = await _platformIdentityResolvers.ResolveIdentityProfilesAsync(identityReferences).ConfigureAwait(false);
-
-		return await DispatchAsync(pipelineName, resolvedIdentityProfiles, transactionalModel, channelPreferences, pipelineId, cultureInfo, cancellationToken).ConfigureAwait(false);
+		var result = await _pipelineLookupService.GetMatchingPipelinesAsync(pipelineIntent, pipelineId, dispatchChannelPreferences).ConfigureAwait(false);
+		return result;
 	}
 
 	public Task DispatchAsync(DeliveryReport report)
@@ -74,4 +96,5 @@ public sealed class DefaultCommunicationsClient(
 	{
 		return _deliveryReportProvider.DispatchAsync(Guard.AgainstNull(reports));
 	}
+
 }

@@ -49,8 +49,6 @@ public class DefaultPipelineProviderConfigurationTests
 	public void UseChannelSendingStrategy_Should_HaveDefaultChannelSendingStrategyProvider()
 	{
 		var configuration = new DefaultPipelineProviderConfiguration();
-
-		Assert.IsNotNull(configuration.PipelineDeliveryStrategyProvider);
-		Assert.IsInstanceOfType(configuration.PipelineDeliveryStrategyProvider, typeof(FirstMatchPipelineDeliveryStrategy));
+		Assert.IsInstanceOfType<FirstMatchPipelineDeliveryStrategy>(configuration.PipelineDeliveryStrategyProvider);
 	}
 }
