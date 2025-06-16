@@ -33,7 +33,7 @@ public interface IChannel
 	/// </summary>
 	/// <param name="identityAddress">The identity address to check.</param>
 	/// <returns>True if the channel supports the address; otherwise, false.</returns>
-	bool SupportsIdentityAddress(IIdentityAddress identityAddress);
+	bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress);
 	/// <summary>
 	/// Generates a channel communication given the provided dispatch context.
 	/// </summary>

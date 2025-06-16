@@ -56,12 +56,12 @@ internal sealed class SmsChannel(ISmsChannelConfiguration configuration) : IChan
 		};
 	}
 
-	private IIdentityAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
+	private IPlatformIdentityAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
 	{
 		return _configuration.FromAddressResolver != null ? _configuration.FromAddressResolver(communicationContext) : null;
 	}
 
-	public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
+	public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
 	{
 		return identityAddress != null &&
 					(

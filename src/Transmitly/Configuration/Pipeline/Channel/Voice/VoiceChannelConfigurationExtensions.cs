@@ -43,7 +43,7 @@ public static class VoiceChannelConfigurationExtensions
 	/// <param name="voiceChannelConfiguration">Voice Channel configuration options.</param>
 	/// <param name="fromAddressResolver">Resolves the Address the communication will appear to be sent from.</param>
 	/// <returns></returns>
-	public static IPipelineConfiguration AddVoice(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress?>? fromAddressResolver, Action<IVoiceChannelConfiguration> voiceChannelConfiguration)
+	public static IPipelineConfiguration AddVoice(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IPlatformIdentityAddress?>? fromAddressResolver, Action<IVoiceChannelConfiguration> voiceChannelConfiguration)
 	{
 		Guard.AgainstNull(voiceChannelConfiguration);
 		Guard.AgainstNull(pipelineChannelConfiguration);
@@ -61,7 +61,7 @@ public static class VoiceChannelConfigurationExtensions
 	/// <param name="voiceChannelConfiguration">Voice Channel configuration options.</param>
 	/// <param name="fromAddress">Address the communication will appear to be sent from.</param>
 	/// <returns></returns>
-	public static IPipelineConfiguration AddVoice(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress? fromAddress, Action<IVoiceChannelConfiguration> voiceChannelConfiguration)
+	public static IPipelineConfiguration AddVoice(this IPipelineConfiguration pipelineChannelConfiguration, IPlatformIdentityAddress? fromAddress, Action<IVoiceChannelConfiguration> voiceChannelConfiguration)
 	{
 		return AddVoice(pipelineChannelConfiguration, (ctx) => fromAddress, voiceChannelConfiguration);
 	}

@@ -33,5 +33,5 @@ public interface IEmailChannelConfiguration : IChannelConfiguration
 	/// <summary>
 	/// The address used as the 'from' address.
 	/// </summary>
-	Func<IDispatchCommunicationContext, IIdentityAddress>? FromAddressResolver { get; }
+	Func<IDispatchCommunicationContext, IPlatformIdentityAddress>? FromAddressResolver { get; }
 }

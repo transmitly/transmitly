@@ -82,7 +82,7 @@ public class SmsChannelTests : BaseUnitTest
 	public void ShouldSetProvidedChannelProviderIds()
 	{
 		var list = fixture.Freeze<string[]>();
-		var config = new SmsChannelConfiguration(_ => fixture.Create<IIdentityAddress>());
+		var config = new SmsChannelConfiguration(_ => fixture.Create<IPlatformIdentityAddress>());
 		config.AddChannelProviderFilter(list);
 		var sut = new SmsChannel(config);
 		CollectionAssert.AreEquivalent(list, sut.AllowedChannelProviderIds.ToArray());
@@ -103,7 +103,7 @@ public class SmsChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task ShouldSetProvidedFromAddressResolver()
 	{
-		var from = fixture.Freeze<IIdentityAddress>();
+		var from = fixture.Freeze<IPlatformIdentityAddress>();
 		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;
@@ -120,7 +120,7 @@ public class SmsChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task ContentModelResourceShouldAddSmsAttachment()
 	{
-		var from = fixture.Freeze<IIdentityAddress>();
+		var from = fixture.Freeze<IPlatformIdentityAddress>();
 		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
 		var resource = new Resource("res", "ct", new MemoryStream());
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([resource]);

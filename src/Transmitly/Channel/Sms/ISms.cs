@@ -18,8 +18,8 @@ namespace Transmitly;
 
 public interface ISms
 {
-	IIdentityAddress[]? To { get; }
-	IIdentityAddress? From { get; }
+	IPlatformIdentityAddress[]? To { get; }
+	IPlatformIdentityAddress? From { get; }
 	string? Message { get; }
 	MessagePriority Priority { get; }
 	TransportPriority TransportPriority { get; }

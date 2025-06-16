@@ -12,23 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly;
+using Transmitly.Util;
 
-/// <summary>
-/// Describes how to apply channel preferences.
-/// </summary>
-public enum ChannelPreferenceType
+namespace Transmitly.Tests;
+
+internal sealed class MockChannelPreference(string channelId) : IPlatformIdentityChannelPreference
 {
-	/// <summary>
-	/// All of the channels are allowed but order is prioritized by the preferred order of the platform identity.
-	/// </summary>
-	Priority,
-	/// <summary>
-	/// Only the channels explicitly preferred by the platform identity are allowed.
-	/// </summary>
-	Filter,
-	/// <summary>
-	/// All of the channels are allowed but order is prioritized by the preferred order of the platform identity.
-	/// </summary>
-	Default = Priority
+	public string ChannelId { get; set; } = Guard.AgainstNullOrWhiteSpace(channelId);
+
+	public int? Priority { get; set; }
+
+	public string? AddressPurposePreference { get; set; }
 }

@@ -59,7 +59,7 @@ internal sealed class EmailChannel(IEmailChannelConfiguration configuration) : I
 		};
 	}
 
-	private IIdentityAddress GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
+	private IPlatformIdentityAddress GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
 	{
 		Guard.AgainstNull(_configuration.FromAddressResolver);
 		return _configuration.FromAddressResolver(communicationContext);
@@ -79,7 +79,7 @@ internal sealed class EmailChannel(IEmailChannelConfiguration configuration) : I
 		return new ReadOnlyCollection<IEmailAttachment>([]);
 	}
 
-	public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
+	public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
 	{
 		return identityAddress != null &&
 					!string.IsNullOrWhiteSpace(identityAddress.Value) &&

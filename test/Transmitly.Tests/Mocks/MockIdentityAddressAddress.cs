@@ -17,7 +17,7 @@ using Transmitly.Util;
 
 namespace Transmitly.Tests;
 
-internal sealed record MockIdentityAddressAddress(string Value) : IIdentityAddress
+internal sealed record MockIdentityAddressAddress(string Value) : IPlatformIdentityAddress
 {
 	public string Value { get; set; } = Guard.AgainstNullOrWhiteSpace(Value);
 	public string? Type { get; set; }

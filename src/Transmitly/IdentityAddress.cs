@@ -23,7 +23,7 @@ namespace Transmitly;
 /// Initializes a new instance of the <see cref="IdentityAddress"/> class.
 /// </remarks>
 [DebuggerStepThrough]
-public sealed class IdentityAddress : IIdentityAddress, IEquatable<IdentityAddress>
+public sealed class IdentityAddress : IPlatformIdentityAddress, IEquatable<IdentityAddress>
 {
 	private const string ValueKey = "value";
 	private const string DisplayKey = "display";

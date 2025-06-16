@@ -24,7 +24,7 @@ public interface IVoiceChannelConfiguration : IChannelConfiguration
 	/// <summary>
 	/// From Address
 	/// </summary>
-	Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver { get; }
+	Func<IDispatchCommunicationContext, IPlatformIdentityAddress?>? FromAddressResolver { get; }
 	/// <summary>
 	/// Details of the voice to use.
 	/// </summary>

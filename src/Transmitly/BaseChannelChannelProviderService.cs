@@ -25,7 +25,6 @@ public abstract class BaseChannelChannelProviderService(IChannelProviderFactory 
 	public async Task<IReadOnlyCollection<ChannelChannelProviderGroup>> CreateGroupingsForPlatformIdentityAsync(string? pipelineCategory, IReadOnlyCollection<IChannel> pipelineChannels, IReadOnlyCollection<string> dispatchChannelPreferences, IPlatformIdentityProfile platformIdentity)
 	{
 		var groups = new List<ChannelChannelProviderGroup>();
-		var activeChannelPreferences = GetActiveChannelPreferences(pipelineCategory, platformIdentity);
 
 		foreach (var channel in pipelineChannels)
 		{
@@ -34,14 +33,14 @@ public abstract class BaseChannelChannelProviderService(IChannelProviderFactory 
 			// Filter allowed channel providers based on dispatch preferences and channel restrictions
 			foreach (var channelProvider in await _channelProviderFactory.GetAllAsync().ConfigureAwait(false))
 			{
-				if (!IsChannelProviderEligible(dispatchChannelPreferences, channel, channelProvider))
+				if (!IsChannelProviderEligible(dispatchChannelPreferences, channel, channelProvider, platformIdentity))
 				{
 					continue;
 				}
 
 				foreach (var dispatcher in channelProvider.DispatcherRegistrations)
 				{
-					if (!IsDispatcherEligible(platformIdentity, activeChannelPreferences, channel, dispatcher))
+					if (!IsDispatcherEligible(platformIdentity, channel, dispatcher))
 					{
 						continue;
 					}
@@ -63,38 +62,27 @@ public abstract class BaseChannelChannelProviderService(IChannelProviderFactory 
 			}
 		}
 
-		// Order the groups according to channel preferences, if any
-		if (activeChannelPreferences != null && activeChannelPreferences.Type == ChannelPreferenceType.Priority)
+		if (platformIdentity.ChannelPreferences?.Count > 0)
 		{
-			groups = [.. OrderProvidersByPlatformIdentityPreference(groups, activeChannelPreferences.Channels)];
+			var preferences = platformIdentity.ChannelPreferences
+				.Where(cp => string.IsNullOrWhiteSpace(cp.Category) || cp.Category == pipelineCategory)
+				.SelectMany(cp => cp.Preferences)
+				.ToList();
+			if (preferences.Count > 0)
+			{
+				groups = [.. groups.OrderBy(g => preferences.FindIndex(p => string.Equals(p.ChannelId, g.Channel.Id, StringComparison.InvariantCulture)))];
+			}
 		}
 
 		return groups.AsReadOnly();
 	}
 
-	private static IEnumerable<ChannelChannelProviderGroup> OrderProvidersByPlatformIdentityPreference(IEnumerable<ChannelChannelProviderGroup> groups, IReadOnlyCollection<string>? preferences)
-	{
-		if ((preferences?.Count ?? 0) == 0)
-			return groups;
-
-		var channelPreferences = preferences!.ToList();
-		return groups.OrderBy(g =>
-		{
-			var index = channelPreferences.IndexOf(g.Channel.Id);
-			return index >= 0 ? index : int.MaxValue;
-		});
-	}
-
-	private static bool IsDispatcherEligible(IPlatformIdentityProfile platformIdentity, IChannelPreference? activeChannelPreferences, IChannel channel, IChannelProviderDispatcherRegistration dispatcher)
+	private static bool IsDispatcherEligible(IPlatformIdentityProfile platformIdentity, IChannel channel, IChannelProviderDispatcherRegistration dispatcher)
 	{
 		if (!dispatcher.SupportsChannel(channel.Id))
 			return false;
 
 		if (dispatcher.CommunicationType != typeof(object) && channel.CommunicationType != dispatcher.CommunicationType)
-			return false;
-
-		if (activeChannelPreferences != null && activeChannelPreferences.Channels.Count != 0 && activeChannelPreferences.Type == ChannelPreferenceType.Filter &&
-			!activeChannelPreferences.Channels.Any(c => string.Equals(c, channel.Id, StringComparison.InvariantCulture)))
 			return false;
 
 		if (!platformIdentity.Addresses.Any(a => channel.SupportsIdentityAddress(a)))
@@ -103,7 +91,7 @@ public abstract class BaseChannelChannelProviderService(IChannelProviderFactory 
 		return true;
 	}
 
-	private static bool IsChannelProviderEligible(IReadOnlyCollection<string> dispatchChannelPreferences, IChannel channel, IChannelProviderRegistration channelProvider)
+	private static bool IsChannelProviderEligible(IReadOnlyCollection<string> dispatchChannelPreferences, IChannel channel, IChannelProviderRegistration channelProvider, IPlatformIdentityProfile platformIdentity)
 	{
 		// Check dispatch preferences: if preferences exist, the channel must be listed.
 		if (dispatchChannelPreferences.Count > 0 &&
@@ -119,16 +107,13 @@ public abstract class BaseChannelChannelProviderService(IChannelProviderFactory 
 			return false;
 		}
 
+		//todo: pipeline category matters here
+		if (platformIdentity.ChannelPreferences?.Count > 0
+			&& !platformIdentity.ChannelPreferences!.Any(cp => cp.Preferences.Count == 0 || cp.Preferences.Any(p => string.Equals(p.ChannelId, channel.Id, StringComparison.InvariantCulture))))
+		{
+			return false;
+		}
+
 		return true;
-	}
-
-	private static IChannelPreference? GetActiveChannelPreferences(string? pipelineCategory, IPlatformIdentityProfile platformIdentity)
-	{
-		var activeChannelPreferences = platformIdentity.ChannelPreferences?
-										.FirstOrDefault(a => string.Equals(a.Category, pipelineCategory, StringComparison.InvariantCulture));
-
-		if (activeChannelPreferences == null && (platformIdentity.ChannelPreferences?.All(a => string.IsNullOrWhiteSpace(a.Category)) ?? false))
-			activeChannelPreferences = platformIdentity.ChannelPreferences.FirstOrDefault();
-		return activeChannelPreferences;
 	}
 }

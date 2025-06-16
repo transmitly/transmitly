@@ -12,14 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly;
+namespace Transmitly.Tests;
 
-public interface IIdentityAddress
+internal sealed class MockChannelPreferenceSet : IPlatformIdentityChannelPreferenceSet
 {
-	IDictionary<string, string?> AddressParts { get; set; }
-	IDictionary<string, string?> Attributes { get; set; }
-	string Value { get; set; }
-	string? Display { get; set; }
-	string? Type { get; set; }
-	IReadOnlyCollection<string>? Purposes { get; set; }
+	public IReadOnlyCollection<IPlatformIdentityChannelPreference> Channels { get; set; } = [];
+
+	public string? Category { get; set; }
+
+	public IReadOnlyCollection<IPlatformIdentityChannelPreference> Preferences { get; set; } = [];
+
+	public MockChannelPreferenceSet(string? category, params string[] channelIds)
+	{
+		if (channelIds is null || channelIds.Length == 0)
+			return;
+		Category = category;
+		Channels = channelIds.Select(id => new MockChannelPreference(id)).ToList().AsReadOnly();
+	}
 }

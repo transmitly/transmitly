@@ -18,6 +18,6 @@ namespace Transmitly.Channel.Configuration.Sms;
 
 public interface ISmsChannelConfiguration : IChannelConfiguration
 {
-	Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver { get; }
+	Func<IDispatchCommunicationContext, IPlatformIdentityAddress?>? FromAddressResolver { get; }
 	IContentTemplateConfiguration Message { get; }
 }

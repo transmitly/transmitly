@@ -100,7 +100,7 @@ public class VoiceChannelTests : BaseUnitTest
 	[TestMethod]
 	public void ShouldSetProvidedFromAddress()
 	{
-		var from = fixture.Freeze<IIdentityAddress>();
+		var from = fixture.Freeze<IPlatformIdentityAddress>();
 		var config = new VoiceChannelConfiguration(_ => from);
 		var sut = new VoiceChannel(config);
 		Assert.IsNotNull(config.FromAddressResolver);
@@ -110,7 +110,7 @@ public class VoiceChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task ShouldSetProvidedFromAddressResolver()
 	{
-		var from = fixture.Freeze<IIdentityAddress>();
+		var from = fixture.Freeze<IPlatformIdentityAddress>();
 		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;

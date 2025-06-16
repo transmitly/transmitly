@@ -39,7 +39,7 @@ internal class UnitTestChannel : IChannel
 
 	public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
-	public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
+	public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
 	{
 		return identityAddress.Value?.StartsWith(_handlesAddressStartsWith) ?? false;
 	}
@@ -61,7 +61,7 @@ internal class UnitTestChannel : IChannel
 
 	private string _handlesAddressStartsWith = "unit-test-address";
 
-	public IIdentityAddress FromAddress { get; set; }
+	public IPlatformIdentityAddress FromAddress { get; set; }
 
 	public string Id { get; }
 

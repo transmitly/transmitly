@@ -18,10 +18,10 @@ namespace Transmitly.Channel.Voice;
 internal sealed class VoiceCommunication(string message, IExtendedProperties extendedProperties) : IVoice
 {
 	///<inheritdoc/>
-	public IIdentityAddress? From { get; set; }
+	public IPlatformIdentityAddress? From { get; set; }
 
 	///<inheritdoc/>
-	public IIdentityAddress[]? To { get; set; }
+	public IPlatformIdentityAddress[]? To { get; set; }
 
 	///<inheritdoc/>
 	public IVoiceType? VoiceType { get; set; }

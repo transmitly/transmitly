@@ -12,27 +12,24 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly.Pipeline.Configuration;
 
 namespace Transmitly;
 
 /// <summary>
 /// Describes the channel preferences for a platform identity.
 /// </summary>
-public interface IChannelPreference
+public interface IPlatformIdentityChannelPreference
 {
 	/// <summary>
-	/// How the channel preferences should be applied.
+	/// <see cref="Id.Channel">Channel id</see> preferences.
 	/// </summary>
-	ChannelPreferenceType Type { get; }
+	string ChannelId { get; }
 	/// <summary>
-	/// Optional <see cref="IPipeline.Category">pipeline category</see> the channel preferences are tied to. 
-	/// When empty will apply to all pipelines.
+	/// Gets the channel provider id preferences, if any. 
 	/// </summary>
-	string? Category { get; }
+	int? Priority { get; }
 	/// <summary>
-	/// An ordered list of channel id preferences. If a category is not provided 
-	/// the preferences will apply to all pipeline categories.
+	/// Gets the preferred purpose for the address, such as "billing" or "shipping"; "mobile" or "home".
 	/// </summary>
-	IReadOnlyCollection<string> Channels { get; }
+	string? AddressPurposePreference { get; }
 }

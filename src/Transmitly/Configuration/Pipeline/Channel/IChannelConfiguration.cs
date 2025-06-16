@@ -47,19 +47,19 @@ public interface IChannelConfiguration
 	/// <summary>
 	/// Sets the list of address purposes to use for the dispatching recipients.
 	/// </summary>
-	/// <param name="purposes">An identity addresses' purpose. (<see cref="IIdentityAddress.Purposes"/>)</param>
+	/// <param name="purposes">An identity addresses' purpose. (<see cref="IPlatformIdentityAddress.Purposes"/>)</param>
 	/// <returns></returns>
 	IChannelConfiguration AddRecipientAddressPurpose(params string[] purposes);
 	/// <summary>
 	/// Sets the list of address purposes to use for the dispatching recipients.
 	/// </summary>
-	/// <param name="purposes">An identity addresses' purpose. (<see cref="IIdentityAddress.Purposes"/>)</param>
+	/// <param name="purposes">An identity addresses' purpose. (<see cref="IPlatformIdentityAddress.Purposes"/>)</param>
 	/// <returns></returns>
 	IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes);
 	/// <summary>
 	/// Sets the list of address purposes to use for the dispatching recipients.
 	/// </summary>
-	/// <param name="purposes">An identity addresses' purpose. (<see cref="IIdentityAddress.Purposes"/>)</param>
+	/// <param name="purposes">An identity addresses' purpose. (<see cref="IPlatformIdentityAddress.Purposes"/>)</param>
 	/// <returns></returns>
 	IChannelConfiguration AddCopyRecipientAddressPurpose(params string[] purposes);
 	/// <summary>

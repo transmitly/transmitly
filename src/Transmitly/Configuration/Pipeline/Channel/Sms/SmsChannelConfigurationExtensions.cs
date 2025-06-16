@@ -42,7 +42,7 @@ public static class SmsChannelConfigurationExtensions
 	/// <param name="fromAddressResolver">Service to resolve the from address for this channel.</param>
 	/// <param name="smsChannelConfiguration">Sms Channel configuration options.</param>
 	/// <returns></returns>
-	public static IPipelineConfiguration AddSms(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress?>? fromAddressResolver, Action<ISmsChannelConfiguration> smsChannelConfiguration)
+	public static IPipelineConfiguration AddSms(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IPlatformIdentityAddress?>? fromAddressResolver, Action<ISmsChannelConfiguration> smsChannelConfiguration)
 	{
 		var smsOptions = new SmsChannelConfiguration(fromAddressResolver);
 		smsChannelConfiguration(smsOptions);
@@ -57,7 +57,7 @@ public static class SmsChannelConfigurationExtensions
 	/// <param name="fromAddress">Address used as the 'from' address.</param>
 	/// <param name="smsChannelConfiguration">Sms Channel configuration options.</param>
 	/// <returns></returns>
-	public static IPipelineConfiguration AddSms(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<ISmsChannelConfiguration> smsChannelConfiguration)
+	public static IPipelineConfiguration AddSms(this IPipelineConfiguration pipelineChannelConfiguration, IPlatformIdentityAddress fromAddress, Action<ISmsChannelConfiguration> smsChannelConfiguration)
 	{
 		return AddSms(pipelineChannelConfiguration, _ => fromAddress, smsChannelConfiguration);
 	}

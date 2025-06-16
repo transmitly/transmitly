@@ -12,13 +12,19 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Tests;
+using Transmitly.Pipeline.Configuration;
 
-internal sealed class MockChannelPreferences : IChannelPreference
+namespace Transmitly;
+
+public interface IPlatformIdentityChannelPreferenceSet
 {
-	public ChannelPreferenceType Type { get; set; } = ChannelPreferenceType.Default;
-
-	public string? Category { get; set; }
-
-	public IReadOnlyCollection<string> Channels { get; set; } = [];
+	/// <summary>
+	/// Optional <see cref="IPipeline.Category">pipeline category</see> the channel preferences are tied to.
+	/// If not specified, will apply to all registered pipelines.
+	/// </summary>
+	string? Category { get; }
+	/// <summary>
+	/// A collection of channel preferences for the platform identity.
+	/// </summary>
+	IReadOnlyCollection<IPlatformIdentityChannelPreference> Preferences { get; }
 }

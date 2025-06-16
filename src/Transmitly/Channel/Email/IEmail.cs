@@ -39,23 +39,23 @@ public interface IEmail
 	/// <summary>
 	/// The sender of the email.
 	/// </summary>
-	IIdentityAddress From { get; }
+	IPlatformIdentityAddress From { get; }
 	/// <summary>
 	/// The reply to address of the email.
 	/// </summary>
-	IIdentityAddress[]? ReplyTo { get; }
+	IPlatformIdentityAddress[]? ReplyTo { get; }
 	/// <summary>
 	/// The recipient of the email.
 	/// </summary>
-	IIdentityAddress[]? To { get; }
+	IPlatformIdentityAddress[]? To { get; }
 	/// <summary>
 	/// The carbon copy recipient of the email.
 	/// </summary>
-	IIdentityAddress[]? Cc { get; }
+	IPlatformIdentityAddress[]? Cc { get; }
 	/// <summary>
 	/// The blind carbon copy recipient of the email.
 	/// </summary>
-	IIdentityAddress[]? Bcc { get; }
+	IPlatformIdentityAddress[]? Bcc { get; }
 	/// <summary>
 	/// The attachments of the email.
 	/// </summary>

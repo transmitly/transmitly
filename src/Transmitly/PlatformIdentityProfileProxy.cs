@@ -19,13 +19,13 @@ namespace Transmitly;
 sealed class PlatformIdentityProfileProxy : DynamicObject, IPlatformIdentityProfile, ICustomTypeDescriptor
 {
 	private readonly IPlatformIdentityProfile _source;
-	private readonly IReadOnlyCollection<IIdentityAddress> _addresses;
+	private readonly IReadOnlyCollection<IPlatformIdentityAddress> _addresses;
 	private readonly Type _sourceType;
 	private readonly PropertyDescriptorCollection _proxyProperties;
 
 	internal IPlatformIdentityProfile Source => _source;
 
-	public PlatformIdentityProfileProxy(IPlatformIdentityProfile source, IReadOnlyCollection<IIdentityAddress>? overrideAddresses = null)
+	public PlatformIdentityProfileProxy(IPlatformIdentityProfile source, IReadOnlyCollection<IPlatformIdentityAddress>? overrideAddresses = null)
 	{
 		_source = Guard.AgainstNull(source);
 		_addresses = overrideAddresses ?? source.Addresses;
@@ -46,9 +46,9 @@ sealed class PlatformIdentityProfileProxy : DynamicObject, IPlatformIdentityProf
 
 	string? IPlatformIdentityProfile.Type => _source.Type;
 
-	IReadOnlyCollection<IIdentityAddress> IPlatformIdentityProfile.Addresses => _addresses;
+	IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses => _addresses;
 
-	IReadOnlyCollection<IChannelPreference>? IPlatformIdentityProfile.ChannelPreferences => _source.ChannelPreferences;
+	IReadOnlyCollection<IPlatformIdentityChannelPreferenceSet>? IPlatformIdentityProfile.ChannelPreferences => _source.ChannelPreferences;
 
 	AttributeCollection ICustomTypeDescriptor.GetAttributes() =>
 		TypeDescriptor.GetAttributes(_sourceType);

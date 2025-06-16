@@ -16,9 +16,9 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly.Channel.Configuration.Voice;
 
-sealed class VoiceChannelConfiguration(Func<IDispatchCommunicationContext, IIdentityAddress?>? fromAddressResolver) : IVoiceChannelConfiguration
+sealed class VoiceChannelConfiguration(Func<IDispatchCommunicationContext, IPlatformIdentityAddress?>? fromAddressResolver) : IVoiceChannelConfiguration
 {
-	public Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver => fromAddressResolver;
+	public Func<IDispatchCommunicationContext, IPlatformIdentityAddress?>? FromAddressResolver => fromAddressResolver;
 
 	public IVoiceType? VoiceType { get; private set; }
 

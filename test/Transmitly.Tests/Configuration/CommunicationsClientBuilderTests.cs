@@ -161,9 +161,8 @@ public class CommunicationsClientBuilderTests
 			})
 			.BuildClient();
 		var identity = new Mock<IPlatformIdentityProfile>();
-		var channelPreferences = new Mock<IChannelPreference>();
-		channelPreferences.Setup(s => s.Type).Returns(ChannelPreferenceType.Priority);
-		channelPreferences.Setup(s => s.Channels).Returns(["unit-test-channel1", "unit-test-channel0"]);
+		var channelPreferences = new Mock<IPlatformIdentityChannelPreferenceSet>();
+		channelPreferences.Setup(s => s.Preferences).Returns([new ChannelPreference("unit-test-channel1"), new ChannelPreference("unit-test-channel0")]);
 		identity.Setup(s => s.ChannelPreferences).Returns([channelPreferences.Object]);
 		identity.Setup(s => s.Addresses).Returns(["unit-test-address-to".AsIdentityAddress()]);
 
@@ -194,9 +193,8 @@ public class CommunicationsClientBuilderTests
 			})
 			.BuildClient();
 		var identity = new Mock<IPlatformIdentityProfile>();
-		var channelPreferences = new Mock<IChannelPreference>();
-		channelPreferences.Setup(s => s.Type).Returns(ChannelPreferenceType.Filter);
-		channelPreferences.Setup(s => s.Channels).Returns(["unit-test-channel1"]);
+		var channelPreferences = new Mock<IPlatformIdentityChannelPreferenceSet>();
+		channelPreferences.Setup(s => s.Preferences).Returns([new ChannelPreference("unit-test-channel1")]);
 		identity.Setup(s => s.ChannelPreferences).Returns([channelPreferences.Object]);
 		identity.Setup(s => s.Addresses).Returns(["unit-test-address-to".AsIdentityAddress()]);
 

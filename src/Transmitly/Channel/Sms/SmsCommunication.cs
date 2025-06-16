@@ -17,7 +17,7 @@ namespace Transmitly.Channel.Sms;
 /// <inheritdoc cref="ISms"/>
 internal class SmsCommunication(IExtendedProperties extendedProperties) : ISms
 {
-	public IIdentityAddress[]? To { get; set; }
+	public IPlatformIdentityAddress[]? To { get; set; }
 
 	public string? Message { get; set; }
 
@@ -27,7 +27,7 @@ internal class SmsCommunication(IExtendedProperties extendedProperties) : ISms
 
 	public IReadOnlyCollection<ISmsAttachment> Attachments { get; set; } = [];
 
-	public IIdentityAddress? From { get; set; }
+	public IPlatformIdentityAddress? From { get; set; }
 
 	public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 

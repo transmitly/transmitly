@@ -15,14 +15,13 @@
 namespace Transmitly;
 
 public static class PlatformIdentityExtensions
-
 {
-	public static IIdentityAddress AsIdentityAddress(this string address, string? display = null)
+	public static IPlatformIdentityAddress AsIdentityAddress(this string address, string? display = null)
 	{
 		return new IdentityAddress(address, display);
 	}
 
-	public static IPlatformIdentityProfile AsPlatformIdentity(this IReadOnlyCollection<IIdentityAddress> identityAddresses)
+	public static IPlatformIdentityProfile AsPlatformIdentity(this IReadOnlyCollection<IPlatformIdentityAddress> identityAddresses)
 	{
 		return new PlatformIdentityProfile(null, null, identityAddresses);
 	}

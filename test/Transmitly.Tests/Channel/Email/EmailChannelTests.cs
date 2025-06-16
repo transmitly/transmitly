@@ -68,7 +68,7 @@ public class EmailChannelTests : BaseUnitTest
 	[DataRow("Abc..123@example.com", false)]
 	public void MatchesEmailAddressesAsExpected(string email, bool expected)
 	{
-		var channel = new EmailChannel(new EmailChannelConfiguration(_ => fixture.Create<IIdentityAddress>()));
+		var channel = new EmailChannel(new EmailChannelConfiguration(_ => fixture.Create<IPlatformIdentityAddress>()));
 
 		var result = channel.SupportsIdentityAddress(email.AsIdentityAddress());
 		Assert.AreEqual(expected, result, email);
@@ -77,14 +77,14 @@ public class EmailChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldGuardAgainstNullContext()
 	{
-		var channel = new EmailChannel(new EmailChannelConfiguration(_ => fixture.Create<IIdentityAddress>()));
+		var channel = new EmailChannel(new EmailChannelConfiguration(_ => fixture.Create<IPlatformIdentityAddress>()));
 
 		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => channel.GenerateCommunicationAsync(null!));
 	}
 
 	private EmailChannelConfiguration NewEmailChannel()
 	{
-		return fixture.Build<EmailChannelConfiguration>().FromFactory<IIdentityAddress>(from => new EmailChannelConfiguration(_ => from)).Create();
+		return fixture.Build<EmailChannelConfiguration>().FromFactory<IPlatformIdentityAddress>(from => new EmailChannelConfiguration(_ => from)).Create();
 	}
 
 	[TestMethod]
@@ -115,7 +115,7 @@ public class EmailChannelTests : BaseUnitTest
 	public void ShouldSetProvidedChannelProviderIds()
 	{
 		var list = fixture.Freeze<string[]>();
-		var config = new EmailChannelConfiguration(_ => fixture.Create<IIdentityAddress>());
+		var config = new EmailChannelConfiguration(_ => fixture.Create<IPlatformIdentityAddress>());
 		config.AddChannelProviderFilter(list);
 		var sut = new EmailChannel(config);
 		CollectionAssert.AreEquivalent(list, sut.AllowedChannelProviderIds.ToArray());
@@ -136,7 +136,7 @@ public class EmailChannelTests : BaseUnitTest
 	[TestMethod]
 	public void ShouldSetProvidedFromAddress()
 	{
-		var from = fixture.Create<IIdentityAddress>();
+		var from = fixture.Create<IPlatformIdentityAddress>();
 		var channelProviderIds = fixture.Freeze<string[]>();
 		var config = new EmailChannelConfiguration(_ => from);
 		config.AddChannelProviderFilter(channelProviderIds);
@@ -148,7 +148,7 @@ public class EmailChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task ShouldSetProvidedFromAddressResolver()
 	{
-		var from = fixture.Freeze<IIdentityAddress>();
+		var from = fixture.Freeze<IPlatformIdentityAddress>();
 		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;
@@ -165,7 +165,7 @@ public class EmailChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task ContentModelResourceShouldAddSmsAttachment()
 	{
-		var from = fixture.Freeze<IIdentityAddress>();
+		var from = fixture.Freeze<IPlatformIdentityAddress>();
 		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
 		var resource = new Resource("res", "ct", new MemoryStream());
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([resource]);

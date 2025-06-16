@@ -83,7 +83,7 @@ public static class CommunicationsClientExtensions
 	{
 		Guard.AgainstNull(identityAddresses);
 
-		return client.DispatchAsync(pipelineIntent, identityAddresses.Select(x => (IIdentityAddress)new IdentityAddress(x)).ToList(), TransactionModel.Create(transactionalModel), cultureInfo, cancellationToken);
+		return client.DispatchAsync(pipelineIntent, identityAddresses.Select(x => (IPlatformIdentityAddress)new IdentityAddress(x)).ToList(), TransactionModel.Create(transactionalModel), cultureInfo, cancellationToken);
 	}
 
 	/// <summary>
@@ -96,7 +96,7 @@ public static class CommunicationsClientExtensions
 	/// <param name="cultureInfo">Culture ISO.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
 	/// <returns>Dispatch results</returns>
-	public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineIntent, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
+	public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineIntent, IReadOnlyCollection<IPlatformIdentityAddress> identityAddresses, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 	{
 		Guard.AgainstNull(identityAddresses);
 		var platformIdentities = new PlatformIdentityProfile[] {
@@ -115,7 +115,7 @@ public static class CommunicationsClientExtensions
 	/// <param name="cultureInfo">Culture ISO.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
 	/// <returns>Dispatch results</returns>
-	public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineIntent, IReadOnlyCollection<IIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
+	public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineIntent, IReadOnlyCollection<IPlatformIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 	{
 		return client.DispatchAsync(pipelineIntent, [identityAddresses.AsPlatformIdentity()], transactionalModel, channelPreferences, null, cultureInfo, cancellationToken);
 	}

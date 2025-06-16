@@ -93,14 +93,14 @@ internal sealed class VoiceChannel(IVoiceChannelConfiguration configuration) : I
 		};
 	}
 
-	private IIdentityAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
+	private IPlatformIdentityAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
 	{
 		return _configuration.FromAddressResolver != null
 			? _configuration.FromAddressResolver(communicationContext)
 			: null;
 	}
 
-	public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
+	public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
 	{
 		return identityAddress != null &&
 					(

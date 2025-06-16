@@ -16,7 +16,7 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly.Channel.Configuration.Sms;
 
-sealed class SmsChannelConfiguration(Func<IDispatchCommunicationContext, IIdentityAddress?>? fromAddressResolver = null) : ISmsChannelConfiguration
+sealed class SmsChannelConfiguration(Func<IDispatchCommunicationContext, IPlatformIdentityAddress?>? fromAddressResolver = null) : ISmsChannelConfiguration
 {
 	public IContentTemplateConfiguration Message { get; } = new ContentTemplateConfiguration();
 
@@ -30,7 +30,7 @@ sealed class SmsChannelConfiguration(Func<IDispatchCommunicationContext, IIdenti
 
 	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; private set; }
 
-	public Func<IDispatchCommunicationContext, IIdentityAddress?>? FromAddressResolver { get; } = fromAddressResolver;
+	public Func<IDispatchCommunicationContext, IPlatformIdentityAddress?>? FromAddressResolver { get; } = fromAddressResolver;
 
 	public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
 	{

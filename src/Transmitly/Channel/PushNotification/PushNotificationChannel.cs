@@ -43,7 +43,7 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 		return new PushNotificationCommunication(recipients, ExtendedProperties, title, body, imageUrl);
 	}
 
-	public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
+	public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
 	{
 		return _supportedAddressTypes.Contains(identityAddress.Type);
 	}

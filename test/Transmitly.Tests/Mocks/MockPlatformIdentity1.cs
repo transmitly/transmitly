@@ -25,8 +25,7 @@ internal sealed record MockPlatformIdentity1 : IPlatformIdentityProfile
 	{
 		Id = id ?? Guid.Empty.ToString();
 		Type = Guard.AgainstNullOrWhiteSpace(platformIdentityAddressType);
-
-		ChannelPreferences = [new MockChannelPreferences { Channels = [.. (channelPreferences ?? [])] }];
+		ChannelPreferences = [new MockChannelPreferenceSet(null, [.. (channelPreferences ?? [])])];
 	}
 
 
@@ -41,10 +40,10 @@ internal sealed record MockPlatformIdentity1 : IPlatformIdentityProfile
 
 	}
 
-	public IReadOnlyCollection<IIdentityAddress> Addresses { get; set; } = new List<IIdentityAddress>();
+	public IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get; set; } = new List<IPlatformIdentityAddress>();
 	public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
 	public string? Id { get; set; }
 	public string? Type { get; set; }
 	public bool IsPersona { get; set; }
-	public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
+	public IReadOnlyCollection<IPlatformIdentityChannelPreferenceSet>? ChannelPreferences { get; set; }
 }

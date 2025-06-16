@@ -107,7 +107,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	public async Task ShouldRespectAllowedChannelProviderPreference()
 	{
 		const string PipelineIntent = "test-pipeline";
-		IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
+		IReadOnlyCollection<IPlatformIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 		var model = TransactionModel.Create(new { });
 
 		var tly = new CommunicationsClientBuilder()
@@ -151,7 +151,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	public async Task ShouldRestrictAllowedChannelProviderPreference()
 	{
 		const string PipelineIntent = "test-pipeline";
-		IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
+		IReadOnlyCollection<IPlatformIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 		var model = TransactionModel.Create(new { });
 
 		var tly = new CommunicationsClientBuilder()
@@ -196,7 +196,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	public async Task ShouldRespectAllowedChannelProviderPreferenceAnyDeliveryStrategy()
 	{
 		const string PipelineIntent = "test-pipeline";
-		IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
+		IReadOnlyCollection<IPlatformIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 		var model = TransactionModel.Create(new { });
 
 		var tly = new CommunicationsClientBuilder()
@@ -242,7 +242,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	public async Task ShouldReturnPipelineNotFoundResultCode()
 	{
 		const string PipelineIntent = "test-pipeline";
-		IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
+		IReadOnlyCollection<IPlatformIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 		var model = TransactionModel.Create(new { });
 
 		var tly = new CommunicationsClientBuilder()
@@ -264,7 +264,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	public async Task ShouldReturnChannelFiltersNotAllowedWhenChannelFiltersDisabled()
 	{
 		const string PipelineIntent = "test-pipeline";
-		IReadOnlyCollection<IIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
+		IReadOnlyCollection<IPlatformIdentityAddress> testRecipients = ["8885556666".AsIdentityAddress()];
 		var model = TransactionModel.Create(new { });
 
 		var tly = new CommunicationsClientBuilder()
@@ -287,7 +287,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 		var sut = fixture.Create<DefaultCommunicationsClient>();
 
 		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() =>
-			sut.DispatchAsync("test", (IReadOnlyCollection<IIdentityAddress>)null!, null!, null!, CancellationToken.None)
+			sut.DispatchAsync("test", (IReadOnlyCollection<IPlatformIdentityAddress>)null!, null!, null!, CancellationToken.None)
 		);
 
 		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() =>

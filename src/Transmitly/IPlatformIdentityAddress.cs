@@ -14,11 +14,12 @@
 
 namespace Transmitly;
 
-public interface IPushNotification
+public interface IPlatformIdentityAddress
 {
-	string? Title { get; }
-	string? Body { get; }
-	string? ImageUrl { get; }
-	IReadOnlyCollection<IPlatformIdentityAddress> Recipient { get; }
-	IExtendedProperties ExtendedProperties { get; }
+	IDictionary<string, string?> AddressParts { get; set; }
+	IDictionary<string, string?> Attributes { get; set; }
+	string Value { get; set; }
+	string? Display { get; set; }
+	string? Type { get; set; }
+	IReadOnlyCollection<string>? Purposes { get; set; }
 }

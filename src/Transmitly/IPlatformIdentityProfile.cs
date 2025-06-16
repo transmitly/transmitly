@@ -30,9 +30,9 @@ public interface IPlatformIdentityProfile
 	/// <summary>
 	/// Collections of addresses.
 	/// </summary>
-	IReadOnlyCollection<IIdentityAddress> Addresses { get; }
+	IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get; }
 	/// <summary>
 	/// Channel preferences for the platform identity.
 	/// </summary>
-	IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; }
+	IReadOnlyCollection<IPlatformIdentityChannelPreferenceSet>? ChannelPreferences { get; }
 }

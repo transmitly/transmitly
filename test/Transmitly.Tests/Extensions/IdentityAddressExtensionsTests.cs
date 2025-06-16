@@ -20,7 +20,7 @@ public class IdentityAddressExtensionsTests
 	[TestMethod()]
 	public void ShouldThrowIfAddressIsnNull()
 	{
-		Assert.ThrowsExactly<ArgumentNullException>(() => ((IIdentityAddress?)null!).IsType("fail"));
+		Assert.ThrowsExactly<ArgumentNullException>(() => ((IPlatformIdentityAddress?)null!).IsType("fail"));
 	}
 
 	[TestMethod()]

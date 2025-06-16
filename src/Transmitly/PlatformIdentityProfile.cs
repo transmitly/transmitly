@@ -16,21 +16,22 @@ using System.Collections.ObjectModel;
 
 namespace Transmitly;
 
+///<inheritdoc cref="IPlatformIdentityProfile"/>
 public sealed class PlatformIdentityProfile : IPlatformIdentityProfile
 {
-	private ReadOnlyCollection<IIdentityAddress> _addresses;
+	private ReadOnlyCollection<IPlatformIdentityAddress> _addresses;
 
-	public PlatformIdentityProfile(string? id, string? type, IEnumerable<IIdentityAddress> identityAddresses, IEnumerable<IChannelPreference>? channelPreferences = null)
+	public PlatformIdentityProfile(string? id, string? type, IEnumerable<IPlatformIdentityAddress> identityAddresses, IEnumerable<IPlatformIdentityChannelPreferenceSet>? channelPreferenceSets = null)
 	{
 		Id = id;
 		Type = type;
 		Guard.AgainstNull(identityAddresses);
-		_addresses = new ReadOnlyCollection<IIdentityAddress>([.. identityAddresses]);
-		ChannelPreferences = [.. (channelPreferences ?? [])];
+		_addresses = new ReadOnlyCollection<IPlatformIdentityAddress>([.. identityAddresses]);
+		ChannelPreferences = [.. (channelPreferenceSets ?? [])];
 	}
 
 	public string? Id { get; set; }
 	public string? Type { get; set; }
-	public IReadOnlyCollection<IIdentityAddress> Addresses { get => _addresses; set => _addresses = new ReadOnlyCollection<IIdentityAddress>([.. value]); }
-	public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
+	public IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get => _addresses; set => _addresses = new ReadOnlyCollection<IPlatformIdentityAddress>([.. value]); }
+	public IReadOnlyCollection<IPlatformIdentityChannelPreferenceSet>? ChannelPreferences { get; }
 }

@@ -17,7 +17,7 @@ using Transmitly.Template.Configuration;
 namespace Transmitly.Channel.Configuration.Email;
 
 ///<inheritdoc cref="IEmailChannelConfiguration"/>
-sealed class EmailChannelConfiguration(Func<IDispatchCommunicationContext, IIdentityAddress>? fromAddressResolver = null) : IEmailChannelConfiguration
+sealed class EmailChannelConfiguration(Func<IDispatchCommunicationContext, IPlatformIdentityAddress>? fromAddressResolver = null) : IEmailChannelConfiguration
 {
 	public IContentTemplateConfiguration Subject { get; } = new ContentTemplateConfiguration();
 
@@ -25,7 +25,7 @@ sealed class EmailChannelConfiguration(Func<IDispatchCommunicationContext, IIden
 
 	public IContentTemplateConfiguration TextBody { get; } = new ContentTemplateConfiguration();
 
-	public Func<IDispatchCommunicationContext, IIdentityAddress>? FromAddressResolver => fromAddressResolver;
+	public Func<IDispatchCommunicationContext, IPlatformIdentityAddress>? FromAddressResolver => fromAddressResolver;
 
 	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 

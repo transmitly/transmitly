@@ -54,7 +54,7 @@ public static class EmailChannelConfigurationExtensions
 	/// <param name="fromAddress">Address used as the 'from' address</param>
 	/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
 	/// <returns></returns>
-	public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, IIdentityAddress fromAddress, Action<IEmailChannelConfiguration> emailChannelConfiguration)
+	public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, IPlatformIdentityAddress fromAddress, Action<IEmailChannelConfiguration> emailChannelConfiguration)
 	{
 		return AddEmail(pipelineChannelConfiguration, (ctx) => fromAddress, emailChannelConfiguration);
 	}
@@ -63,10 +63,10 @@ public static class EmailChannelConfigurationExtensions
 	/// Adds the 'Email' communication channel to provider pipeline
 	/// </summary>
 	/// <param name="pipelineChannelConfiguration">Channel configuration for the pipeline</param>
-	/// <param name="fromAddressResolver">Resolver that will return a <see cref="IIdentityAddress"/></param>
+	/// <param name="fromAddressResolver">Resolver that will return a <see cref="IPlatformIdentityAddress"/></param>
 	/// <param name="emailChannelConfiguration">Email Channel configuration options</param>
 	/// <returns></returns>
-	public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, Action<IEmailChannelConfiguration> emailChannelConfiguration)
+	public static IPipelineConfiguration AddEmail(this IPipelineConfiguration pipelineChannelConfiguration, Func<IDispatchCommunicationContext, IPlatformIdentityAddress> fromAddressResolver, Action<IEmailChannelConfiguration> emailChannelConfiguration)
 	{
 		var emailOptions = new EmailChannelConfiguration(fromAddressResolver);
 		emailChannelConfiguration(emailOptions);
@@ -74,7 +74,7 @@ public static class EmailChannelConfigurationExtensions
 		return pipelineChannelConfiguration;
 	}
 
-	public static string ToEmailAddress(this IIdentityAddress identityAddress)
+	public static string ToEmailAddress(this IPlatformIdentityAddress identityAddress)
 	{
 		Guard.AgainstNull(identityAddress);
 		Guard.AgainstNullOrWhiteSpace(identityAddress.Value);

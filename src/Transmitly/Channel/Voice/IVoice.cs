@@ -16,8 +16,8 @@ namespace Transmitly;
 
 public interface IVoice
 {
-	IIdentityAddress? From { get; }
-	IIdentityAddress[]? To { get; }
+	IPlatformIdentityAddress? From { get; }
+	IPlatformIdentityAddress[]? To { get; }
 	IVoiceType? VoiceType { get; }
 	string Message { get; }
 	MachineDetection MachineDetection { get; }
