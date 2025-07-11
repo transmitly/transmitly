@@ -111,13 +111,13 @@ public static class CommunicationsClientExtensions
 	/// <param name="pipelineIntent">Intent of the pipeline.</param>
 	/// <param name="identityAddresses">Potential recipients of communications.</param>
 	/// <param name="transactionalModel">Model for the communications</param>
-	/// <param name="channelPreferences">Ids of channels preferences to use with channel and channel provider decisioning.</param>
+	/// <param name="dispatchChannelPreferences">Ids of channels preferences to use with channel and channel provider decisioning.</param>
 	/// <param name="cultureInfo">Culture ISO.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
 	/// <returns>Dispatch results</returns>
-	public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineIntent, IReadOnlyCollection<IPlatformIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
+	public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineIntent, IReadOnlyCollection<IPlatformIdentityAddress> identityAddresses, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
 	{
-		return client.DispatchAsync(pipelineIntent, [identityAddresses.AsPlatformIdentity()], transactionalModel, channelPreferences, null, cultureInfo, cancellationToken);
+		return client.DispatchAsync(pipelineIntent, [identityAddresses.AsPlatformIdentity()], transactionalModel, dispatchChannelPreferences, null, cultureInfo, cancellationToken);
 	}
 
 	/// <summary>

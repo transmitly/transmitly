@@ -62,18 +62,6 @@ public abstract class BaseChannelChannelProviderService(IChannelProviderFactory 
 			}
 		}
 
-		if (platformIdentity.ChannelPreferences?.Count > 0)
-		{
-			var preferences = platformIdentity.ChannelPreferences
-				.Where(cp => string.IsNullOrWhiteSpace(cp.Category) || cp.Category == pipelineCategory)
-				.SelectMany(cp => cp.Preferences)
-				.ToList();
-			if (preferences.Count > 0)
-			{
-				groups = [.. groups.OrderBy(g => preferences.FindIndex(p => string.Equals(p.ChannelId, g.Channel.Id, StringComparison.InvariantCulture)))];
-			}
-		}
-
 		return groups.AsReadOnly();
 	}
 
@@ -103,13 +91,6 @@ public abstract class BaseChannelChannelProviderService(IChannelProviderFactory 
 		// Check if channel has restrictions and if the provider is allowed
 		if (channel.AllowedChannelProviderIds.Any() &&
 			!channel.AllowedChannelProviderIds.Any(cpi => string.Equals(cpi, channelProvider.Id, StringComparison.InvariantCulture)))
-		{
-			return false;
-		}
-
-		//todo: pipeline category matters here
-		if (platformIdentity.ChannelPreferences?.Count > 0
-			&& !platformIdentity.ChannelPreferences!.Any(cp => cp.Preferences.Count == 0 || cp.Preferences.Any(p => string.Equals(p.ChannelId, channel.Id, StringComparison.InvariantCulture))))
 		{
 			return false;
 		}

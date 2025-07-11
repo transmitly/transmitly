@@ -21,11 +21,10 @@ internal sealed record MockPlatformIdentity1 : IPlatformIdentityProfile
 	public string SomeValue => Id + "_Test";
 	public const string DefaultPlatformIdentityType = "test-identity-type";
 
-	public MockPlatformIdentity1(string? id, string platformIdentityAddressType = DefaultPlatformIdentityType, IEnumerable<string>? channelPreferences = null)
+	public MockPlatformIdentity1(string? id, string platformIdentityAddressType = DefaultPlatformIdentityType)
 	{
 		Id = id ?? Guid.Empty.ToString();
 		Type = Guard.AgainstNullOrWhiteSpace(platformIdentityAddressType);
-		ChannelPreferences = [new MockChannelPreferenceSet(null, [.. (channelPreferences ?? [])])];
 	}
 
 
@@ -35,7 +34,7 @@ internal sealed record MockPlatformIdentity1 : IPlatformIdentityProfile
 	}
 
 
-	public MockPlatformIdentity1(Guid? id, string platformIdentityType = DefaultPlatformIdentityType) : this(id?.ToString(), platformIdentityType, null)
+	public MockPlatformIdentity1(Guid? id, string platformIdentityType = DefaultPlatformIdentityType) : this(id?.ToString(), platformIdentityType)
 	{
 
 	}
@@ -45,5 +44,4 @@ internal sealed record MockPlatformIdentity1 : IPlatformIdentityProfile
 	public string? Id { get; set; }
 	public string? Type { get; set; }
 	public bool IsPersona { get; set; }
-	public IReadOnlyCollection<IPlatformIdentityChannelPreferenceSet>? ChannelPreferences { get; set; }
 }

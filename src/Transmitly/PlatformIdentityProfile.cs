@@ -21,17 +21,15 @@ public sealed class PlatformIdentityProfile : IPlatformIdentityProfile
 {
 	private ReadOnlyCollection<IPlatformIdentityAddress> _addresses;
 
-	public PlatformIdentityProfile(string? id, string? type, IEnumerable<IPlatformIdentityAddress> identityAddresses, IEnumerable<IPlatformIdentityChannelPreferenceSet>? channelPreferenceSets = null)
+	public PlatformIdentityProfile(string? id, string? type, IEnumerable<IPlatformIdentityAddress> identityAddresses)
 	{
 		Id = id;
 		Type = type;
 		Guard.AgainstNull(identityAddresses);
 		_addresses = new ReadOnlyCollection<IPlatformIdentityAddress>([.. identityAddresses]);
-		ChannelPreferences = [.. (channelPreferenceSets ?? [])];
 	}
 
 	public string? Id { get; set; }
 	public string? Type { get; set; }
 	public IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get => _addresses; set => _addresses = new ReadOnlyCollection<IPlatformIdentityAddress>([.. value]); }
-	public IReadOnlyCollection<IPlatformIdentityChannelPreferenceSet>? ChannelPreferences { get; }
 }

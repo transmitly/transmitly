@@ -31,8 +31,4 @@ public interface IPlatformIdentityProfile
 	/// Collections of addresses.
 	/// </summary>
 	IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get; }
-	/// <summary>
-	/// Channel preferences for the platform identity.
-	/// </summary>
-	IReadOnlyCollection<IPlatformIdentityChannelPreferenceSet>? ChannelPreferences { get; }
 }
