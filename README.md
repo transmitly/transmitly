@@ -24,7 +24,7 @@ dotnet add package Transmitly.ChannelProvider.Smtp
 ```
 
 ### Setup a Pipeline
-Now it's time to configure a `pipeline`. `Pipelines` will give us a lot of flexibility down the road. For now you can think of a pipeline as a way to configure which channels and channel providers are involved when you dispatch domain event. 
+Now it's time to configure a `pipeline`. `Pipelines` will give us a lot of flexibility down the road. For now you can think of a pipeline as a way to configure which channels and channel providers are involved when you dispatch your domain intent. 
 In other words, you typically start an application by sending a welcome email to a newly registered user. As your application grows, you may want to send an SMS or an Email depending on which address the user gave you at sign up. With Transmitly, it's managed in a single location and your domain/business logic is agnostic of which communications are sent and how.
 
 ```csharp
@@ -69,8 +69,8 @@ class AccountRegistrationService
     //Validate and create the Account
     var newAccount = CreateAccount(account);
 
-    //Dispatch (Send) our configured email
-    var result = await _communicationsClient.DispatchAsync("WelcomeKit", "newAccount@gmail.com", new{});
+    //Dispatch (Send) using our pipeline intent named and the email address of the new account
+    var result = await _communicationsClient.DispatchAsync("WelcomeKit", newAccount.EmailAddress, new{});
 
     if(result.IsSuccessful)
       return newAccount;
@@ -80,10 +80,11 @@ class AccountRegistrationService
 }
 ```
 
-That's it! You're sending emails like a champ. But you might think that seems like a lot of work compared to a simple IEmail Client. Let's break down what we gained by using Transmitly.
+That's it! You're dispatching emails like a champ. But you might think that seems like a lot of work compared to a simple IEmail Client. Let's break down what we gained by using Transmitly.
  * Vendor agnostic - We can change channel providers with a simple configuration change
    * That means when we want to try out SendGrid, Twilio, Infobip or one of the many other services, it's a single change in a single location. :relaxed: 
  * Delivery configuration - The details of our (Email) communications are not cluttering up our code base.
+   * We've also managed to keep our domain/business logic clean by using pipeline intents rather than explicitly sending and email or other communication types. 
  * Message composition - The details of how an email or sms is generated are not scattered throughout your codebase.
    * In the future we may want to send an SMS and/or push notifications. We can now control that in a single location -- not in our business logic.
  * We can now use a single service/client for all of our communication needs
@@ -229,7 +230,7 @@ class AccountRegistrationService
     var newAccount = CreateAccount(account);
 
     //Dispatch (Send) our configured email
-    var result = await _communicationsClient.DispatchAsync("WelcomeKit", "newAccount@gmail.com", new { firstName = newAccount.FirstName });
+    var result = await _communicationsClient.DispatchAsync("WelcomeKit", newAccount.EmailAddress, new { firstName = newAccount.FirstName });
 
     if(result.IsSuccessful)
       return newAccount;
