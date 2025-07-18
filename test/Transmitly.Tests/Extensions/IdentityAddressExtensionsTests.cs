@@ -27,7 +27,7 @@ public class IdentityAddressExtensionsTests
 	public void MatchShouldBeCaseInsensitive()
 	{
 		var expectedType = "unit-test";
-		var sut = new IdentityAddress("test", type: expectedType);
+		var sut = new PlatformIdentityAddress("test", type: expectedType);
 		Assert.IsTrue(sut.IsType(expectedType));
 		Assert.IsTrue(sut.IsType(expectedType.ToUpper()));
 		Assert.IsTrue(sut.IsType(expectedType.ToLower()));
@@ -38,7 +38,7 @@ public class IdentityAddressExtensionsTests
 	{
 		var expectedType = "unit-test";
 		var expectedValue = "pass";
-		var sut = new IdentityAddress("test", type: expectedType);
+		var sut = new PlatformIdentityAddress("test", type: expectedType);
 		Assert.AreEqual(expectedValue, sut.IfType(expectedType, expectedValue));
 		Assert.AreNotEqual("anything-else", sut.IfType(expectedType, expectedValue));
 	}

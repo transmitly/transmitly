@@ -14,14 +14,37 @@
 
 namespace Transmitly;
 
-
+/// <summary>
+/// Represents the result of a dispatch operation. 
+/// </summary>
 public interface IDispatchResult
 {
+	/// <summary>
+	/// The resource identifier for the dispatched communication, if available.	
+	/// </summary>
 	string? ResourceId { get; }
+	/// <summary>
+	/// The status of the communication after dispatching.
+	/// </summary>
 	CommunicationsStatus Status { get; }
+	/// <summary>
+	/// The identifier of the channel provider used for dispatching the communication.
+	/// </summary>
 	string? ChannelProviderId { get; }
+	/// <summary>
+	/// The identifier of the channel used for dispatching the communication.
+	/// </summary>
 	string? ChannelId { get; }
+	/// <summary>
+	/// The identifier of the pipeline used for dispatching the communication, if applicable.
+	/// </summary>
 	string? PipelineId { get; }
+	/// <summary>
+	/// The intent of the pipeline used for dispatching the communication, if applicable.
+	/// </summary>
 	string? PipelineIntent { get; }
+	/// <summary>
+	/// An exception that occurred during the dispatch operation, if any. 
+	/// </summary>
 	Exception? Exception { get; }
 }

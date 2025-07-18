@@ -23,7 +23,7 @@ public class InternetAddressTests
 	[DataRow(null)]
 	public void ShouldRequireValue(string input)
 	{
-		Assert.ThrowsExactly<ArgumentNullException>(() => _ = new IdentityAddress(input, "notnull"));
+		Assert.ThrowsExactly<ArgumentNullException>(() => _ = new PlatformIdentityAddress(input, "notnull"));
 	}
 
 	[TestMethod()]
@@ -33,7 +33,7 @@ public class InternetAddressTests
 	public void ShouldNotRequireDisplayValue(string input)
 	{
 		const string expectedValue = "value";
-		var address = new IdentityAddress(expectedValue, input);
+		var address = new PlatformIdentityAddress(expectedValue, input);
 		Assert.AreEqual(expectedValue, address.Value);
 		Assert.AreEqual(input, address.Display);
 	}
@@ -42,7 +42,7 @@ public class InternetAddressTests
 	public void InternetAddressImplicitFromStringShouldSetValue()
 	{
 		const string expectedValue = "test";
-		IdentityAddress address = expectedValue;
+		PlatformIdentityAddress address = expectedValue;
 		Assert.AreEqual(expectedValue, address.Value);
 		Assert.IsNull(address.Display);
 	}
@@ -51,7 +51,7 @@ public class InternetAddressTests
 	public void FromInternetAddressShouldImplicitCastToString()
 	{
 		const string expectedDisplay = "test";
-		string? address = new IdentityAddress(expectedDisplay);
+		string? address = new PlatformIdentityAddress(expectedDisplay);
 
 		Assert.AreEqual(expectedDisplay, address);
 	}

@@ -32,7 +32,7 @@ internal sealed class VoiceChannel(IVoiceChannelConfiguration configuration) : I
 
 	//		private readonly Func<IDispatchCommunicationContext, IIdentityAddress>? _fromAddressResolver;
 
-	private static readonly string[] _supportedAddressTypes = [IdentityAddress.Types.Cell(), IdentityAddress.Types.HomePhone(), IdentityAddress.Types.Phone(), IdentityAddress.Types.Mobile()];
+	private static readonly string[] _supportedAddressTypes = [PlatformIdentityAddress.Types.Cell(), PlatformIdentityAddress.Types.HomePhone(), PlatformIdentityAddress.Types.Phone(), PlatformIdentityAddress.Types.Mobile()];
 
 	private static readonly Regex _voiceMatchRegex = CreateRegEx();
 

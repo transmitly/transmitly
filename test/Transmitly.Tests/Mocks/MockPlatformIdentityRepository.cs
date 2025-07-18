@@ -26,7 +26,7 @@ internal sealed class MockPlatformIdentityRepository : IPlatformIdentityResolver
 		{
 			if (Guid.TryParse(refs.Id, out var parsedId))
 			{
-				results.Add(new MockPlatformIdentity1(parsedId) { IsPersona = _isFirst, Addresses = new List<IdentityAddress>() { new("unit-test-address"), new("unit-test-address2"), new("xxx") } });
+				results.Add(new MockPlatformIdentity1(parsedId) { IsPersona = _isFirst, Addresses = new List<PlatformIdentityAddress>() { new("unit-test-address"), new("unit-test-address2"), new("xxx") } });
 				_isFirst = false;
 			}
 		}

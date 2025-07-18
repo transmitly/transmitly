@@ -22,7 +22,7 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 {
 	//const string pushTokenPattern = @"\b(?:[A-Fa-f0-9]{64}|[A-Za-z0-9_-]{20,})\b";
 	private readonly IPushNotificationChannelConfiguration _configuration = Guard.AgainstNull(configuration);
-	private static readonly string[] _supportedAddressTypes = [IdentityAddress.Types.DeviceToken(), IdentityAddress.Types.Topic()];
+	private static readonly string[] _supportedAddressTypes = [PlatformIdentityAddress.Types.DeviceToken(), PlatformIdentityAddress.Types.Topic()];
 
 	public Type CommunicationType => typeof(IPushNotification);
 

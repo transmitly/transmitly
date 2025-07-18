@@ -28,7 +28,7 @@ public partial class DefaultCommunicationsClientTests
 		const string ExpectedMessage = "Your OTP Code: {{Code}}";
 		const string ChannelId = "unit-test-channel";
 
-		IReadOnlyCollection<IPlatformIdentityAddress> RecipientAddresses = new IdentityAddress[] { new("unit-test-address-recipient") };
+		IReadOnlyCollection<IPlatformIdentityAddress> RecipientAddresses = new PlatformIdentityAddress[] { new("unit-test-address-recipient") };
 		string[] SupportedChannels = [ChannelProviderId];
 
 
@@ -76,7 +76,7 @@ public partial class DefaultCommunicationsClientTests
 		const string PlatformIdentityType = "unit-test-platform-identity-type-0";
 		const string ChannelProviderId = "unit-test-channel-provider";
 		const string ChannelId = "unit-test-channel";
-		IReadOnlyCollection<IPlatformIdentityAddress> RecipientAddresses = new IdentityAddress[] { new("unit-test-address-recipient") };
+		IReadOnlyCollection<IPlatformIdentityAddress> RecipientAddresses = new PlatformIdentityAddress[] { new("unit-test-address-recipient") };
 		string[] SupportedChannels = [ChannelId];
 
 

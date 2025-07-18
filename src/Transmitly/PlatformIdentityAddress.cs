@@ -20,10 +20,10 @@ namespace Transmitly;
 /// Represents an identity address.
 /// </summary>
 /// <remarks>
-/// Initializes a new instance of the <see cref="IdentityAddress"/> class.
+/// Initializes a new instance of the <see cref="PlatformIdentityAddress"/> class.
 /// </remarks>
 [DebuggerStepThrough]
-public sealed class IdentityAddress : IPlatformIdentityAddress, IEquatable<IdentityAddress>
+public sealed class PlatformIdentityAddress : IPlatformIdentityAddress, IEquatable<PlatformIdentityAddress>
 {
 	private const string ValueKey = "value";
 	private const string DisplayKey = "display";
@@ -32,7 +32,7 @@ public sealed class IdentityAddress : IPlatformIdentityAddress, IEquatable<Ident
 	/// <param name="attributes"></param>        
 	/// <param name="type">Optional type for this address. See: <see cref="Channel.Push.IdentityAddressPushNotificationExtensions"/> for example of extending types.</param>
 	/// <param name="purposes">Optional purposes this address can be used for.</param>
-	public IdentityAddress(IDictionary<string, string?> addressParts, IDictionary<string, string?> attributes, string? type = null, params string[] purposes)
+	public PlatformIdentityAddress(IDictionary<string, string?> addressParts, IDictionary<string, string?> attributes, string? type = null, params string[] purposes)
 	{
 		AddressParts = Guard.AgainstNull(addressParts);
 		Attributes = Guard.AgainstNull(attributes);
@@ -48,7 +48,7 @@ public sealed class IdentityAddress : IPlatformIdentityAddress, IEquatable<Ident
 		Purposes = purposes;
 	}
 
-	public IdentityAddress(string value, string? display = null, IDictionary<string, string?>? attributes = null, string? type = null)
+	public PlatformIdentityAddress(string value, string? display = null, IDictionary<string, string?>? attributes = null, string? type = null)
 		: this(new Dictionary<string, string?>() { { ValueKey, Guard.AgainstNullOrWhiteSpace(value) }, { DisplayKey, display } }, attributes ?? new Dictionary<string, string?>(), type)
 	{
 	}
@@ -107,18 +107,18 @@ public sealed class IdentityAddress : IPlatformIdentityAddress, IEquatable<Ident
 	public IReadOnlyCollection<string>? Purposes { get; set; }
 
 	/// <summary>
-	/// Implicitly converts a string to an <see cref="IdentityAddress"/>.
+	/// Implicitly converts a string to an <see cref="PlatformIdentityAddress"/>.
 	/// </summary>
 	/// <param name="value">The string value to convert.</param>
-	/// <returns>The converted <see cref="IdentityAddress"/>.</returns>
-	public static implicit operator IdentityAddress(string value) => new(value);
+	/// <returns>The converted <see cref="PlatformIdentityAddress"/>.</returns>
+	public static implicit operator PlatformIdentityAddress(string value) => new(value);
 
 	/// <summary>
-	/// Implicitly converts an <see cref="IdentityAddress"/> to a string.
+	/// Implicitly converts an <see cref="PlatformIdentityAddress"/> to a string.
 	/// </summary>
-	/// <param name="address">The <see cref="IdentityAddress"/> to convert.</param>
+	/// <param name="address">The <see cref="PlatformIdentityAddress"/> to convert.</param>
 	/// <returns>The converted string.</returns>
-	public static implicit operator string?(IdentityAddress address) => address?.Value;
+	public static implicit operator string?(PlatformIdentityAddress address) => address?.Value;
 
 	/// <summary>
 	/// Determines whether the two specified operands are equal.
@@ -126,7 +126,7 @@ public sealed class IdentityAddress : IPlatformIdentityAddress, IEquatable<Ident
 	/// <param name="address">The left hand operand in the equation.</param>
 	/// <param name="other">The right hand operand in the equation.</param>
 	/// <returns>True if equal, false if not.</returns>
-	public static bool operator ==(IdentityAddress address, IdentityAddress other)
+	public static bool operator ==(PlatformIdentityAddress address, PlatformIdentityAddress other)
 	{
 		if (address is null && other is null)
 		{
@@ -141,17 +141,17 @@ public sealed class IdentityAddress : IPlatformIdentityAddress, IEquatable<Ident
 	/// <param name="left">The left hand operand in the equation.</param>
 	/// <param name="right">The right hand operand in the equation.</param>
 	/// <returns>True if the two operands are not equal, and false if they are.</returns>
-	public static bool operator !=(IdentityAddress left, IdentityAddress right)
+	public static bool operator !=(PlatformIdentityAddress left, PlatformIdentityAddress right)
 	{
 		return !(left == right);
 	}
 
 	/// <summary>
-	/// Gets a value indicating whether this <see cref="IdentityAddress"/> is equal to the specified identity address.
+	/// Gets a value indicating whether this <see cref="PlatformIdentityAddress"/> is equal to the specified identity address.
 	/// </summary>
 	/// <param name="other">The comparand identity address.</param>
 	/// <returns>true if the objects are equal, false if they're not.</returns>
-	public bool Equals(IdentityAddress? other)
+	public bool Equals(PlatformIdentityAddress? other)
 	{
 		if (other is null)
 		{
@@ -166,7 +166,7 @@ public sealed class IdentityAddress : IPlatformIdentityAddress, IEquatable<Ident
 	}
 
 	/// <summary>
-	/// Gets a value indicating whether this <see cref="IdentityAddress"/> is equal to the specified object.
+	/// Gets a value indicating whether this <see cref="PlatformIdentityAddress"/> is equal to the specified object.
 	/// </summary>
 	/// <param name="obj">The comparand object.</param>
 	/// <returns>true if the objects are equal, false if they're not.</returns>
@@ -187,7 +187,7 @@ public sealed class IdentityAddress : IPlatformIdentityAddress, IEquatable<Ident
 			return false;
 		}
 
-		return Equals((IdentityAddress)obj);
+		return Equals((PlatformIdentityAddress)obj);
 	}
 
 	/// <summary>

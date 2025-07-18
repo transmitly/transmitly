@@ -18,7 +18,7 @@ public static class PlatformIdentityExtensions
 {
 	public static IPlatformIdentityAddress AsIdentityAddress(this string address, string? display = null)
 	{
-		return new IdentityAddress(address, display);
+		return new PlatformIdentityAddress(address, display);
 	}
 
 	public static IPlatformIdentityProfile AsPlatformIdentity(this IReadOnlyCollection<IPlatformIdentityAddress> identityAddresses)

@@ -22,13 +22,13 @@ public class PushNotificationChannelTests
 	[TestMethod()]
 	public void SupportsPlatformIdentityType()
 	{
-		var tests = new List<(IdentityAddress, bool)> {
-			(new IdentityAddress("test", type: IdentityAddress.Types.DeviceToken()), true),
-			(new IdentityAddress("test", type: IdentityAddress.Types.Topic()), true),
-			(new IdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", type:IdentityAddress.Types.DeviceToken()), true),
-			(new IdentityAddress("test", type: "other"), false),
-			(new IdentityAddress("test"), false),
-			(new IdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664"), false)
+		var tests = new List<(IPlatformIdentityAddress, bool)> {
+			(new PlatformIdentityAddress("test", type: PlatformIdentityAddress.Types.DeviceToken()), true),
+			(new PlatformIdentityAddress("test", type: PlatformIdentityAddress.Types.Topic()), true),
+			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", type:PlatformIdentityAddress.Types.DeviceToken()), true),
+			(new PlatformIdentityAddress("test", type: "other"), false),
+			(new PlatformIdentityAddress("test"), false),
+			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664"), false)
 		};
 
 		foreach (var test in tests)

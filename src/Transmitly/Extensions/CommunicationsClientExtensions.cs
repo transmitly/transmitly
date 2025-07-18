@@ -66,7 +66,7 @@ public static class CommunicationsClientExtensions
 	/// <returns>Dispatch results</returns>
 	public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineIntent, string identityAddress, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 	{
-		return client.DispatchAsync(pipelineIntent, new IdentityAddress[] { new(identityAddress) }, transactionalModel, cultureInfo, cancellationToken);
+		return client.DispatchAsync(pipelineIntent, new PlatformIdentityAddress[] { new(identityAddress) }, transactionalModel, cultureInfo, cancellationToken);
 	}
 
 	/// <summary>
@@ -83,7 +83,7 @@ public static class CommunicationsClientExtensions
 	{
 		Guard.AgainstNull(identityAddresses);
 
-		return client.DispatchAsync(pipelineIntent, identityAddresses.Select(x => (IPlatformIdentityAddress)new IdentityAddress(x)).ToList(), TransactionModel.Create(transactionalModel), cultureInfo, cancellationToken);
+		return client.DispatchAsync(pipelineIntent, identityAddresses.Select(x => (IPlatformIdentityAddress)new PlatformIdentityAddress(x)).ToList(), TransactionModel.Create(transactionalModel), cultureInfo, cancellationToken);
 	}
 
 	/// <summary>

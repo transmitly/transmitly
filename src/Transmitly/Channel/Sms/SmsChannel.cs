@@ -27,7 +27,7 @@ internal sealed class SmsChannel(ISmsChannelConfiguration configuration) : IChan
 #endif
 {
 	private readonly ISmsChannelConfiguration _configuration = Guard.AgainstNull(configuration);
-	private static readonly string[] _supportedAddressTypes = [IdentityAddress.Types.Cell(), IdentityAddress.Types.Phone(), IdentityAddress.Types.Mobile()];
+	private static readonly string[] _supportedAddressTypes = [PlatformIdentityAddress.Types.Cell(), PlatformIdentityAddress.Types.Phone(), PlatformIdentityAddress.Types.Mobile()];
 	private static readonly Regex _smsMatchRegex = CreateRegEx();
 
 	public Type CommunicationType => typeof(ISms);
