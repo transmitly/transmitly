@@ -13,25 +13,29 @@
 //  limitations under the License.
 
 using Transmitly.Channel.Configuration;
+using Transmitly.Delivery;
 using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Template.Configuration;
 
-namespace Transmitly
+namespace Transmitly;
+
+public abstract class BaseCommunicationClientFactory : ICommunicationClientFactory
 {
-	public abstract class BaseCommunicationClientFactory : ICommunicationClientFactory
+	public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
 	{
-		public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
-		{
-			return new DefaultCommunicationsClient(
-				new DefaultPipelineFactory(context.Pipelines),
-				new DefaultChannelProviderFactory(context.ChannelProviders),
+		var deliveryReportService = new DefaultDeliveryReportService(context.DeliveryReportObservers);
+		return new DefaultCommunicationsClient(
+			new DefaultPipelineService(new DefaultPipelineFactory(context.Pipelines)),
+			new DefaultDispatchCoordinatorService(
+				new DefaultChannelChannelProviderService(new DefaultChannelProviderFactory(context.ChannelProviders)),
+				new DefaultPersonaService(new DefaultPersonaFactory(context.Personas)),
 				new DefaultTemplateEngineFactory(context.TemplateEngines),
-				new DefaultPersonaFactory(context.Personas),
-				new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers),
-				context.DeliveryReportProvider
-			);
-		}
+				deliveryReportService
+			),
+			new DefaultPlatformIdentityService(new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers)),
+			deliveryReportService
+		);
 	}
 }

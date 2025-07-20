@@ -12,11 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Tests.Mocks
+namespace Transmitly.Tests.Mocks;
+
+class ObjWithIndexer
 {
-	class ObjWithIndexer
-	{
-		public int Id { get; set; } = 1;
-		public int this[int index] => index;
-	}
+	public int Id { get; set; } = 1;
+	public int this[int index] => index;
 }

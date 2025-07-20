@@ -12,14 +12,39 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+/// <summary>
+/// Represents the result of a dispatch operation. 
+/// </summary>
+public interface IDispatchResult
 {
-	public interface IDispatchResult
-	{
-		string? ResourceId { get; }
-		DispatchStatus DispatchStatus { get; }
-		string? ChannelProviderId { get; }
-		string? ChannelId { get; }
-		Exception? Exception { get; }
-	}
+	/// <summary>
+	/// The resource identifier for the dispatched communication, if available.	
+	/// </summary>
+	string? ResourceId { get; }
+	/// <summary>
+	/// The status of the communication after dispatching.
+	/// </summary>
+	CommunicationsStatus Status { get; }
+	/// <summary>
+	/// The identifier of the channel provider used for dispatching the communication.
+	/// </summary>
+	string? ChannelProviderId { get; }
+	/// <summary>
+	/// The identifier of the channel used for dispatching the communication.
+	/// </summary>
+	string? ChannelId { get; }
+	/// <summary>
+	/// The identifier of the pipeline used for dispatching the communication, if applicable.
+	/// </summary>
+	string? PipelineId { get; }
+	/// <summary>
+	/// The intent of the pipeline used for dispatching the communication, if applicable.
+	/// </summary>
+	string? PipelineIntent { get; }
+	/// <summary>
+	/// An exception that occurred during the dispatch operation, if any. 
+	/// </summary>
+	Exception? Exception { get; }
 }

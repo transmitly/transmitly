@@ -13,33 +13,29 @@
 //  limitations under the License.
 
 using Moq;
+using Transmitly.Util;
 
-namespace Transmitly.Template.Configuration.Tests
+namespace Transmitly.Template.Configuration.Tests;
+
+[TestClass()]
+public class DelegateContentTemplateRegistrationTests
 {
-	[TestClass()]
-	public class DelegateContentTemplateRegistrationTests
+	[TestMethod()]
+	public void ShouldThrowIfDelegateNull()
 	{
-		[TestMethod()]
-		public void ShouldThrowIfDelegateNull()
-		{
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-			Assert.ThrowsException<ArgumentNullException>(() => new DelegateContentTemplateRegistration(null));
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-		}
+		Assert.ThrowsExactly<ArgumentNullException>(() => _ = new DelegateContentTemplateRegistration(null!));
+	}
 
-#pragma warning restore CS8604 // Possible null reference argument.
-
-		[TestMethod()]
-		public async Task ShouldReturnesourceContent()
+	[TestMethod()]
+	public async Task ShouldReturnResourceContent()
+	{
+		const string expected = "OK";
+		var template = new DelegateContentTemplateRegistration((context) =>
 		{
-			const string expected = "OK";
-			var template = new DelegateContentTemplateRegistration((context) =>
-			{
-				Guard.AgainstNull(context);
-				return Task.FromResult<string?>(expected);
-			});
-			var context = new Mock<IDispatchCommunicationContext>();
-			Assert.AreEqual(expected, await template.GetContentAsync(context.Object));
-		}
+			Guard.AgainstNull(context);
+			return Task.FromResult<string?>(expected);
+		});
+		var context = new Mock<IDispatchCommunicationContext>();
+		Assert.AreEqual(expected, await template.GetContentAsync(context.Object));
 	}
 }

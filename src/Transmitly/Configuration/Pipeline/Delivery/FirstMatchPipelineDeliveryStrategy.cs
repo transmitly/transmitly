@@ -15,37 +15,36 @@
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 
-namespace Transmitly.Delivery
+namespace Transmitly.Delivery;
+
+internal sealed class FirstMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
 {
-	internal sealed class FirstMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
+	public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<RecipientDispatchCommunicationContext> sendingGroups, CancellationToken cancellationToken)
 	{
-		public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<RecipientDispatchCommunicationContext> sendingGroups, CancellationToken cancellationToken)
+		var results = new List<IDispatchResult?>(sendingGroups.Count);
+		foreach (var recipient in sendingGroups)
 		{
-			var results = new List<IDispatchResult?>(sendingGroups.Count);
-			foreach (var recipient in sendingGroups)
+			foreach (var pair in recipient.ChannelChannelProviderGroups)
 			{
-				foreach (var pair in recipient.ChannelChannelProviderGroups)
+				var channel = pair.Channel;
+				foreach (var provider in pair.ChannelProviderDispatchers)
 				{
-					var channel = pair.Channel;
-					foreach (var provider in pair.ChannelProviderDispatchers)
+					var result = await DispatchCommunicationAsync(channel, provider, recipient, cancellationToken).ConfigureAwait(false);
+
+					if (result == null || result.Count == 0)
 					{
-						var result = await DispatchCommunicationAsync(channel, provider, recipient, cancellationToken).ConfigureAwait(false);
-
-						if (result == null || result.Count == 0)
-						{
-							continue;
-						}
-
-						results.AddRange(result);
-						if (result.All(r => r != null && r.DispatchStatus == DispatchStatus.Exception))
-						{
-							continue;
-						}
-						return new DispatchCommunicationResult(results.AsReadOnly(), true);
+						continue;
 					}
+
+					results.AddRange(result);
+					if (result.All(r => r != null && r.Status.IsFailure()))
+					{
+						continue;
+					}
+					return new DispatchCommunicationResult(results.AsReadOnly());
 				}
 			}
-			return new DispatchCommunicationResult(results.AsReadOnly(), IsPipelineSuccessful(results));
 		}
+		return new DispatchCommunicationResult(results.AsReadOnly());
 	}
 }

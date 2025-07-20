@@ -12,21 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery
+namespace Transmitly.Delivery;
+
+public interface IVoiceDeliveryReport
 {
-	public interface IVoiceDeliveryReport
-	{
-		/// <summary>
-		/// Destination address of the voice communication.
-		/// </summary>
-		string? To { get; }
-		/// <summary>
-		/// Address of the sender of the voice communication.
-		/// </summary>
-		string? From { get; }
-		/// <summary>
-		/// Duration of the voice communication, in seconds.
-		/// </summary>
-		TimeSpan? Duration { get; }
-	}
+	/// <summary>
+	/// Destination address of the voice communication.
+	/// </summary>
+	string? To { get; }
+	/// <summary>
+	/// Address of the sender of the voice communication.
+	/// </summary>
+	string? From { get; }
+	/// <summary>
+	/// Duration of the voice communication, in seconds.
+	/// </summary>
+	TimeSpan? Duration { get; }
 }

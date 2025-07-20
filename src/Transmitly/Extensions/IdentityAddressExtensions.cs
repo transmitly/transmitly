@@ -12,19 +12,18 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
-{
-	public static class IdentityAddressExtensions
-	{
-		public static bool IsType(this IIdentityAddress identityAddress, string type)
-		{
-			Guard.AgainstNull(identityAddress);
-			return type.Equals(identityAddress.Type, StringComparison.OrdinalIgnoreCase);
-		}
+namespace Transmitly;
 
-		public static T? IfType<T>(this IIdentityAddress identityAddress, string type, T? value)
-		{
-			return identityAddress.IsType(type) ? value : default;
-		}
+public static class IdentityAddressExtensions
+{
+	public static bool IsType(this IPlatformIdentityAddress identityAddress, string type)
+	{
+		Guard.AgainstNull(identityAddress);
+		return type.Equals(identityAddress.Type, StringComparison.OrdinalIgnoreCase);
+	}
+
+	public static T? IfType<T>(this IPlatformIdentityAddress identityAddress, string type, T? value)
+	{
+		return identityAddress.IsType(type) ? value : default;
 	}
 }

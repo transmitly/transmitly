@@ -13,23 +13,22 @@
 //  limitations under the License.
 
 
-namespace Transmitly.ChannelProvider.Configuration
+namespace Transmitly.ChannelProvider.Configuration;
+
+public interface IChannelProviderDispatcherRegistration
 {
-	public interface IChannelProviderDispatcherRegistration
-	{
-		/// <summary>
-		/// The type of the dispatcher.
-		/// </summary>
-		Type DispatcherType { get; }
-		/// <summary>
-		/// The communication type supported by the dispatcher.
-		/// </summary>
-		Type CommunicationType { get; }
-		/// <summary>
-		/// Checks whether the channel provider dispatcher supports the specified channel.
-		/// </summary>
-		/// <param name="channel">The channel to check.</param>
-		/// <returns>True if the channel is supported, otherwise false.</returns>
-		bool SupportsChannel(string channel);
-	}
+	/// <summary>
+	/// The type of the dispatcher.
+	/// </summary>
+	Type DispatcherType { get; }
+	/// <summary>
+	/// The communication type supported by the dispatcher.
+	/// </summary>
+	Type CommunicationType { get; }
+	/// <summary>
+	/// Checks whether the channel provider dispatcher supports the specified channel.
+	/// </summary>
+	/// <param name="channel">The channel to check.</param>
+	/// <returns>True if the channel is supported, otherwise false.</returns>
+	bool SupportsChannel(string channel);
 }

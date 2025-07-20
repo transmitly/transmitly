@@ -12,8 +12,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
-{
-	public record Resource(string? Name, string? ContentType, Stream? ContentStream);
-}
+namespace Transmitly;
+
+public record Resource(string? Name, string? ContentType, Stream? ContentStream);
 

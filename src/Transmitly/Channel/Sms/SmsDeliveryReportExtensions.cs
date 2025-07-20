@@ -12,15 +12,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery
+namespace Transmitly.Delivery;
+
+public static class SmsDeliveryReportExtensions
 {
-	public static class SmsDeliveryReportExtensions
+	public static ISmsDeliveryReport? Sms(this DeliveryReport deliveryReport)
 	{
-		public static ISmsDeliveryReport? Sms(this DeliveryReport deliveryReport)
-		{
-			if (deliveryReport is ISmsDeliveryReport voiceReport)
-				return voiceReport;
-			return null;
-		}
+		if (deliveryReport is ISmsDeliveryReport smsReport)
+			return smsReport;
+		return null;
 	}
 }

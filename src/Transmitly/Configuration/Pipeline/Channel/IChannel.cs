@@ -12,46 +12,36 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Configuration
+namespace Transmitly.Channel.Configuration;
+
+public interface IChannel
 {
-	public interface IChannel<T> : IChannel
-	{
-		new Task<T> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
-	}
-
 	/// <summary>
-	/// Represents a communication channel.
+	/// Gets the concrete communication type.
 	/// </summary>
-	public interface IChannel
-	{
-		Type CommunicationType { get; }
-		/// <summary>
-		/// Gets the ID of the channel.
-		/// </summary>
-		string Id { get; }
-
-		/// <summary>
-		/// Gets the allowed channel providers.
-		/// </summary>
-		IEnumerable<string> AllowedChannelProviderIds { get; }
-
-		/// <summary>
-		/// Checks if the channel supports the given internet address.
-		/// </summary>
-		/// <param name="identityAddress">The identity address to check.</param>
-		/// <returns>True if the channel supports the address; otherwise, false.</returns>
-		bool SupportsIdentityAddress(IIdentityAddress identityAddress);
-
-		/// <summary>
-		/// Generates a communication using the specified template engine and communication context.
-		/// </summary>
-		/// <param name="communicationContext">The communication context.</param>
-		/// <returns>The generated communication.</returns>
-		Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
-
-		/// <summary>
-		/// Gets the extended properties for the channel.
-		/// </summary>
-		ExtendedProperties ExtendedProperties { get; }
-	}
+	Type CommunicationType { get; }
+	/// <summary>
+	/// Gets the Id of the channel.
+	/// </summary>
+	string Id { get; }
+	/// <summary>
+	/// Gets the allowed channel providers.
+	/// </summary>
+	IEnumerable<string> AllowedChannelProviderIds { get; }
+	/// <summary>
+	/// Checks if the channel supports the given internet address.
+	/// </summary>
+	/// <param name="identityAddress">The identity address to check.</param>
+	/// <returns>True if the channel supports the address; otherwise, false.</returns>
+	bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress);
+	/// <summary>
+	/// Generates a channel communication given the provided dispatch context.
+	/// </summary>
+	/// <param name="communicationContext">The communication context.</param>
+	/// <returns>The generated communication.</returns>
+	Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext);
+	/// <summary>
+	/// Gets the extended properties for the channel.
+	/// </summary>
+	IExtendedProperties ExtendedProperties { get; }
 }

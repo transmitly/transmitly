@@ -16,66 +16,39 @@ using Moq;
 using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
 
-namespace Transmitly.Pipeline.Configuration.Tests
+namespace Transmitly.Pipeline.Configuration.Tests;
+
+[TestClass]
+public class DefaultPipelineProviderConfigurationTests
 {
-	[TestClass]
-	public class DefaultPipelineProviderConfigurationTests
+	[TestMethod]
+	public void AddChannel_Should_AddChannelToList()
 	{
-		[TestMethod]
-		public void AddChannel_Should_AddChannelToList()
-		{
 
-			var configuration = new DefaultPipelineProviderConfiguration();
-			var channel = new Mock<IChannel>();
+		var configuration = new DefaultPipelineProviderConfiguration();
+		var channel = new Mock<IChannel>();
 
-			configuration.AddChannel(channel.Object);
+		configuration.AddChannel(channel.Object);
 
-			Assert.AreEqual(1, configuration.Channels.Count);
-			Assert.AreEqual(channel.Object, configuration.Channels.First());
-		}
+		Assert.AreEqual(1, configuration.Channels.Count);
+		Assert.AreEqual(channel.Object, configuration.Channels.First());
+	}
 
-		[TestMethod]
-		public void BlindCopy_Should_AddIdentityAddressToList()
-		{
-			var configuration = new DefaultPipelineProviderConfiguration();
+	[TestMethod]
+	public void UseChannelSendingStrategy_Should_SetChannelSendingStrategyProvider()
+	{
+		var configuration = new DefaultPipelineProviderConfiguration();
+		var sendingStrategy = new Mock<BasePipelineDeliveryStrategyProvider>() { CallBase = true };
 
-			configuration.BlindCopyIdentityAddress("Identity1", "Identity2");
+		configuration.UsePipelineDeliveryStrategy(sendingStrategy.Object);
 
-			Assert.AreEqual(2, configuration.BlindCopyIdentityAddresses.Count);
-			Assert.IsTrue(configuration.BlindCopyIdentityAddresses.Contains("Identity1"));
-			Assert.IsTrue(configuration.BlindCopyIdentityAddresses.Contains("Identity2"));
-		}
+		Assert.AreEqual(sendingStrategy.Object, configuration.PipelineDeliveryStrategyProvider);
+	}
 
-		[TestMethod]
-		public void UseChannelSendingStrategy_Should_SetChannelSendingStrategyProvider()
-		{
-			var configuration = new DefaultPipelineProviderConfiguration();
-			var sendingStrategy = new Mock<BasePipelineDeliveryStrategyProvider>() { CallBase = true };
-
-			configuration.UsePipelineDeliveryStrategy(sendingStrategy.Object);
-
-			Assert.AreEqual(sendingStrategy.Object, configuration.PipelineDeliveryStrategyProvider);
-		}
-
-		[TestMethod]
-		public void UseChannelSendingStrategy_Should_HaveDefaultChannelSendingStrategyProvider()
-		{
-			var configuration = new DefaultPipelineProviderConfiguration();
-
-			Assert.IsNotNull(configuration.PipelineDeliveryStrategyProvider);
-			Assert.IsInstanceOfType(configuration.PipelineDeliveryStrategyProvider, typeof(FirstMatchPipelineDeliveryStrategy));
-		}
-
-		[TestMethod]
-		public void Copy_Should_AddIdentityAddressToList()
-		{
-			var configuration = new DefaultPipelineProviderConfiguration();
-
-			configuration.CopyIdentityAddress("Identity1", "Identity2");
-
-			Assert.AreEqual(2, configuration.CopyIdentityAddresses.Count);
-			Assert.IsTrue(configuration.CopyIdentityAddresses.Contains("Identity1"));
-			Assert.IsTrue(configuration.CopyIdentityAddresses.Contains("Identity2"));
-		}
+	[TestMethod]
+	public void UseChannelSendingStrategy_Should_HaveDefaultChannelSendingStrategyProvider()
+	{
+		var configuration = new DefaultPipelineProviderConfiguration();
+		Assert.IsInstanceOfType<FirstMatchPipelineDeliveryStrategy>(configuration.PipelineDeliveryStrategyProvider);
 	}
 }

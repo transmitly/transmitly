@@ -12,25 +12,24 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Extensions.Tests
-{
-	[TestClass()]
-	public class DictionaryExtensionsTests
-	{
-		[TestMethod()]
-		public void GetShouldNotThrowIfReturnDefaultForNonExistentKey()
-		{
-			IDictionary<string, object> dict = new Dictionary<string, object> { { "key", true } };
-			Assert.AreEqual(default, DictionaryExtensions.Get<bool>(dict, "nothing"));
-			Assert.AreEqual(default, DictionaryExtensions.Get<string>(dict, "nothing"));
-			Assert.AreEqual(default, DictionaryExtensions.Get<object>(dict, "nothing"));
-		}
+namespace Transmitly.Extensions.Tests;
 
-		[TestMethod()]
-		public void GetShouldGetKey()
-		{
-			IDictionary<string, object> dict = new Dictionary<string, object> { { "key", true } };
-			Assert.AreEqual(true, DictionaryExtensions.Get<bool>(dict, "key"));
-		}
+[TestClass()]
+public class DictionaryExtensionsTests
+{
+	[TestMethod()]
+	public void GetShouldNotThrowIfReturnDefaultForNonExistentKey()
+	{
+		IDictionary<string, object> dict = new Dictionary<string, object> { { "key", true } };
+		Assert.AreEqual(default, DictionaryExtensions.Get<bool>(dict, "nothing"));
+		Assert.AreEqual(default, DictionaryExtensions.Get<string>(dict, "nothing"));
+		Assert.AreEqual(default, DictionaryExtensions.Get<object>(dict, "nothing"));
+	}
+
+	[TestMethod()]
+	public void GetShouldGetKey()
+	{
+		IDictionary<string, object> dict = new Dictionary<string, object> { { "key", true } };
+		Assert.IsTrue(DictionaryExtensions.Get<bool>(dict, "key"));
 	}
 }

@@ -12,48 +12,47 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+[TestClass()]
+public class InternetAddressTests
 {
-	[TestClass()]
-	public class InternetAddressTests
+	[TestMethod()]
+	[DataRow("")]
+	[DataRow(" ")]
+	[DataRow(null)]
+	public void ShouldRequireValue(string input)
 	{
-		[TestMethod()]
-		[DataRow("")]
-		[DataRow(" ")]
-		[DataRow(null)]
-		public void ShouldRequireValue(string input)
-		{
-			Assert.ThrowsException<ArgumentNullException>(() => new IdentityAddress(input, "notnull"));
-		}
+		Assert.ThrowsExactly<ArgumentNullException>(() => _ = new PlatformIdentityAddress(input, "notnull"));
+	}
 
-		[TestMethod()]
-		[DataRow("")]
-		[DataRow(" ")]
-		[DataRow(null)]
-		public void ShouldNotRequireDisplayValue(string input)
-		{
-			const string expectedValue = "value";
-			var address = new IdentityAddress(expectedValue, input);
-			Assert.AreEqual(expectedValue, address.Value);
-			Assert.AreEqual(input, address.Display);
-		}
+	[TestMethod()]
+	[DataRow("")]
+	[DataRow(" ")]
+	[DataRow(null)]
+	public void ShouldNotRequireDisplayValue(string input)
+	{
+		const string expectedValue = "value";
+		var address = new PlatformIdentityAddress(expectedValue, input);
+		Assert.AreEqual(expectedValue, address.Value);
+		Assert.AreEqual(input, address.Display);
+	}
 
-		[TestMethod()]
-		public void InternetAddressImplicitFromStringShouldSetValue()
-		{
-			const string expectedValue = "test";
-			IdentityAddress address = expectedValue;
-			Assert.AreEqual(expectedValue, address.Value);
-			Assert.AreEqual(null, address.Display);
-		}
+	[TestMethod()]
+	public void InternetAddressImplicitFromStringShouldSetValue()
+	{
+		const string expectedValue = "test";
+		PlatformIdentityAddress address = expectedValue;
+		Assert.AreEqual(expectedValue, address.Value);
+		Assert.IsNull(address.Display);
+	}
 
-		[TestMethod()]
-		public void FromInternetAddressShouldImplicitCastToString()
-		{
-			const string expectedDisplay = "test";
-			string? address = new IdentityAddress(expectedDisplay);
+	[TestMethod()]
+	public void FromInternetAddressShouldImplicitCastToString()
+	{
+		const string expectedDisplay = "test";
+		string? address = new PlatformIdentityAddress(expectedDisplay);
 
-			Assert.AreEqual(expectedDisplay, address);
-		}
+		Assert.AreEqual(expectedDisplay, address);
 	}
 }

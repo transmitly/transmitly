@@ -14,17 +14,16 @@
 
 using System.Globalization;
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+internal sealed class DelegateContentTemplateRegistration(Func<IDispatchCommunicationContext, Task<string?>> resolver, string? cultureInfo = null) : IContentTemplateRegistration
 {
-	internal sealed class DelegateContentTemplateRegistration(Func<IDispatchCommunicationContext, Task<string?>> resolver, string? cultureInfo = null) : IContentTemplateRegistration
+	private readonly Func<IDispatchCommunicationContext, Task<string?>> _resolver = Guard.AgainstNull(resolver);
+
+	public CultureInfo CultureInfo { get; } = GuardCulture.AgainstNull(cultureInfo);
+
+	public async Task<string?> GetContentAsync(IDispatchCommunicationContext context)
 	{
-		private readonly Func<IDispatchCommunicationContext, Task<string?>> _resolver = Guard.AgainstNull(resolver);
-
-		public CultureInfo CultureInfo { get; } = GuardCulture.AgainstNull(cultureInfo);
-
-		public async Task<string?> GetContentAsync(IDispatchCommunicationContext context)
-		{
-			return await _resolver(context);
-		}
+		return await _resolver(context);
 	}
 }

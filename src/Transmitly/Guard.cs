@@ -16,84 +16,83 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace Transmitly
+namespace Transmitly.Util;
+
+/// <summary>
+/// Provides a set of guard methods for validating arguments.
+/// </summary>
+[DebuggerStepThrough]
+public static class Guard
 {
 	/// <summary>
-	/// Provides a set of guard methods for validating arguments.
+	/// Throws an <see cref="ArgumentNullException"/> if the specified string is null, empty, or consists only of white-space characters.
 	/// </summary>
-	[DebuggerStepThrough]
-	public static class Guard
+	/// <param name="argument">The string argument to check.</param>
+	/// <param name="paramName">The name of the parameter.</param>
+	/// <returns>The original string argument if it is not null, empty, or consists only of white-space characters.</returns>
+	/// <exception cref="ArgumentNullException">Thrown when the specified string is null, empty, or consists only of white-space characters.</exception>
+	public static string AgainstNullOrWhiteSpace(
+		[NotNull] string? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
 	{
-		/// <summary>
-		/// Throws an <see cref="ArgumentNullException"/> if the specified string is null, empty, or consists only of white-space characters.
-		/// </summary>
-		/// <param name="argument">The string argument to check.</param>
-		/// <param name="paramName">The name of the parameter.</param>
-		/// <returns>The original string argument if it is not null, empty, or consists only of white-space characters.</returns>
-		/// <exception cref="ArgumentNullException">Thrown when the specified string is null, empty, or consists only of white-space characters.</exception>
-		public static string AgainstNullOrWhiteSpace(
-			[NotNull] string? argument, [CallerArgumentExpression(nameof(argument))] string? paramName = null)
+		if (string.IsNullOrWhiteSpace(argument))
 		{
-			if (string.IsNullOrWhiteSpace(argument))
-			{
-				throw new ArgumentNullException(paramName);
-			}
+			throw new ArgumentNullException(paramName);
+		}
 #pragma warning disable CS8777 // Parameter must have a non-null value when exiting.
-			return argument!;
+		return argument!;
 #pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
-		}
+	}
 
-		/// <summary>
-		/// Throws an <see cref="ArgumentNullException"/> if the specified collection is null or empty.
-		/// </summary>
-		/// <typeparam name="T">The type of the collection elements.</typeparam>
-		/// <param name="collection">The collection to check.</param>
-		/// <param name="paramName">The name of the parameter.</param>
-		/// <returns>The original collection if it is not null or empty.</returns>
-		/// <exception cref="ArgumentNullException">Thrown when the specified collection is null or empty.</exception>
-		public static ICollection<T> AgainstNullOrEmpty<T>(
-			[NotNull] ICollection<T>? collection,
-			[CallerArgumentExpression(nameof(collection))] string? paramName = null)
-		{
-			if (collection == null || collection.Count == 0)
-			{
-				throw new ArgumentNullException(paramName);
-			}
-
-			return collection;
-		}
-
-		public static List<T> AgainstNullOrEmpty<T>(
-		[NotNull] List<T>? collection,
+	/// <summary>
+	/// Throws an <see cref="ArgumentNullException"/> if the specified collection is null or empty.
+	/// </summary>
+	/// <typeparam name="T">The type of the collection elements.</typeparam>
+	/// <param name="collection">The collection to check.</param>
+	/// <param name="paramName">The name of the parameter.</param>
+	/// <returns>The original collection if it is not null or empty.</returns>
+	/// <exception cref="ArgumentNullException">Thrown when the specified collection is null or empty.</exception>
+	public static ICollection<T> AgainstNullOrEmpty<T>(
+		[NotNull] ICollection<T>? collection,
 		[CallerArgumentExpression(nameof(collection))] string? paramName = null)
+	{
+		if (collection == null || collection.Count == 0)
 		{
-			if (collection == null || collection.Count == 0)
-			{
-				throw new ArgumentNullException(paramName);
-			}
-
-			return collection;
+			throw new ArgumentNullException(paramName);
 		}
 
-		/// <summary>
-		/// Throws an <see cref="ArgumentNullException"/> if the specified argument is null.
-		/// </summary>
-		/// <typeparam name="T">The type of the argument.</typeparam>
-		/// <param name="argument">The argument to check.</param>
-		/// <param name="paramName">The name of the parameter.</param>
-		/// <returns>The original argument if it is not null.</returns>
-		/// <exception cref="ArgumentNullException">Thrown when the specified argument is null.</exception>
-		public static T AgainstNull<T>(
-			[NotNull] T? argument,
-			[CallerArgumentExpression(nameof(argument))] string? paramName = null)
-			where T : class
-		{
-			if (argument is null)
-			{
-				throw new ArgumentNullException(paramName);
-			}
+		return collection;
+	}
 
-			return argument;
+	public static List<T> AgainstNullOrEmpty<T>(
+	[NotNull] List<T>? collection,
+	[CallerArgumentExpression(nameof(collection))] string? paramName = null)
+	{
+		if (collection == null || collection.Count == 0)
+		{
+			throw new ArgumentNullException(paramName);
 		}
+
+		return collection;
+	}
+
+	/// <summary>
+	/// Throws an <see cref="ArgumentNullException"/> if the specified argument is null.
+	/// </summary>
+	/// <typeparam name="T">The type of the argument.</typeparam>
+	/// <param name="argument">The argument to check.</param>
+	/// <param name="paramName">The name of the parameter.</param>
+	/// <returns>The original argument if it is not null.</returns>
+	/// <exception cref="ArgumentNullException">Thrown when the specified argument is null.</exception>
+	public static T AgainstNull<T>(
+		[NotNull] T? argument,
+		[CallerArgumentExpression(nameof(argument))] string? paramName = null)
+		where T : class
+	{
+		if (argument is null)
+		{
+			throw new ArgumentNullException(paramName);
+		}
+
+		return argument;
 	}
 }

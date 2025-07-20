@@ -12,36 +12,35 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+/// <summary>
+/// Represents the priority of a message.
+/// </summary>
+public enum MessagePriority
 {
 	/// <summary>
-	/// Represents the priority of a message.
+	/// The normal priority.
 	/// </summary>
-	public enum MessagePriority
-	{
-		/// <summary>
-		/// The normal priority.
-		/// </summary>
-		Normal = 3,
+	Normal = 3,
 
-		/// <summary>
-		/// The highest priority.
-		/// </summary>
-		Highest = 1,
+	/// <summary>
+	/// The highest priority.
+	/// </summary>
+	Highest = 1,
 
-		/// <summary>
-		/// The high priority.
-		/// </summary>
-		High = 2,
+	/// <summary>
+	/// The high priority.
+	/// </summary>
+	High = 2,
 
-		/// <summary>
-		/// The low priority.
-		/// </summary>
-		Low = 4,
+	/// <summary>
+	/// The low priority.
+	/// </summary>
+	Low = 4,
 
-		/// <summary>
-		/// The lowest priority.
-		/// </summary>
-		Lowest = 5
-	}
+	/// <summary>
+	/// The lowest priority.
+	/// </summary>
+	Lowest = 5
 }

@@ -14,15 +14,14 @@
 
 using Transmitly.ChannelProvider;
 
-namespace Transmitly.Tests.Mocks
-{
-	internal sealed class NullChannelProviderDispatcher : IChannelProviderDispatcher
-	{
-		public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
+namespace Transmitly.Tests.Mocks;
 
-		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
-		{
-			return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);
-		}
+internal sealed class NullChannelProviderDispatcher : IChannelProviderDispatcher
+{
+	public IReadOnlyCollection<string>? RegisteredEvents { get; } = [];
+
+	public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+	{
+		return Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([]);
 	}
 }

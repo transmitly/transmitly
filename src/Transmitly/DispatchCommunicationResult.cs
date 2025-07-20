@@ -12,12 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Configuration
-{
-	public sealed class DispatchCommunicationResult(IReadOnlyCollection<IDispatchResult?> results, bool isSuccessful) : IDispatchCommunicationResult
-	{
-		public IReadOnlyCollection<IDispatchResult?> Results { get; } = Guard.AgainstNull(results);
+namespace Transmitly.Channel.Configuration;
 
-		public bool IsSuccessful { get; } = isSuccessful;
+public sealed class DispatchCommunicationResult(IReadOnlyCollection<IDispatchResult?> results) : IDispatchCommunicationResult
+{
+	public IReadOnlyCollection<IDispatchResult?> Results { get; } = Guard.AgainstNull(results);
+
+	public bool IsSuccessful
+	{
+		get
+		{
+			return Results
+				.GroupBy(g => g?.ChannelId)
+				.All(a =>
+					a.Any(x => x != null && x.Status.IsSuccess())
+				);
+		}
 	}
 }

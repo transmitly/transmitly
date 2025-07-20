@@ -16,41 +16,116 @@ using Moq;
 using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
 
-namespace Transmitly.Tests.Configuration.Pipeline
+namespace Transmitly.Tests.Pipeline.Configuration;
+
+[TestClass]
+public class DefaultPipelineProviderConfigurationTests
 {
-	[TestClass]
-	public class DefaultPipelineProviderConfigurationTests
+	[TestMethod]
+	public void DefaultPipelineStrategyShouldBeFirstMatch()
 	{
-		[TestMethod]
-		public void DefaultPipelineStrategyShouldBeFirstMatch()
-		{
-			var expectedType = typeof(FirstMatchPipelineDeliveryStrategy);
-			var sut = new DefaultPipelineProviderConfiguration();
-			Assert.AreEqual(expectedType, sut.PipelineDeliveryStrategyProvider.GetType());
-		}
+		var expectedType = typeof(FirstMatchPipelineDeliveryStrategy);
+		var sut = new DefaultPipelineProviderConfiguration();
+		Assert.AreEqual(expectedType, sut.PipelineDeliveryStrategyProvider.GetType());
+	}
 
-		[TestMethod]
-		public void ExtensionsShouldSetExpectedStrategyProvider()
-		{
-			var expectedFirstMatchType = typeof(FirstMatchPipelineDeliveryStrategy);
-			var expectedAnyMatchType = typeof(AnyMatchPipelineDeliveryStrategy);
+	[TestMethod]
+	public void ExtensionsShouldSetExpectedStrategyProvider()
+	{
+		var expectedFirstMatchType = typeof(FirstMatchPipelineDeliveryStrategy);
+		var expectedAnyMatchType = typeof(AnyMatchPipelineDeliveryStrategy);
 
-			var sut = new DefaultPipelineProviderConfiguration();
-			Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
+		var sut = new DefaultPipelineProviderConfiguration();
+		Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			PipelineDeliveryStrategyConfigurationExtensions.UseDefaultPipelineDeliveryStrategy(sut);
-			Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
+		sut.UseDefaultPipelineDeliveryStrategy();
+		Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			PipelineDeliveryStrategyConfigurationExtensions.UseAnyMatchPipelineDeliveryStrategy(sut);
-			Assert.AreEqual(expectedAnyMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
+		sut.UseAnyMatchPipelineDeliveryStrategy();
+		Assert.AreEqual(expectedAnyMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			PipelineDeliveryStrategyConfigurationExtensions.UseDefaultPipelineDeliveryStrategy(sut);
-			Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
+		sut.UseDefaultPipelineDeliveryStrategy();
+		Assert.AreEqual(expectedFirstMatchType, sut.PipelineDeliveryStrategyProvider.GetType());
 
-			var customStrategy = new Mock<BasePipelineDeliveryStrategyProvider>();
-			var customStrategyType = customStrategy.Object.GetType();
-			PipelineDeliveryStrategyConfigurationExtensions.UsePipelineDeliveryStrategy(sut, customStrategy.Object);
-			Assert.AreEqual(customStrategyType, sut.PipelineDeliveryStrategyProvider.GetType());
-		}
+		var customStrategy = new Mock<BasePipelineDeliveryStrategyProvider>();
+		var customStrategyType = customStrategy.Object.GetType();
+		PipelineDeliveryStrategyConfigurationExtensions.UsePipelineDeliveryStrategy(sut, customStrategy.Object);
+		Assert.AreEqual(customStrategyType, sut.PipelineDeliveryStrategyProvider.GetType());
+	}
+
+	[TestMethod]
+	public void IsDispatchChannelPriorityPreferenceAllowed_DefaultValueIsTrue()
+	{
+		var config = new DefaultPipelineProviderConfiguration();
+
+		Assert.IsTrue(config.IsDispatchChannelPriorityPreferenceAllowed);
+	}
+
+	[TestMethod]
+	public void AllowDispatchChannelPriorityPreference_SetsFalse_UpdatesPropertyCorrectly()
+	{
+		var config = new DefaultPipelineProviderConfiguration();
+
+		var result = config.AllowDispatchChannelPriorityPreference(false);
+
+		Assert.IsFalse(config.IsDispatchChannelPriorityPreferenceAllowed);
+		Assert.AreSame(config, result); 
+	}
+
+	[TestMethod]
+	public void AllowDispatchChannelPriorityPreference_SetsTrue_UpdatesPropertyCorrectly()
+	{
+		var config = new DefaultPipelineProviderConfiguration();
+		config.AllowDispatchChannelPriorityPreference(false); 
+
+		var result = config.AllowDispatchChannelPriorityPreference(true);
+
+		Assert.IsTrue(config.IsDispatchChannelPriorityPreferenceAllowed);
+		Assert.AreSame(config, result); 
+	}
+
+	[TestMethod]
+	public void PipelineId_DefaultValueIsNull()
+	{
+		var config = new DefaultPipelineProviderConfiguration();
+
+		Assert.IsNull(config.PipelineId);
+	}
+
+	[TestMethod]
+	public void Id_WithValidValue_SetsPipelineIdCorrectly()
+	{
+		var config = new DefaultPipelineProviderConfiguration();
+		const string expectedId = "test-pipeline";
+
+		var result = config.Id(expectedId);
+
+		Assert.AreEqual(expectedId, config.PipelineId);
+		Assert.AreSame(config, result); 
+	}
+
+	[TestMethod]
+	[DataRow(null)]
+	[DataRow("")]
+	[DataRow(" ")]
+	[DataRow("\t")]
+	public void Id_WithInvalidValue_ThrowsArgumentException(string? invalidId)
+	{
+		var config = new DefaultPipelineProviderConfiguration();
+
+		Assert.ThrowsExactly<ArgumentNullException>(() => config.Id(invalidId!));
+	}
+
+	[TestMethod]
+	public void Id_CanBeUpdatedMultipleTimes()
+	{
+		var config = new DefaultPipelineProviderConfiguration();
+		const string initialId = "initial-pipeline";
+		const string updatedId = "updated-pipeline";
+
+		config.Id(initialId);
+		config.Id(updatedId);
+
+		Assert.AreEqual(updatedId, config.PipelineId);
 	}
 }

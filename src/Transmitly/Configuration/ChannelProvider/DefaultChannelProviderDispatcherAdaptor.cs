@@ -14,15 +14,14 @@
 
 using Transmitly.ChannelProvider;
 
-namespace Transmitly.Channel.Configuration
-{
-	internal sealed class DefaultChannelProviderDispatcherAdaptor<TCommunication>(IChannelProviderDispatcher<TCommunication> dispatcher) : IChannelProviderDispatcher
-	{
-		private readonly IChannelProviderDispatcher<TCommunication> _dispatcher = Guard.AgainstNull(dispatcher);
+namespace Transmitly.Channel.Configuration;
 
-		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
-		{
-			return _dispatcher.DispatchAsync((TCommunication)communication, communicationContext, cancellationToken);
-		}
+internal sealed class DefaultChannelProviderDispatcherAdaptor<TCommunication>(IChannelProviderDispatcher<TCommunication> dispatcher) : IChannelProviderDispatcher
+{
+	private readonly IChannelProviderDispatcher<TCommunication> _dispatcher = Guard.AgainstNull(dispatcher);
+
+	public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+	{
+		return _dispatcher.DispatchAsync((TCommunication)communication, communicationContext, cancellationToken);
 	}
 }

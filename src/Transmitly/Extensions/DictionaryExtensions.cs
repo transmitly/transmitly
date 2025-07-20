@@ -12,25 +12,24 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+/// <summary>
+/// Extension methods for dictionaries.
+/// </summary>
+internal static class DictionaryExtensions
 {
 	/// <summary>
-	/// Extension methods for dictionaries.
+	/// Safely gets the value associated with the specified key from the dictionary.
 	/// </summary>
-	internal static class DictionaryExtensions
+	/// <typeparam name="TReturn">The type of the return value.</typeparam>
+	/// <param name="dict">The dictionary.</param>
+	/// <param name="key">The key.</param>
+	/// <returns>The value associated with the specified key, or the default value of TReturn if the key is not found.</returns>
+	public static TReturn? Get<TReturn>(this IDictionary<string, object> dict, string key)
 	{
-		/// <summary>
-		/// Safely gets the value associated with the specified key from the dictionary.
-		/// </summary>
-		/// <typeparam name="TReturn">The type of the return value.</typeparam>
-		/// <param name="dict">The dictionary.</param>
-		/// <param name="key">The key.</param>
-		/// <returns>The value associated with the specified key, or the default value of TReturn if the key is not found.</returns>
-		public static TReturn? Get<TReturn>(this IDictionary<string, object> dict, string key)
-		{
-			if (dict.TryGetValue(key, out object? value))
-				return (TReturn)value;
-			return default;
-		}
+		if (dict.TryGetValue(key, out object? value))
+			return (TReturn)value;
+		return default;
 	}
 }

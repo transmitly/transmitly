@@ -14,31 +14,30 @@
 
 using System.Runtime.Serialization;
 
-namespace Transmitly.Exceptions
+namespace Transmitly.Exceptions;
+
+/// <summary>
+/// A general transmitly communication exception
+/// </summary>
+[Serializable]
+public class CommunicationsException : Exception
 {
-	/// <summary>
-	/// A general transmitly communication exception
-	/// </summary>
-	[Serializable]
-	public class CommunicationsException : Exception
+	public CommunicationsException(string message) : base(message)
 	{
-		public CommunicationsException(string message) : base(message)
-		{
-		}
+	}
 
-		public CommunicationsException(string message, Exception innerException) : base(message, innerException)
-		{
-		}
-		public CommunicationsException()
-		{
+	public CommunicationsException(string message, Exception innerException) : base(message, innerException)
+	{
+	}
+	public CommunicationsException()
+	{
 
-		}
+	}
 #if NET8_0_OR_GREATER
-		//https://aka.ms/dotnet-warnings/SYSLIB0051
-		[Obsolete("https://aka.ms/dotnet-warnings/SYSLIB0051", DiagnosticId = "SYSLIB0051")]
+	//https://aka.ms/dotnet-warnings/SYSLIB0051
+	[Obsolete("https://aka.ms/dotnet-warnings/SYSLIB0051", DiagnosticId = "SYSLIB0051")]
 #endif
-		protected CommunicationsException(SerializationInfo info, StreamingContext context) : base(info, context)
-		{
-		}
+	protected CommunicationsException(SerializationInfo info, StreamingContext context) : base(info, context)
+	{
 	}
 }

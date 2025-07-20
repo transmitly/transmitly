@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery
+namespace Transmitly.Delivery;
+
+public interface IChannelProviderDeliveryReportRequestAdaptor
 {
-	public interface IChannelProviderDeliveryReportRequestAdaptor
-	{
-		Task<IReadOnlyCollection<DeliveryReport>?> AdaptAsync(IRequestAdaptorContext adaptorContext);
-	}
+	Task<IReadOnlyCollection<DeliveryReport>?> AdaptAsync(IRequestAdaptorContext adaptorContext);
 }

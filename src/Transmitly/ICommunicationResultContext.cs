@@ -12,11 +12,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IDispatchCommunicationResult
 {
-	public interface IDispatchCommunicationResult
-	{
-		bool IsSuccessful { get; }
-		IReadOnlyCollection<IDispatchResult?> Results { get; }
-	}
+	bool IsSuccessful { get; }
+	IReadOnlyCollection<IDispatchResult?> Results { get; }
 }

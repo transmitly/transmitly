@@ -12,52 +12,34 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+namespace Transmitly.Channel.Email;
 
-namespace Transmitly.Channel.Email
+/// <inheritdoc cref="IEmail" />
+internal sealed class EmailCommunication(IPlatformIdentityAddress from, IExtendedProperties extendedProperties) : IEmail
 {
-	/// <inheritdoc />
-	internal sealed class EmailCommunication(IIdentityAddress from, IExtendedProperties extendedProperties) : IEmail
-	{
-		/// <inheritdoc />
-		public string? Subject { get; internal set; }
+	public string? Subject { get; internal set; }
 
-		/// <inheritdoc />
-		public string? HtmlBody { get; internal set; }
+	public string? HtmlBody { get; internal set; }
 
-		/// <inheritdoc />
-		public string? TextBody { get; internal set; }
+	public string? TextBody { get; internal set; }
 
-		/// <inheritdoc />
-		public MessagePriority Priority { get; internal set; } = MessagePriority.Normal;
+	public MessagePriority Priority { get; internal set; } = MessagePriority.Normal;
 
-		/// <inheritdoc />
-		public TransportPriority TransportPriority { get; internal set; } = TransportPriority.Normal;
+	public TransportPriority TransportPriority { get; internal set; } = TransportPriority.Normal;
 
-		/// <inheritdoc />
-		public IIdentityAddress From { get; } = Guard.AgainstNull(from);
+	public IPlatformIdentityAddress From { get; } = Guard.AgainstNull(from);
 
-		/// <inheritdoc />
-		public IIdentityAddress[]? ReplyTo { get; internal set; } = [from];
+	public IPlatformIdentityAddress[]? ReplyTo { get; internal set; } = [from];
 
-		/// <inheritdoc />
-		public IIdentityAddress[]? To { get; internal set; }
+	public IPlatformIdentityAddress[]? To { get; internal set; }
 
-		/// <inheritdoc />
-		public IIdentityAddress[]? Cc { get; internal set; }
+	public IPlatformIdentityAddress[]? Cc { get; internal set; }
 
-		/// <inheritdoc />
-		public IIdentityAddress[]? Bcc { get; internal set; }
+	public IPlatformIdentityAddress[]? Bcc { get; internal set; }
 
-		/// <inheritdoc />
-		public IReadOnlyCollection<IAttachment> Attachments { get; internal set; } = [];
+	public IReadOnlyCollection<IEmailAttachment> Attachments { get; internal set; } = [];
 
-		/// <inheritdoc />
-		public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
+	public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 
-		/// <inheritdoc />
-		public string? DeliveryReportCallbackUrl { get; set; }
-
-		/// <inheritdoc />
-		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
-	}
+	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 }

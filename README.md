@@ -24,7 +24,7 @@ dotnet add package Transmitly.ChannelProvider.Smtp
 ```
 
 ### Setup a Pipeline
-Now it's time to configure a `pipeline`. `Pipelines` will give us a lot of flexibility down the road. For now you can think of a pipeline as a way to configure which channels and channel providers are involved when you dispatch domain event. 
+Now it's time to configure a `pipeline`. `Pipelines` will give us a lot of flexibility down the road. For now you can think of a pipeline as a way to configure which channels and channel providers are involved when you dispatch your domain intent. 
 In other words, you typically start an application by sending a welcome email to a newly registered user. As your application grows, you may want to send an SMS or an Email depending on which address the user gave you at sign up. With Transmitly, it's managed in a single location and your domain/business logic is agnostic of which communications are sent and how.
 
 ```csharp
@@ -69,8 +69,8 @@ class AccountRegistrationService
     //Validate and create the Account
     var newAccount = CreateAccount(account);
 
-    //Dispatch (Send) our configured email
-    var result = await _communicationsClient.DispatchAsync("WelcomeKit", "newAccount@gmail.com", new{});
+    //Dispatch (Send) using our pipeline intent named and the email address of the new account
+    var result = await _communicationsClient.DispatchAsync("WelcomeKit", newAccount.EmailAddress, new{});
 
     if(result.IsSuccessful)
       return newAccount;
@@ -80,10 +80,11 @@ class AccountRegistrationService
 }
 ```
 
-That's it! You're sending emails like a champ. But you might think that seems like a lot of work compared to a simple IEmail Client. Let's break down what we gained by using Transmitly.
+That's it! You're dispatching emails like a champ. But you might think that seems like a lot of work compared to a simple IEmail Client. Let's break down what we gained by using Transmitly.
  * Vendor agnostic - We can change channel providers with a simple configuration change
    * That means when we want to try out SendGrid, Twilio, Infobip or one of the many other services, it's a single change in a single location. :relaxed: 
  * Delivery configuration - The details of our (Email) communications are not cluttering up our code base.
+   * We've also managed to keep our domain/business logic clean by using pipeline intents rather than explicitly sending and email or other communication types. 
  * Message composition - The details of how an email or sms is generated are not scattered throughout your codebase.
    * In the future we may want to send an SMS and/or push notifications. We can now control that in a single location -- not in our business logic.
  * We can now use a single service/client for all of our communication needs
@@ -91,7 +92,7 @@ That's it! You're sending emails like a champ. But you might think that seems li
   
 
 ### Changing Channel Providers
-Want to try out a new service to send out your emails? Twilio? Infobip? With Transmitly it's as easy as adding a your prefered channel provider and a few lines of configuration. In the example below, we'll try out SendGrid.
+Want to try out a new service to send out your emails? Twilio? Infobip? With Transmitly it's as easy as adding a your preferred channel provider and a few lines of configuration. In the example below, we'll try out SendGrid.
 
 For the next example we'll start using SendGrid to send our emails. 
 ```shell
@@ -128,7 +129,7 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
 builder.Services.AddSingleton(communicationsClient);
 ```
 
-That's right, we added a new channel provider package. Removed our SMTP configuration and added and configured our Send Grid support. You don't need to change any other code. Our piplines, channel and more importantly our domain/business logic stays the same. :open_mouth:
+That's right, we added a new channel provider package. Removed our SMTP configuration and added and configured our Send Grid support. You don't need to change any other code. Our pipelines, channel and more importantly our domain/business logic stays the same. :open_mouth:
 
 ### Supported Channel Providers
 
@@ -141,7 +142,7 @@ That's right, we added a new channel provider package. Removed our SMTP configur
 | Push Notifications  | [Transmitly.ChannelProvider.Firebase](https://github.com/transmitly/transmitly-channel-provider-firebase)  |
 
 ### Delivery Reports
-Now that we are dispatching communications, the next questiona along the lines of: how do I log things; how do I store the content; what about status updates from the 3rd party services? All great questions. To start, we'll focus on logging the requests. Our simple example is using the SMTP library. In that case we don't get a lot of visibility into if it was sent. Just that it was dispatched or delivered. Once you move into 3rd party channel providers you start to unlock more fidelity into what is and has happened to your communications. Delivery reports are how you manage these updates in a structured and consistent way across any channel provider or channel. 
+Now that we are dispatching communications, the next question is along the lines of: how do I log things; how do I store the content; what about status updates from the 3rd party services? All great questions. To start, we'll focus on logging the requests. Our simple example is using the SMTP library. In that case we don't get a lot of visibility into if it was sent. Just that it was dispatched or delivered. Once you move into 3rd party channel providers you start to unlock more fidelity into what is and has happened to your communications. Delivery reports are how you manage these updates in a structured and consistent way across any channel provider or channel. 
 
 ```csharp
 using Transmitly;
@@ -169,7 +170,7 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
 builder.Services.AddSingleton(communicationsClient);
 ```
 
-Adding the `AddDeliveryReportHandler` gives us the option of passing in a func that will be executed during different lifecycles of the communicatinos being dispatched. In this case, we're listening to any report for any channel/channel provider. If you'd like a bit more [fine grained control check out the wiki](https://github.com/transmitly/transmitly/wiki/Delivery-Reports#filters) for information on how you can dail in the data you want. Delivery reports are built to give you the most flexability to handle the chnages to communications as part of your communications strategy. With a delivery report you could retry a failed send, notify stakeholders of important messages and more commonly, store the contents of communications being sent.
+Adding the `AddDeliveryReportHandler` gives us the option of passing in a func that will be executed during different lifecycles of the communications being dispatched. In this case, we're listening to any report for any channel/channel provider. If you'd like a bit more [fine grained control check out the wiki](https://github.com/transmitly/transmitly/wiki/Delivery-Reports#filters) for information on how you can dial in the data you want. Delivery reports are built to give you the most flexibility to handle the changes to communications as part of your communications strategy. With a delivery report you could retry a failed send, notify stakeholders of important messages and more commonly, store the contents of communications being sent.
 
 Note: As mentioned earlier, using 3rd party services usually means you will have asynchronous updates to the status of the communication. In general, most providers will push this information to you in the form of a webhook. Transmitly can help with these webhooks with the Mvc libraries.
 
@@ -178,7 +179,7 @@ Using the Transmitly Mvc libraries you're able to configure all of your channel 
 [See the wiki for more on delivery reports]([wiki/Delivery-Reports](https://github.com/transmitly/transmitly/wiki/Delivery-Reports))
 
 ### Template Engines
-Templating is not supported out of the box. This is by design to allow you to choose the template engine you prefer, or even futher, integrating a bespoke engine that you'd really like to keep using. As of today, Transmitly has two officially supported template engines; Fluid & Scriban. As with any other feature, it's as simple as adding the template engine to your project. For this example, we'll use Scriban
+Templating is not supported out of the box. This is by design to allow you to choose the template engine you prefer, or even further, integrating a bespoke engine that you'd really like to keep using. As of today, Transmitly has two officially supported template engines; Fluid & Scriban. As with any other feature, it's as simple as adding the template engine to your project. For this example, we'll use Scriban
 
 ```bash
 dotnet add Transmitly.TemplateEngines.Scriban
@@ -229,7 +230,7 @@ class AccountRegistrationService
     var newAccount = CreateAccount(account);
 
     //Dispatch (Send) our configured email
-    var result = await _communicationsClient.DispatchAsync("WelcomeKit", "newAccount@gmail.com", new { firstName = newAccount.FirstName });
+    var result = await _communicationsClient.DispatchAsync("WelcomeKit", newAccount.EmailAddress, new { firstName = newAccount.FirstName });
 
     if(result.IsSuccessful)
       return newAccount;

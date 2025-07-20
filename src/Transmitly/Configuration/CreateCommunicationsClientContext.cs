@@ -14,33 +14,32 @@
 
 
 using Transmitly.ChannelProvider.Configuration;
-using Transmitly.Pipeline.Configuration;
-using Transmitly.Template.Configuration;
 using Transmitly.Delivery;
-using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Persona.Configuration;
+using Transmitly.Pipeline.Configuration;
+using Transmitly.PlatformIdentity.Configuration;
+using Transmitly.Template.Configuration;
 
-namespace Transmitly
+namespace Transmitly;
+
+internal sealed class CreateCommunicationsClientContext(
+	IReadOnlyCollection<IChannelProviderRegistration> channelProviders,
+	IReadOnlyCollection<IPipeline> pipelines,
+	IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
+	IReadOnlyCollection<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations,
+	IReadOnlyCollection<IPersonaRegistration> personaRegistrations,
+	IReadOnlyCollection<IObserver<DeliveryReport>> deliveryReportObservers
+) : ICreateCommunicationsClientContext
 {
-	internal sealed class CreateCommunicationsClientContext(
-		IReadOnlyCollection<IChannelProviderRegistration> channelProviders,
-		IReadOnlyCollection<IPipeline> pipelines,
-		IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
-		IReadOnlyCollection<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations,
-		IReadOnlyCollection<IPersonaRegistration> personaRegistrations,
-		IDeliveryReportReporter deliveryReportProvider
-	) : ICreateCommunicationsClientContext
-	{
-		public IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; } = channelProviders;
+	public IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; } = channelProviders;
 
-		public IReadOnlyCollection<IPipeline> Pipelines { get; } = pipelines;
+	public IReadOnlyCollection<IPipeline> Pipelines { get; } = pipelines;
 
-		public IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; } = templateEngines;
+	public IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; } = templateEngines;
 
-		public IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; } = platformIdentityResolverRegistrations;
+	public IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; } = platformIdentityResolverRegistrations;
 
-		public IReadOnlyCollection<IPersonaRegistration> Personas { get; } = personaRegistrations;
+	public IReadOnlyCollection<IPersonaRegistration> Personas { get; } = personaRegistrations;
 
-		public IDeliveryReportReporter DeliveryReportProvider { get; } = deliveryReportProvider;
-	}
+	public IReadOnlyCollection<IObserver<DeliveryReport>> DeliveryReportObservers { get; } = deliveryReportObservers;
 }

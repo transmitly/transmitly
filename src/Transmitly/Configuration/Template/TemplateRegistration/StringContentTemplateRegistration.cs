@@ -14,24 +14,23 @@
 
 using System.Globalization;
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+internal sealed class StringContentTemplateRegistration : IContentTemplateRegistration
 {
-	internal sealed class StringContentTemplateRegistration : IContentTemplateRegistration
+	private readonly string? _content;
+
+	public StringContentTemplateRegistration(string content, string? cultureInfo = null)
 	{
-		private readonly string? _content;
+		Guard.AgainstNullOrWhiteSpace(content);
+		CultureInfo = GuardCulture.AgainstNull(cultureInfo);
+		_content = content;
+	}
 
-		public StringContentTemplateRegistration(string content, string? cultureInfo = null)
-		{
-			Guard.AgainstNullOrWhiteSpace(content);
-			CultureInfo = GuardCulture.AgainstNull(cultureInfo);
-			_content = content;
-		}
+	public CultureInfo CultureInfo { get; }
 
-		public CultureInfo CultureInfo { get; }
-
-		public Task<string?> GetContentAsync(IDispatchCommunicationContext context)
-		{
-			return Task.FromResult(_content);
-		}
+	public Task<string?> GetContentAsync(IDispatchCommunicationContext context)
+	{
+		return Task.FromResult(_content);
 	}
 }

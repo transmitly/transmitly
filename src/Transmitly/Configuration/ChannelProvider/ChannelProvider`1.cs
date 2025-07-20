@@ -12,23 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+namespace Transmitly.ChannelProvider.Configuration;
 
-namespace Transmitly.ChannelProvider.Configuration
+///<inheritdoc/>
+internal class ChannelProviderRegistration(string providerId,
+	IReadOnlyCollection<IChannelProviderDispatcherRegistration>? dispatcherTypes,
+	IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>? deliveryReportRequestAdaptors,
+	object? configuration) : IChannelProviderRegistration
 {
 	///<inheritdoc/>
-	internal class ChannelProviderRegistration(string providerId,
-		IReadOnlyCollection<IChannelProviderDispatcherRegistration>? dispatcherTypes,
-		IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>? deliveryReportRequestAdaptors,
-		object? configuration) : IChannelProviderRegistration
-	{
-		///<inheritdoc/>
-		public string Id { get; } = Guard.AgainstNullOrWhiteSpace(providerId);
+	public string Id { get; } = Guard.AgainstNullOrWhiteSpace(providerId);
 
-		public object? Configuration => configuration;
+	public object? Configuration => configuration;
 
-		public IReadOnlyCollection<IChannelProviderDispatcherRegistration> DispatcherRegistrations => dispatcherTypes ?? [];
+	public IReadOnlyCollection<IChannelProviderDispatcherRegistration> DispatcherRegistrations => dispatcherTypes ?? [];
 
-		public IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRequestAdaptorRegistrations => deliveryReportRequestAdaptors ?? [];
+	public IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration> DeliveryReportRequestAdaptorRegistrations => deliveryReportRequestAdaptors ?? [];
 
-	}
 }

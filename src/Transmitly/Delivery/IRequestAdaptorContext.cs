@@ -12,16 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery
+namespace Transmitly.Delivery;
+
+public interface IRequestAdaptorContext
 {
-	public interface IRequestAdaptorContext
-	{
-		string? GetQueryValue(string key);
-		string? GetFormValue(string key);
-		string? GetHeaderValue(string key);
-		string? GetValue(string key);
-		string? Content { get; }
-		string? PipelineName { get; }
-		string? ResourceId { get; }
-	}
+	string? GetQueryValue(string key);
+	string? GetFormValue(string key);
+	string? GetHeaderValue(string key);
+	string? GetValue(string key);
+	string? Content { get; }
+	string? PipelineIntent { get; }
+	string? PipelineId { get; }
+	string? ResourceId { get; }
 }

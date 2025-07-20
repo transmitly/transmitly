@@ -12,16 +12,15 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
-{
-	public record LinkedResource : Resource
-	{
-		public string Id { get; }
+namespace Transmitly;
 
-		public LinkedResource(string id, Stream stream) : base(null, null, stream)
-		{
-			Id = Guard.AgainstNullOrWhiteSpace(id);
-		}
+public record LinkedResource : Resource
+{
+	public string Id { get; }
+
+	public LinkedResource(string id, Stream stream) : base(null, null, stream)
+	{
+		Id = Guard.AgainstNullOrWhiteSpace(id);
 	}
 }
 

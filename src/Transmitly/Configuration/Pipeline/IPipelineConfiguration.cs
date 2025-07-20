@@ -15,63 +15,72 @@
 using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.Pipeline.Configuration;
+
+/// <summary>
+/// Configuration of a pipeline
+/// </summary>
+public interface IPipelineConfiguration
 {
 	/// <summary>
-	/// Configuration of a pipeline
+	/// The unique identifier for the pipeline.
+	/// <para>To set value see <see cref="Id(string)"/></para>
 	/// </summary>
-	public interface IPipelineConfiguration
-	{
-		/// <summary>
-		/// Gets the list of available channels registered in the pipeline.
-		/// </summary>
-		/// <see cref="AddChannel(IChannel)"/>
-		IReadOnlyCollection<IChannel> Channels { get; }
-		/// <summary>
-		/// Gets the list of persona filters registered in the pipeline.
-		/// </summary>
-		IReadOnlyCollection<string> PersonaFilters { get; }
-		/// <summary>
-		/// Gets the registered channel sending strategy provider
-		/// </summary>
-		BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; }
-		/// <summary>
-		/// Priority of the transportation method.
-		/// </summary>
-		TransportPriority TransportPriority { get; set; }
-		/// <summary>
-		/// Priority of the message.
-		/// </summary>
-		MessagePriority MessagePriority { get; set; }
-		/// <summary>
-		/// Recipients to copy the message to (if supported).
-		/// </summary>
-		/// <param name="platformIdentityType"></param>
-		/// <returns>Pipeline configuration</returns>
-		IPipelineConfiguration CopyIdentityAddress(params string[] platformIdentityType);
-		/// <summary>
-		/// Recipients to blind copy the message to (if supported).
-		/// </summary>
-		/// <param name="platformIdentityType"></param>
-		/// <returns>Pipeline configuration</returns>
-		IPipelineConfiguration BlindCopyIdentityAddress(params string[] platformIdentityType);
-		/// <summary>
-		/// Registers a communication channel with the pipeline.
-		/// </summary>
-		/// <param name="channel"><see cref="IChannel"/> to register.</param>
-		/// <returns>Pipeline configuration</returns>
-		IPipelineConfiguration AddChannel(IChannel channel);
-		/// <summary>
-		/// Sets the pipeline sending strategy provider.
-		/// </summary>
-		/// <param name="deliveryStrategyProvider">Sending strategy provider.</param>
-		/// <returns>Pipeline configuration.</returns>
-		IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider);
-		/// <summary>
-		/// Adds a persona filter to the pipeline configuration.
-		/// </summary>
-		/// <param name="personaName">Name of the registered persona filter.</param>
-		/// <returns>Pipeline configuration.</returns>
-		IPipelineConfiguration AddPersonaFilter(string personaName);
-	}
+	string? PipelineId { get; }
+	/// <summary>
+	/// Gets the list of available channels registered in the pipeline.
+	/// </summary>
+	/// <see cref="AddChannel(IChannel)"/>
+	IReadOnlyCollection<IChannel> Channels { get; }
+	/// <summary>
+	/// Gets the list of persona filters registered in the pipeline.
+	/// </summary>
+	IReadOnlyCollection<string> PersonaFilters { get; }
+	/// <summary>
+	/// Gets the registered channel sending strategy provider
+	/// </summary>
+	BasePipelineDeliveryStrategyProvider PipelineDeliveryStrategyProvider { get; }
+	/// <summary>
+	/// Whether the pipeline is forced to comply with the provided platform dispatch requirements. (Default = True)
+	/// <para>To set value see <see cref="AllowDispatchRequirements(bool)"/></para>
+	/// </summary>
+	bool IsDispatchRequirementsAllowed { get; }
+	/// <summary>
+	/// Whether the pipeline allows dispatch channel priority preference. (Default = True)
+	/// <para>To set value see <see cref="AllowDispatchChannelPriorityPreference(bool)"/></para>
+	/// </summary>
+	bool IsDispatchChannelPriorityPreferenceAllowed {get; } 
+	/// <summary>
+	/// Registers a communication channel with the pipeline.
+	/// </summary>
+	/// <param name="channel"><see cref="IChannelConfiguration"/> to register.</param>
+	/// <returns>Pipeline configuration</returns>
+	IPipelineConfiguration AddChannel(IChannel channel);
+	/// <summary>
+	/// Sets the pipeline sending strategy provider.
+	/// </summary>
+	/// <param name="deliveryStrategyProvider">Sending strategy provider.</param>
+	/// <returns>Pipeline configuration.</returns>
+	IPipelineConfiguration UsePipelineDeliveryStrategy(BasePipelineDeliveryStrategyProvider deliveryStrategyProvider);
+	/// <summary>
+	/// Adds a persona filter to the pipeline configuration.
+	/// </summary>
+	/// <param name="personaName">Name of the registered persona filter.</param>
+	/// <returns>Pipeline configuration.</returns>
+	IPipelineConfiguration AddPersonaFilter(string personaName);
+	/// <summary>
+	/// Adds an Id to a pipeline to uniquely identify it from other pipelines that may have the same intent name.
+	/// </summary>
+	/// <param name="id">Unique id of the pipeline.</param>
+	/// <returns>Pipeline configuration.</returns>
+	IPipelineConfiguration Id(string id);
+	/// <summary>
+	/// Forces the pipeline to fail if it cannot comply to the provided platform dispatch requirements.
+	/// </summary>
+	/// <returns>Pipeline configuration.</returns>
+	IPipelineConfiguration AllowDispatchRequirements(bool allowed);
+	/// <summary>
+	/// Allows the pipeline to use the dispatch channel priority preference when dispatching communications.
+	/// </summary>
+	IPipelineConfiguration AllowDispatchChannelPriorityPreference(bool allowed);
 }

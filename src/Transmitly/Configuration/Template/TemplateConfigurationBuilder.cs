@@ -12,37 +12,36 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+/// <summary>
+/// Represents a builder for configuring template settings.
+/// </summary>
+public sealed class TemplateConfigurationBuilder
 {
+	private readonly CommunicationsClientBuilder _communicationsConfiguration;
+	private readonly Action<ITemplateEngineRegistration> _addTemplateEngine;
+
 	/// <summary>
-	/// Represents a builder for configuring template settings.
+	/// Initializes a new instance of the <see cref="TemplateConfigurationBuilder"/> class.
 	/// </summary>
-	public sealed class TemplateConfigurationBuilder
+	/// <param name="communicationsConfiguration">The communications configuration builder.</param>
+	/// <param name="addTemplateEngine">The action to add a template engine.</param>
+	internal TemplateConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<ITemplateEngineRegistration> addTemplateEngine)
 	{
-		private readonly CommunicationsClientBuilder _communicationsConfiguration;
-		private readonly Action<ITemplateEngineRegistration> _addTemplateEngine;
+		_communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
+		_addTemplateEngine = Guard.AgainstNull(addTemplateEngine);
+	}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TemplateConfigurationBuilder"/> class.
-		/// </summary>
-		/// <param name="communicationsConfiguration">The communications configuration builder.</param>
-		/// <param name="addTemplateEngine">The action to add a template engine.</param>
-		internal TemplateConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<ITemplateEngineRegistration> addTemplateEngine)
-		{
-			_communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
-			_addTemplateEngine = Guard.AgainstNull(addTemplateEngine);
-		}
-
-		/// <summary>
-		/// Adds a template engine to the communications configuration.
-		/// </summary>
-		/// <param name="engineInstance">The template engine instance.</param>
-		/// <param name="id">The optional ID for the template engine.</param>
-		/// <returns>The communications configuration builder.</returns>
-		public CommunicationsClientBuilder Add(ITemplateEngine engineInstance, string? id = null)
-		{
-			_addTemplateEngine(new TemplateEngineRegistration(engineInstance, id));
-			return _communicationsConfiguration;
-		}
+	/// <summary>
+	/// Adds a template engine to the communications configuration.
+	/// </summary>
+	/// <param name="engineInstance">The template engine instance.</param>
+	/// <param name="id">The optional ID for the template engine.</param>
+	/// <returns>The communications configuration builder.</returns>
+	public CommunicationsClientBuilder Add(ITemplateEngine engineInstance, string? id = null)
+	{
+		_addTemplateEngine(new TemplateEngineRegistration(engineInstance, id));
+		return _communicationsConfiguration;
 	}
 }

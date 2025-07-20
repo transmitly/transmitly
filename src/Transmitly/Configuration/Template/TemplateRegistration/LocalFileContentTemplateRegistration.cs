@@ -14,40 +14,39 @@
 
 using System.Globalization;
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+internal sealed class LocalFileContentTemplateRegistration : IContentTemplateRegistration
 {
-	internal sealed class LocalFileContentTemplateRegistration : IContentTemplateRegistration
+	private readonly string _path;
+	private readonly bool _exists;
+
+	public CultureInfo CultureInfo { get; }
+
+	public LocalFileContentTemplateRegistration(string path, bool throwIfNotFound = true, string? cultureInfo = null)
 	{
-		private readonly string _path;
-		private readonly bool _exists;
-
-		public CultureInfo CultureInfo { get; }
-
-		public LocalFileContentTemplateRegistration(string path, bool throwIfNotFound = true, string? cultureInfo = null)
+		_path = Guard.AgainstNullOrWhiteSpace(path);
+		CultureInfo = GuardCulture.AgainstNull(cultureInfo);
+		_exists = File.Exists(path);
+		if (throwIfNotFound && !_exists)
 		{
-			_path = Guard.AgainstNullOrWhiteSpace(path);
-			CultureInfo = GuardCulture.AgainstNull(cultureInfo);
-			_exists = File.Exists(path);
-			if (throwIfNotFound && !_exists)
-			{
-				throw new FileNotFoundException($"Template File, '{path}', not found.");
-			}
+			throw new FileNotFoundException($"Template File, '{path}', not found.");
 		}
+	}
 
 #if NET6_0_OR_GREATER
-		public async Task<string?> GetContentAsync(IDispatchCommunicationContext context)
-		{
-			if (!_exists)
-				return null;
-			return await File.ReadAllTextAsync(_path);
-		}
-#else
-		public Task<string?> GetContentAsync(IDispatchCommunicationContext context)
-		{
-			if (!_exists)
-				return Task.FromResult<string?>(null);
-			return Task.FromResult<string?>(File.ReadAllText(_path));
-		}
-#endif
+	public async Task<string?> GetContentAsync(IDispatchCommunicationContext context)
+	{
+		if (!_exists)
+			return null;
+		return await File.ReadAllTextAsync(_path);
 	}
+#else
+	public Task<string?> GetContentAsync(IDispatchCommunicationContext context)
+	{
+		if (!_exists)
+			return Task.FromResult<string?>(null);
+		return Task.FromResult<string?>(File.ReadAllText(_path));
+	}
+#endif
 }

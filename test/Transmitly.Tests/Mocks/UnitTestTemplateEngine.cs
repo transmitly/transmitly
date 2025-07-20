@@ -14,28 +14,27 @@
 
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+internal sealed class UnitTestTemplateEngine : ITemplateEngine
 {
-	internal sealed class UnitTestTemplateEngine : ITemplateEngine
+	public async Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
 	{
-		public async Task<string?> RenderAsync(IContentTemplateRegistration? registration, IDispatchCommunicationContext context)
+		if (registration == null)
+			return null;
+		var contentModel = context.ContentModel;
+		var templateContent = await registration.GetContentAsync(context);
+
+		if (string.IsNullOrWhiteSpace(templateContent) || contentModel == null)
+			return default;
+
+		Type type = contentModel!.GetType();
+
+		foreach (var property in type.GetProperties())
 		{
-			if (registration == null)
-				return null;
-			var contentModel = context.ContentModel;
-			var templateContent = await registration.GetContentAsync(context);
-
-			if (string.IsNullOrWhiteSpace(templateContent) || contentModel == null)
-				return default;
-
-			Type type = contentModel!.GetType();
-
-			foreach (var property in type.GetProperties())
-			{
-				templateContent = templateContent!.Replace("{{" + property.Name + "}}", property.GetValue(contentModel)?.ToString());
-			}
-
-			return templateContent;
+			templateContent = templateContent!.Replace("{{" + property.Name + "}}", property.GetValue(contentModel)?.ToString());
 		}
+
+		return templateContent;
 	}
 }

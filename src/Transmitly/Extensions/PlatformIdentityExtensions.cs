@@ -12,19 +12,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public static class PlatformIdentityExtensions
 {
-	public static class PlatformIdentityExtensions
-
+	public static IPlatformIdentityAddress AsIdentityAddress(this string address, string? display = null)
 	{
-		public static IIdentityAddress AsIdentityAddress(this string address, string? display = null)
-		{
-			return new IdentityAddress(address, display);
-		}
+		return new PlatformIdentityAddress(address, display);
+	}
 
-		public static IPlatformIdentityProfile AsPlatformIdentity(this IReadOnlyCollection<IIdentityAddress> identityAddresses)
-		{
-			return new PlatformIdentityProfile(null, null, identityAddresses);
-		}
+	public static IPlatformIdentityProfile AsPlatformIdentity(this IReadOnlyCollection<IPlatformIdentityAddress> identityAddresses)
+	{
+		return new PlatformIdentityProfile(null, null, identityAddresses);
 	}
 }

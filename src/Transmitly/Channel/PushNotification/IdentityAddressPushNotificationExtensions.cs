@@ -12,27 +12,26 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Push
-{
-	/// <summary>
-	/// Defines the Push Notification specific identity address types
-	/// </summary>
-	public static class IdentityAddressPushNotificationExtensions
-	{
-#pragma warning disable IDE0060 // Remove unused parameter
-		/// <summary>
-		/// General device token type
-		/// </summary>
-		/// <param name="identityAddress"></param>
-		/// <returns>Device Token Identifier</returns>
-		public static string DeviceToken(this IIdentityAddressType? identityAddress) => "device-token";
+namespace Transmitly.Channel.Push;
 
-		/// <summary>
-		/// Push notification topic type
-		/// </summary>
-		/// <param name="identityAddress"></param>
-		/// <returns>Push Notification Topic Identifier</returns>
-		public static string Topic(this IIdentityAddressType? identityAddress) => "push-topic";
+/// <summary>
+/// Defines the Push Notification specific identity address types
+/// </summary>
+public static class IdentityAddressPushNotificationExtensions
+{
+#pragma warning disable IDE0060 // Remove unused parameter
+	/// <summary>
+	/// General device token type
+	/// </summary>
+	/// <param name="identityAddress"></param>
+	/// <returns>Device Token Identifier</returns>
+	public static string DeviceToken(this IIdentityAddressType? identityAddress) => "device-token";
+
+	/// <summary>
+	/// Push notification topic type
+	/// </summary>
+	/// <param name="identityAddress"></param>
+	/// <returns>Push Notification Topic Identifier</returns>
+	public static string Topic(this IIdentityAddressType? identityAddress) => "push-topic";
 #pragma warning restore IDE0060 // Remove unused parameter
-	}
 }

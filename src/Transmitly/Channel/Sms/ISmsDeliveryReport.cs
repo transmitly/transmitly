@@ -12,21 +12,20 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Delivery
+namespace Transmitly.Delivery;
+
+public interface ISmsDeliveryReport
 {
-	public interface ISmsDeliveryReport
-	{
-		/// <summary>
-		/// Destination address of the sms communication.
-		/// </summary>
-		string? To { get; }
-		/// <summary>
-		/// Address of the sender of the sms communication.
-		/// </summary>
-		string? From { get; }
-		/// <summary>
-		/// The number of parts the sms communication content was split into.
-		/// </summary>
-		int? Count { get; }
-	}
+	/// <summary>
+	/// Destination address of the sms communication.
+	/// </summary>
+	string? To { get; }
+	/// <summary>
+	/// Address of the sender of the sms communication.
+	/// </summary>
+	string? From { get; }
+	/// <summary>
+	/// The number of parts the sms communication content was split into.
+	/// </summary>
+	int? Count { get; }
 }

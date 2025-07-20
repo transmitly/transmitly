@@ -12,22 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+public abstract class BaseTemplateEngineRegistrationFactory : ITemplateEngineFactory
 {
-	public abstract class BaseTemplateEngineRegistrationFactory : ITemplateEngineFactory
+	protected IReadOnlyCollection<ITemplateEngineRegistration> Registrations => _registrations.AsReadOnly();
+	private readonly List<ITemplateEngineRegistration> _registrations;
+
+	protected BaseTemplateEngineRegistrationFactory(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations)
 	{
-		protected IReadOnlyCollection<ITemplateEngineRegistration> Registrations => _registrations.AsReadOnly();
-		private readonly List<ITemplateEngineRegistration> _registrations;
-
-		protected BaseTemplateEngineRegistrationFactory(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations)
+		_registrations = [.. Guard.AgainstNull(templateEngineRegistrations)];
+		if (templateEngineRegistrations.Count() != 1)
 		{
-			_registrations = Guard.AgainstNull(templateEngineRegistrations).ToList();
-			if (templateEngineRegistrations.Count() != 1)
-			{
-				throw new NotSupportedException("Only a single template engine is supported.");
-			}
+			throw new NotSupportedException("Only a single template engine is supported.");
 		}
-
-		public abstract ITemplateEngine Get();
 	}
+
+	public abstract ITemplateEngine Get();
 }

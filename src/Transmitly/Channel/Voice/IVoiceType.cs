@@ -12,12 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface IVoiceType
 {
-	public interface IVoiceType
-	{
-		string? Language { get; set; }
-		string? Gender { get; set; }
-		string? Name { get; set; }
-	}
+	string? Language { get; set; }
+	string? Gender { get; set; }
+	string? Name { get; set; }
 }

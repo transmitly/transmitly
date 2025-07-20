@@ -15,43 +15,42 @@
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 
-namespace Transmitly.Delivery
+namespace Transmitly.Delivery;
+
+internal sealed class AnyMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
 {
-	internal sealed class AnyMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
+	/// <summary>
+	/// Sends the communication to all the channels using the allowed channel providers.
+	/// </summary>
+	/// <param name="sendingGroups">The collection of channels to send the communication to.</param>
+	/// <param name="cancellationToken">Cancellation token.</param>
+	/// <returns>A task representing the asynchronous operation.</returns>
+	public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<RecipientDispatchCommunicationContext> sendingGroups, CancellationToken cancellationToken)
 	{
-		/// <summary>
-		/// Sends the communication to all the channels using the allowed channel providers.
-		/// </summary>
-		/// <param name="sendingGroups">The collection of channels to send the communication to.</param>
-		/// <param name="cancellationToken">Cancellation token.</param>
-		/// <returns>A task representing the asynchronous operation.</returns>
-		public override async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<RecipientDispatchCommunicationContext> sendingGroups, CancellationToken cancellationToken)
+		var results = new List<IDispatchResult?>(sendingGroups.Count);
+		foreach (var recipient in sendingGroups)
 		{
-			var results = new List<IDispatchResult?>(sendingGroups.Count);
-			foreach (var recipient in sendingGroups)
+			foreach (var pair in recipient.ChannelChannelProviderGroups)
 			{
-				foreach (var pair in recipient.ChannelChannelProviderGroups)
+				var channel = pair.Channel;
+				foreach (var dispatcher in pair.ChannelProviderDispatchers)
 				{
-					var channel = pair.Channel;
-					foreach (var dispatcher in pair.ChannelProviderDispatchers)
+					var result = await DispatchCommunicationAsync(channel, dispatcher, recipient, cancellationToken);
+
+					if (result == null || result.Count == 0)
 					{
-						var result = await DispatchCommunicationAsync(channel, dispatcher, recipient, cancellationToken);
+						continue;
+					}
 
-						if (result == null || result.Count == 0)
-						{
-							continue;
-						}
+					results.AddRange(result);
 
-						results.AddRange(result);
-
-						if (result.Any(r => r != null && r.DispatchStatus == DispatchStatus.Exception))
-						{
-							return new DispatchCommunicationResult(results, false);
-						}
+					if (result.Any(r => r != null && r.Status.IsFailure()))
+					{
+						return new DispatchCommunicationResult(results);
 					}
 				}
 			}
-			return new DispatchCommunicationResult(results, IsPipelineSuccessful(results));
 		}
+		return new DispatchCommunicationResult(results);
 	}
 }

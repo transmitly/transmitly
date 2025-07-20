@@ -14,38 +14,37 @@
 
 using Transmitly.ChannelProvider;
 using Transmitly.ChannelProvider.Configuration;
-using Transmitly.Exceptions;
 using Transmitly.Delivery;
+using Transmitly.Exceptions;
 
-namespace Transmitly.Channel.Configuration
+namespace Transmitly.Channel.Configuration;
+
+/// <summary>
+/// Default channel provider factory
+/// </summary>
+public sealed class DefaultChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations) : BaseChannelProviderFactory(registrations)
 {
-	/// <summary>
-	/// Default channel provider factory
-	/// </summary>
-	public sealed class DefaultChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations) : BaseChannelProviderFactory(registrations)
+	public override Task<IChannelProviderDispatcher?> ResolveDispatcherAsync(IChannelProviderRegistration channelProvider, IChannelProviderDispatcherRegistration channelProviderDispatcherRegistration)
 	{
-		public override Task<IChannelProviderDispatcher?> ResolveDispatcherAsync(IChannelProviderRegistration channelProvider, IChannelProviderDispatcherRegistration channelProviderDispatcherRegistration)
-		{
-			IChannelProviderDispatcher? resolvedDispatcherInstance;
-			if (channelProviderDispatcherRegistration.DispatcherType.GetConstructors().Length == 0)
-				throw new CommunicationsException($"Cannot create an instance of {channelProviderDispatcherRegistration.DispatcherType}. No public constructors");
+		IChannelProviderDispatcher? resolvedDispatcherInstance;
+		if (channelProviderDispatcherRegistration.DispatcherType.GetConstructors().Length == 0)
+			throw new CommunicationsException($"Cannot create an instance of {channelProviderDispatcherRegistration.DispatcherType}. No public constructors");
 
-			if (channelProvider.Configuration == null)
-			{
-				resolvedDispatcherInstance = Activator.CreateInstance(channelProviderDispatcherRegistration.DispatcherType, channelProviderDispatcherRegistration.DispatcherType.GetConstructors()[0].GetParameters().Select(x => Activator.CreateInstance(x.ParameterType)).ToArray()) as IChannelProviderDispatcher;
-			}
-			else
-			{
-				resolvedDispatcherInstance = Activator.CreateInstance(channelProviderDispatcherRegistration.DispatcherType, channelProvider.Configuration) as IChannelProviderDispatcher;
-			}
-			return Task.FromResult(resolvedDispatcherInstance);
-		}
-
-		public override Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor)
+		if (channelProvider.Configuration == null)
 		{
-			Guard.AgainstNull(channelProviderDeliveryReportRequestAdaptor);
-			var adaptor = Activator.CreateInstance(channelProviderDeliveryReportRequestAdaptor.Type) as IChannelProviderDeliveryReportRequestAdaptor;
-			return Task.FromResult(Guard.AgainstNull(adaptor));
+			resolvedDispatcherInstance = Activator.CreateInstance(channelProviderDispatcherRegistration.DispatcherType, [.. channelProviderDispatcherRegistration.DispatcherType.GetConstructors()[0].GetParameters().Select(x => Activator.CreateInstance(x.ParameterType))]) as IChannelProviderDispatcher;
 		}
+		else
+		{
+			resolvedDispatcherInstance = Activator.CreateInstance(channelProviderDispatcherRegistration.DispatcherType, channelProvider.Configuration) as IChannelProviderDispatcher;
+		}
+		return Task.FromResult(resolvedDispatcherInstance);
+	}
+
+	public override Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor)
+	{
+		Guard.AgainstNull(channelProviderDeliveryReportRequestAdaptor);
+		var adaptor = Activator.CreateInstance(channelProviderDeliveryReportRequestAdaptor.Type) as IChannelProviderDeliveryReportRequestAdaptor;
+		return Task.FromResult(Guard.AgainstNull(adaptor));
 	}
 }

@@ -14,35 +14,34 @@
 
 using Transmitly.Delivery;
 
-namespace Transmitly.ChannelProvider.Configuration
+namespace Transmitly.ChannelProvider.Configuration;
+
+/// <summary>
+/// Creates a new instance of <see cref="BaseChannelProviderFactory"/>
+/// </summary>
+/// <param name="registrations">Enumerable of registered channel providers.</param>
+/// <exception cref="ArgumentNullException">When the registrations is null</exception>
+/// 
+public abstract class BaseChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations) : IChannelProviderFactory
 {
-	/// <summary>
-	/// Creates a new instance of <see cref="BaseChannelProviderFactory"/>
-	/// </summary>
-	/// <param name="registrations">Enumerable of registered channel providers.</param>
-	/// <exception cref="ArgumentNullException">When the registrations is null</exception>
-	/// 
-	public abstract class BaseChannelProviderFactory(IEnumerable<IChannelProviderRegistration> registrations) : IChannelProviderFactory
+	private readonly List<IChannelProviderRegistration> _registrations = [.. Guard.AgainstNull(registrations)];
+	protected IReadOnlyCollection<IChannelProviderRegistration> Registrations => _registrations.AsReadOnly();
+
+	///<inheritdoc/>
+	public virtual Task<IReadOnlyCollection<IChannelProviderRegistration>> GetAllAsync()
 	{
-		private readonly List<IChannelProviderRegistration> _registrations = Guard.AgainstNull(registrations).ToList();
-		protected IReadOnlyCollection<IChannelProviderRegistration> Registrations => _registrations.AsReadOnly();
+		return Task.FromResult(Registrations);
+	}
 
-		///<inheritdoc/>
-		public virtual Task<IReadOnlyCollection<IChannelProviderRegistration>> GetAllAsync()
-		{
-			return Task.FromResult(Registrations);
-		}
+	public abstract Task<IChannelProviderDispatcher?> ResolveDispatcherAsync(IChannelProviderRegistration channelProvider, IChannelProviderDispatcherRegistration channelProviderDispatcherRegistration);
 
-		public abstract Task<IChannelProviderDispatcher?> ResolveDispatcherAsync(IChannelProviderRegistration channelProvider, IChannelProviderDispatcherRegistration channelProviderDispatcherRegistration);
+	///<inheritdoc/>
+	public abstract Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor);
 
-		///<inheritdoc/>
-		public abstract Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor);
-
-		///<inheritdoc/>
-		public virtual Task<IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>> GetAllDeliveryReportRequestAdaptorsAsync()
-		{
-			var adaptors = _registrations.SelectMany(m => m.DeliveryReportRequestAdaptorRegistrations).ToList().AsReadOnly();
-			return Task.FromResult((IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>)adaptors);
-		}
+	///<inheritdoc/>
+	public virtual Task<IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>> GetAllDeliveryReportRequestAdaptorsAsync()
+	{
+		var adaptors = _registrations.SelectMany(m => m.DeliveryReportRequestAdaptorRegistrations).ToList().AsReadOnly();
+		return Task.FromResult((IReadOnlyCollection<IDeliveryReportRequestAdaptorRegistration>)adaptors);
 	}
 }

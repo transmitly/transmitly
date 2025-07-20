@@ -15,68 +15,67 @@
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Transmitly
+namespace Transmitly.Util;
+
+/// <summary>
+/// Provides methods for guarding against null values and invalid culture names.
+/// </summary>
+[DebuggerStepThrough]
+public static class GuardCulture
 {
+	private static readonly HashSet<string> CultureNames = CreateCultureNames();
+
 	/// <summary>
-	/// Provides methods for guarding against null values and invalid culture names.
+	/// Returns the specified culture if it is not null, otherwise returns the invariant culture.
 	/// </summary>
-	[DebuggerStepThrough]
-	public static class GuardCulture
+	/// <param name="name">The name of the culture.</param>
+	/// <returns>The specified culture or the invariant culture.</returns>
+	public static CultureInfo AgainstNull(string? name)
 	{
-		private static readonly HashSet<string> CultureNames = CreateCultureNames();
+		if (!IsValid(name))
+			return CultureInfo.InvariantCulture;
+		return new CultureInfo(name!);
+	}
 
-		/// <summary>
-		/// Returns the specified culture if it is not null, otherwise returns the invariant culture.
-		/// </summary>
-		/// <param name="name">The name of the culture.</param>
-		/// <returns>The specified culture or the invariant culture.</returns>
-		public static CultureInfo AgainstNull(string? name)
-		{
-			if (!IsValid(name))
-				return CultureInfo.InvariantCulture;
-			return new CultureInfo(name!);
-		}
+	/// <summary>
+	/// Returns the specified culture if it is not null, otherwise returns the invariant culture.
+	/// </summary>
+	/// <param name="cultureInfo">The culture info.</param>
+	/// <returns>The specified culture or the invariant culture.</returns>
+	public static CultureInfo AgainstNull(CultureInfo? cultureInfo)
+	{
+		if (cultureInfo == null)
+			return CultureInfo.InvariantCulture;
+		return cultureInfo;
+	}
 
-		/// <summary>
-		/// Returns the specified culture if it is not null, otherwise returns the invariant culture.
-		/// </summary>
-		/// <param name="cultureInfo">The culture info.</param>
-		/// <returns>The specified culture or the invariant culture.</returns>
-		public static CultureInfo AgainstNull(CultureInfo? cultureInfo)
-		{
-			if (cultureInfo == null)
-				return CultureInfo.InvariantCulture;
-			return cultureInfo;
-		}
+	/// <summary>
+	/// Checks if the culture name is valid
+	/// </summary>
+	/// <param name="name">Culture name</param>
+	/// <returns>true if valid; otherwise false</returns>
+	private static bool IsValid(string? name)
+	{
+		if (string.IsNullOrWhiteSpace(name))
+			return false;
 
-		/// <summary>
-		/// Checks if the culture name is valid
-		/// </summary>
-		/// <param name="name">Culture name</param>
-		/// <returns>true if valid; otherwise false</returns>
-		private static bool IsValid(string? name)
-		{
-			if (string.IsNullOrWhiteSpace(name))
-				return false;
+		return CultureNames.Contains(name!);
+	}
 
-			return CultureNames.Contains(name!);
-		}
-
-		/// <summary>
-		/// Gets the available culture names
-		/// </summary>
-		/// <returns>Available culture names</returns>
-		private static HashSet<string> CreateCultureNames()
-		{
-			var cultureInfoArray = CultureInfo.GetCultures(CultureTypes.AllCultures)
-										  .Where(x => !string.IsNullOrWhiteSpace(x.Name))
-										  .ToArray();
-			var allNames = new HashSet<string>(
-				cultureInfoArray.Select(x => x.TwoLetterISOLanguageName),
-				StringComparer.OrdinalIgnoreCase
-			);
-			allNames.UnionWith(cultureInfoArray.Select(x => x.Name));
-			return allNames;
-		}
+	/// <summary>
+	/// Gets the available culture names
+	/// </summary>
+	/// <returns>Available culture names</returns>
+	private static HashSet<string> CreateCultureNames()
+	{
+		var cultureInfoArray = CultureInfo.GetCultures(CultureTypes.AllCultures)
+									  .Where(x => !string.IsNullOrWhiteSpace(x.Name))
+									  .ToArray();
+		var allNames = new HashSet<string>(
+			cultureInfoArray.Select(x => x.TwoLetterISOLanguageName),
+			StringComparer.OrdinalIgnoreCase
+		);
+		allNames.UnionWith(cultureInfoArray.Select(x => x.Name));
+		return allNames;
 	}
 }

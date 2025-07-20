@@ -12,46 +12,64 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Tests.Integration;
 
-namespace Transmitly.Tests.Identity
+namespace Transmitly.Tests.Identity;
+
+[TestClass]
+public partial class PlatformIdentityResolverTests
 {
-	[TestClass]
-	public class PlatformIdentityResolverTests
+	[TestMethod]
+	public async Task IdentityShouldBeResolved()
 	{
-		[TestMethod]
-		public async Task MyTestMethod()
+		const string FromAddress = "unit-test-address-from";
+		const string PipelineIntent = "unit-test-pipeline";
+		const string ChannelProviderId = "unit-test-channel-provider";
+		const string ExpectedMessage = "Your OTP Code: {{Code}}";
+		const string ChannelId = "unit-test-channel";
+
+		var builder = new CommunicationsClientBuilder()
+			.ChannelProvider.Add<OptionalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>(
+			ChannelProviderId,
+			ChannelId, ChannelId
+		 ).
+		AddPipeline(PipelineIntent, options =>
 		{
-			const string FromAddress = "unit-test-address-from";
-			const string PipelineName = "unit-test-pipeline";
-			const string ChannelProviderId = "unit-test-channel-provider";
-			const string ExpectedMessage = "Your OTP Code: {{Code}}";
-			const string ChannelId = "unit-test-channel";
+			var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
+			channel.Configuration.Subject.AddStringTemplate(ExpectedMessage);
+			options.AddChannel(channel);
 
-			var builder = new CommunicationsClientBuilder()
-				.ChannelProvider.Add<OptionalConfigurationTestChannelProviderDispatcher, UnitTestCommunication>(
-				ChannelProviderId,
-				ChannelId, ChannelId
-			 ).
-			AddPipeline(PipelineName, options =>
+		}).
+		 AddPlatformIdentityResolver<MockPlatformIdentityRepository>();
+
+		var client = builder.BuildClient();
+
+		var result = await client.DispatchAsync(PipelineIntent, [new IdentityReference("test-identity", Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
+
+		Assert.IsNotNull(result);
+		Assert.IsTrue(result.IsSuccessful);
+
+		Assert.AreEqual(1, result.Results.Count);
+		var singleResult = result.Results.First();
+		Assert.IsTrue(singleResult?.Status.IsSuccess());
+	}
+
+	[TestMethod]
+	public async Task GetAllResolversAsyncReturnsAllRegistrations()
+	{
+		var registrations = new List<IPlatformIdentityResolverRegistration>
 			{
-				var channel = new UnitTestChannel(FromAddress, ChannelId, ChannelProviderId);
-				channel.Subject.AddStringTemplate(ExpectedMessage);
-				options.AddChannel(channel);
+				new MockPlatformIdentityResolverRegistration { PlatformIdentityType = "TypeA" },
+				new MockPlatformIdentityResolverRegistration { PlatformIdentityType = "TypeB" }
+			};
+		var factory = new MockPlatformIdentityResolverRegistrationFactory(registrations);
 
-			}).
-			 AddPlatformIdentityResolver<TestPlatformIdentityRepository>();
+		var result = await factory.GetAllResolversAsync();
 
-			var client = builder.BuildClient();
-
-			var result = await client.DispatchAsync(PipelineName, [new IdentityReference("test-identity", Guid.NewGuid().ToString())], TransactionModel.Create(new { }));
-
-			Assert.IsNotNull(result);
-			Assert.IsTrue(result.IsSuccessful);
-			Assert.IsNotNull(result.Results);
-			Assert.AreEqual(1, result.Results.Count);
-			var singleResult = result.Results.First();
-			Assert.AreEqual(DispatchStatus.Dispatched, singleResult?.DispatchStatus);
-		}
+		Assert.IsNotNull(result);
+		Assert.AreEqual(2, result.Count);
+		Assert.AreEqual("TypeA", result[0].PlatformIdentityType);
+		Assert.AreEqual("TypeB", result[1].PlatformIdentityType);
 	}
 }

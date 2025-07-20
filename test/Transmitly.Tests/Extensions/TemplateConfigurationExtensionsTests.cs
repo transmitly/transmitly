@@ -13,27 +13,26 @@
 //  limitations under the License.
 
 using AutoFixture;
-using Transmitly.Template.Configuration;
 using Transmitly.Exceptions;
+using Transmitly.Template.Configuration;
 
-namespace Transmitly.Tests
+namespace Transmitly.Tests;
+
+[TestClass()]
+public class TemplateConfigurationExtensionsTests : BaseUnitTest
 {
-	[TestClass()]
-	public class TemplateConfigurationExtensionsTests : BaseUnitTest
+	[TestMethod()]
+	public void ShouldThrowIfCultureSpecificConfigurationIsRequired()
 	{
-		[TestMethod()]
-		public void ShouldThrowIfCultureSpecificConfigurationIsRequired()
-		{
-			var config = fixture.Create<IContentTemplateConfiguration>();
-			Assert.ThrowsException<CommunicationsException>(() => TemplateConfigurationExtensions.GetTemplateRegistration(config, System.Globalization.CultureInfo.GetCultureInfo("en-es"), true));
-		}
+		var config = fixture.Create<IContentTemplateConfiguration>();
+		Assert.ThrowsExactly<CommunicationsException>(() => TemplateConfigurationExtensions.GetTemplateRegistration(config, System.Globalization.CultureInfo.GetCultureInfo("en-es"), true));
+	}
 
-		[TestMethod]
-		public void ShouldThrowIfTemplateConfigIsNull()
-		{
-			Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddStringTemplate(null!, string.Empty));
-			Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddEmbeddedResourceTemplate(null!, string.Empty));
-			Assert.ThrowsException<ArgumentNullException>(() => TemplateConfigurationExtensions.AddTemplateResolver(null!, (ctx) => Task.FromResult<string?>(string.Empty)));
-		}
+	[TestMethod]
+	public void ShouldThrowIfTemplateConfigIsNull()
+	{
+		Assert.ThrowsExactly<ArgumentNullException>(() => TemplateConfigurationExtensions.AddStringTemplate(null!, string.Empty));
+		Assert.ThrowsExactly<ArgumentNullException>(() => TemplateConfigurationExtensions.AddEmbeddedResourceTemplate(null!, string.Empty));
+		Assert.ThrowsExactly<ArgumentNullException>(() => TemplateConfigurationExtensions.AddTemplateResolver(null!, (ctx) => Task.FromResult<string?>(string.Empty)));
 	}
 }

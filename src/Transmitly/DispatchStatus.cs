@@ -12,17 +12,28 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public static class DispatchResultStatusExtensions
 {
-	public enum DispatchStatus
+	public static bool IsSuccess(this CommunicationsStatus status)
 	{
-		Unknown,
-		Dispatched,
-		Delivered,
-		Pending,
-		Undeliverable,
-		Expired,
-		Rejected,
-		Exception
+		return (status.Code >= CommunicationsStatus.SuccessMin && status.Code <= CommunicationsStatus.SuccessMax) ||
+			(status.Code >= CommunicationsStatus.InfoMin && status.Code <= CommunicationsStatus.InfoMax);
+	}
+
+	public static bool IsClientError(this CommunicationsStatus status)
+	{
+		return status.Code >= CommunicationsStatus.ClientErrMin && status.Code <= CommunicationsStatus.ClientErrMax;
+	}
+
+	public static bool IsServerError(this CommunicationsStatus status)
+	{
+		return status.Code >= CommunicationsStatus.ServerErrMin && status.Code <= CommunicationsStatus.ServerErrMax;
+	}
+
+	public static bool IsFailure(this CommunicationsStatus status)
+	{
+		return IsClientError(status) || IsServerError(status);
 	}
 }

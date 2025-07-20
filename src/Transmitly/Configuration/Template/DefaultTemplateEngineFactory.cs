@@ -12,14 +12,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Template.Configuration
+namespace Transmitly.Template.Configuration;
+
+public sealed class DefaultTemplateEngineFactory(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations) : BaseTemplateEngineRegistrationFactory(templateEngineRegistrations)
 {
-	public sealed class DefaultTemplateEngineFactory(IEnumerable<ITemplateEngineRegistration> templateEngineRegistrations) : BaseTemplateEngineRegistrationFactory(templateEngineRegistrations)
+	public override ITemplateEngine Get()
 	{
-		public override ITemplateEngine Get()
-		{
-			//currently only a single template engine is supported
-			return Registrations.First().Instance;
-		}
+		//currently only a single template engine is supported
+		return Registrations.First().Instance;
 	}
 }

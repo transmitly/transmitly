@@ -13,62 +13,67 @@
 //  limitations under the License.
 
 using System.Globalization;
+using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
-using Transmitly.Delivery;
 
-namespace Transmitly
+namespace Transmitly;
+
+internal interface IInternalDispatchCommunicationContext
 {
-	internal interface IInternalDispatchCommunicationContext
-	{
-		/// <summary>
-		/// Gets or sets the content model.
-		/// </summary>
-		ITransactionModel? TransactionModel { get; }
+	BasePipelineDeliveryStrategyProvider StrategyProvider { get; }
+	/// <summary>
+	/// Gets or sets the content model.
+	/// </summary>
+	ITransactionModel? TransactionModel { get; }
 
-		/// <summary>
-		/// Gets or sets the culture information.
-		/// </summary>
-		CultureInfo CultureInfo { get; }
+	/// <summary>
+	/// Gets or sets the culture information.
+	/// </summary>
+	CultureInfo CultureInfo { get; }
 
-		/// <summary>
-		/// Gets or sets the collection of recipients.
-		/// </summary>
-		IReadOnlyCollection<IPlatformIdentityProfile> PlatformIdentities { get; }
+	/// <summary>
+	/// Gets or sets the collection of recipients.
+	/// </summary>
+	IReadOnlyCollection<IPlatformIdentityProfile> PlatformIdentities { get; }
 
-		/// <summary>
-		/// Gets or sets the transport priority.
-		/// </summary>
-		TransportPriority TransportPriority { get; }
+	/// <summary>
+	/// Gets or sets the transport priority.
+	/// </summary>
+	TransportPriority TransportPriority { get; }
 
-		/// <summary>
-		/// Gets or sets the message priority.
-		/// </summary>
-		MessagePriority MessagePriority { get; }
+	/// <summary>
+	/// Gets or sets the message priority.
+	/// </summary>
+	MessagePriority MessagePriority { get; }
 
-		/// <summary>
-		/// Gets or sets the channel configuration.
-		/// </summary>
-		IPipelineConfiguration ChannelConfiguration { get; }
+	/// <summary>
+	/// Gets or sets the channel configuration.
+	/// </summary>
+	IPipelineConfiguration ChannelConfiguration { get; }
 
-		/// <summary>
-		/// Gets the collection of dispatch results.
-		/// </summary>
-		ICollection<IDispatchResult> DispatchResults { get; }
+	/// <summary>
+	/// Gets the collection of dispatch results.
+	/// </summary>
+	ICollection<IDispatchResult> DispatchResults { get; }
 
-		/// <summary>
-		/// Gets the delivery report handler instance.
-		/// </summary>
-		IDeliveryReportReporter DeliveryReportManager { get; }
+	/// <summary>
+	/// Gets the delivery report handler instance.
+	/// </summary>
+	IDeliveryReportService DeliveryReportManager { get; }
 
-		/// <summary>
-		/// Gets the template engine
-		/// </summary>
-		ITemplateEngine TemplateEngine { get; }
+	/// <summary>
+	/// Gets the template engine.
+	/// </summary>
+	ITemplateEngine TemplateEngine { get; }
 
-		/// <summary>
-		/// Gets the current pipeline name
-		/// </summary>
-		string PipelineName { get; }
-	}
+	/// <summary>
+	/// Gets the current pipeline intent.
+	/// </summary>
+	string PipelineIntent { get; }
+
+	/// <summary>
+	/// Gets the unique identifier of the pipeline.
+	/// </summary>
+	string? PipelineId { get; }
 }

@@ -14,25 +14,24 @@
 
 using System.Linq.Expressions;
 
-namespace Transmitly.Persona.Configuration
+namespace Transmitly.Persona.Configuration;
+
+
+public sealed class PersonaConfigurationBuilder
 {
+	private readonly CommunicationsClientBuilder _communicationsConfiguration;
+	private readonly Action<IPersonaRegistration> _addPersona;
 
-	public sealed class PersonaConfigurationBuilder
+	internal PersonaConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IPersonaRegistration> addTemplateEngine)
 	{
-		private readonly CommunicationsClientBuilder _communicationsConfiguration;
-		private readonly Action<IPersonaRegistration> _addPersona;
+		_communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
+		_addPersona = Guard.AgainstNull(addTemplateEngine);
+	}
 
-		internal PersonaConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IPersonaRegistration> addTemplateEngine)
-		{
-			_communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
-			_addPersona = Guard.AgainstNull(addTemplateEngine);
-		}
-
-		public CommunicationsClientBuilder Add<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> predicate)
-			where TPersona : class
-		{
-			_addPersona(new PersonaRegistration<TPersona>(name, platformIdentityType, predicate));
-			return _communicationsConfiguration;
-		}
+	public CommunicationsClientBuilder Add<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> predicate)
+		where TPersona : class
+	{
+		_addPersona(new PersonaRegistration<TPersona>(name, platformIdentityType, predicate));
+		return _communicationsConfiguration;
 	}
 }

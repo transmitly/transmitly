@@ -12,12 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.PlatformIdentity.Configuration
-{
-	internal sealed class PlatformIdentityResolverRegistration(Type resolverType, string? platformIdentityType) : IPlatformIdentityResolverRegistration
-	{
-		public string? PlatformIdentityType => platformIdentityType;
+namespace Transmitly.PlatformIdentity.Configuration;
 
-		public Type ResolverType => resolverType;
-	}
+internal sealed class PlatformIdentityResolverRegistration(Type resolverType, string? platformIdentityType) : IPlatformIdentityResolverRegistration
+{
+	public string? PlatformIdentityType => platformIdentityType;
+
+	public Type ResolverType => resolverType;
 }

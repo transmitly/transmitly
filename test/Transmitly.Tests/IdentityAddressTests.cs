@@ -12,23 +12,22 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Tests
-{
-	[TestClass]
-	public class IdentityAddressTests
-	{
-		[TestMethod]
-		public void IdentityAddressEquality()
-		{
-			var one = new IdentityAddress("test1@transmit.ly", "test");
-			var two = new IdentityAddress("test1@transmit.ly", "Test");
-			var three = new IdentityAddress("test2@transmit.ly", "test");
-			var four = new IdentityAddress("test2@transmit.ly", "Test");
+namespace Transmitly.Tests;
 
-			Assert.IsTrue(one.Equals(one));
-			Assert.IsTrue(one.Equals(two));
-			Assert.IsFalse(one.Equals(three));
-			Assert.IsFalse(one.Equals(four));
-		}
+[TestClass]
+public class IdentityAddressTests
+{
+	[TestMethod]
+	public void IdentityAddressEquality()
+	{
+		var one = new PlatformIdentityAddress("test1@transmit.ly", "test");
+		var two = new PlatformIdentityAddress("test1@transmit.ly", "Test");
+		var three = new PlatformIdentityAddress("test2@transmit.ly", "test");
+		var four = new PlatformIdentityAddress("test2@transmit.ly", "Test");
+
+		Assert.IsTrue(one.Equals(one));
+		Assert.IsTrue(one.Equals(two));
+		Assert.IsFalse(one.Equals(three));
+		Assert.IsFalse(one.Equals(four));
 	}
 }

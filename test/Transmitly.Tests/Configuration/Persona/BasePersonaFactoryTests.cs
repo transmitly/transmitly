@@ -15,50 +15,49 @@
 using AutoFixture;
 using Transmitly.Tests;
 
-namespace Transmitly.Persona.Configuration.Tests
+namespace Transmitly.Persona.Configuration.Tests;
+
+[TestClass()]
+public class BasePersonaFactoryTests : BaseUnitTest
 {
-	[TestClass()]
-	public class BasePersonaFactoryTests : BaseUnitTest
+	[TestMethod()]
+	public async Task GetAllShouldReturnRegistrations()
 	{
-		[TestMethod()]
-		public async Task GetAllShouldReturnRegistrations()
-		{
-			var registrations = fixture.Create<IEnumerable<IPersonaRegistration>>();
-			fixture.Inject(registrations);
-			var sut = fixture.Create<BasePersonaFactory>();
-			var results = await sut.GetAllAsync();
+		var registrations = fixture.Create<IEnumerable<IPersonaRegistration>>();
+		fixture.Inject(registrations);
+		var sut = fixture.Create<BasePersonaFactory>();
+		var results = await sut.GetAllAsync();
 
-			Assert.AreEqual(registrations.Count(), results.Count);
-			CollectionAssert.AreEquivalent(registrations.ToList(), results.ToList());
-		}
+		Assert.AreEqual(registrations.Count(), results.Count);
+		CollectionAssert.AreEquivalent(registrations.ToList(), results.ToList());
+	}
 
-		[TestMethod()]
-		public async Task GetShouldReturnRegistration()
-		{
-			var registrations = fixture.Create<IEnumerable<IPersonaRegistration>>();
-			fixture.Inject(registrations);
-			var sut = fixture.Create<BasePersonaFactory>();
-			var result = await sut.GetAsync(registrations.First().Name);
-			Assert.IsNotNull(result);
-			Assert.AreEqual(registrations.First().Name, result.Name);
+	[TestMethod()]
+	public async Task GetShouldReturnRegistration()
+	{
+		var registrations = fixture.Create<IEnumerable<IPersonaRegistration>>();
+		fixture.Inject(registrations);
+		var sut = fixture.Create<BasePersonaFactory>();
+		var result = await sut.GetAsync(registrations.First().Name);
+		Assert.IsNotNull(result);
+		Assert.AreEqual(registrations.First().Name, result.Name);
 
-			result = await sut.GetAsync(fixture.Create<string>());
-			Assert.IsNull(result);
-		}
+		result = await sut.GetAsync(fixture.Create<string>());
+		Assert.IsNull(result);
+	}
 
-		[TestMethod]
-		public async Task AnyMatchShouldEnforceRequiredParameters()
-		{
-			var registrations = fixture.Create<IEnumerable<IPersonaRegistration>>();
-			fixture.Inject(registrations);
-			var sut = fixture.Create<BasePersonaFactory>();
-			await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => sut.AnyMatch<UnitTestPersona>(null!, []));
-			await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => sut.AnyMatch<UnitTestPersona>(fixture.Create<string>(), null!));
-		}
+	[TestMethod]
+	public async Task AnyMatchShouldEnforceRequiredParameters()
+	{
+		var registrations = fixture.Create<IEnumerable<IPersonaRegistration>>();
+		fixture.Inject(registrations);
+		var sut = fixture.Create<BasePersonaFactory>();
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => sut.AnyMatch<UnitTestPersona>(null!, []));
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => sut.AnyMatch<UnitTestPersona>(fixture.Create<string>(), null!));
+	}
 
-		class UnitTestPersona
-		{
+	class UnitTestPersona
+	{
 
-		}
 	}
 }

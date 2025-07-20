@@ -17,36 +17,41 @@ using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 
-namespace Transmitly.Channel.Configuration
+namespace Transmitly.Channel.Configuration;
+
+internal class InternalDispatchCommunicationContext(ITransactionModel? transactionModel,
+	IPipelineConfiguration channelConfiguration,
+	IReadOnlyCollection<IPlatformIdentityProfile> recipients,
+	ITemplateEngine templateEngine,
+	IDeliveryReportService deliveryReportManager,
+	CultureInfo cultureInfo,
+	string pipelineIntent,
+	string? pipelineId,
+	BasePipelineDeliveryStrategyProvider strategyProvider,
+	MessagePriority messagePriority = MessagePriority.Normal,
+	TransportPriority transportPriority = TransportPriority.Normal) : IInternalDispatchCommunicationContext
 {
-	internal class InternalDispatchCommunicationContext(ITransactionModel? transactionModel,
-		IPipelineConfiguration channelConfiguration,
-		IReadOnlyCollection<IPlatformIdentityProfile> recipients,
-		ITemplateEngine templateEngine,
-		IDeliveryReportReporter deliveryReportManager,
-		CultureInfo cultureInfo,
-		string pipelineName,
-		MessagePriority messagePriority = MessagePriority.Normal,
-		TransportPriority transportPriority = TransportPriority.Normal) : IInternalDispatchCommunicationContext
-	{
-		public ITransactionModel? TransactionModel => transactionModel;
+	public ITransactionModel? TransactionModel => transactionModel;
 
-		public ITemplateEngine TemplateEngine { get; } = Guard.AgainstNull(templateEngine);
+	public ITemplateEngine TemplateEngine { get; } = Guard.AgainstNull(templateEngine);
 
-		public CultureInfo CultureInfo { get; set; } = GuardCulture.AgainstNull(cultureInfo);
+	public CultureInfo CultureInfo { get; set; } = GuardCulture.AgainstNull(cultureInfo);
 
-		public IReadOnlyCollection<IPlatformIdentityProfile> PlatformIdentities { get; set; } = Guard.AgainstNull(recipients);
+	public IReadOnlyCollection<IPlatformIdentityProfile> PlatformIdentities { get; set; } = Guard.AgainstNull(recipients);
 
-		public TransportPriority TransportPriority { get; set; } = transportPriority;
+	public TransportPriority TransportPriority { get; set; } = transportPriority;
 
-		public MessagePriority MessagePriority { get; set; } = messagePriority;
+	public MessagePriority MessagePriority { get; set; } = messagePriority;
 
-		public IPipelineConfiguration ChannelConfiguration { get; } = Guard.AgainstNull(channelConfiguration);
+	public IPipelineConfiguration ChannelConfiguration { get; } = Guard.AgainstNull(channelConfiguration);
 
-		public ICollection<IDispatchResult> DispatchResults { get; } = [];
+	public ICollection<IDispatchResult> DispatchResults { get; } = [];
 
-		public IDeliveryReportReporter DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
+	public IDeliveryReportService DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
 
-		public string PipelineName { get; } = Guard.AgainstNullOrWhiteSpace(pipelineName);
-	}
+	public string PipelineIntent { get; } = Guard.AgainstNullOrWhiteSpace(pipelineIntent);
+
+	public string? PipelineId => pipelineId;
+
+	public BasePipelineDeliveryStrategyProvider StrategyProvider { get; } = Guard.AgainstNull(strategyProvider);
 }

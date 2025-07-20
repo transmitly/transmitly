@@ -12,13 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+namespace Transmitly;
+
+public interface ITransactionModel
 {
-	public interface ITransactionModel
-	{
-		object Model { get; }
-		IReadOnlyList<Resource> Resources { get; }
-		IReadOnlyList<LinkedResource> LinkedResources { get; }
-	}
+	object Model { get; }
+	IReadOnlyList<Resource> Resources { get; }
+	IReadOnlyList<LinkedResource> LinkedResources { get; }
 }
 

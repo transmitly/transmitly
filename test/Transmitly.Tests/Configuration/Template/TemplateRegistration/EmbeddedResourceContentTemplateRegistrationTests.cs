@@ -15,36 +15,38 @@
 using Moq;
 using Transmitly.Exceptions;
 
-namespace Transmitly.Template.Configuration.Tests
+namespace Transmitly.Template.Configuration.Tests;
+
+[TestClass()]
+public class EmbeddedResourceContentTemplateRegistrationTests
 {
-	[TestClass()]
-	public class EmbeddedResourceContentTemplateRegistrationTests
-	{
 #pragma warning disable CS8604 // Possible null reference argument.
-		[TestMethod()]
-		[DataRow("")]
-		[DataRow(" ")]
-		[DataRow(null)]
-		public void ShouldThrowIfResourceIdIsEmpty(string? value)
-		{
+	[TestMethod()]
+	[DataRow("")]
+	[DataRow(" ")]
+	[DataRow(null)]
+	public void ShouldThrowIfResourceIdIsEmpty(string? value)
+	{
+		EmbeddedResourceContentTemplateRegistration? instance = null;
+		void create() => instance = new EmbeddedResourceContentTemplateRegistration(value);
+		Assert.ThrowsExactly<ArgumentNullException>(create);
+	}
 
-			Assert.ThrowsException<ArgumentNullException>(() => new EmbeddedResourceContentTemplateRegistration(value));
-		}
-
-		[TestMethod]
-		public void ShouldThrowIfResourceCannotBeFound()
-		{
-			Assert.ThrowsException<CommunicationsException>(() => new EmbeddedResourceContentTemplateRegistration("test", resourceAssembly: typeof(EmbeddedResourceContentTemplateRegistrationTests).Assembly));
-		}
+	[TestMethod]
+	public void ShouldThrowIfResourceCannotBeFound()
+	{
+		EmbeddedResourceContentTemplateRegistration? instance = null;
+		void create() => instance = new EmbeddedResourceContentTemplateRegistration("test", resourceAssembly: typeof(EmbeddedResourceContentTemplateRegistrationTests).Assembly);
+		Assert.ThrowsExactly<CommunicationsException>(create);
+	}
 
 #pragma warning restore CS8604 // Possible null reference argument.
 
-		[TestMethod()]
-		public async Task ShouldReturnEmbeddedResourceContent()
-		{
-			var template = new EmbeddedResourceContentTemplateRegistration("Transmitly.Tests.EmbeddedResources.has-content.txt", null, typeof(EmbeddedResourceContentTemplateRegistrationTests).Assembly);
-			var context = new Mock<IDispatchCommunicationContext>();
-			Assert.AreEqual("has content!", await template.GetContentAsync(context.Object));
-		}
+	[TestMethod()]
+	public async Task ShouldReturnEmbeddedResourceContent()
+	{
+		var template = new EmbeddedResourceContentTemplateRegistration("Transmitly.Tests.EmbeddedResources.has-content.txt", null, typeof(EmbeddedResourceContentTemplateRegistrationTests).Assembly);
+		var context = new Mock<IDispatchCommunicationContext>();
+		Assert.AreEqual("has content!", await template.GetContentAsync(context.Object));
 	}
 }

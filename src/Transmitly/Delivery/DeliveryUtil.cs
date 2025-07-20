@@ -14,35 +14,41 @@
 
 using System.Web;
 
-namespace Transmitly.Delivery
+namespace Transmitly.Delivery;
+
+public static class DeliveryUtil
 {
-	public static class DeliveryUtil
+	public const string ResourceIdKey = "tlyr";
+	public const string PipelineIntentKey = "tlyp";
+	public const string ChannelIdKey = "tlyc";
+	public const string ChannelProviderIdKey = "tlycp";
+	public const string EventIdKey = "tlye";
+	public const string PipelineIdKey = "tlypid";
+
+	public static Uri AddPipelineContext(this Uri url, string resourceId, string pipelineIntent, string? pipelineId, string? channel, string? channelProvider)
 	{
-		public const string ResourceIdKey = "tlyr";
-		public const string PipelineNameKey = "tlyp";
-		public const string ChannelIdKey = "tlyc";
-		public const string ChannelProviderIdKey = "tlycp";
-		public const string EventIdKey = "tlye";
+		Guard.AgainstNullOrWhiteSpace(channel);
+		Guard.AgainstNullOrWhiteSpace(channelProvider);
+		Guard.AgainstNullOrWhiteSpace(pipelineIntent);
+		Guard.AgainstNullOrWhiteSpace(resourceId);
 
-		public static Uri AddPipelineContext(this Uri url, string resourceId, string pipelineName, string channel, string channelProvider)
-		{
-			return Guard.AgainstNull(url)
-				.AddParameter(ResourceIdKey, resourceId)
-				.AddParameter(PipelineNameKey, pipelineName)
-				.AddParameter(ChannelIdKey, channel)
-				.AddParameter(ChannelProviderIdKey, channelProvider)
-				.AddParameter(EventIdKey, Guid.NewGuid().ToString("N"));
-		}
+		return Guard.AgainstNull(url)
+			.AddParameter(ResourceIdKey, resourceId)
+			.AddParameter(PipelineIntentKey, pipelineIntent)
+			.AddParameter(PipelineIdKey, pipelineId ?? string.Empty)
+			.AddParameter(ChannelIdKey, channel)
+			.AddParameter(ChannelProviderIdKey, channelProvider)
+			.AddParameter(EventIdKey, Guid.NewGuid().ToString("N"));
+	}
 
-		//Source=https://stackoverflow.com/a/19679135
-		public static Uri AddParameter(this Uri url, string paramName, string paramValue)
-		{
-			var uriBuilder = new UriBuilder(url);
-			var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-			query[paramName] = paramValue;
-			uriBuilder.Query = query.ToString();
+	//Source=https://stackoverflow.com/a/19679135
+	public static Uri AddParameter(this Uri url, string paramName, string paramValue)
+	{
+		var uriBuilder = new UriBuilder(url);
+		var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+		query[paramName] = paramValue;
+		uriBuilder.Query = query.ToString();
 
-			return uriBuilder.Uri;
-		}
+		return uriBuilder.Uri;
 	}
 }

@@ -12,33 +12,32 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.PlatformIdentity.Configuration
+namespace Transmitly.PlatformIdentity.Configuration;
+
+///<inheritdoc cref="IPlatformIdentityResolverFactory"/>
+public abstract class BasePlatformIdentityResolverRegistrationFactory(IEnumerable<IPlatformIdentityResolverRegistration> resolvers) : IPlatformIdentityResolverFactory
 {
-	///<inheritdoc cref="IPlatformIdentityResolverFactory"/>
-	public abstract class BasePlatformIdentityResolverRegistrationFactory(IEnumerable<IPlatformIdentityResolverRegistration> resolvers) : IPlatformIdentityResolverFactory
+	private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolverRegistrations = [.. Guard.AgainstNull(resolvers)];
+	protected IReadOnlyCollection<IPlatformIdentityResolverRegistration> Registrations => _platformIdentityResolverRegistrations.AsReadOnly();
+
+	public virtual Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAllResolversAsync()
 	{
-		private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolverRegistrations = [.. Guard.AgainstNull(resolvers)];
-		protected IReadOnlyCollection<IPlatformIdentityResolverRegistration> Registrations => _platformIdentityResolverRegistrations.AsReadOnly();
+		return Task.FromResult<IReadOnlyList<IPlatformIdentityResolverRegistration>>(_platformIdentityResolverRegistrations);
+	}
 
-		public virtual Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAllAsync()
-		{
-			return Task.FromResult<IReadOnlyList<IPlatformIdentityResolverRegistration>>(_platformIdentityResolverRegistrations);
-		}
+	public Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetPlatformIdentityResolversByTypes(params string[] platformIdentityTypes)
+	{
+		return Task.FromResult<IReadOnlyList<IPlatformIdentityResolverRegistration>>(
+			_platformIdentityResolverRegistrations
+			.Where(x => string.IsNullOrEmpty(x.PlatformIdentityType) || platformIdentityTypes.Contains(x.PlatformIdentityType, StringComparer.InvariantCultureIgnoreCase))
+			.ToList().AsReadOnly()
+		);
+	}
 
-		public Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAsync(IReadOnlyCollection<string> platformIdentityTypes)
-		{
-			return Task.FromResult<IReadOnlyList<IPlatformIdentityResolverRegistration>>(
-				_platformIdentityResolverRegistrations
-				.Where(x => string.IsNullOrEmpty(x.PlatformIdentityType) || platformIdentityTypes.Contains(x.PlatformIdentityType, StringComparer.InvariantCultureIgnoreCase))
-				.ToList().AsReadOnly()
-			);
-		}
+	public virtual Task<IPlatformIdentityResolver?> GetPlatformIdentityResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration)
+	{
+		Guard.AgainstNull(platformIdentityResolverRegistration);
 
-		public virtual Task<IPlatformIdentityResolver?> ResolveResolver(IPlatformIdentityResolverRegistration platformIdentityResolverRegistration)
-		{
-			Guard.AgainstNull(platformIdentityResolverRegistration);
-
-			return Task.FromResult(Activator.CreateInstance(platformIdentityResolverRegistration.ResolverType) as IPlatformIdentityResolver);
-		}
+		return Task.FromResult(Activator.CreateInstance(platformIdentityResolverRegistration.ResolverType) as IPlatformIdentityResolver);
 	}
 }

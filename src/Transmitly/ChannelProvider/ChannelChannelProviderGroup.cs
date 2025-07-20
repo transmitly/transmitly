@@ -14,16 +14,15 @@
 
 using Transmitly.Channel.Configuration;
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly.ChannelProvider;
+
+public sealed class ChannelChannelProviderGroup
 {
-	public sealed class ChannelChannelProviderGroup
+	internal ChannelChannelProviderGroup(IChannel channel, IReadOnlyCollection<IChannelProvider> channelProviderDispatchers)
 	{
-		internal ChannelChannelProviderGroup(IChannel channel, IReadOnlyCollection<IChannelProvider> channelProviderDispatchers)
-		{
-			Channel = Guard.AgainstNull(channel);
-			ChannelProviderDispatchers = Guard.AgainstNull(channelProviderDispatchers);
-		}
-		public IChannel Channel { get; }
-		public IReadOnlyCollection<IChannelProvider> ChannelProviderDispatchers { get; }
+		Channel = Guard.AgainstNull(channel);
+		ChannelProviderDispatchers = Guard.AgainstNull(channelProviderDispatchers);
 	}
+	public IChannel Channel { get; }
+	public IReadOnlyCollection<IChannelProvider> ChannelProviderDispatchers { get; }
 }

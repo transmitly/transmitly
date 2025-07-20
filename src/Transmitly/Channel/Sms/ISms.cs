@@ -12,24 +12,18 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly
+using Transmitly.Channel.Sms;
+
+namespace Transmitly;
+
+public interface ISms
 {
-	public interface ISms
-	{
-		IIdentityAddress? From { get; }
-		IIdentityAddress[]? To { get; }
-		string? Message { get; }
-		MessagePriority Priority { get; }
-		TransportPriority TransportPriority { get; }
-		IReadOnlyCollection<IAttachment> Attachments { get; }
-		IExtendedProperties ExtendedProperties { get; }
-		/// <summary>
-		/// The URL to call for status updates for the dispatched communication.
-		/// </summary>
-		string? DeliveryReportCallbackUrl { get; set; }
-		/// <summary>
-		/// A resolver that will return The URL to call for status updates for the dispatched communication.
-		/// </summary>
-		Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
-	}
+	IPlatformIdentityAddress[]? To { get; }
+	IPlatformIdentityAddress? From { get; }
+	string? Message { get; }
+	MessagePriority Priority { get; }
+	TransportPriority TransportPriority { get; }
+	IReadOnlyCollection<ISmsAttachment> Attachments { get; }
+	IExtendedProperties ExtendedProperties { get; }
+	Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
 }

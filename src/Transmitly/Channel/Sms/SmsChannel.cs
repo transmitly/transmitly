@@ -14,126 +14,119 @@
 
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
-using Transmitly.Template.Configuration;
+using Transmitly.Channel.Configuration;
+using Transmitly.Channel.Configuration.Sms;
 
-namespace Transmitly.Channel.Sms
+namespace Transmitly.Channel.Sms;
+
+
+#if FEATURE_SOURCE_GEN
+internal sealed partial class SmsChannel(ISmsChannelConfiguration configuration) : IChannel<ISms>
+#else
+internal sealed class SmsChannel(ISmsChannelConfiguration configuration) : IChannel<ISms>
+#endif
 {
-#if FEATURE_SOURCE_GEN
-    internal sealed partial class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
-#else
-	internal sealed class SmsChannel(string[]? channelProviderId = null) : ISmsChannel
-#endif
+	private readonly ISmsChannelConfiguration _configuration = Guard.AgainstNull(configuration);
+	private static readonly string[] _supportedAddressTypes = [PlatformIdentityAddress.Types.Cell(), PlatformIdentityAddress.Types.Phone(), PlatformIdentityAddress.Types.Mobile()];
+	private static readonly Regex _smsMatchRegex = CreateRegEx();
+
+	public Type CommunicationType => typeof(ISms);
+
+	public string Id => Transmitly.Id.Channel.Sms();
+
+	public IEnumerable<string> AllowedChannelProviderIds => _configuration.ChannelProviderFilter ?? Array.Empty<string>();
+
+	public IExtendedProperties ExtendedProperties => new ExtendedProperties();
+
+	public async Task<ISms> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 	{
-		private static readonly string[] _supportedAddressTypes = [IdentityAddress.Types.Cell(), IdentityAddress.Types.HomePhone(), IdentityAddress.Types.Phone(), IdentityAddress.Types.Mobile()];
-		private static readonly Regex _smsMatchRegex = CreateRegex();
-		private readonly Func<IDispatchCommunicationContext, IIdentityAddress>? _fromAddressResolver;
-		const string pattern = @"^\+?[1-9]\d{1,14}$";
-		const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
-#if FEATURE_SOURCE_GEN
-		[GeneratedRegex(pattern, options)]
-		private static partial Regex DefaultRegex();
-#endif
-		public IIdentityAddress? From { get; }
+		Guard.AgainstNull(communicationContext);
 
-		public IContentTemplateConfiguration Message { get; } = new ContentTemplateConfiguration();
+		var body = await _configuration.Message.RenderAsync(communicationContext, true).ConfigureAwait(false);
 
-		public string Id => Transmitly.Id.Channel.Sms();
-
-		public IEnumerable<string> AllowedChannelProviderIds => channelProviderId ?? [];
-
-		public Type CommunicationType => typeof(ISms);
-
-		public ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-
-		public string? DeliveryReportCallbackUrl { get; set; }
-
-		public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
-
-		internal SmsChannel(IIdentityAddress? fromAddress, string[]? channelProviderId = null) : this(channelProviderId)
+		return new SmsCommunication(ExtendedProperties)
 		{
-			From = fromAddress;
-		}
+			From = GetSenderFromAddress(communicationContext),
+			Message = body,
+			Attachments = ConvertAttachments(communicationContext),
+			Priority = communicationContext.MessagePriority,
+			TransportPriority = communicationContext.TransportPriority,
+			To = [.. communicationContext.PlatformIdentities.SelectMany(m => m.Addresses)],
+			DeliveryReportCallbackUrlResolver = _configuration.DeliveryReportCallbackUrlResolver
+		};
+	}
 
-		internal SmsChannel(Func<IDispatchCommunicationContext, IIdentityAddress> fromAddressResolver, string[]? channelProviderId = null) : this(channelProviderId)
-		{
-			_fromAddressResolver = Guard.AgainstNull(fromAddressResolver);
-		}
+	private IPlatformIdentityAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
+	{
+		return _configuration.FromAddressResolver != null ? _configuration.FromAddressResolver(communicationContext) : null;
+	}
 
-		public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
-		{
-			Guard.AgainstNull(communicationContext);
-
-			var body = await Message.RenderAsync(communicationContext, true).ConfigureAwait(false);
-
-			return new SmsCommunication(ExtendedProperties)
-			{
-				From = GetSenderFromAddress(communicationContext),
-				Message = body,
-				Attachments = ConvertAttachments(communicationContext),
-				Priority = communicationContext.MessagePriority,
-				TransportPriority = communicationContext.TransportPriority,
-				To = communicationContext.PlatformIdentities.SelectMany(m => m.Addresses).ToArray(),
-				DeliveryReportCallbackUrl = DeliveryReportCallbackUrl,
-				DeliveryReportCallbackUrlResolver = DeliveryReportCallbackUrlResolver
-			};
-		}
-
-		public bool SupportsIdentityAddress(IIdentityAddress identityAddress)
-		{
-			return identityAddress != null &&
-				(
-					string.IsNullOrWhiteSpace(identityAddress.Type) ||
+	public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
+	{
+		return identityAddress != null &&
 					(
-						!string.IsNullOrWhiteSpace(identityAddress.Type) &&
-						!_supportedAddressTypes.Contains(identityAddress.Type)
-					)
-				) &&
-				_smsMatchRegex.IsMatch(identityAddress.Value);
-		}
+						string.IsNullOrWhiteSpace(identityAddress.Type) ||
+						(
+							!string.IsNullOrWhiteSpace(identityAddress.Type) &&
+							!_supportedAddressTypes.Contains(identityAddress.Type)
+						)
+					) &&
+					_smsMatchRegex.IsMatch(identityAddress.Value);
+	}
 
-		private IIdentityAddress? GetSenderFromAddress(IDispatchCommunicationContext communicationContext)
+	private static ReadOnlyCollection<ISmsAttachment> ConvertAttachments(IDispatchCommunicationContext communicationContext)
+	{
+		if (communicationContext.ContentModel?.Resources?.Count > 0)
 		{
-			return _fromAddressResolver != null ? _fromAddressResolver(communicationContext) : From;
+			List<ISmsAttachment> attachments = new(communicationContext.ContentModel?.Resources?.Count ?? 0);
+			foreach (var resource in communicationContext.ContentModel?.Resources ?? [])
+			{
+				attachments.Add(new SmsAttachment(resource));
+			}
+			return attachments.AsReadOnly();
 		}
+		return new ReadOnlyCollection<ISmsAttachment>(Array.Empty<ISmsAttachment>());
+	}
 
-		private static Regex CreateRegex()
-		{
-			// https://en.wikipedia.org/wiki/E.164
+	async Task<object> IChannel.GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
+	{
+		return await GenerateCommunicationAsync(communicationContext);
+	}
 
-			TimeSpan matchTimeout = TimeSpan.FromSeconds(1);
+	const string pattern = @"^\+?[1-9]\d{1,14}$";
+	const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
 
-			try
-			{
-				if (AppDomain.CurrentDomain.GetData("REGEX_DEFAULT_MATCH_TIMEOUT") == null)
-				{
-					return new Regex(pattern, options, matchTimeout);
-				}
-			}
-			catch
-			{
-				// Fallback on error
-			}
-
-			// Legacy fallback (without explicit match timeout)
 #if FEATURE_SOURCE_GEN
-			return DefaultRegex();
-#else
-			return new Regex(pattern, options);
+	[GeneratedRegex(pattern, options, 2000)]
+	private static partial Regex DefaultRegEx();
 #endif
+	//Source=https://github.com/Microsoft/referencesource/blob/master/System.ComponentModel.DataAnnotations/DataAnnotations/EmailAddressAttribute.cs
+	private static Regex CreateRegEx()
+	{
+#if FEATURE_SOURCE_GEN
+		return DefaultRegEx();
+#else
+		// Set explicit regex match timeout, sufficient enough for email parsing
+		// Unless the global REGEX_DEFAULT_MATCH_TIMEOUT is already set
+		TimeSpan matchTimeout = TimeSpan.FromSeconds(2);
+
+		try
+		{
+			var domainTimeout = AppDomain.CurrentDomain.GetData("REGEX_DEFAULT_MATCH_TIMEOUT");
+			if (domainTimeout is not TimeSpan)
+			{
+
+				return new Regex(pattern, options, matchTimeout);
+
+			}
+		}
+		catch
+		{
+			// Fallback on error
 		}
 
-		private static ReadOnlyCollection<IAttachment> ConvertAttachments(IDispatchCommunicationContext communicationContext)
-		{
-			if (communicationContext.ContentModel?.Resources?.Count > 0)
-			{
-				List<IAttachment> attachments = new(communicationContext.ContentModel?.Resources?.Count ?? 0);
-				foreach (var resource in communicationContext.ContentModel?.Resources ?? [])
-				{
-					attachments.Add(new SmsAttachment(resource));
-				}
-				return attachments.AsReadOnly();
-			}
-			return new ReadOnlyCollection<IAttachment>([]);
-		}
+		// Legacy fallback (without explicit match timeout)
+		return new Regex(pattern, options);
+#endif
 	}
 }

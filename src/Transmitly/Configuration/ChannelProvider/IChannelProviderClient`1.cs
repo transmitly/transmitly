@@ -12,10 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.ChannelProvider
+namespace Transmitly.ChannelProvider;
+
+public interface IChannelProviderDispatcher<in TCommunication> : IChannelProviderDispatcher
 {
-	public interface IChannelProviderDispatcher<in TCommunication> : IChannelProviderDispatcher
-	{
-		Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(TCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken);
-	}
+	Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(TCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken);
 }

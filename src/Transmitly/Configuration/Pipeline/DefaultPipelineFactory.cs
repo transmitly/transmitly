@@ -14,28 +14,34 @@
 
 using System.Collections.ObjectModel;
 
-namespace Transmitly.Pipeline.Configuration
+namespace Transmitly.Pipeline.Configuration;
+
+/// <summary>
+/// Default factory for pipeline registrations.
+/// </summary>
+/// <param name="pipelineRegistrations">The registered pipelines.</param>
+/// <exception cref="ArgumentNullException">If the provided pipeline registrations are null</exception>
+public sealed class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegistrations) : IPipelineFactory
 {
-	/// <summary>
-	/// Default factory for pipeline registrations.
-	/// </summary>
-	/// <param name="pipelineRegistrations">The registered pipelines.</param>
-	/// <exception cref="ArgumentNullException">If the provided pipeline registrations are null</exception>
-	public sealed class DefaultPipelineFactory(IEnumerable<IPipeline> pipelineRegistrations) : IPipelineFactory
+	private readonly ReadOnlyCollection<IPipeline> _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations).ToList().AsReadOnly();
+
+	public Task<IReadOnlyCollection<IPipeline>> GetAllAsync()
 	{
-		private readonly ReadOnlyCollection<IPipeline> _pipelineRegistrations = Guard.AgainstNull(pipelineRegistrations).ToList().AsReadOnly();
+		return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelineRegistrations);
+	}
 
-		public Task<IReadOnlyCollection<IPipeline>> GetAllAsync()
-		{
-			return Task.FromResult<IReadOnlyCollection<IPipeline>>(_pipelineRegistrations);
-		}
-
-		public Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineName)
-		{
-			return Task.FromResult<IReadOnlyCollection<IPipeline>>(
-				_pipelineRegistrations
-				.Where(x => x.PipelineName == pipelineName).ToList().AsReadOnly()
-			);
-		}
+	public Task<IReadOnlyCollection<IPipeline>> GetAsync(string pipelineIntent, string? pipelineId = null)
+	{
+		return Task.FromResult<IReadOnlyCollection<IPipeline>>(
+			_pipelineRegistrations
+			.Where(x =>
+				x.Intent == pipelineIntent &&
+				(
+					string.IsNullOrWhiteSpace(pipelineId) || x.Id == pipelineId
+				)
+			)
+			.ToList()
+			.AsReadOnly()
+		);
 	}
 }

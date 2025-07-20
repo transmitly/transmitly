@@ -12,95 +12,93 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+namespace Transmitly.Delivery;
 
-namespace Transmitly.Delivery
+internal class DeliveryReportMonitor : IObserver<DeliveryReport>
 {
-	internal class DeliveryReportMonitor : IObserver<DeliveryReport>
+	private readonly IReadOnlyCollection<string> _restrictedToEventNames;
+	private readonly IReadOnlyCollection<string> _restrictedToChannelIds;
+	private readonly IReadOnlyCollection<string> _restrictedToChannelProviderIds;
+	private readonly IReadOnlyCollection<string> _restrictedToPipelineIntents;
+
+	private readonly IObserver<DeliveryReport>? _observer;
+	private IDisposable? _cancellation;
+	public DeliveryReportMonitor(
+		IObserver<DeliveryReport> reportObservable,
+		IReadOnlyCollection<string>? restrictedToEventNames = null,
+		IReadOnlyCollection<string>? restrictedToChannelIds = null,
+		IReadOnlyCollection<string>? restrictedToChannelProviderIds = null,
+		IReadOnlyCollection<string>? restrictedToPipelineIntents = null)
+			: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineIntents)
 	{
-		private readonly IReadOnlyCollection<string> _restrictedToEventNames;
-		private readonly IReadOnlyCollection<string> _restrictedToChannelIds;
-		private readonly IReadOnlyCollection<string> _restrictedToChannelProviderIds;
-		private readonly IReadOnlyCollection<string> _restrictedToPipelineNames;
+		_observer = Guard.AgainstNull(reportObservable);
+	}
 
-		private readonly IObserver<DeliveryReport>? _observer;
-		private IDisposable? _cancellation;
-		public DeliveryReportMonitor(
-			IObserver<DeliveryReport> reportObservable,
-			IReadOnlyCollection<string>? restrictedToEventNames = null,
-			IReadOnlyCollection<string>? restrictedToChannelIds = null,
-			IReadOnlyCollection<string>? restrictedToChannelProviderIds = null,
-			IReadOnlyCollection<string>? restrictedToPipelineNames = null)
-				: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineNames)
-		{
-			_observer = Guard.AgainstNull(reportObservable);
-		}
+	public DeliveryReportMonitor(
+		DeliveryReportAsyncHandler reportHandler,
+		IReadOnlyCollection<string>? restrictedToEventNames = null,
+		IReadOnlyCollection<string>? restrictedToChannelIds = null,
+		IReadOnlyCollection<string>? restrictedToChannelProviderIds = null,
+		IReadOnlyCollection<string>? restrictedToPipelineIntents = null)
+			: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineIntents)
+	{
 
-		public DeliveryReportMonitor(
-			DeliveryReportAsyncHandler reportHandler,
-			IReadOnlyCollection<string>? restrictedToEventNames = null,
-			IReadOnlyCollection<string>? restrictedToChannelIds = null,
-			IReadOnlyCollection<string>? restrictedToChannelProviderIds = null,
-			IReadOnlyCollection<string>? restrictedToPipelineNames = null)
-				: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineNames)
-		{
+		_observer = new DeliveryReportAsyncHandlerObserver(Guard.AgainstNull(reportHandler));
+	}
 
-			_observer = new DeliveryReportAsyncHandlerObserver(Guard.AgainstNull(reportHandler));
-		}
+	private DeliveryReportMonitor(
+		IReadOnlyCollection<string>? restrictedToEventNames,
+		IReadOnlyCollection<string>? restrictedToChannelIds,
+		IReadOnlyCollection<string>? restrictedToChannelProviderIds,
+		IReadOnlyCollection<string>? restrictedToPipelineIntents)
+	{
+		_restrictedToEventNames = restrictedToEventNames ?? [];//Empty = Any
+		_restrictedToChannelIds = restrictedToChannelIds ?? [];
+		_restrictedToChannelProviderIds = restrictedToChannelProviderIds ?? [];
+		_restrictedToPipelineIntents = restrictedToPipelineIntents ?? [];
+	}
 
-		private DeliveryReportMonitor(
-			IReadOnlyCollection<string>? restrictedToEventNames,
-			IReadOnlyCollection<string>? restrictedToChannelIds,
-			IReadOnlyCollection<string>? restrictedToChannelProviderIds,
-			IReadOnlyCollection<string>? restrictedToPipelineNames)
-		{
-			_restrictedToEventNames = restrictedToEventNames ?? [];//Empty = Any
-			_restrictedToChannelIds = restrictedToChannelIds ?? [];
-			_restrictedToChannelProviderIds = restrictedToChannelProviderIds ?? [];
-			_restrictedToPipelineNames = restrictedToPipelineNames ?? [];
-		}
+	public virtual void Subscribe(IObservable<DeliveryReport> provider) =>
+		_cancellation = provider.Subscribe(this);
 
-		public virtual void Subscribe(IObservable<DeliveryReport> provider) =>
-			_cancellation = provider.Subscribe(this);
+	public virtual void Unsubscribe()
+	{
+		_cancellation?.Dispose();
+	}
 
-		public virtual void Unsubscribe()
-		{
-			_cancellation?.Dispose();
-		}
+	public virtual void OnCompleted()
+	{
+		_observer?.OnCompleted();
+	}
 
-		public virtual void OnCompleted()
-		{
-			_observer?.OnCompleted();
-		}
+	public virtual void OnError(Exception error)
+	{
+		_observer?.OnError(error);
+	}
 
-		public virtual void OnError(Exception error)
-		{
-			_observer?.OnError(error);
-		}
+	public virtual void OnNext(DeliveryReport value)
+	{
+		if (!ShouldFireEvent(value))
+			return;
 
-		public virtual void OnNext(DeliveryReport value)
-		{
-			if (!ShouldFireEvent(value))
-				return;
+		if (_observer != null)
+			_ = Task.Run(() => _observer.OnNext(value));
+	}
 
-			if (_observer != null)
-				_ = Task.Run(() => _observer.OnNext(value));
-		}
+	private bool ShouldFireEvent(DeliveryReport value)
+	{
+		if (_restrictedToEventNames.Count != 0 && !_restrictedToEventNames.Any(e => e.Equals(value.EventName, StringComparison.OrdinalIgnoreCase)))
+			return false;
 
-		private bool ShouldFireEvent(DeliveryReport value)
-		{
-			if (_restrictedToEventNames.Count != 0 && !_restrictedToEventNames.Any(e => e.Equals(value.EventName, StringComparison.OrdinalIgnoreCase)))
-				return false;
+		if (_restrictedToChannelIds.Count != 0 && value.ChannelId != null && !_restrictedToChannelIds.Any(c => c.Equals(value.ChannelId, StringComparison.OrdinalIgnoreCase)))
+			return false;
 
-			if (_restrictedToChannelIds.Count != 0 && value.ChannelId != null && !_restrictedToChannelIds.Any(c => c.Equals(value.ChannelId, StringComparison.OrdinalIgnoreCase)))
-				return false;
+		if (_restrictedToChannelProviderIds.Count != 0 && value.ChannelProviderId != null && !_restrictedToChannelProviderIds.Any(c => c.Equals(value.ChannelProviderId, StringComparison.OrdinalIgnoreCase)))
+			return false;
 
-			if (_restrictedToChannelProviderIds.Count != 0 && value.ChannelProviderId != null && !_restrictedToChannelProviderIds.Any(c => c.Equals(value.ChannelProviderId, StringComparison.OrdinalIgnoreCase)))
-				return false;
+		if (_restrictedToPipelineIntents.Count != 0 && !string.IsNullOrWhiteSpace(value.PipelineIntent) && !_restrictedToPipelineIntents.Any(e => e.Equals(value.PipelineIntent, StringComparison.OrdinalIgnoreCase)))
+			return false;
 
-			if (_restrictedToPipelineNames.Count != 0 && !string.IsNullOrWhiteSpace(value.PipelineName) && !_restrictedToPipelineNames.Any(e => e.Equals(value.PipelineName, StringComparison.OrdinalIgnoreCase)))
-				return false;
-
-			return true;
-		}
+		return true;
 	}
 }
