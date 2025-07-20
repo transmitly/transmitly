@@ -26,9 +26,9 @@ public sealed class Channels
 
 	internal Channels() { }
 
-#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable S2325, CA1822 // Mark members as static
 	public string GetId(string providerId, string? clientId = DefaultProviderId)
-#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore S2325, CA1822 // Mark members as static
 	{
 		Guard.AgainstNullOrWhiteSpace(providerId);
 		return string.Join(".", providerId, !string.IsNullOrWhiteSpace(clientId) ? clientId : DefaultProviderId).Trim('.');

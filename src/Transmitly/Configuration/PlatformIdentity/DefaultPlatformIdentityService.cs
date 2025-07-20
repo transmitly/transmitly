@@ -14,6 +14,6 @@
 
 namespace Transmitly.PlatformIdentity.Configuration;
 
-sealed class DefaultPlatformIdentityService(IPlatformIdentityResolverFactory platformIdentityResolverRegistrations) : BasePlatformIdentityService(platformIdentityResolverRegistrations)
+public sealed class DefaultPlatformIdentityService(IPlatformIdentityResolverFactory platformIdentityResolverRegistrations) : BasePlatformIdentityService(platformIdentityResolverRegistrations)
 {
 }

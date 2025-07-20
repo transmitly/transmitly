@@ -14,7 +14,7 @@
 
 namespace Transmitly.Pipeline.Configuration;
 
-sealed class DefaultPipelineService(IPipelineFactory pipelineFactory) : BasePipelineService(pipelineFactory)
+public sealed class DefaultPipelineService(IPipelineFactory pipelineFactory) : BasePipelineService(pipelineFactory)
 {
-	
+
 }

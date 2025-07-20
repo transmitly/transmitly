@@ -14,6 +14,9 @@
 
 namespace Transmitly;
 
+/// <summary>
+/// CommunicationsStatus represents the status of a communication operation.
+/// </summary>
 public sealed record CommunicationsStatus
 {
 	public const int InfoMin = 1000, InfoMax = 1999;
@@ -45,15 +48,43 @@ public sealed record CommunicationsStatus
 	internal static CommunicationsStatus ServerError(string reasonPhrase, int subCode = 0)
 	  => Create(TransmitlyCallerId, ServerErrMin, ServerErrMax, subCode, reasonPhrase, true);
 
+	/// <summary>
+	/// Creates a new Info typed CommunicationsStatus with the specified parameters.
+	/// </summary>
+	/// <param name="callerId"></param>
+	/// <param name="reasonPhrase"></param>
+	/// <param name="subCode"></param>
+	/// <returns></returns>
 	public static CommunicationsStatus Info(string callerId, string reasonPhrase, int subCode = 0)
 	  => Create(callerId, InfoMin, InfoMax, subCode, reasonPhrase);
 
+	/// <summary>
+	/// Creates a new Success typed CommunicationsStatus with the specified parameters.
+	/// </summary>
+	/// <param name="callerId"></param>
+	/// <param name="reasonPhrase"></param>
+	/// <param name="subCode"></param>
+	/// <returns></returns>
 	public static CommunicationsStatus Success(string callerId, string reasonPhrase, int subCode = 0)
 	  => Create(callerId, SuccessMin, SuccessMax, subCode, reasonPhrase);
 
+	/// <summary>
+	/// Creates a new ClientError typed CommunicationsStatus with the specified parameters.
+	/// </summary>
+	/// <param name="callerId"></param>
+	/// <param name="reasonPhrase"></param>
+	/// <param name="subCode"></param>
+	/// <returns></returns>
 	public static CommunicationsStatus ClientError(string callerId, string reasonPhrase, int subCode = 0)
 	  => Create(callerId, ClientErrMin, ClientErrMax, subCode, reasonPhrase);
 
+	/// <summary>
+	/// Creates a new ServerError typed CommunicationsStatus with the specified parameters.
+	/// </summary>
+	/// <param name="callerId"></param>
+	/// <param name="reasonPhrase"></param>
+	/// <param name="subCode"></param>
+	/// <returns></returns>
 	public static CommunicationsStatus ServerError(string callerId, string reasonPhrase, int subCode = 0)
 	  => Create(callerId, ServerErrMin, ServerErrMax, subCode, reasonPhrase);
 

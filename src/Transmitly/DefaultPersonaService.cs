@@ -16,7 +16,7 @@ using Transmitly.Persona.Configuration;
 
 namespace Transmitly;
 
-sealed class DefaultPersonaService(IPersonaFactory personaFactory) : BasePersonaService(Guard.AgainstNull(personaFactory))
+public sealed class DefaultPersonaService(IPersonaFactory personaFactory) : BasePersonaService(Guard.AgainstNull(personaFactory))
 {
 
 }

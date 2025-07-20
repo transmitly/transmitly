@@ -20,7 +20,7 @@ public abstract class BaseDeliveryReportService : IDeliveryReportService
 {
 	private readonly HashSet<IObserver<DeliveryReport>> _observers = [];
 
-	public BaseDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers)
+	protected BaseDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers)
 	{
 		Subscribe(observers);
 	}

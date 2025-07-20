@@ -22,5 +22,6 @@ public interface IRequestAdaptorContext
 	string? GetValue(string key);
 	string? Content { get; }
 	string? PipelineIntent { get; }
+	string? PipelineId { get; }
 	string? ResourceId { get; }
 }

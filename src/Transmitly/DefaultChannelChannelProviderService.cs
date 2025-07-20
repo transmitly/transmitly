@@ -16,7 +16,7 @@ using Transmitly.ChannelProvider.Configuration;
 
 namespace Transmitly;
 
-sealed class DefaultChannelChannelProviderService(IChannelProviderFactory channelProviderFactory) : BaseChannelChannelProviderService(channelProviderFactory)
+public sealed class DefaultChannelChannelProviderService(IChannelProviderFactory channelProviderFactory) : BaseChannelChannelProviderService(channelProviderFactory)
 {
 
 }

@@ -25,11 +25,11 @@ public sealed class DeliveryReportEventName
 	private const string Prefix = "On";
 
 	internal DeliveryReportEventName() { }
-#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable S2325,CA1822 // Mark members as static
 	public string Delivered() => Prefix + "Delivered";
 	public string Error() => Prefix + "Error";
 	public string Dispatched() => Prefix + "Dispatched";
 	public string Dispatch() => Prefix + "Dispatch";
 	public string StatusChanged() => Prefix + "StatusChanged";
-#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore S2325, CA1822 // Mark members as static
 }

@@ -53,7 +53,8 @@ public static class CommunicationClientBuilderExtensions
 	/// <returns>The configuration builder.</returns>
 	public static CommunicationsClientBuilder AddDeliveryReportHandler(this CommunicationsClientBuilder builder, DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineIntents = null)
 	{
-		return builder.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineIntents);
+		var observer = new DeliveryReportAsyncHandlerObserver(reportHandler);
+		return builder.AddDeliveryReportHandler(observer, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineIntents);
 	}
 
 }

@@ -23,12 +23,19 @@ public static class DeliveryUtil
 	public const string ChannelIdKey = "tlyc";
 	public const string ChannelProviderIdKey = "tlycp";
 	public const string EventIdKey = "tlye";
+	public const string PipelineIdKey = "tlypid";
 
-	public static Uri AddPipelineContext(this Uri url, string resourceId, string pipelineIntent, string channel, string channelProvider)
+	public static Uri AddPipelineContext(this Uri url, string resourceId, string pipelineIntent, string? pipelineId, string? channel, string? channelProvider)
 	{
+		Guard.AgainstNullOrWhiteSpace(channel);
+		Guard.AgainstNullOrWhiteSpace(channelProvider);
+		Guard.AgainstNullOrWhiteSpace(pipelineIntent);
+		Guard.AgainstNullOrWhiteSpace(resourceId);
+
 		return Guard.AgainstNull(url)
 			.AddParameter(ResourceIdKey, resourceId)
 			.AddParameter(PipelineIntentKey, pipelineIntent)
+			.AddParameter(PipelineIdKey, pipelineId ?? string.Empty)
 			.AddParameter(ChannelIdKey, channel)
 			.AddParameter(ChannelProviderIdKey, channelProvider)
 			.AddParameter(EventIdKey, Guid.NewGuid().ToString("N"));

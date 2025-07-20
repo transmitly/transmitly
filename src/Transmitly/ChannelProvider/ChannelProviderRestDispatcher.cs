@@ -12,7 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+#if NETFRAMEWORK
 using System.Net.Http;
+#endif
 using System.Net.Http.Headers;
 using Transmitly.Exceptions;
 
@@ -25,7 +27,7 @@ public abstract class ChannelProviderRestDispatcher<TCommunication> : ChannelPro
 	private bool _disposedValue;
 	protected HttpClient HttpClient => _lazyHttpClient.Value;
 
-	public ChannelProviderRestDispatcher(HttpClient? httpClient = null)
+	protected ChannelProviderRestDispatcher(HttpClient? httpClient = null)
 	{
 		_lazyHttpClient = new Lazy<HttpClient>(() =>
 		{
@@ -69,13 +71,13 @@ public abstract class ChannelProviderRestDispatcher<TCommunication> : ChannelPro
 			{
 				_lazyHttpClient.Value.Dispose();
 			}
+
 			_disposedValue = true;
 		}
 	}
 
-	void IDisposable.Dispose()
+	public void Dispose()
 	{
-		// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
 		Dispose(disposing: true);
 		GC.SuppressFinalize(this);
 	}

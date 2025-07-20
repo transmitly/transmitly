@@ -58,6 +58,16 @@ public sealed class DefaultCommunicationsClient(
 		return await DispatchAsync(matchingPipelines, resolvedIdentityProfiles, transactionalModel, dispatchChannelPreferences, GuardCulture.AgainstNull(cultureInfo), cancellationToken).ConfigureAwait(false);
 	}
 
+	public Task DispatchAsync(DeliveryReport report)
+	{
+		return _deliveryReportProvider.DispatchAsync(Guard.AgainstNull(report));
+	}
+
+	public Task DispatchAsync(IReadOnlyCollection<DeliveryReport> reports)
+	{
+		return _deliveryReportProvider.DispatchAsync(Guard.AgainstNull(reports));
+	}
+
 	private async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<IPipeline> pipelines, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, CultureInfo? cultureInfo = null, CancellationToken cancellationToken = default)
 	{
 		var cultureInfoSafe = GuardCulture.AgainstNull(cultureInfo);
@@ -89,15 +99,4 @@ public sealed class DefaultCommunicationsClient(
 		var result = await _pipelineLookupService.GetMatchingPipelinesAsync(pipelineIntent, pipelineId, dispatchChannelPreferences).ConfigureAwait(false);
 		return result;
 	}
-
-	public Task DispatchAsync(DeliveryReport report)
-	{
-		return _deliveryReportProvider.DispatchAsync(Guard.AgainstNull(report));
-	}
-
-	public Task DispatchAsync(IReadOnlyCollection<DeliveryReport> reports)
-	{
-		return _deliveryReportProvider.DispatchAsync(Guard.AgainstNull(reports));
-	}
-
 }

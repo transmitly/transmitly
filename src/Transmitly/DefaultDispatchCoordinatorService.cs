@@ -17,7 +17,7 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly;
 
-sealed class DefaultDispatchCoordinatorService(IChannelChannelProviderService channelChannelProviderService, IPersonaService personaService, ITemplateEngineFactory templateEngineFactory, IDeliveryReportService deliveryReportService)
+public sealed class DefaultDispatchCoordinatorService(IChannelChannelProviderService channelChannelProviderService, IPersonaService personaService, ITemplateEngineFactory templateEngineFactory, IDeliveryReportService deliveryReportService)
 	: BaseDispatchCoordinatorService(Guard.AgainstNull(channelChannelProviderService), Guard.AgainstNull(personaService), Guard.AgainstNull(templateEngineFactory), Guard.AgainstNull(deliveryReportService))
 {
 

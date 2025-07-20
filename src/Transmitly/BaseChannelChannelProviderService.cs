@@ -33,7 +33,7 @@ public abstract class BaseChannelChannelProviderService(IChannelProviderFactory 
 			// Filter allowed channel providers based on dispatch preferences and channel restrictions
 			foreach (var channelProvider in await _channelProviderFactory.GetAllAsync().ConfigureAwait(false))
 			{
-				if (!IsChannelProviderEligible(dispatchChannelPreferences, channel, channelProvider, platformIdentity))
+				if (!IsChannelProviderEligible(dispatchChannelPreferences, channel, channelProvider))
 				{
 					continue;
 				}
@@ -79,7 +79,7 @@ public abstract class BaseChannelChannelProviderService(IChannelProviderFactory 
 		return true;
 	}
 
-	private static bool IsChannelProviderEligible(IReadOnlyCollection<string> dispatchChannelPreferences, IChannel channel, IChannelProviderRegistration channelProvider, IPlatformIdentityProfile platformIdentity)
+	private static bool IsChannelProviderEligible(IReadOnlyCollection<string> dispatchChannelPreferences, IChannel channel, IChannelProviderRegistration channelProvider)
 	{
 		// Check dispatch preferences: if preferences exist, the channel must be listed.
 		if (dispatchChannelPreferences.Count > 0 &&

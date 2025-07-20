@@ -113,7 +113,7 @@ internal sealed class SmsChannel(ISmsChannelConfiguration configuration) : IChan
 		try
 		{
 			var domainTimeout = AppDomain.CurrentDomain.GetData("REGEX_DEFAULT_MATCH_TIMEOUT");
-			if (domainTimeout is null || domainTimeout is not TimeSpan)
+			if (domainTimeout is not TimeSpan)
 			{
 
 				return new Regex(pattern, options, matchTimeout);

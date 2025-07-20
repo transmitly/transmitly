@@ -37,9 +37,9 @@ sealed class EmailChannelConfiguration(Func<IDispatchCommunicationContext, IPlat
 
 	public IReadOnlyCollection<string>? CopyRecipientPurposes { get; private set; }
 
-	public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purpose)
+	public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
 	{
-		BlindCopyRecipientPurposes = [.. purpose];
+		BlindCopyRecipientPurposes = [.. purposes];
 		return this;
 	}
 
@@ -49,9 +49,9 @@ sealed class EmailChannelConfiguration(Func<IDispatchCommunicationContext, IPlat
 		return this;
 	}
 
-	public IChannelConfiguration AddCopyRecipientAddressPurpose(params string[] purpose)
+	public IChannelConfiguration AddCopyRecipientAddressPurpose(params string[] purposes)
 	{
-		CopyRecipientPurposes = [.. purpose];
+		CopyRecipientPurposes = [.. purposes];
 		return this;
 	}
 
@@ -61,9 +61,9 @@ sealed class EmailChannelConfiguration(Func<IDispatchCommunicationContext, IPlat
 		return this;
 	}
 
-	public IChannelConfiguration AddRecipientAddressPurpose(params string[] purpose)
+	public IChannelConfiguration AddRecipientAddressPurpose(params string[] purposes)
 	{
-		RecipientAddressPurposes = [.. purpose];
+		RecipientAddressPurposes = [.. purposes];
 		return this;
 	}
 }

@@ -81,13 +81,10 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		if (platformIdentities.Count > 1)
 			throw new NotSupportedException("Only single platform identity is supported.");
 
-		foreach (var identity in Guard.AgainstNull(platformIdentities))
+		foreach (var identity in Guard.AgainstNull(platformIdentities).Where(id => !string.IsNullOrWhiteSpace(id.Id)))
 		{
-			if (!string.IsNullOrWhiteSpace(identity.Id))
-			{
-				_bag.Add(identity.Id!, identity);
-				_bag.Add(PlatformIdentityPropertyKey, ConvertToDynamic(identity));
-			}
+			_bag.Add(identity.Id!, identity);
+			_bag.Add(PlatformIdentityPropertyKey, ConvertToDynamic(identity));
 		}
 		//hack end
 		_bag[ResourcePropertyKey] = ConvertToDynamic(resources?.Select(s => new { s.Name, s.ContentType }).ToList());
@@ -96,19 +93,17 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 
 		if (model is IDictionary<string, object?> expandoObj)
 		{
-			foreach (var kvp in expandoObj)
+			foreach (var kvp in expandoObj.Where(kvp => !_bag.ContainsKey(kvp.Key)))
 			{
-				if (!_bag.ContainsKey(kvp.Key))
-					_bag[kvp.Key] = ConvertToDynamic(kvp.Value);
+				_bag[kvp.Key] = ConvertToDynamic(kvp.Value);
 			}
 		}
 		else
 		{
 			foreach (var property in model.GetType().GetProperties()
-						 .Where(p => p.GetIndexParameters().Length == 0))
+						 .Where(p => p.GetIndexParameters().Length == 0 && !_bag.ContainsKey(p.Name)))
 			{
-				if (!_bag.ContainsKey(property.Name))
-					_bag[property.Name] = ConvertToDynamic(property.GetValue(model));
+				_bag[property.Name] = ConvertToDynamic(property.GetValue(model));
 			}
 		}
 	}
