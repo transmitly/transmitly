@@ -13,11 +13,12 @@
 //  limitations under the License.
 
 using System.Text.Json;
+using Transmitly;
 using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
 using Transmitly.Persona.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
-using Transmitly;
+using Transmitly.Util;
 
 namespace Tandely.Notifications.Client
 {
@@ -28,7 +29,6 @@ namespace Tandely.Notifications.Client
 		static NotificationsOptions? _options;
 		readonly DefaultCommunicationsClient _defaultClient;
 		readonly IReadOnlyCollection<IPersonaRegistration>? _pipelinePersonas;
-		readonly static object _lock = new();
 
 		internal NotificationsCommunicationsClient(DefaultCommunicationsClient defaultClient, ICreateCommunicationsClientContext context,
 			IPlatformIdentityResolverFactory platformIdentityResolverFactory, NotificationsOptions options,
@@ -50,17 +50,15 @@ namespace Tandely.Notifications.Client
 			return client;
 		}
 
-		public void DeliverReport(DeliveryReport report)
+		private IPersonaRegistration[] getIdentityPersonas(IPlatformIdentityProfile pid)
 		{
-			_defaultClient.DeliverReport(report);
+			var result = _pipelinePersonas?.Where(x => pid.GetType().IsAssignableFrom(x.PersonaType) && x.IsMatch(pid)).ToArray();
+			return result ?? [];
 		}
 
-		public void DeliverReports(IReadOnlyCollection<DeliveryReport> reports)
-		{
-			_defaultClient.DeliverReports(reports);
-		}
 
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> allowedChannels, string? cultureInfo = null, CancellationToken cancellationToken = default)
+
+		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineIntent, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
 			try
 			{
@@ -69,8 +67,9 @@ namespace Tandely.Notifications.Client
 
 				var payload = JsonSerializer.Serialize(new DispatchNotificationModel
 				{
-					AllowedChannels = allowedChannels,
-					CommunicationId = pipelineName,
+					AllowedChannels = dispatchChannelPreferences,
+					CommunicationIntent = pipelineIntent,
+					CommunicationId = pipelineId,
 					PersonFilters = personFilters ?? [],
 					ExternalInstanceReferenceId = dispatchCorrelationId,
 					TransactionalModel = new NotificationsTransactionalModel(transactionalModel),
@@ -97,48 +96,51 @@ namespace Tandely.Notifications.Client
 				{
 					return new DispatchCommunicationResult([new NotificationsDispatchResult
 						{
-							DispatchStatus = DispatchStatus.Dispatched,
+							Status = CommunicationsStatus.Success("Tandely", "Dispatched"),
 							ResourceId = dispatchCorrelationId,
 							ChannelId = "Tandely.Notifications",
 							Exception = null,
 							ChannelProviderId = "Tandely.Notifications"
-						}], true);
+						}]);
 				}
 				else
 				{
 					return new DispatchCommunicationResult([new NotificationsDispatchResult
 						{
-							DispatchStatus = DispatchStatus.Undeliverable,
+							Status = CommunicationsStatus.ServerError("Tandely", "Undeliverable"),
 							ResourceId = dispatchCorrelationId,
 							ChannelId = "Tandely.Notifications",
 							Exception = new Exception(string.Join(", ", apiResult?.Results.Select(x => x.Exception?.ToString())??[])),
 							ChannelProviderId = "Tandely.Notifications"
-						}], false);
+						}]);
 				}
 			}
 			catch (Exception ex)
 			{
 				return new DispatchCommunicationResult([new NotificationsDispatchResult
 					{
-						DispatchStatus = DispatchStatus.Exception,
+						Status = CommunicationsStatus.ClientError("Tandely", "Exception"),
 						ResourceId = null,
 						ChannelId = "Tandely.Notifications",
 						Exception = new Exception("An exception occurred while attempting to dispatch communications to the Tandely Notifications services", ex),
 						ChannelProviderId = "Tandely.Notifications"
-					}], false);
+					}]);
 			}
 		}
 
-		private IPersonaRegistration[] getIdentityPersonas(IPlatformIdentityProfile pid)
+		public Task<IDispatchCommunicationResult> DispatchAsync(string pipelineIntent, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
-			var result = _pipelinePersonas?.Where(x => pid.GetType().IsAssignableFrom(x.PersonaType) && x.IsMatch(pid)).ToArray();
-			return result ?? [];
+			return DispatchAsync(pipelineIntent, identityReferences.Select(x => new PlatformIdentityProfile(x.Id, x.Type, [])).ToList(), transactionalModel, dispatchChannelPreferences, pipelineId, cultureInfo, cancellationToken);
 		}
 
-
-		public async Task<IDispatchCommunicationResult> DispatchAsync(string pipelineName, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> channelPreferences, string? cultureInfo = null, CancellationToken cancellationToken = default)
+		public Task DispatchAsync(DeliveryReport report)
 		{
-			return await DispatchAsync(pipelineName, identityReferences.Select(x => new PlatformIdentityProfile(x.Id, x.Type, [])).ToList(), transactionalModel, channelPreferences, cultureInfo, cancellationToken).ConfigureAwait(false);
+			return _defaultClient.DispatchAsync(report);
+		}
+
+		public Task DispatchAsync(IReadOnlyCollection<DeliveryReport> reports)
+		{
+			return _defaultClient.DispatchAsync(reports);
 		}
 	}
 }

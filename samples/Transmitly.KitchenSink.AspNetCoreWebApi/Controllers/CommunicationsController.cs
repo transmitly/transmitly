@@ -14,6 +14,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Transmitly.Delivery;
+using Transmitly.Util;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
@@ -42,7 +43,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 				PipelineName.OtpCode,
 				[otpCodeVM.Recipient],
 				TransactionModel.Create(new { code = otpCodeVM.Code }),
-				channelPreferences: preferredChannels);
+				dispatchChannelPreferences: preferredChannels);
 
 			return GetActionResult(result);
 
@@ -58,6 +59,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 					dispatchVM.Recipients,
 					dispatchVM.TransationModel,
 					dispatchVM.AllowedChannelIds,
+					null,
 					dispatchVM.Culture,
 					cancellationToken
 			);
@@ -68,7 +70,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 		[HttpPost("channel/provider/update", Name = "DeliveryReport")]
 		public IActionResult ChannelProviderDeliveryReport(ChannelProviderDeliveryReportRequest providerReport)
 		{
-			_communicationsClient.DeliverReports(providerReport.DeliveryReports);
+			_communicationsClient.DispatchAsync(providerReport.DeliveryReports);
 			return Ok();
 		}
 	}

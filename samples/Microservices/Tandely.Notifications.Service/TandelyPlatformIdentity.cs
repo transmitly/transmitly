@@ -22,7 +22,6 @@ namespace Tandely.Notifications.Service
 		public string? Type { get; set; }
 		public string[] Personas { get; set; } = [];
 		public List<TandelyIdentityAddress> Addresses { get; set; } = [];
-		public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
-		IReadOnlyCollection<IIdentityAddress> IPlatformIdentityProfile.Addresses { get => Addresses; }
+		IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses { get => Addresses; }
 	}
 }

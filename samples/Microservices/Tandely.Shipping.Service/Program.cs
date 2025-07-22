@@ -19,6 +19,7 @@ using System.Text.Json.Serialization;
 using Tandely.Notifications.Client;
 using Transmitly;
 using Transmitly.Samples.Shared;
+using Transmitly.Util;
 
 namespace Tandely.Shipping.Service
 {
@@ -40,6 +41,7 @@ namespace Tandely.Shipping.Service
 				options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 				options.JsonSerializerOptions.Converters.Add(new JsonExceptionConverter());
 				options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+				options.JsonSerializerOptions.Converters.Add(new ObjectToInferredTypesConverter());
 			});
 
 			builder.Services.Configure<JsonOptions>(options =>
@@ -48,6 +50,7 @@ namespace Tandely.Shipping.Service
 				options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 				options.SerializerOptions.Converters.Add(new JsonExceptionConverter());
 				options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+				options.SerializerOptions.Converters.Add(new ObjectToInferredTypesConverter());
 			});
 
 			var notificationsServiceUrl = Guard.AgainstNullOrWhiteSpace(builder.Configuration.GetValue<string>("NotificationsService:Url"));

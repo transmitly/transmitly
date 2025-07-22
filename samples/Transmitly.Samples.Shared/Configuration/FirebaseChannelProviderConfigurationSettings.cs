@@ -12,6 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.ChannelProvider.Firebase.Configuration;
+
 namespace Transmitly.Samples.Shared
 {
 	public class FirebaseChannelProviderConfigurationSettings : ChannelProviderConfigurationSettings

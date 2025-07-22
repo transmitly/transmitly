@@ -12,20 +12,24 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using System.Dynamic;
 using System.Text.Json;
+using Transmitly.Samples.Shared;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
 	public class DispatchTransactionModel : ITransactionModel
 	{
 		private object _model = new { };
-
+		private readonly static JsonSerializerOptions _jsonOptions = new() { Converters = { new ObjectToInferredTypesConverter() } };
 		public object Model
 		{
 			get => _model; set
 			{
 				if (value is JsonElement)
-					_model = JsonSerializer.Deserialize<System.Dynamic.ExpandoObject>(JsonSerializer.Serialize(value)) ?? new System.Dynamic.ExpandoObject();
+				{
+					_model = JsonSerializer.Deserialize<ExpandoObject>(JsonSerializer.Serialize(value), _jsonOptions) ?? new System.Dynamic.ExpandoObject();
+				}
 				else
 					_model = value;
 

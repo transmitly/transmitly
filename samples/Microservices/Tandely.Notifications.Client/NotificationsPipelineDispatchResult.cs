@@ -18,7 +18,7 @@ namespace Tandely.Notifications.Client
 {
 	public class NotificationsPipelineDispatchResult
 	{
-		public DispatchStatus DispatchStatus { get; set; }
+		public CommunicationsStatus Status { get; set; }
 		public string? ChannelId { get; set; }
 		public string? ChannelProviderId { get; set; }
 		public string? ResourceId { get; set; }

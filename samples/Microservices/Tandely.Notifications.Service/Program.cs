@@ -18,6 +18,7 @@ using System.Text.Json.Serialization;
 using Tandely.IntegrationEvents;
 using Transmitly;
 using Transmitly.Samples.Shared;
+using Transmitly.Util;
 
 namespace Tandely.Notifications.Service
 {
@@ -39,6 +40,7 @@ namespace Tandely.Notifications.Service
 				options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 				options.JsonSerializerOptions.Converters.Add(new JsonExceptionConverter());
 				options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+				options.JsonSerializerOptions.Converters.Add(new ObjectToInferredTypesConverter());
 			});
 
 			builder.Services.Configure<JsonOptions>(options =>
@@ -47,6 +49,7 @@ namespace Tandely.Notifications.Service
 				options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 				options.SerializerOptions.Converters.Add(new JsonExceptionConverter());
 				options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+				options.SerializerOptions.Converters.Add(new ObjectToInferredTypesConverter());
 			});
 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -77,7 +80,7 @@ namespace Tandely.Notifications.Service
 				.AddPlatformIdentityResolver<CustomerRepository>("Customer")
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger.CreateLogger<Program>().LogInformation("[DeliveryReport] Dispatched to {ChannelId} using {ChannelProvider} with result {DispatchStatus}", report.ChannelId, report.ChannelProviderId, report.DispatchStatus);
+					logger.CreateLogger<Program>().LogInformation("[DeliveryReport] Dispatched to {ChannelId} using {ChannelProvider} with result {DispatchStatus}", report.ChannelId, report.ChannelProviderId, report.Status);
 					return Task.CompletedTask;
 				})
 				.AddFluidTemplateEngine()

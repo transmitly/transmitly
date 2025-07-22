@@ -41,6 +41,8 @@ namespace Tandely.Customers.Service
 				options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 				options.JsonSerializerOptions.Converters.Add(new JsonExceptionConverter());
 				options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+				options.JsonSerializerOptions.Converters.Add(new ObjectToInferredTypesConverter());
+				
 			});
 
 			builder.Services.Configure<JsonOptions>(options =>
@@ -49,6 +51,7 @@ namespace Tandely.Customers.Service
 				options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 				options.SerializerOptions.Converters.Add(new JsonExceptionConverter());
 				options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+				options.SerializerOptions.Converters.Add(new ObjectToInferredTypesConverter());
 			});
 
 			builder.Services.AddControllers();

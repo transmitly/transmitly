@@ -27,22 +27,20 @@ namespace Tandely.Notifications.Service
 		public string? FirstName { get; set; }
 		public string? LastName { get; set; }
 		public int LoyaltyPoints { get; set; }
-		public IReadOnlyCollection<IChannelPreference>? ChannelPreferences { get; set; }
-
 
 		string? IPlatformIdentityProfile.Id { get => Id.ToString(); }
 		string? IPlatformIdentityProfile.Type { get => nameof(Customer); }
-		IReadOnlyCollection<IIdentityAddress> IPlatformIdentityProfile.Addresses
+		IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses
 		{
 			get
 			{
-				var result = new List<IIdentityAddress>();
+				var result = new List<IPlatformIdentityAddress>();
 				if (!string.IsNullOrWhiteSpace(MobilePhone))
-					result.Add(new IdentityAddress(MobilePhone));
+					result.Add(new PlatformIdentityAddress(MobilePhone));
 				if (!string.IsNullOrWhiteSpace(EmailAddress))
-					result.Add(new IdentityAddress(EmailAddress, Name));
+					result.Add(new PlatformIdentityAddress(EmailAddress, Name));
 				if (!string.IsNullOrWhiteSpace(DeviceToken))
-					result.Add(new IdentityAddress(DeviceToken, type: IdentityAddress.Types.DeviceToken()));
+					result.Add(new PlatformIdentityAddress(DeviceToken, type: PlatformIdentityAddress.Types.DeviceToken()));
 				return result;
 			}
 		}

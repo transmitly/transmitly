@@ -16,12 +16,13 @@ using Transmitly;
 
 namespace Tandely.Notifications.Service
 {
-	public class TandelyIdentityAddress : IIdentityAddress
+	public class TandelyIdentityAddress : IPlatformIdentityAddress
 	{
 		public string? Type { get; set; }
 		public string Value { get; set; }
 		public IDictionary<string, string?> AddressParts { get; set; } = new Dictionary<string, string?>();
 		public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
 		public string? Display { get; set; }
+		public IReadOnlyCollection<string>? Purposes { get; set; } = new List<string>();
 	}
 }

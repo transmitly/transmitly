@@ -19,6 +19,7 @@ using System.Text.Json.Serialization;
 using Tandely.Notifications.Client;
 using Transmitly;
 using Transmitly.Samples.Shared;
+using Transmitly.Util;
 
 namespace Tandely.Orders.Service
 {

@@ -24,7 +24,7 @@ namespace Tandely.Notifications.Service
 	{
 		private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
-		public async Task<IReadOnlyCollection<IPlatformIdentityProfile>?> Resolve(IReadOnlyCollection<IPlatformIdentityReference> identityReferences)
+		public async Task<IReadOnlyCollection<IPlatformIdentityProfile>?> ResolveIdentityProfiles(IReadOnlyCollection<IPlatformIdentityReference> identityReferences)
 		{
 			var tasks = identityReferences.Select(async identityReference =>
 			{

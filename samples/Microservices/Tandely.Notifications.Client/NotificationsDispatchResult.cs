@@ -20,12 +20,16 @@ namespace Tandely.Notifications.Client
 	{
 		public string? ResourceId { get; set; }
 
-		public DispatchStatus DispatchStatus { get; set; }
+		public CommunicationsStatus Status { get; set; } = CommunicationsStatus.ClientError("Tandely", "Unknown");
 
 		public string? ChannelProviderId { get; internal set; }
 
 		public string? ChannelId { get; internal set; }
 
 		public Exception? Exception { get; set; }
+
+		public string? PipelineId { get; internal set; }
+
+		public string? PipelineIntent { get; internal set; }
 	}
 }

@@ -11,12 +11,13 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Transmitly;
 using Transmitly.Delivery;
 using Transmitly.Samples.Shared;
-using Transmitly;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
@@ -34,13 +35,18 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
 			// Add services to the container.
 			builder.Services
-				.AddControllers()
+				.AddControllers(options =>
+				{
+					//Adds the necessary model binders to handle channel provider specific webhooks
+					//and convert them to delivery reports (Added with package: Transmitly.Microsoft.AspnetCore.Mvc)
+					options.AddTransmitlyDeliveryReportModelBinders();
+				})
 				.AddJsonOptions(opt =>
 				{
 					opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+					opt.JsonSerializerOptions.Converters.Add(new ObjectToInferredTypesConverter());
 					opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 					opt.JsonSerializerOptions.Converters.Add(new JsonExceptionConverter());
-
 				});
 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -76,7 +82,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				// the generated communications even firing off webhooks to notify other systems.
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogInformation("[{channelId}:{channelProviderId}:Dispatched] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.ResourceId, JsonSerializer.Serialize(report.ChannelCommunication));
+					logger?.LogInformation("[{channelId}:{channelProviderId}:Dispatched] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.ResourceId, JsonSerializer.Serialize(report.ChannelCommunication, new JsonSerializerOptions { WriteIndented = true }));
 					return Task.CompletedTask;
 
 					// There's quite a few potential delivery events that can happen with Transmitly.
@@ -86,7 +92,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				}, [DeliveryReport.Event.Dispatched()])
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogInformation("[{channelId}:{channelProviderId}:StatusChanged] Id={id}; Status={status}", report.ChannelId, report.ChannelProviderId, report.ResourceId, report.DispatchStatus);
+					logger?.LogInformation("[{channelId}:{channelProviderId}:StatusChanged] Id={id}; Status={status}", report.ChannelId, report.ChannelProviderId, report.ResourceId, report.Status);
 					return Task.CompletedTask;
 				}, [DeliveryReport.Event.StatusChanged()])
 				// You can also filter out on other conditions like, channels and channel provider ids
@@ -94,7 +100,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				// that will handle SMS and push
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogError("[{channelId}:{channelProvider}:Error] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.ResourceId, JsonSerializer.Serialize(report.ChannelCommunication));
+					logger?.LogError("[{channelId}:{channelProvider}:Error] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.ResourceId, JsonSerializer.Serialize(report.ChannelCommunication, new JsonSerializerOptions { WriteIndented = true }));
 					return Task.CompletedTask;
 					//we're filtering out all events except for 'Error' events
 				}, [DeliveryReport.Event.Error()])
@@ -138,10 +144,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				//See: OTPCode route in Controllers.CommunicationsController.cs
 				.AddPipeline(PipelineName.OtpCode, pipeline =>
 				{
-					//we want to notify any of our channel providers that support it, to prioritize this message
-					//this is different than MessagePriority. Where MessagePriority indicates the importance to the recipient
-					pipeline.TransportPriority = TransportPriority.High;
-
 					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsIdentityAddress(), email =>
 					{
 						email.Subject.AddStringTemplate("Your one time password code");
@@ -178,7 +180,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 								Don't be late!
 							"""
 							);
-						voice.DeliveryReportCallbackUrl = "https://domain.com/communications/channel/provider/update";
+						voice.AddDeliveryReportCallbackUrlResolver((ctx) => Task.FromResult<string?>("https://domain.com/communications/channel/provider/update"));
 						//voice.Twilio().Url = "https://domain.com/twilio/messageNeeded";
 						//voice.Twilio().OnStoreMessageForRetrievalAsync = (messageNeededId, voice, context) =>
 						//{
@@ -187,10 +189,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						//};
 					});
 				});
-			})
-			//Adds the necessary model binders to handle channel provider specific webhooks
-			//and convert them to delivery reports (Added with package: Transmitly.Microsoft.AspnetCore.Mvc)
-			.AddChannelProviderDeliveryReportModelBinders();
+			});
 
 			// Check out the Controllers/CommunicationsController.cs for an example of
 			// how you can take advantage of everything we've configured here.

@@ -38,7 +38,7 @@ namespace Tandely.Notifications.Service.Controllers
 				cancellationToken: cancellationToken
 			);
 
-			var resultStatuses = string.Join(",", result.Results.Select(x => x!.DispatchStatus));
+			var resultStatuses = string.Join(",", result.Results.Select(x => x!.Status.IsSuccess()));
 
 			if (!resultStatuses.Any())
 				resultStatuses = "No notifications dispatched";

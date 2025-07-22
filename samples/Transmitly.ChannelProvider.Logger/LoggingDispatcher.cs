@@ -15,6 +15,7 @@
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Transmitly.Delivery;
+using Transmitly.Util;
 
 namespace Transmitly.ChannelProvider.Debugging
 {
@@ -38,33 +39,35 @@ namespace Transmitly.ChannelProvider.Debugging
 			}
 			else if (options.SimulateDispatchResultHandler == null)
 			{
-				communicationContext.DeliveryReportManager.DispatchReport(
+				communicationContext.DeliveryReportManager.DispatchAsync(
 					new DeliveryReport(
 						DeliveryReport.Event.Dispatched(),
 						communicationContext.ChannelId,
 						communicationContext.ChannelProviderId,
-						communicationContext.PipelineName,
+						communicationContext.PipelineIntent,
+						communicationContext.PipelineId,
 						Guid.NewGuid().ToString(),
-						DispatchStatus.Dispatched,
+						CommunicationsStatus.Success("Tly.Logger", "Dispatched"),
 						communication,
 						communicationContext.ContentModel,
 						null
 					)
 				);
-				return [new DispatchResult(DispatchStatus.Dispatched, Guid.NewGuid().ToString())];
+				return [new DispatchResult(CommunicationsStatus.Success("Tly.Logger", "Dispatched"), Guid.NewGuid().ToString())];
 			}
 
 			var result = await options.SimulateDispatchResultHandler(communication, communicationContext).ConfigureAwait(false);
-			
+
 			foreach (var r in result?.Where(x => x != null) ?? [])
-				communicationContext.DeliveryReportManager.DispatchReport(
+				communicationContext.DeliveryReportManager.DispatchAsync(
 						new DeliveryReport(
 							DeliveryReport.Event.Dispatched(),
 							r!.ChannelId,
 							r.ChannelProviderId,
-							communicationContext.PipelineName,
+							communicationContext.PipelineIntent,
+							communicationContext.PipelineId,
 							r.ResourceId,
-							r.DispatchStatus,
+							r.Status,
 							communication,
 							communicationContext.ContentModel,
 							r.Exception

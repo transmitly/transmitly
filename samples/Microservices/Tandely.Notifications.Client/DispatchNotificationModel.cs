@@ -17,6 +17,7 @@ namespace Tandely.Notifications.Client
 	public sealed class DispatchNotificationModel
 	{
 		public IReadOnlyCollection<string> AllowedChannels { get; set; } = [];
+		public string? CommunicationIntent { get; set; }
 		public string? CommunicationId { get; set; }
 		public IEnumerable<string> PersonFilters { get; set; } = [];
 		public string? ExternalInstanceReferenceId { get; set; }
