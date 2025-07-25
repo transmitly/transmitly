@@ -64,7 +64,7 @@ public abstract class BasePipelineService(IPipelineFactory pipelineFactory) : IP
 			var results = disallowedPipelines
 				.Select(pipeline => new CommunicationsStatus(
 					pipeline.Id ?? pipeline.Intent,
-					PredefinedCommunicationStatuses.DispatchRequirementsNotAllowed.Detail,
+					PredefinedCommunicationStatuses.DispatchRequirementsNotAllowed.Type,
 					PredefinedCommunicationStatuses.DispatchRequirementsNotAllowed.Code))
 				.ToList()
 				.AsReadOnly();
@@ -76,7 +76,7 @@ public abstract class BasePipelineService(IPipelineFactory pipelineFactory) : IP
 		{
 			var results = pipelines.Select(pipeline => new CommunicationsStatus(
 				pipeline.Id ?? pipeline.Intent,
-				PredefinedCommunicationStatuses.DispatchChannelFilterMismatch.Detail,
+				PredefinedCommunicationStatuses.DispatchChannelFilterMismatch.Type,
 				PredefinedCommunicationStatuses.DispatchChannelFilterMismatch.Code))
 				.ToList()
 				.AsReadOnly();

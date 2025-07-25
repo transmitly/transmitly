@@ -29,13 +29,13 @@ public sealed class Id
 	/// <summary>
 	/// Provides an extensible way to access the Id of referenced channels.
 	/// </summary>
-	public static Channels Channel { get; } = new Channels();
+	public static Channels Channel { get; } = new();
 	/// <summary>
 	/// Provides an extensible way to access the Id of referenced channel providers.
 	/// </summary>
-	public static ChannelProviders ChannelProvider { get; } = new ChannelProviders();
+	public static ChannelProviders ChannelProvider { get; } = new();
 	/// <summary>
 	/// Provides an extensible way to access the Id of referenced template engines.
 	/// </summary>
-	public static TemplateEngines TemplateEngines { get; } = new TemplateEngines();
+	public static TemplateEngines TemplateEngines { get; } = new();
 }

@@ -36,6 +36,9 @@ sealed class VoiceChannelConfiguration(Func<IDispatchCommunicationContext, IPlat
 
 	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; private set; }
 
+	private readonly Lazy<IExtendedProperties> _extendedProprties = new(() => new ExtendedProperties());
+	public IExtendedProperties ExtendedProperties => _extendedProprties.Value;
+
 	public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
 	{
 		BlindCopyRecipientPurposes = purposes;

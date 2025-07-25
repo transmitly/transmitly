@@ -23,7 +23,7 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 	private readonly Dictionary<string, object?> _bag = [];
 
 	private const string TransactionPropertyKey = "trx";
-	private const string PlatformIdentityPropertyKey = "aud";
+	private const string PlatformIdentityPropertyKey = "pid";
 	private const string ResourcePropertyKey = "att";
 	private const string LinkedResourcePropertyKey = "lnk";
 
@@ -75,9 +75,9 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 
 		//hack: as of today, we're going to only allow a single identity be used in a dynamic content model.
 		// the changes to the dispatch strategy will ensure we do not send the same communications to multiple recipients
-		// the change also means that to access audience info we will use aud.PropertyName, instead of the previous aud[0].PropertyName
+		// the change also means that to access platform identity info we will use pid.PropertyName, instead of the previous pid[0].PropertyName
 		// in the future we should be able to do this in a more dynamic way by replacing tokens and managing the index for the developers.
-		// for example aud.PropertyName -> aud[index].PropertyName
+		// for example pid.PropertyName -> pid[index].PropertyName
 		if (platformIdentities.Count > 1)
 			throw new NotSupportedException("Only single platform identity is supported.");
 

@@ -9,8 +9,8 @@
 		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
 		<PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-		<AssemblyVersion>0.0.1</AssemblyVersion>
-		<AssemblyFileVersion>0.0.1</AssemblyFileVersion>
+		<AssemblyVersion>0.2.0</AssemblyVersion>
+		<AssemblyFileVersion>0.2.0</AssemblyFileVersion>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>

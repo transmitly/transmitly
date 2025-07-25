@@ -32,6 +32,9 @@ sealed class SmsChannelConfiguration(Func<IDispatchCommunicationContext, IPlatfo
 
 	public Func<IDispatchCommunicationContext, IPlatformIdentityAddress?>? FromAddressResolver { get; } = fromAddressResolver;
 
+	private readonly Lazy<IExtendedProperties> _extendedProprties = new(() => new ExtendedProperties());
+	public IExtendedProperties ExtendedProperties => _extendedProprties.Value;
+
 	public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
 	{
 		BlindCopyRecipientPurposes = purposes;

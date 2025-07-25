@@ -31,7 +31,7 @@ internal sealed class EmailChannel(IEmailChannelConfiguration configuration) : I
 
 	public IEnumerable<string> AllowedChannelProviderIds => _configuration.ChannelProviderFilter ?? Array.Empty<string>();
 
-	public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+	public IExtendedProperties ExtendedProperties => _configuration.ExtendedProperties;
 
 	public Type CommunicationType => typeof(IEmail);
 

@@ -20,6 +20,10 @@ namespace Transmitly.Channel.Configuration;
 public interface IChannelConfiguration
 {
 	/// <summary>
+	/// Gets the extended properties that have been saved for the configured channel.
+	/// </summary>
+	IExtendedProperties ExtendedProperties { get; }
+	/// <summary>
 	/// Gets the list of address purposes to use for the dispatching recipients. 
 	/// <para>To set collection see: <see cref="AddRecipientAddressPurpose(string[])"/></para>
 	/// </summary>

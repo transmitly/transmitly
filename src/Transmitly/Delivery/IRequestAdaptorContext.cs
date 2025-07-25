@@ -19,6 +19,7 @@ public interface IRequestAdaptorContext
 	string? GetQueryValue(string key);
 	string? GetFormValue(string key);
 	string? GetHeaderValue(string key);
+	[Obsolete("Use GetQueryValue, GetFormValue or GetHeaderValue instead")]
 	string? GetValue(string key);
 	string? Content { get; }
 	string? PipelineIntent { get; }
