@@ -17,6 +17,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 	public class SendGridTemplateVM
 	{
 		public DispatchTransactionModel Model { get; set; } = new DispatchTransactionModel();
-		public DispatchAudience? Recipient { get; set; }
+		public DispatchPlatformIdentityProfile? Recipient { get; set; }
 	}
 }

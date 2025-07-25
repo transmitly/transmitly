@@ -11,7 +11,6 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -37,7 +36,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			builder.Services
 				.AddControllers(options =>
 				{
-					//Adds the necessary model binders to handle channel provider specific webhooks
+					//Adds the necessary model binders to handle channel provider specific webhooks (Twilio, Infobip, etc)
 					//and convert them to delivery reports (Added with package: Transmitly.Microsoft.AspnetCore.Mvc)
 					options.AddTransmitlyDeliveryReportModelBinders();
 				})
@@ -92,7 +91,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				}, [DeliveryReport.Event.Dispatched()])
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger?.LogInformation("[{channelId}:{channelProviderId}:StatusChanged] Id={id}; Status={status}", report.ChannelId, report.ChannelProviderId, report.ResourceId, report.Status);
+					logger?.LogInformation("[{channelId}:{channelProviderId}:StatusChanged] Id={id}; Status={status}", report.ChannelId, report.ChannelProviderId, report.ResourceId, report.Status.Type);
 					return Task.CompletedTask;
 				}, [DeliveryReport.Event.StatusChanged()])
 				// You can also filter out on other conditions like, channels and channel provider ids
@@ -109,7 +108,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				//may send out a transactional communication.
 				//For example, our first pipeline defines an Email and Sms. 
 				//Transmitly will take care of the details of which channel to dispatch and which channel provider to use.
-				//All you need to provide is the audience data and Transmitly takes care of the rest!
+				//All you need to provide is the identity data and Transmitly takes care of the rest!
 				//See: Dispatch route in Controllers.CommunicationsController.cs
 				.AddPipeline(PipelineName.FirstPipeline, pipeline =>
 				{
@@ -119,10 +118,9 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 					// Out of the box there are multiple dispatch strategies. pipeline. "Any Match" would dispatch
 					// using any channel that matched requirements (See: pipeline.UseAnyMatchPipelineDeliveryStrategy()).
 
-
 					//AddEmail is a channel that is core to the Transmitly library.
-					//AsAudienceAddress() is also a convenience method that helps us create an audience address
-					//Audience addresses can be anything, email, phone, or even a device/app Id for push notifications!
+					//AsIdentityAddress() is also a convenience method that helps us create an identity address
+					//An identity addresses can be anything, email, phone, or even a device/app Id for push notifications!
 					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsIdentityAddress("The Transmit.ly group"), email =>
 					{
 						//Transmitly is a bit different. All of our content is supported by templates out of the box.
@@ -131,13 +129,19 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						email.Subject.AddStringTemplate("Hey {{firstName}}, Check out Transmit.ly! " + Emoji.Robot);
 						email.HtmlBody.AddStringTemplate("Hey <strong>{{firstName}}</strong>, check out <a href=\"https://transmit.ly\" title=\"Transmit.ly\">this cool new library</a> for managing transactional communications in your app.");
 						email.TextBody.AddStringTemplate("Hey, check out this cool new library. https://transmitly.ly");
+						//Already have emails defined with SendGrid? Great, we can handle those too!
+						// We can use the extended properties provided by the SendGrid channel provider.
+						// This way we ensure that if the SendGrid channel provider is used for this channel, we'll use the template id.
+						// if we happen to fallback or even remove SendGrid, we can gracefully fallback to our content defined above. Neat!
+						//email.SendGrid().TemplateId = "d-36ed2a324e76475f9c68462505899384";
+
 					});
 
 					//AddSms is a channel that is core to the Transmitly library.
 					pipeline.AddSms(tlyConfig.DefaultSmsFromAddress.AsIdentityAddress(), sms =>
 					{
 						sms.Message.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
-						//sms.DeliveryReportCallbackUrl = "https://domain.com/communications/channel/provider/update";
+						//sms.AddDeliveryReportCallbackUrlResolver((ctx) => Task.FromResult<string?>("https://domain.com/communications/channel/provider/update"));
 
 					});
 				})
@@ -150,11 +154,6 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						email.HtmlBody.AddStringTemplate("Your code: <strong>{{code}}</strong>");
 						email.TextBody.AddStringTemplate("Your code: {{code}}");
 						//email.DeliveryReportCallbackUrl = "https://domain.com/communications/channel/provider/update";
-						//Already have emails defined with SendGrid? Great, we can handle those too!
-						// We can use the extended properties provided by the SendGrid channel provider.
-						// This way we ensure that if the SendGrid channel provider is used for this channel, we'll use the template id.
-						// if we happen to fallback or even remove SendGrid, we can gracefully fallback to our content defined above. Neat!
-						//email.SendGrid().TemplateId = "d-89ae21e8ebed491380ed580f30e0b052";
 
 						// While not required, we can specify channel providers that are allowed to 
 						// handle this communication. In this case, we might want to use our secure

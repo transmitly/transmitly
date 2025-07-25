@@ -14,7 +14,7 @@
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
-	public class DispatchAudience : IPlatformIdentityProfile
+	public class DispatchPlatformIdentityProfile : IPlatformIdentityProfile
 	{
 		public string? Id { get; set; }
 		public string? Type { get; set; }

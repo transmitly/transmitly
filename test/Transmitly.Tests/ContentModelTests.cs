@@ -52,8 +52,8 @@ public class ContentModelTests
 		Assert.IsNull(model.NullValue);
 		Assert.IsNotNull(model[expectedId]);
 		Assert.AreEqual(expectedId, model[expectedId].Id);
-		Assert.IsNotNull(model.aud);
-		Assert.AreEqual(expectedId, model.aud.Id);
+		Assert.IsNotNull(model.pid);
+		Assert.AreEqual(expectedId, model.pid.Id);
 	}
 
 	[TestMethod]

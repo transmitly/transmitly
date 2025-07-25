@@ -17,6 +17,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Tandely.IntegrationEvents;
 using Transmitly;
+using Transmitly.Exceptions;
 using Transmitly.Samples.Shared;
 using Transmitly.Util;
 
@@ -31,7 +32,7 @@ namespace Tandely.Notifications.Service
 			/// !!! See appSettings.json for examples of how to configure with your own settings !!!
 			var tlyConfig = builder.Configuration.GetRequiredSection("Transmitly").Get<TransmitlyConfiguration>();
 			if (tlyConfig == null)
-				throw new Exception("Transmitly configuration is missing from configuration.");
+				throw new CommunicationsException("Transmitly configuration section is missing from app configuration.");
 
 			// Add services to the container.
 			builder.Services.AddControllers().AddJsonOptions(options =>
@@ -66,7 +67,7 @@ namespace Tandely.Notifications.Service
 			});
 
 			var logger = LoggerFactory.Create((c) => c.AddConsole().AddDebug());
-
+			var defaultLogger = logger.CreateLogger<Program>();
 			builder.Services.AddTransmitly(tly =>
 			{
 				// Configure channel providers loaded from appsettings.json
@@ -80,7 +81,8 @@ namespace Tandely.Notifications.Service
 				.AddPlatformIdentityResolver<CustomerRepository>("Customer")
 				.AddDeliveryReportHandler((report) =>
 				{
-					logger.CreateLogger<Program>().LogInformation("[DeliveryReport] Dispatched to {ChannelId} using {ChannelProvider} with result {DispatchStatus}", report.ChannelId, report.ChannelProviderId, report.Status);
+					defaultLogger.LogInformation("SendGrid MessageId: {SendGridMessageId}", report.SendGrid().Email.MessageId);
+					defaultLogger.LogInformation("[DeliveryReport] Dispatched to {ChannelId} using {ChannelProvider} with result {DispatchStatus}", report.ChannelId, report.ChannelProviderId, report.Status);
 					return Task.CompletedTask;
 				})
 				.AddFluidTemplateEngine()
@@ -90,7 +92,7 @@ namespace Tandely.Notifications.Service
 					pipeline
 					.AddSms(tlyConfig.DefaultSmsFromAddress.AsIdentityAddress(), sms =>
 					{
-						sms.Message.AddStringTemplate("{{aud.FirstName}}, #{{OrderId}} has shipped with {{Carrier}}! You can track it @ https://shipping.example.com/?track={{TrackingNumber}}");
+						sms.Message.AddStringTemplate("{{pid.FirstName}}, #{{OrderId}} has shipped with {{Carrier}}! You can track it @ https://shipping.example.com/?track={{TrackingNumber}}");
 					})
 					.AddEmail((ctx) =>
 					{
@@ -111,12 +113,12 @@ namespace Tandely.Notifications.Service
 					pipeline
 					.AddPushNotification(push =>
 					 {
-						 push.Title.AddStringTemplate("{{aud.FirstName}}, your VIP order shipped!");
+						 push.Title.AddStringTemplate("{{pid.FirstName}}, your VIP order shipped!");
 						 push.Body.AddStringTemplate("Your VIP Tandely order, #{{OrderId}} has shipped with {{Carrier}}! ");
 					 }).
 					 AddVoice(tlyConfig.DefaultVoiceFromAddress.AsIdentityAddress(), voice =>
 					 {
-						 voice.Message.AddStringTemplate("{{aud.FirstName}}, your personal shopper will be contacting you shortly. In the meantime, we're happy to announce your order #{{OrderId}} has shipped with {{Carrier}}! ");
+						 voice.Message.AddStringTemplate("{{pid.FirstName}}, your personal shopper will be contacting you shortly. In the meantime, we're happy to announce your order #{{OrderId}} has shipped with {{Carrier}}! ");
 					 });
 
 				})
@@ -125,14 +127,14 @@ namespace Tandely.Notifications.Service
 					pipeline
 					.AddEmail(tlyConfig.DefaultEmailFromAddress.AsIdentityAddress(), email =>
 					{
-						email.Subject.AddStringTemplate("Thank you for your order, {{aud.FirstName}}");
+						email.Subject.AddStringTemplate("Thank you for your order, {{pid.FirstName}}");
 						email.HtmlBody.AddTemplateResolver(async ctx =>
 						{
 							var result = await new HttpClient()
 							.GetStringAsync("https://raw.githubusercontent.com/transmitly/transmitly/0289de19f3f97cfb85fe6e18b5e8c4d54c8ed4a9/samples/templates/liquid/invoice.html");
 
 							if (string.IsNullOrWhiteSpace(result))
-								return "Your total for your order, #{{Order.Id}} is <strong>${{Order.Total}}</strong> which brings you to <strong>{{aud.LoyaltyPoints}}</strong> loyalty points!";
+								return "Your total for your order, #{{Order.Id}} is <strong>${{Order.Total}}</strong> which brings you to <strong>{{pid.LoyaltyPoints}}</strong> loyalty points!";
 							return result;
 						});
 					});

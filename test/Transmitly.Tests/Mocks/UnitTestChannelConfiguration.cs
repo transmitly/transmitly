@@ -33,6 +33,8 @@ internal sealed class UnitTestChannelConfiguration : IChannelConfiguration
 
 	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; private set; }
 
+	IExtendedProperties IChannelConfiguration.ExtendedProperties => ExtendedProperties;
+
 	public IChannelConfiguration AddRecipientAddressPurpose(params string[] purposes)
 	{
 		RecipientAddressPurposes = purposes;

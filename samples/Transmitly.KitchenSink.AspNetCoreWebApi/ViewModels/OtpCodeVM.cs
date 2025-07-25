@@ -17,7 +17,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 	public class OtpCodeVM
 	{
 		public string Code { get; set; } = "12345";
-		public DispatchAudience? Recipient { get; set; }
+		public DispatchPlatformIdentityProfile? Recipient { get; set; }
 		public List<string> CommunicationPreferences { get; set; } = [];
 	}
 }

@@ -70,7 +70,7 @@ public class SmsChannelTests : BaseUnitTest
 
 		var result = await sut.GenerateCommunicationAsync(context);
 
-		Assert.IsInstanceOfType(result, typeof(ISms));
+		Assert.IsInstanceOfType<ISms>(result);
 
 		Assert.AreEqual(from, result.From);
 		Assert.AreEqual(body, result.Message);

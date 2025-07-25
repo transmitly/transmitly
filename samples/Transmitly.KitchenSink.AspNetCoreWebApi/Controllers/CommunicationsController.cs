@@ -20,10 +20,9 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
-	public partial class CommunicationsController(ICommunicationsClient communicationsClient, ILogger<CommunicationsController> logger) : ControllerBase
+	public partial class CommunicationsController(ICommunicationsClient communicationsClient) : ControllerBase
 	{
 		private readonly ICommunicationsClient _communicationsClient = Guard.AgainstNull(communicationsClient);
-		private readonly ILogger<CommunicationsController> _logger = Guard.AgainstNull(logger);
 
 		private IActionResult GetActionResult(IDispatchCommunicationResult result)
 		{

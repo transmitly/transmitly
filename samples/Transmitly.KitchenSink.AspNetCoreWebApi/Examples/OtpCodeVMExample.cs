@@ -25,7 +25,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			{
 				Code = "12345",
 				CommunicationPreferences = [Id.Channel.Email()],
-				Recipient = new DispatchAudience()
+				Recipient = new DispatchPlatformIdentityProfile()
 				{
 					Addresses =
 					[

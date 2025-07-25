@@ -8,18 +8,20 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Transmitly" Version="0.2.0" />
+		<!--<PackageReference Include="Transmitly" Version="0.2.0" />-->
 		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.2.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.2.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.2.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="0.2.1" />
-		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.2.0" />
+		<!--<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.2.0" />-->
 
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 		<PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\transmitly-channel-provider-sendgrid\src\Transmitly.ChannelProvider.SendGrid\Transmitly.ChannelProvider.SendGrid.csproj" />
+	  <ProjectReference Include="..\..\src\Transmitly\Transmitly.csproj" />
 	  <ProjectReference Include="..\Transmitly.ChannelProvider.Logger\Transmitly.ChannelProvider.Logger.csproj" />
 	</ItemGroup>
 </Project>

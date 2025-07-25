@@ -21,7 +21,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 		[Required]
 		public string? PipelineName { get; set; }
 		[Required]
-		public List<DispatchAudience> Recipients { get; set; } = [];
+		public List<DispatchPlatformIdentityProfile> Recipients { get; set; } = [];
 		public DispatchTransactionModel TransationModel { get; set; } = new DispatchTransactionModel();
 
 		public string? Culture { get; set; }

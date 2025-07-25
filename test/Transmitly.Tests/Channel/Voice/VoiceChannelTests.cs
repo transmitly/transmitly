@@ -67,7 +67,7 @@ public class VoiceChannelTests : BaseUnitTest
 
 		var result = await sut.GenerateCommunicationAsync(context);
 
-		Assert.IsInstanceOfType(result, typeof(IVoice));
+		Assert.IsInstanceOfType<IVoice>(result);
 
 		Assert.AreEqual(from, result.From);
 		Assert.AreEqual(body, result.Message);

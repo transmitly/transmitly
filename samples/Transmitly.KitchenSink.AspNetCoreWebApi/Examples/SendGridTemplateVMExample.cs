@@ -22,7 +22,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 		{
 			return new SendGridTemplateVM
 			{
-				Recipient = new DispatchAudience() { Addresses = [new("example@domain.com")] },
+				Recipient = new DispatchPlatformIdentityProfile() { Addresses = [new("example@domain.com")] },
 				Model = new DispatchTransactionModel()
 			};
 		}
