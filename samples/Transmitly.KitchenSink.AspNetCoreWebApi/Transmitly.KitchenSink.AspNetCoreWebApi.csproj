@@ -11,26 +11,19 @@
 	<ItemGroup>
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" />
-		<!--<PackageReference Include="Transmitly" Version="0.2.0" />-->
+		<PackageReference Include="Transmitly" Version="0.2.1" />
 		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.2.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="0.2.1" />
-		<!--<PackageReference Include="Transmitly.Microsoft.AspnetCore.Mvc" Version="0.2.0" />-->
+		<PackageReference Include="Transmitly.Microsoft.AspnetCore.Mvc" Version="0.2.1" />
 		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.2.0" />
-		
 		<PackageReference Include="Transmitly.TemplateEngine.Fluid" Version="0.2.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.2.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.2.0" />
-		<!--<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.2.0" />-->
-		
+		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.2.2" />
 		<PackageReference Include="Twilio.AspNet.Core" Version="8.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\transmitly-channel-provider-sendgrid\src\Transmitly.ChannelProvider.SendGrid.Configuration\Transmitly.ChannelProvider.SendGrid.Configuration.csproj" />
-		<ProjectReference Include="..\..\..\transmitly-channel-provider-sendgrid\src\Transmitly.ChannelProvider.SendGrid.Sdk\Transmitly.ChannelProvider.SendGrid.Sdk.csproj" />
-		<ProjectReference Include="..\..\..\transmitly-channel-provider-sendgrid\src\Transmitly.ChannelProvider.SendGrid\Transmitly.ChannelProvider.SendGrid.csproj" />
-		<ProjectReference Include="..\..\..\transmitly-microsoft-aspnetcore-mvc\src\Transmitly.Microsoft.AspnetCore.Mvc\Transmitly.Microsoft.AspnetCore.Mvc.csproj" />
-		<ProjectReference Include="..\..\src\Transmitly\Transmitly.csproj" />
 		<ProjectReference Include="..\Transmitly.Samples.Shared\Transmitly.Samples.Shared.csproj" />
 	</ItemGroup>
 </Project>

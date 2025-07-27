@@ -23,16 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Shipping.Service", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitly.Samples.Shared", "Transmitly.Samples.Shared\Transmitly.Samples.Shared.csproj", "{C7C295D3-19F3-4BD8-B24D-F179CBBE7B48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitly", "..\src\Transmitly\Transmitly.csproj", "{BF844FC4-DC0F-7A7B-B054-ECF49AB5514E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitly.ChannelProvider.SendGrid", "..\..\transmitly-channel-provider-sendgrid\src\Transmitly.ChannelProvider.SendGrid\Transmitly.ChannelProvider.SendGrid.csproj", "{1F2C7249-B005-EC68-46CE-CC0EB61F4F41}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitly.ChannelProvider.SendGrid.Configuration", "..\..\transmitly-channel-provider-sendgrid\src\Transmitly.ChannelProvider.SendGrid.Configuration\Transmitly.ChannelProvider.SendGrid.Configuration.csproj", "{258C5E80-12A6-3882-D1AF-3ECFFB269339}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitly.ChannelProvider.SendGrid.Sdk", "..\..\transmitly-channel-provider-sendgrid\src\Transmitly.ChannelProvider.SendGrid.Sdk\Transmitly.ChannelProvider.SendGrid.Sdk.csproj", "{30F523D2-23FA-2103-68F6-56CE32D15A74}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitly.Microsoft.AspnetCore.Mvc", "..\..\transmitly-microsoft-aspnetcore-mvc\src\Transmitly.Microsoft.AspnetCore.Mvc\Transmitly.Microsoft.AspnetCore.Mvc.csproj", "{805C1BF4-BF27-4324-06B0-CCCC1E3FC039}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,26 +65,6 @@ Global
 		{C7C295D3-19F3-4BD8-B24D-F179CBBE7B48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7C295D3-19F3-4BD8-B24D-F179CBBE7B48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7C295D3-19F3-4BD8-B24D-F179CBBE7B48}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BF844FC4-DC0F-7A7B-B054-ECF49AB5514E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF844FC4-DC0F-7A7B-B054-ECF49AB5514E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF844FC4-DC0F-7A7B-B054-ECF49AB5514E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF844FC4-DC0F-7A7B-B054-ECF49AB5514E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1F2C7249-B005-EC68-46CE-CC0EB61F4F41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1F2C7249-B005-EC68-46CE-CC0EB61F4F41}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1F2C7249-B005-EC68-46CE-CC0EB61F4F41}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1F2C7249-B005-EC68-46CE-CC0EB61F4F41}.Release|Any CPU.Build.0 = Release|Any CPU
-		{258C5E80-12A6-3882-D1AF-3ECFFB269339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{258C5E80-12A6-3882-D1AF-3ECFFB269339}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{258C5E80-12A6-3882-D1AF-3ECFFB269339}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{258C5E80-12A6-3882-D1AF-3ECFFB269339}.Release|Any CPU.Build.0 = Release|Any CPU
-		{30F523D2-23FA-2103-68F6-56CE32D15A74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30F523D2-23FA-2103-68F6-56CE32D15A74}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30F523D2-23FA-2103-68F6-56CE32D15A74}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30F523D2-23FA-2103-68F6-56CE32D15A74}.Release|Any CPU.Build.0 = Release|Any CPU
-		{805C1BF4-BF27-4324-06B0-CCCC1E3FC039}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{805C1BF4-BF27-4324-06B0-CCCC1E3FC039}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{805C1BF4-BF27-4324-06B0-CCCC1E3FC039}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{805C1BF4-BF27-4324-06B0-CCCC1E3FC039}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
