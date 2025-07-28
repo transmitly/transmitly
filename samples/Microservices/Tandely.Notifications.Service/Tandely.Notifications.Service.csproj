@@ -17,7 +17,7 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
 		<PackageReference Include="Transmitly" Version="0.2.1" />
-		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.2.0" />
+		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.2.1" />
 		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.2.0" />
 		<PackageReference Include="Transmitly.TemplateEngine.Fluid" Version="0.2.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.2.1" />
