@@ -129,8 +129,9 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						email.Subject.AddStringTemplate("Hey {{firstName}}, Check out Transmit.ly! " + Emoji.Robot);
 						email.HtmlBody.AddStringTemplate("Hey <strong>{{firstName}}</strong>, check out <a href=\"https://transmit.ly\" title=\"Transmit.ly\">this cool new library</a> for managing transactional communications in your app.");
 						email.TextBody.AddStringTemplate("Hey, check out this cool new library. https://transmitly.ly");
+
 						//Already have emails defined with SendGrid? Great, we can handle those too!
-						// We can use the extended properties provided by the SendGrid channel provider.
+						// We can use the extended properties provided by the SendGrid channel provider (or many other channel providers).
 						// This way we ensure that if the SendGrid channel provider is used for this channel, we'll use the template id.
 						// if we happen to fallback or even remove SendGrid, we can gracefully fallback to our content defined above. Neat!
 						//email.SendGrid().TemplateId = "d-36ed2a324e76475f9c68462505899384";
@@ -155,11 +156,11 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						email.TextBody.AddStringTemplate("Your code: {{code}}");
 						//email.DeliveryReportCallbackUrl = "https://domain.com/communications/channel/provider/update";
 
-						// While not required, we can specify channel providers that are allowed to 
-						// handle this communication. In this case, we might want to use our secure
-						// smtp server to send out our OTP codes. Another use-case would be using a schremsII
-						// smtp server to comply with GDRP rules.
-					});//}, Id.ChannelProvider.Smtp("secure-server"));
+						// We can optionally specify channel providers that are allowed to handle this communication.
+						// In this case, we might want to use our secure smtp server to send out our OTP codes.
+						// Another use-case would be using a schremsII smtp server to comply with GDRP rules.
+						//email.AddChannelProviderFilter(Id.ChannelProvider.Smtp("secure-server"));
+					});
 
 					pipeline.AddPushNotification(push =>
 					{
@@ -210,7 +211,5 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 
 			app.Run();
 		}
-
-
 	}
 }
