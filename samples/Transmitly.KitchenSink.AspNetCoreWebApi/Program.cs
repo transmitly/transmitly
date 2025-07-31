@@ -136,6 +136,21 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						// if we happen to fallback or even remove SendGrid, we can gracefully fallback to our content defined above. Neat!
 						//email.SendGrid().TemplateId = "d-36ed2a324e76475f9c68462505899384";
 
+						//Provider supports AMP, yup we can handle that too.
+//						email.Infobip().AmpHtml.AddStringTemplate(
+//"""
+//<!doctype html>
+//<html ⚡>
+//  <head>
+//    <meta charset="utf-8">
+//    <link rel="canonical" href="hello-world.html" >
+//    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+//    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+//    <script async src="https://cdn.ampproject.org/v0.js"></script>
+//  </head>
+//  <body>Hello World!</body>
+//</html>
+//""");
 					});
 
 					//AddSms is a channel that is core to the Transmitly library.
@@ -181,6 +196,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 							"""
 							);
 						voice.AddDeliveryReportCallbackUrlResolver((ctx) => Task.FromResult<string?>("https://domain.com/communications/channel/provider/update"));
+						//In some cases, Twilio requires us to give them the content of a message when they are ready to execute the call
+						//below is an example of saving a message and serving it for Twilio's consumption at a later date
 						//voice.Twilio().Url = "https://domain.com/twilio/messageNeeded";
 						//voice.Twilio().OnStoreMessageForRetrievalAsync = (messageNeededId, voice, context) =>
 						//{
