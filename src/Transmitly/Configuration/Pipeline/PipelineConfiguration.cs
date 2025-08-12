@@ -34,29 +34,29 @@ public sealed class PipelineConfigurationBuilder
 	}
 
 	/// <summary>
-	/// Adds a pipeline to the communication configuration with the specified name, category, transport priority, message priority, and options.
+	/// Adds a pipeline to the communication configuration with the specified intent name, category, transport priority, message priority, and options.
 	/// </summary>
-	/// <param name="name">The name of the pipeline</param>
+	/// <param name="intentName">The named intent of the pipeline</param>
 	/// <param name="category">The category of the pipeline (optional)</param>
 	/// <param name="options">The configuration options for the pipeline</param>
 	/// <returns>The updated communication configuration builder</returns>
-	public CommunicationsClientBuilder Add(string name, string? category, Action<IPipelineConfiguration> options)
+	public CommunicationsClientBuilder Add(string intentName, string? category, Action<IPipelineConfiguration> options)
 	{
 		var detailConfig = new DefaultPipelineProviderConfiguration();
 		options(detailConfig);
-		_addPipeline(new PipelineRegistration(detailConfig, name, null, category));
+		_addPipeline(new PipelineRegistration(detailConfig, intentName, null, category));
 		return _communicationsConfiguration;
 	}
 
 	/// <summary>
-	/// Adds a pipeline to the communication configuration with the specified name, and default category.
+	/// Adds a pipeline to the communication configuration with the specified intent name, and default category.
 	/// </summary>
-	/// <param name="name">The name of the pipeline</param>
+	/// <param name="intentName">The named intent of the pipeline</param>
 	/// <param name="options">The configuration options for the pipeline</param>
 	/// <returns>The updated communication configuration builder</returns>
-	public CommunicationsClientBuilder Add(string name, Action<IPipelineConfiguration> options)
+	public CommunicationsClientBuilder Add(string intentName, Action<IPipelineConfiguration> options)
 	{
-		return Add(name, null, options);
+		return Add(intentName, null, options);
 	}
 
 	/// <summary>

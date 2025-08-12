@@ -93,12 +93,12 @@ public sealed class CommunicationsClientBuilder
 	/// <summary>
 	/// Adds a pipeline to the configuration.
 	/// </summary>
-	/// <param name="name">The name of the pipeline.</param>
+	/// <param name="intentName">The named intent of the pipeline.</param>
 	/// <param name="category">The optional category of the pipeline.</param>
 	/// <param name="options">The configuration options for the pipeline.</param>
 	/// <returns>The configuration builder.</returns>
-	public CommunicationsClientBuilder AddPipeline(string name, string? category, Action<IPipelineConfiguration> options) =>
-		Pipeline.Add(name, category, options);
+	public CommunicationsClientBuilder AddPipeline(string intentName, string? category, Action<IPipelineConfiguration> options) =>
+		Pipeline.Add(intentName, category, options);
 
 	/// <summary>
 	/// Adds a pipeline configurator to the configuration.

@@ -99,9 +99,7 @@ public static class CommunicationsClientExtensions
 	public static Task<IDispatchCommunicationResult> DispatchAsync(this ICommunicationsClient client, string pipelineIntent, IReadOnlyCollection<IPlatformIdentityAddress> identityAddresses, ITransactionModel transactionalModel, string? cultureInfo = null, CancellationToken cancellationToken = default)
 	{
 		Guard.AgainstNull(identityAddresses);
-		var platformIdentities = new PlatformIdentityProfile[] {
-			new(null,null,identityAddresses)
-		};
+		var platformIdentities = identityAddresses.Select(s => new PlatformIdentityProfile(null, s.Type, [s])).ToList();
 		return client.DispatchAsync(pipelineIntent, platformIdentities, transactionalModel, cultureInfo, cancellationToken);
 	}
 	/// <summary>

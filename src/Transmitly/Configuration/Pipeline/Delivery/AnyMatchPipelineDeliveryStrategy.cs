@@ -35,7 +35,7 @@ internal sealed class AnyMatchPipelineDeliveryStrategy : BasePipelineDeliveryStr
 				var channel = pair.Channel;
 				foreach (var dispatcher in pair.ChannelProviderDispatchers)
 				{
-					var result = await DispatchCommunicationAsync(channel, dispatcher, recipient, cancellationToken);
+					var result = await DispatchCommunicationAsync(channel, dispatcher, recipient, cancellationToken).ConfigureAwait(false);
 
 					if (result == null || result.Count == 0)
 					{

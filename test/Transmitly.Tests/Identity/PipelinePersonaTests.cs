@@ -19,8 +19,6 @@ namespace Transmitly.Tests.Identity;
 [TestClass]
 public class PipelinePersonaTests
 {
-
-
 	[TestMethod]
 	public async Task PipelineShouldOnlyFireForMatchingPersonas()
 	{
