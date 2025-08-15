@@ -14,7 +14,7 @@
 
 namespace Transmitly;
 
-public interface ICommunicationClientFactory
+sealed class DefaultCommunicationClientMiddleware : BaseCommunicationClientMiddleware
 {
-	ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context);
+
 }
