@@ -53,7 +53,6 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
 //Tip: The Microsoft Dependency Injection library will take care of the registration for you (https://github.com/dotnet/runtime/tree/main/src/libraries/Microsoft.Extensions.DependencyInjection)
 builder.Services.AddSingleton(communicationsClient);
 ```
-
 In our new account registration code:
 ```csharp
 class AccountRegistrationService
@@ -247,6 +246,29 @@ That's another fairly advanced feature handled in a strongly typed and extensibl
 | ------------- |
 | [Transmitly.TemplateEngine.Fluid](https://github.com/transmitly/transmitly-template-engine-fluid)  |
 | [Transmitly.TemplateEngine.Scriban](https://github.com/transmitly/transmitly-template-engine-scriban)  |
+
+
+### Dispatch Middleware
+`BuildClient()` composes registered dispatch middlewares into a pipeline. Each middleware receives a `DispatchMiddlewareContext` and may invoke the next delegate to continue the chain. Middlewares run in registration order and can short-circuit dispatching by omitting a call to `next`.
+
+```csharp
+class ApiRedirectMiddleware : IDispatchMiddleware
+{
+    private readonly HttpClient _client = new();
+
+    public async Task<IReadOnlyCollection<IDispatchResult?>> InvokeAsync(
+        DispatchMiddlewareContext ctx,
+        Func<DispatchMiddlewareContext, Task<IReadOnlyCollection<IDispatchResult?>>> next)
+    {
+        // Bypass the channel provider dispatcher and send directly to an API
+        await _client.PostAsync("https://example.com/api", new StringContent(ctx.Communication.ToString()!), ctx.Token);
+        return [new DispatchResult(CommunicationsStatus.Success("api"))];
+    }
+}
+
+// Registration
+builder.AddDispatchMiddleware(new ApiRedirectMiddleware());
+```
 
 
 ### Next Steps
