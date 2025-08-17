@@ -115,9 +115,9 @@ public sealed class CommunicationsClientBuilder
 	/// <param name="communicationClientMiddleware">Factory to register</param>
 	/// <param name="index">Optional order to register the middelware.</param>
 	/// <returns>The configuration builder.</returns>
-	public CommunicationsClientBuilder RegisterClientMiddleware(ICommunicationClientMiddleware communicationClientMiddleware, int? index = null)
+	public CommunicationsClientBuilder AddClientMiddleware(ICommunicationClientMiddleware communicationClientMiddleware, int? index = null)
 	{
-		_compositeClientMiddleware.AddFactory(communicationClientMiddleware, index);
+		_compositeClientMiddleware.Add(communicationClientMiddleware, index);
 		return this;
 	}
 

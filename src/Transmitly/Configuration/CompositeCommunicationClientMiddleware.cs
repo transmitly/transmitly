@@ -29,11 +29,11 @@ sealed class CompositeCommunicationClientMiddleware : ICommunicationClientMiddle
 
 	}
 
-	public void AddFactory(ICommunicationClientMiddleware factory, int? index)
+	public void Add(ICommunicationClientMiddleware middleware, int? index)
 	{
 		if (!index.HasValue)
 		{
-			_middlewares.Add(factory);
+			_middlewares.Add(middleware);
 		}
 		else if (index.Value < 0 || index.Value > _middlewares.Count)
 		{
@@ -41,7 +41,7 @@ sealed class CompositeCommunicationClientMiddleware : ICommunicationClientMiddle
 		}
 		else
 		{
-			_middlewares.Insert(index.Value, factory);
+			_middlewares.Insert(index.Value, middleware);
 		}
 	}
 
@@ -55,7 +55,7 @@ sealed class CompositeCommunicationClientMiddleware : ICommunicationClientMiddle
 
 		if (client == null)
 		{
-			throw new CommunicationsException("No available communications client middelware created a communications client.");
+			throw new CommunicationsException("No available communications client middleware returned an instance of a communications client.");
 		}
 		return client;
 	}

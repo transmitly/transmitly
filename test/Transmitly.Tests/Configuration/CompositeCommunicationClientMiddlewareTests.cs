@@ -60,8 +60,8 @@ public class CompositeCommunicationClientMiddlewareTests
 			.Returns(mockClient.Object);
 
 
-		composite.AddFactory(mockMiddleware1.Object, null);
-		composite.AddFactory(mockMiddleware2.Object, null);
+		composite.Add(mockMiddleware1.Object, null);
+		composite.Add(mockMiddleware2.Object, null);
 		var result = composite.CreateClient(Mock.Of<ICreateCommunicationsClientContext>(), null);
 
 
@@ -85,8 +85,8 @@ public class CompositeCommunicationClientMiddlewareTests
 			.Returns((ICreateCommunicationsClientContext ctx, ICommunicationsClient client) => client);
 
 
-		composite.AddFactory(mockMiddleware1.Object, null);
-		composite.AddFactory(mockMiddleware2.Object, 0); // Insert at beginning
+		composite.Add(mockMiddleware1.Object, null);
+		composite.Add(mockMiddleware2.Object, 0); // Insert at beginning
 		var result = composite.CreateClient(Mock.Of<ICreateCommunicationsClientContext>(), null);
 
 
@@ -102,9 +102,9 @@ public class CompositeCommunicationClientMiddlewareTests
 		var mockMiddleware = new Mock<ICommunicationClientMiddleware>();
 
 		Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-			composite.AddFactory(mockMiddleware.Object, -1));
+			composite.Add(mockMiddleware.Object, -1));
 		Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-			composite.AddFactory(mockMiddleware.Object, 1));
+			composite.Add(mockMiddleware.Object, 1));
 	}
 
 	[TestMethod]
@@ -121,8 +121,8 @@ public class CompositeCommunicationClientMiddlewareTests
 		mockMiddleware2.Setup(m => m.CreateClient(It.IsAny<ICreateCommunicationsClientContext>(), It.IsAny<ICommunicationsClient>()))
 			.Returns(mockClient2.Object);
 
-		composite.AddFactory(mockMiddleware1.Object, null);
-		composite.AddFactory(mockMiddleware2.Object, null);
+		composite.Add(mockMiddleware1.Object, null);
+		composite.Add(mockMiddleware2.Object, null);
 
 
 		var result = composite.CreateClient(Mock.Of<ICreateCommunicationsClientContext>(), null);
@@ -142,7 +142,7 @@ public class CompositeCommunicationClientMiddlewareTests
 		mockMiddleware.Setup(m => m.CreateClient(It.IsAny<ICreateCommunicationsClientContext>(), It.IsAny<ICommunicationsClient>()))
 			.Returns((ICommunicationsClient)null!);
 
-		composite.AddFactory(mockMiddleware.Object, null);
+		composite.Add(mockMiddleware.Object, null);
 
 		Assert.ThrowsException<CommunicationsException>(() =>
 			composite.CreateClient(Mock.Of<ICreateCommunicationsClientContext>(), null));
