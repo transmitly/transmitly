@@ -21,10 +21,13 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly;
 
-public abstract class BaseCommunicationClientFactory : ICommunicationClientFactory
+public abstract class BaseCommunicationClientMiddleware : ICommunicationClientMiddleware
 {
-	public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
+	public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context, ICommunicationsClient? previous)
 	{
+		if (previous is not null)
+			return previous;
+
 		var deliveryReportService = new DefaultDeliveryReportService(context.DeliveryReportObservers);
 		return new DefaultCommunicationsClient(
 			new DefaultPipelineService(new DefaultPipelineFactory(context.Pipelines)),

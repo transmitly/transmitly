@@ -32,7 +32,8 @@ public sealed class CommunicationsClientBuilder
 {
 	private const string DefaultTemplateEngineId = "Default";
 	private bool _clientCreated;
-	private ICommunicationClientFactory _clientFactory = new DefaultCommunicationClientFactory();
+	private readonly CompositeCommunicationClientMiddleware _compositeClientMiddleware = new();
+	private ICommunicationClientMiddleware _registeredClientMiddleware = new DefaultCommunicationClientMiddleware();
 	private readonly List<IChannelProviderRegistration> _channelProviders = [];
 	private readonly List<IPipeline> _pipelines = [];
         private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolvers = [];
@@ -112,13 +113,15 @@ public sealed class CommunicationsClientBuilder
 		Pipeline.AddConfigurator(configurator);
 
 	/// <summary>
-	/// Registers a custom client factory.
+	/// Registers client middleware to generate a new instance of <see cref="ICommunicationsClient"/> .
 	/// </summary>
-	/// <param name="communicationClientFactory">Factory to register</param>
+	/// <param name="communicationClientMiddleware">Factory to register</param>
+	/// <param name="index">Optional order to register the middelware.</param>
 	/// <returns>The configuration builder.</returns>
-	public CommunicationsClientBuilder RegisterClientFactory(ICommunicationClientFactory communicationClientFactory)
+	public CommunicationsClientBuilder RegisterClientMiddleware(ICommunicationClientMiddleware communicationClientMiddleware, int? index = null)
 	{
-		_clientFactory = communicationClientFactory;
+		_compositeClientMiddleware.AddFactory(communicationClientMiddleware, index);
+		_registeredClientMiddleware = _compositeClientMiddleware;
 		return this;
 	}
 
