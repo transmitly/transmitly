@@ -26,9 +26,15 @@ public abstract class BaseChannelChannelProviderService(IChannelProviderFactory 
 	{
 		var groups = new List<ChannelChannelProviderGroup>();
 
-		foreach (var channel in pipelineChannels)
-		{
-			var providerWrappers = new List<ChannelProviderWrapper>();
+                foreach (var channel in pipelineChannels)
+                {
+                        if (platformIdentity.ChannelPreferences.Count > 0 &&
+                                !platformIdentity.ChannelPreferences.Any(preference => string.Equals(channel.Id, preference, StringComparison.InvariantCulture)))
+                        {
+                                continue;
+                        }
+
+                        var providerWrappers = new List<ChannelProviderWrapper>();
 
 			// Filter allowed channel providers based on dispatch preferences and channel restrictions
 			foreach (var channelProvider in await _channelProviderFactory.GetAllAsync().ConfigureAwait(false))
