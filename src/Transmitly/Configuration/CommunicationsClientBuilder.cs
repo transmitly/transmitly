@@ -12,8 +12,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System;
-using System.Linq;
 using System.Linq.Expressions;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
@@ -32,15 +30,14 @@ public sealed class CommunicationsClientBuilder
 {
 	private const string DefaultTemplateEngineId = "Default";
 	private bool _clientCreated;
-	private readonly CompositeCommunicationClientMiddleware _compositeClientMiddleware = new();
-	private ICommunicationClientMiddleware _registeredClientMiddleware = new DefaultCommunicationClientMiddleware();
+	private readonly CompositeCommunicationClientMiddleware _compositeClientMiddleware = new(new DefaultCommunicationClientMiddleware());
 	private readonly List<IChannelProviderRegistration> _channelProviders = [];
 	private readonly List<IPipeline> _pipelines = [];
-        private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolvers = [];
-        private readonly List<ITemplateEngineRegistration> _templateEngines = [];
-        private readonly List<IPersonaRegistration> _personaRegistrations = [];
-        private readonly List<IObserver<DeliveryReport>> _deliveryReportObservers = [];
-        private readonly List<IDispatchMiddleware> _middlewares = [];
+	private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolvers = [];
+	private readonly List<ITemplateEngineRegistration> _templateEngines = [];
+	private readonly List<IPersonaRegistration> _personaRegistrations = [];
+	private readonly List<IObserver<DeliveryReport>> _deliveryReportObservers = [];
+	private readonly List<IDispatchMiddleware> _middlewares = [];
 
 	/// <summary>
 	/// Creates an instance of the class
@@ -83,7 +80,7 @@ public sealed class CommunicationsClientBuilder
 	/// <summary>
 	/// Gets the persona configuration builder.
 	/// </summary>
-        public PersonaConfigurationBuilder Persona { get; }
+	public PersonaConfigurationBuilder Persona { get; }
 
 	/// <summary>
 	/// Adds a template engine to the configuration.
@@ -121,7 +118,6 @@ public sealed class CommunicationsClientBuilder
 	public CommunicationsClientBuilder RegisterClientMiddleware(ICommunicationClientMiddleware communicationClientMiddleware, int? index = null)
 	{
 		_compositeClientMiddleware.AddFactory(communicationClientMiddleware, index);
-		_registeredClientMiddleware = _compositeClientMiddleware;
 		return this;
 	}
 
@@ -155,57 +151,68 @@ public sealed class CommunicationsClientBuilder
 	/// <param name="platformIdentityType">Platform Identity type name.</param>
 	/// <param name="personaCondition">Conditions that the <typeparamref name="TPersona"/> must meet.</param>
 	/// <returns>The configuration builder.</returns>
-        public CommunicationsClientBuilder AddPersona<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> personaCondition)
-                where TPersona : class =>
-                Persona.Add(name, platformIdentityType, personaCondition);
+	public CommunicationsClientBuilder AddPersona<TPersona>(string name, string platformIdentityType, Expression<Func<TPersona, bool>> personaCondition)
+			where TPersona : class =>
+			Persona.Add(name, platformIdentityType, personaCondition);
 
-        /// <summary>
-        /// Adds a dispatch middleware to the configuration.
-        /// </summary>
-        /// <param name="middleware">Middleware instance.</param>
-        /// <returns>The configuration builder.</returns>
-        public CommunicationsClientBuilder AddDispatchMiddleware(IDispatchMiddleware middleware)
-        {
-                _middlewares.Add(Guard.AgainstNull(middleware));
-                return this;
-        }
+	/// <summary>
+	/// Adds a dispatch middleware to the configuration.
+	/// </summary>
+	/// <param name="middleware">Middleware instance.</param>
+	/// <returns>The configuration builder.</returns>
+	public CommunicationsClientBuilder AddDispatchMiddleware(IDispatchMiddleware middleware)
+	{
+		_middlewares.Add(Guard.AgainstNull(middleware));
+		return this;
+	}
 
 	/// <summary>
 	/// Creates an instance of the <see cref="ICommunicationsClient"/>.
 	/// </summary>
 	/// <returns>The communications client.</returns>
-        public ICommunicationsClient BuildClient()
-        {
-                if (_clientCreated)
-                        throw new InvalidOperationException($"{nameof(BuildClient)}() can only be called once.");
+	public ICommunicationsClient BuildClient()
+	{
+		if (_clientCreated)
+			throw new InvalidOperationException($"{nameof(BuildClient)}() can only be called once.");
 
-                if (_templateEngines.Count == 0)
-                        AddTemplateEngine(new NoopTemplatingEngine(), DefaultTemplateEngineId);
+		if (_templateEngines.Count == 0)
+			AddTemplateEngine(new NoopTemplatingEngine(), DefaultTemplateEngineId);
 
-                ApplyDispatchMiddleware();
+		ApplyDispatchMiddleware();
 
-                var client = _clientFactory.CreateClient(
-                        new CreateCommunicationsClientContext(
-                                _channelProviders,
-                                _pipelines,
-                                _templateEngines,
-                                _platformIdentityResolvers,
-                                _personaRegistrations,
-                                _deliveryReportObservers
-                        )
-                );
+		var client = _compositeClientMiddleware.CreateClient(
+				new CreateCommunicationsClientContext(
+						_channelProviders,
+						_pipelines,
+						_templateEngines,
+						_platformIdentityResolvers,
+						_personaRegistrations,
+						_deliveryReportObservers
+				),
+				null
+		);
 
-                _clientCreated = true;
+		_clientCreated = true;
 
-                return client;
-        }
+		return client;
+	}
 
-        private void ApplyDispatchMiddleware()
-        {
-                Func<DispatchMiddlewareContext, Task<IReadOnlyCollection<IDispatchResult?>>> core = BasePipelineDeliveryStrategyProvider.DefaultInvoke;
-                foreach (var mw in _middlewares.AsEnumerable().Reverse())
-                        core = ctx => mw.InvokeAsync(ctx, core);
-                foreach (var pipeline in _pipelines)
-                        pipeline.Configuration.PipelineDeliveryStrategyProvider.SetDispatchDelegate(core);
-        }
+	private void ApplyDispatchMiddleware()
+	{
+		// Create an immutable pipeline of middleware delegates
+		var pipeline = _middlewares
+			.AsEnumerable()
+			.Reverse()
+			.Aggregate(
+				(Func<DispatchMiddlewareContext, Task<IReadOnlyCollection<IDispatchResult?>>>)BasePipelineDeliveryStrategyProvider.DefaultInvoke,
+				(next, middleware) => 
+					context => middleware.InvokeAsync(context, next)
+			);
+
+		// Apply the pipeline to each PipelineDeliveryStrategyProvider
+		foreach (var pipelineConfig in _pipelines)
+		{
+			pipelineConfig.Configuration.PipelineDeliveryStrategyProvider.SetDispatchDelegate(pipeline);
+		}
+	}
 }

@@ -12,11 +12,22 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Exceptions;
+
 namespace Transmitly;
 
 sealed class CompositeCommunicationClientMiddleware : ICommunicationClientMiddleware
 {
 	private readonly List<ICommunicationClientMiddleware> _middlewares = [];
+	public CompositeCommunicationClientMiddleware(ICommunicationClientMiddleware defaultCommunicationClientMiddleware)
+	{
+		_middlewares = [defaultCommunicationClientMiddleware];
+	}
+
+	public CompositeCommunicationClientMiddleware()
+	{
+
+	}
 
 	public void AddFactory(ICommunicationClientMiddleware factory, int? index)
 	{
@@ -44,7 +55,7 @@ sealed class CompositeCommunicationClientMiddleware : ICommunicationClientMiddle
 
 		if (client == null)
 		{
-			throw new InvalidOperationException("No available communications client middelware created a communications client.");
+			throw new CommunicationsException("No available communications client middelware created a communications client.");
 		}
 		return client;
 	}
