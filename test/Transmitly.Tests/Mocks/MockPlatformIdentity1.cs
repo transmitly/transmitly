@@ -39,9 +39,10 @@ internal sealed record MockPlatformIdentity1 : IPlatformIdentityProfile
 
 	}
 
-	public IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get; set; } = new List<IPlatformIdentityAddress>();
-	public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
-	public string? Id { get; set; }
-	public string? Type { get; set; }
-	public bool IsPersona { get; set; }
+        public IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get; set; } = new List<IPlatformIdentityAddress>();
+        public IReadOnlyCollection<string> ChannelPreferences { get; set; } = new List<string>();
+        public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
+        public string? Id { get; set; }
+        public string? Type { get; set; }
+        public bool IsPersona { get; set; }
 }

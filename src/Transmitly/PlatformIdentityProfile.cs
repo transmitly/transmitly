@@ -19,17 +19,20 @@ namespace Transmitly;
 ///<inheritdoc cref="IPlatformIdentityProfile"/>
 public sealed class PlatformIdentityProfile : IPlatformIdentityProfile
 {
-	private ReadOnlyCollection<IPlatformIdentityAddress> _addresses;
+        private ReadOnlyCollection<IPlatformIdentityAddress> _addresses;
+        private ReadOnlyCollection<string> _channelPreferences = new([]);
 
-	public PlatformIdentityProfile(string? id, string? type, IEnumerable<IPlatformIdentityAddress> identityAddresses)
-	{
-		Id = id;
-		Type = type;
-		Guard.AgainstNull(identityAddresses);
-		_addresses = new ReadOnlyCollection<IPlatformIdentityAddress>([.. identityAddresses]);
-	}
+        public PlatformIdentityProfile(string? id, string? type, IEnumerable<IPlatformIdentityAddress> identityAddresses, IEnumerable<string>? channelPreferences = null)
+        {
+                Id = id;
+                Type = type;
+                Guard.AgainstNull(identityAddresses);
+                _addresses = new ReadOnlyCollection<IPlatformIdentityAddress>([.. identityAddresses]);
+                _channelPreferences = new ReadOnlyCollection<string>(channelPreferences?.ToList() ?? []);
+        }
 
-	public string? Id { get; set; }
-	public string? Type { get; set; }
-	public IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get => _addresses; set => _addresses = new ReadOnlyCollection<IPlatformIdentityAddress>([.. value]); }
+        public string? Id { get; set; }
+        public string? Type { get; set; }
+        public IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get => _addresses; set => _addresses = new ReadOnlyCollection<IPlatformIdentityAddress>([.. value]); }
+        public IReadOnlyCollection<string> ChannelPreferences { get => _channelPreferences; set => _channelPreferences = new ReadOnlyCollection<string>([.. value]); }
 }
