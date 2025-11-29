@@ -21,11 +21,6 @@ namespace Transmitly;
 /// <inheritdoc />
 public sealed class ExtendedProperties : IExtendedProperties
 {
-	internal ExtendedProperties()
-	{
-
-	}
-
 	readonly Dictionary<string, object?> _bag = [];
 
 	int IReadOnlyCollection<KeyValuePair<string, object?>>.Count => _bag.Count;
