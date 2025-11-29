@@ -28,7 +28,7 @@ public class PushNotificationChannelTests
 			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", type:PlatformIdentityAddress.Types.DeviceToken()), true),
 			(new PlatformIdentityAddress("test", type: "other"), false),
 			(new PlatformIdentityAddress("test"), false),
-			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664"), false)
+			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664"), true)
 		};
 
 		foreach (var test in tests)
