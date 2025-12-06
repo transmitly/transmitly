@@ -22,25 +22,47 @@ jobs:
       - uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
+
       - name: dotnet
         uses: actions/setup-dotnet@v3
+
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0
         with:
           versionSpec: '5.x'
+
       - name: Determine Version
         uses: gittools/actions/gitversion/execute@v0
+
+      - name: Detect solution extension
+        id: detect_sln
+        shell: pwsh
+        run: |
+          $name = "${{ inputs.channelName }}"
+          if (Test-Path "$name.slnx") {
+            "ext=slnx" >> $env:GITHUB_OUTPUT
+          } elseif (Test-Path "$name.sln") {
+            "ext=sln" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Error "Neither $name.slnx nor $name.sln found in the repo root."
+            exit 1
+          }
+
       - name: Build netcore solution
-        run: dotnet build ${{inputs.channelName}}.sln --configuration ${{inputs.buildConfiguration}} -p:AssemblyVersion=${{ env.assemblySemVer }} -p:FileVersion=${{ env.assemblySemFileVer  }} -p:InformationalVersion=${{ env.informationalVersion }}
+        run: dotnet build ${{ inputs.channelName }}.${{ steps.detect_sln.outputs.ext }} --configuration ${{ inputs.buildConfiguration }} -p:AssemblyVersion=${{ env.assemblySemVer }} -p:FileVersion=${{ env.assemblySemFileVer }} -p:InformationalVersion=${{ env.informationalVersion }}
+
       - name: Test
         if: ${{ inputs.runTests }}
-        run: dotnet test --no-build --no-restore --configuration Debug ${{inputs.channelName}}.sln
+        run: dotnet test --no-build --no-restore --configuration Debug ${{ inputs.channelName }}.${{ steps.detect_sln.outputs.ext }}
+
       - name: Package
-        run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-${{env.buildMetaData}}.${{ env.shortSha }} --configuration ${{inputs.buildConfiguration}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+        run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-${{ env.buildMetaData }}.${{ env.shortSha }} --configuration ${{ inputs.buildConfiguration }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+
       - name: Publish Nuget
-        run: dotnet nuget push src\${{inputs.channelName}}\bin\${{inputs.buildConfiguration}}\${{inputs.channelName}}*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push src\${{ inputs.channelName }}\bin\${{ inputs.buildConfiguration }}\${{ inputs.channelName }}*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
+
       - name: Add github source
         run: dotnet nuget add source --username ${{ secrets.PUBLISH_GITHUB_USERNAME }} --password ${{ secrets.PUBLISH_GITHUB_PACKAGE_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/transmitly/index.json"
+
       - name: Publish (Github)
-        run: dotnet nuget push src\${{inputs.channelName}}\bin\${{inputs.buildConfiguration}}\${{inputs.channelName}}*.nupkg --api-key ${{secrets.PUBLISH_GITHUB_PACKAGE_API_KEY}} --source "github"
-        
+        run: dotnet nuget push src\${{ inputs.channelName }}\bin\${{ inputs.buildConfiguration }}\${{ inputs.channelName }}*.nupkg --api-key ${{ secrets.PUBLISH_GITHUB_PACKAGE_API_KEY }} --source "github"
