@@ -88,7 +88,7 @@ public class EmailChannelTests : BaseUnitTest
 	}
 
 	[TestMethod]
-	public async Task GenerateCommunicationAsyncShouldGenerateValidSmsCommunication()
+	public async Task GenerateCommunicationAsyncShouldGenerateValidEmailCommunication()
 	{
 		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
@@ -163,7 +163,7 @@ public class EmailChannelTests : BaseUnitTest
 	}
 
 	[TestMethod]
-	public async Task ContentModelResourceShouldAddSmsAttachment()
+	public async Task ContentModelResourceShouldAddEmailAttachment()
 	{
 		var from = fixture.Freeze<IPlatformIdentityAddress>();
 		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();

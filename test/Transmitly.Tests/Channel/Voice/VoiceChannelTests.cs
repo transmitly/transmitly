@@ -39,8 +39,8 @@ public class VoiceChannelTests : BaseUnitTest
 	[DataRow("+2902124", true)]
 	public void SupportsIdentityAddressTest(string value, bool expected)
 	{
-		var sms = new VoiceChannel(new VoiceChannelConfiguration(null));
-		var result = sms.SupportsIdentityAddress(value.AsIdentityAddress());
+		var voice = new VoiceChannel(new VoiceChannelConfiguration(null));
+		var result = voice.SupportsIdentityAddress(value.AsIdentityAddress());
 		Assert.AreEqual(expected, result, value);
 	}
 
@@ -53,7 +53,7 @@ public class VoiceChannelTests : BaseUnitTest
 	}
 
 	[TestMethod]
-	public async Task GenerateCommunicationAsyncShouldGenerateValidSmsCommunication()
+	public async Task GenerateCommunicationAsyncShouldGenerateValidVoiceCommunication()
 	{
 		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);

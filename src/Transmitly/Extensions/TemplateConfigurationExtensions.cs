@@ -50,14 +50,14 @@ public static class TemplateConfigurationExtensions
 	/// <exception cref="CommunicationsException">If the template configuration is not found and <paramref name="configurationRequired"/>=true.</exception>
 	public static IContentTemplateRegistration? GetTemplateRegistration(this IContentTemplateConfiguration contentTemplateConfiguration, CultureInfo culture, bool configurationRequired = true)
 	{
-		var result = contentTemplateConfiguration?.TemplateRegistrations.FirstOrDefault(f => f.CultureInfo == culture);
+		var result = contentTemplateConfiguration?.TemplateRegistrations.FirstOrDefault(f => culture.Equals(f.CultureInfo));
 
 		if (result == null)
 		{
 			if (configurationRequired)
 				throw new CommunicationsException($"Required template registration not found for culture '{culture.Name}'");
 			else
-				return contentTemplateConfiguration?.TemplateRegistrations.FirstOrDefault(f => f.CultureInfo == CultureInfo.InvariantCulture);
+				return contentTemplateConfiguration?.TemplateRegistrations.FirstOrDefault(f => CultureInfo.InvariantCulture.Equals(f.CultureInfo));
 		}
 
 		return result;

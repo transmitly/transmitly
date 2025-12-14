@@ -35,4 +35,21 @@ public class TemplateConfigurationExtensionsTests : BaseUnitTest
 		Assert.ThrowsExactly<ArgumentNullException>(() => TemplateConfigurationExtensions.AddEmbeddedResourceTemplate(null!, string.Empty));
 		Assert.ThrowsExactly<ArgumentNullException>(() => TemplateConfigurationExtensions.AddTemplateResolver(null!, (ctx) => Task.FromResult<string?>(string.Empty)));
 	}
+
+	[TestMethod]
+	public async Task ShouldMatchTemplateCultureInfo()
+	{
+		var context = fixture.Create<IDispatchCommunicationContext>();
+		var esContent = fixture.Freeze<string>();
+		var config = new ContentTemplateConfiguration()
+			.AddStringTemplate("invariant")
+			.AddStringTemplate(esContent, "es-MX");
+
+		var content = config.GetTemplateRegistration(new System.Globalization.CultureInfo("es-MX"), true);
+		Assert.IsNotNull(content);
+		var templateContent = await content.GetContentAsync(context);
+		Assert.AreEqual(esContent, templateContent);
+
+
+	}
 }

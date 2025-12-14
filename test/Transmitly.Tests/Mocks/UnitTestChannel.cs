@@ -50,7 +50,7 @@ internal class UnitTestChannel : IChannel
 	}
 	public async Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 	{
-		var subjectTemplate = Configuration.Subject.TemplateRegistrations.FirstOrDefault(f => f.CultureInfo == communicationContext.CultureInfo);
+		var subjectTemplate = Configuration.Subject.TemplateRegistrations.FirstOrDefault(f => f.CultureInfo.Equals(communicationContext.CultureInfo));
 		if (subjectTemplate == null)
 			return new UnitTestCommunication("NO TEMPLATE");
 
