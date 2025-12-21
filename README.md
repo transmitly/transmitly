@@ -255,11 +255,16 @@ We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ 
 | -------- | -------- |
 | Microsoft.Microsoft.Extensions.DependencyInjection | [Transmitly.Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)  |
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/transmitly/transmitly/assets/3877248/524f26c8-f670-4dfa-be78-badda0f48bfb">
-  <img alt="an open-source project sponsored by CiLabs of Code Impressions, LLC" src="https://github.com/transmitly/transmitly/assets/3877248/34239edd-234d-4bee-9352-49d781716364" width="500" align="right">
-</picture> 
 
-----------------------------------------------------
+### Copyright and Trademark 
 
-_Copyright &copy; Code Impressions, LLC - Provided under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html)._
+Copyright © 2024–2025 Code Impressions, LLC.
+
+Transmitly™ is a trademark of Code Impressions, LLC.
+
+This open-source project is sponsored and maintained by Code Impressions
+and is licensed under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html).
+
+The Apache License applies to the software code only and does not grant
+permission to use the Transmitly name or logo, except as required to
+describe the origin of the software.
