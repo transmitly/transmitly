@@ -18,8 +18,10 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 	{
 		public string? Id { get; set; }
 		public string? Type { get; set; }
-		public List<DispatchPlatformIdentityAddress> Addresses { get; set; } = [];
-		IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses { get => Addresses.AsReadOnly(); }
-		public IDictionary<string, string>? Attributes { get; set; } = null;
-	}
+                public List<DispatchPlatformIdentityAddress> Addresses { get; set; } = [];
+                IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses { get => Addresses.AsReadOnly(); }
+                public List<string> ChannelPreferences { get; set; } = [];
+                IReadOnlyCollection<string> IPlatformIdentityProfile.ChannelPreferences { get => ChannelPreferences.AsReadOnly(); }
+                public IDictionary<string, string>? Attributes { get; set; } = null;
+        }
 }

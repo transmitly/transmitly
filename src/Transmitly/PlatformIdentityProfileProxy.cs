@@ -46,7 +46,8 @@ sealed class PlatformIdentityProfileProxy : DynamicObject, IPlatformIdentityProf
 
 	string? IPlatformIdentityProfile.Type => _source.Type;
 
-	IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses => _addresses;
+        IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses => _addresses;
+        IReadOnlyCollection<string> IPlatformIdentityProfile.ChannelPreferences => _source.ChannelPreferences;
 
 	AttributeCollection ICustomTypeDescriptor.GetAttributes() =>
 		TypeDescriptor.GetAttributes(_sourceType);

@@ -27,8 +27,12 @@ public interface IPlatformIdentityProfile
 	/// Identity's type.
 	/// </summary>
 	string? Type { get; }
-	/// <summary>
-	/// Collections of addresses.
-	/// </summary>
-	IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get; }
+        /// <summary>
+        /// Collections of addresses.
+        /// </summary>
+        IReadOnlyCollection<IPlatformIdentityAddress> Addresses { get; }
+        /// <summary>
+        /// Channel preferences for the identity.
+        /// </summary>
+        IReadOnlyCollection<string> ChannelPreferences { get; }
 }
