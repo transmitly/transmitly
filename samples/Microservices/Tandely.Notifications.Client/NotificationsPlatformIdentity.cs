@@ -18,11 +18,13 @@ namespace Tandely.Notifications.Client
 {
 	public sealed class NotificationsPlatformIdentity : IPlatformIdentityProfile, IPlatformIdentityReference
 	{
-		public string? Id { get; set; }
-		public string? Type { get; set; }
-		public string[] Personas { get; set; } = [];
-		public List<NotificationsIdentityAddress> Addresses { get; set; } = [];
+                public string? Id { get; set; }
+                public string? Type { get; set; }
+                public string[] Personas { get; set; } = [];
+                public List<NotificationsIdentityAddress> Addresses { get; set; } = [];
+                public List<string> ChannelPreferences { get; set; } = [];
 
-		IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses { get => Addresses; }
-	}
+                IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses { get => Addresses; }
+                IReadOnlyCollection<string> IPlatformIdentityProfile.ChannelPreferences { get => ChannelPreferences.AsReadOnly(); }
+        }
 }
