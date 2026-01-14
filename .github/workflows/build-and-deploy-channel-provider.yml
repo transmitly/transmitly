@@ -34,7 +34,7 @@ jobs:
         run: dotnet build ${{inputs.channelProviderName}}.sln --configuration ${{inputs.buildConfiguration}} -p:AssemblyVersion=${{ env.assemblySemVer }} -p:FileVersion=${{ env.assemblySemFileVer  }} -p:InformationalVersion=${{ env.informationalVersion }}
       - name: Test
         if: ${{ inputs.runTests }}
-        run: dotnet test --no-build --no-restore --configuration Debug --solution ${{inputs.channelProviderName}}.sln
+        run: dotnet test --no-build --no-restore --configuration Debug ${{inputs.channelProviderName}}.sln
       - name: Package
         run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }}-${{env.buildMetaData}}.${{ env.shortSha }} --configuration ${{inputs.buildConfiguration}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
       - name: Publish Nuget
