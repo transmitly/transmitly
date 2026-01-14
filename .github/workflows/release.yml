@@ -27,8 +27,13 @@ jobs:
           git branch --remote --contains | grep origin/main
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
-      - name: dotnet
-        uses: actions/setup-dotnet@v3
+      - name: Setup .NET SDKs (multi-TFM)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            9.0.x
+            8.0.x
+            6.0.x
       - name: Build netcore solution
         run: dotnet build Transmitly.sln --configuration Release -p:AssemblyVersion=${{ env.majorMinorPatch }} -p:FileVersion=${{ env.majorMinorPatch }} -p:InformationalVersion=${{ env.informationalVersion }}
       - name: Package
