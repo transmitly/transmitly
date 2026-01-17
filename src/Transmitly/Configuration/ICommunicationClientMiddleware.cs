@@ -16,5 +16,5 @@ namespace Transmitly;
 
 public interface ICommunicationClientMiddleware
 {
-	ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context, ICommunicationsClient? previous);
+	ICommunicationsClient? CreateClient(ICreateCommunicationsClientContext context, ICommunicationsClient? previous);
 }

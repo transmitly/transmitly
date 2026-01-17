@@ -80,6 +80,6 @@ public static class EmailChannelConfigurationExtensions
 		Guard.AgainstNullOrWhiteSpace(identityAddress.Value);
 		return string.IsNullOrEmpty(identityAddress.Display)
 			? identityAddress.Value
-			: $"{identityAddress.Display} <{identityAddress.Display}>";
+			: $"{identityAddress.Display} <{identityAddress.Value}>";
 	}
 }

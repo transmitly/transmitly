@@ -23,7 +23,7 @@ namespace Transmitly;
 
 public abstract class BaseCommunicationClientMiddleware : ICommunicationClientMiddleware
 {
-	public virtual ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context, ICommunicationsClient? previous)
+	public virtual ICommunicationsClient? CreateClient(ICreateCommunicationsClientContext context, ICommunicationsClient? previous)
 	{
 		if (previous is not null)
 			return previous;
