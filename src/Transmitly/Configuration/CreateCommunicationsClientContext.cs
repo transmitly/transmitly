@@ -15,6 +15,7 @@
 
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
+using Transmitly.Model.Configuration;
 using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
@@ -27,6 +28,7 @@ internal sealed class CreateCommunicationsClientContext(
 	IReadOnlyCollection<IPipeline> pipelines,
 	IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
 	IReadOnlyCollection<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations,
+	IReadOnlyCollection<IModelResolverRegistration> modelResolverRegistrations,
 	IReadOnlyCollection<IPersonaRegistration> personaRegistrations,
 	IReadOnlyCollection<IObserver<DeliveryReport>> deliveryReportObservers
 ) : ICreateCommunicationsClientContext
@@ -38,6 +40,8 @@ internal sealed class CreateCommunicationsClientContext(
 	public IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; } = templateEngines;
 
 	public IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; } = platformIdentityResolverRegistrations;
+
+	public IReadOnlyCollection<IModelResolverRegistration> ModelResolvers { get; } = modelResolverRegistrations;
 
 	public IReadOnlyCollection<IPersonaRegistration> Personas { get; } = personaRegistrations;
 

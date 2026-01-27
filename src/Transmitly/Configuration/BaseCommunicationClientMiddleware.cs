@@ -14,6 +14,7 @@
 
 using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
+using Transmitly.Model.Configuration;
 using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
@@ -35,6 +36,7 @@ public abstract class BaseCommunicationClientMiddleware : ICommunicationClientMi
 				new DefaultChannelChannelProviderService(new DefaultChannelProviderFactory(context.ChannelProviders)),
 				new DefaultPersonaService(new DefaultPersonaFactory(context.Personas)),
 				new DefaultTemplateEngineFactory(context.TemplateEngines),
+				new DefaultModelResolverService(new DefaultModelResolverRegistrationFactory(context.ModelResolvers)),
 				deliveryReportService
 			),
 			new DefaultPlatformIdentityService(new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers)),
