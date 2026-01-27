@@ -132,13 +132,14 @@ That's right, we added a new channel provider package. Removed our SMTP configur
 
 ### Supported Channel Providers
 
-| Channel(s)  | Project | 
-| ------------- | ------------- |
-| Email  | [Transmitly.ChannelProvider.Smtp](https://github.com/transmitly/transmitly-channel-provider-smtp)  |
-| Email  | [Transmitly.ChannelProvider.SendGrid](https://github.com/transmitly/transmitly-channel-provider-sendgrid)  |
-| Email, Sms, Voice | [Transmitly.ChannelProvider.InfoBip](https://github.com/transmitly/transmitly-channel-provider-infobip)  |
-| Sms, Voice  | [Transmitly.ChannelProvider.Twilio](https://github.com/transmitly/transmitly-channel-provider-twilio)  |
-| Push Notifications  | [Transmitly.ChannelProvider.Firebase](https://github.com/transmitly/transmitly-channel-provider-firebase)  |
+| Channel(s)  | Project | Package |
+| ------------- | ------------- | -------- | 
+| Email  | [Transmitly.ChannelProvider.Smtp](https://github.com/transmitly/transmitly-channel-provider-smtp)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Smtp?style=flat&color=01aef0) |
+| Email  | [Transmitly.ChannelProvider.SendGrid](https://github.com/transmitly/transmitly-channel-provider-sendgrid)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Sendgrid?style=flat&color=01aef0) |
+| Email  | [Transmitly.ChannelProvider.Mailgun](https://github.com/transmitly/transmitly-channel-provider-mailgun)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Mailgun?style=flat&color=01aef0&logo=mailgun) |
+| Email, Sms, Voice | [Transmitly.ChannelProvider.Infobip](https://github.com/transmitly/transmitly-channel-provider-infobip)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Infobip?style=flat&color=01aef0) |
+| Sms, Voice  | [Transmitly.ChannelProvider.Twilio](https://github.com/transmitly/transmitly-channel-provider-twilio)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Twilio?style=flat&color=01aef0) |
+| Push Notifications  | [Transmitly.ChannelProvider.Firebase](https://github.com/transmitly/transmitly-channel-provider-firebase)  |![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Firebase?style=flat&color=01aef0&logo=firebase) | 
 
 ### Delivery Reports
 Now that we are dispatching communications, the next question is along the lines of: how do I log things; how do I store the content; what about status updates from the 3rd party services? All great questions. To start, we'll focus on logging the requests. Our simple example is using the SMTP library. In that case we don't get a lot of visibility into if it was sent. Just that it was dispatched or delivered. Once you move into 3rd party channel providers you start to unlock more fidelity into what is and has happened to your communications. Delivery reports are how you manage these updates in a structured and consistent way across any channel provider or channel. 
@@ -173,7 +174,7 @@ Adding the `AddDeliveryReportHandler` gives us the option of passing in a func t
 
 Note: As mentioned earlier, using 3rd party services usually means you will have asynchronous updates to the status of the communication. In general, most providers will push this information to you in the form of a webhook. Transmitly can help with these webhooks with the Mvc libraries.
 
-Using the Transmitly Mvc libraries you're able to configure all of your channel providers to send to the endpoint you define. Transmitly will manage wrapping the data up and calling your delivery report handlers. [[AspNetCore.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc)] [[AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc)]
+Using the Transmitly Mvc libraries you're able to configure all of your channel providers to send to the endpoint you define. Transmitly will manage wrapping the data up and calling your delivery report handlers. [[AspNetCore.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc) ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.AspnetCore.Mvc?style=flat&color=01aef0)] [[AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc) ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Aspnet.Mvc?style=flat&color=01aef0)]
 
 [See the wiki for more on delivery reports]([wiki/Delivery-Reports](https://github.com/transmitly/transmitly/wiki/Delivery-Reports))
 
@@ -242,18 +243,19 @@ class AccountRegistrationService
 That's another fairly advanced feature handled in a strongly typed and extensible way. In this example, we only added the `firstName` to our model. If we wanted to be even more future proof to template changes, we could have returned the `Account` object or preferably create and used a `Platform Identity Resolver`. Whether you are starting from scratch or working around an existing communications strategy, there's an approach that will work for you.
 
 ### Supported Template Engines
-| Project |
-| ------------- |
-| [Transmitly.TemplateEngine.Fluid](https://github.com/transmitly/transmitly-template-engine-fluid)  |
-| [Transmitly.TemplateEngine.Scriban](https://github.com/transmitly/transmitly-template-engine-scriban)  |
+| Project | Package |
+| ------------- | ----------- |
+| [Transmitly.TemplateEngine.Fluid](https://github.com/transmitly/transmitly-template-engine-fluid)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.TemplateEngine.Fluid?style=flat&color=01aef0) |
+| [Transmitly.TemplateEngine.Scriban](https://github.com/transmitly/transmitly-template-engine-scriban)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.TemplateEngine.Scriban?style=flat&color=01aef0) |
+
 
 ### Next Steps
 We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ more value for your entire team. [Check out the Kitchen Sink](/samples/Transmitly.KitchenSink.AspNetCoreWebApi) sample to learn more about Transmitly's concepts while we work on improving our [wiki](https://github.com/transmitly/transmitly/wiki).
 
 ### Supported Dependency Injection Containers
-|Container |  Project |
-| -------- | -------- |
-| Microsoft.Microsoft.Extensions.DependencyInjection | [Transmitly.Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)  |
+|Container |  Project | Package | 
+| -------- | -------- | --------- |
+| Microsoft.Microsoft.Extensions.DependencyInjection | [Transmitly.Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Extensions.DependencyInjection?style=flat&color=01aef0) |
 
 ---
 _Copyright © Code Impressions, LLC.  This open-source project is sponsored and maintained by Code Impressions
