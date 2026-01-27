@@ -255,7 +255,7 @@ We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ 
 ### Supported Dependency Injection Containers
 |Container |  Project | Package | 
 | -------- | -------- | --------- |
-| Microsoft.Microsoft.Extensions.DependencyInjection | [Transmitly.Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Extensions.DependencyInjection?style=flat&color=01aef0) |
+| Microsoft.Microsoft.Extensions.DependencyInjection | [Transmitly.Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Extensions.DependencyInjection?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Extensions.DependencyInjection) |
 
 ---
 _Copyright © Code Impressions, LLC.  This open-source project is sponsored and maintained by Code Impressions
