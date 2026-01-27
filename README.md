@@ -134,12 +134,12 @@ That's right, we added a new channel provider package. Removed our SMTP configur
 
 | Channel(s)  | Project | Package |
 | ------------- | ------------- | -------- | 
-| Email  | [Transmitly.ChannelProvider.Smtp](https://github.com/transmitly/transmitly-channel-provider-smtp)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Smtp?style=flat&color=01aef0) |
-| Email  | [Transmitly.ChannelProvider.SendGrid](https://github.com/transmitly/transmitly-channel-provider-sendgrid)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Sendgrid?style=flat&color=01aef0) |
-| Email  | [Transmitly.ChannelProvider.Mailgun](https://github.com/transmitly/transmitly-channel-provider-mailgun)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Mailgun?style=flat&color=01aef0&logo=mailgun) |
-| Email, Sms, Voice | [Transmitly.ChannelProvider.Infobip](https://github.com/transmitly/transmitly-channel-provider-infobip)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Infobip?style=flat&color=01aef0) |
-| Sms, Voice  | [Transmitly.ChannelProvider.Twilio](https://github.com/transmitly/transmitly-channel-provider-twilio)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Twilio?style=flat&color=01aef0) |
-| Push Notifications  | [Transmitly.ChannelProvider.Firebase](https://github.com/transmitly/transmitly-channel-provider-firebase)  |![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Firebase?style=flat&color=01aef0&logo=firebase) | 
+| Email  | [Transmitly.ChannelProvider.Smtp](https://github.com/transmitly/transmitly-channel-provider-smtp)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Smtp?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Smtp) |
+| Email  | [Transmitly.ChannelProvider.SendGrid](https://github.com/transmitly/transmitly-channel-provider-sendgrid)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Sendgrid?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.SendGrid) |
+| Email  | [Transmitly.ChannelProvider.Mailgun](https://github.com/transmitly/transmitly-channel-provider-mailgun)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Mailgun?style=flat&color=01aef0&logo=mailgun)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Mailgun) |
+| Email, Sms, Voice | [Transmitly.ChannelProvider.Infobip](https://github.com/transmitly/transmitly-channel-provider-infobip)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Infobip?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Infobip) |
+| Sms, Voice  | [Transmitly.ChannelProvider.Twilio](https://github.com/transmitly/transmitly-channel-provider-twilio)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Twilio?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Twilio) |
+| Push Notifications  | [Transmitly.ChannelProvider.Firebase](https://github.com/transmitly/transmitly-channel-provider-firebase)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Firebase?style=flat&color=01aef0&logo=firebase)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Firebase) | 
 
 ### Delivery Reports
 Now that we are dispatching communications, the next question is along the lines of: how do I log things; how do I store the content; what about status updates from the 3rd party services? All great questions. To start, we'll focus on logging the requests. Our simple example is using the SMTP library. In that case we don't get a lot of visibility into if it was sent. Just that it was dispatched or delivered. Once you move into 3rd party channel providers you start to unlock more fidelity into what is and has happened to your communications. Delivery reports are how you manage these updates in a structured and consistent way across any channel provider or channel. 
@@ -174,7 +174,7 @@ Adding the `AddDeliveryReportHandler` gives us the option of passing in a func t
 
 Note: As mentioned earlier, using 3rd party services usually means you will have asynchronous updates to the status of the communication. In general, most providers will push this information to you in the form of a webhook. Transmitly can help with these webhooks with the Mvc libraries.
 
-Using the Transmitly Mvc libraries you're able to configure all of your channel providers to send to the endpoint you define. Transmitly will manage wrapping the data up and calling your delivery report handlers. [[AspNetCore.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc) ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.AspnetCore.Mvc?style=flat&color=01aef0)] [[AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc) ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Aspnet.Mvc?style=flat&color=01aef0)]
+Using the Transmitly Mvc libraries you're able to configure all of your channel providers to send to the endpoint you define. Transmitly will manage wrapping the data up and calling your delivery report handlers. [[AspNetCore.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc) [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.AspnetCore.Mvc?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Aspnetcore.Mvc)] [[AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc) [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Aspnet.Mvc?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Aspnet.Mvc)]
 
 [See the wiki for more on delivery reports]([wiki/Delivery-Reports](https://github.com/transmitly/transmitly/wiki/Delivery-Reports))
 
@@ -245,8 +245,8 @@ That's another fairly advanced feature handled in a strongly typed and extensibl
 ### Supported Template Engines
 | Project | Package |
 | ------------- | ----------- |
-| [Transmitly.TemplateEngine.Fluid](https://github.com/transmitly/transmitly-template-engine-fluid)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.TemplateEngine.Fluid?style=flat&color=01aef0) |
-| [Transmitly.TemplateEngine.Scriban](https://github.com/transmitly/transmitly-template-engine-scriban)  | ![NuGet Version](https://img.shields.io/nuget/v/Transmitly.TemplateEngine.Scriban?style=flat&color=01aef0) |
+| [Transmitly.TemplateEngine.Fluid](https://github.com/transmitly/transmitly-template-engine-fluid)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.TemplateEngine.Fluid?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.TemplateEngine.Fluid) |
+| [Transmitly.TemplateEngine.Scriban](https://github.com/transmitly/transmitly-template-engine-scriban)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.TemplateEngine.Scriban?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.TemplateEngine.Scriban) |
 
 
 ### Next Steps
