@@ -16,6 +16,7 @@ using System.Globalization;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 using Transmitly.Delivery;
+using Transmitly.Model.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 
@@ -25,11 +26,13 @@ public abstract class BaseDispatchCoordinatorService(
 	IChannelChannelProviderService channelChannelProviderService,
 	IPersonaService personaService,
 	ITemplateEngineFactory templateEngineFactory,
+	IModelResolverService modelResolverService,
 	IDeliveryReportService deliveryReportService) : IDispatchCoordinatorService
 {
 	private readonly IChannelChannelProviderService _channelChannelProviderService = channelChannelProviderService;
 	private readonly IPersonaService _personaService = personaService;
 	private readonly ITemplateEngineFactory _templateEngineFactory = templateEngineFactory;
+	private readonly IModelResolverService _modelResolverService = modelResolverService;
 	private readonly IDeliveryReportService _deliveryReportProvider = deliveryReportService;
 
 	public virtual async Task<IReadOnlyCollection<RecipientDispatchCommunicationContext>> CreateRecipientContexts(
@@ -41,6 +44,7 @@ public abstract class BaseDispatchCoordinatorService(
 	{
 		var recipientContexts = new List<RecipientDispatchCommunicationContext>();
 		var templateEngine = _templateEngineFactory.Get();
+		var hasPerRecipientResolvers = await _modelResolverService.HasResolversAsync(ModelResolverScope.PerRecipient).ConfigureAwait(false);
 
 		foreach (var pipeline in pipelines)
 		{
@@ -58,7 +62,27 @@ public abstract class BaseDispatchCoordinatorService(
 					cultureInfo,
 					pipeline.Intent,
 					pipeline.Id,
-					pipelineConfiguration.PipelineDeliveryStrategyProvider);
+					pipelineConfiguration.PipelineDeliveryStrategyProvider,
+					_modelResolverService);
+
+				if (hasPerRecipientResolvers)
+				{
+					var baseContentModel = new ContentModel(transactionalModel, new[] { platformIdentity });
+					var resolverContext = new DispatchCommunicationContext(
+						baseContentModel,
+						pipelineConfiguration,
+						new[] { platformIdentity },
+						templateEngine,
+						_deliveryReportProvider,
+						cultureInfo,
+						pipeline.Intent,
+						pipeline.Id);
+
+					context.ContentModel = await _modelResolverService.ResolveAsync(
+						resolverContext,
+						baseContentModel,
+						ModelResolverScope.PerRecipient).ConfigureAwait(false);
+				}
 
 				var orderedChannels = SetPipelineChannelOrderPreference(dispatchChannelPreferences, pipelineConfiguration);
 

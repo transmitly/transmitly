@@ -13,12 +13,13 @@
 //  limitations under the License.
 
 using Transmitly.Delivery;
+using Transmitly.Model.Configuration;
 using Transmitly.Template.Configuration;
 
 namespace Transmitly;
 
-public sealed class DefaultDispatchCoordinatorService(IChannelChannelProviderService channelChannelProviderService, IPersonaService personaService, ITemplateEngineFactory templateEngineFactory, IDeliveryReportService deliveryReportService)
-	: BaseDispatchCoordinatorService(Guard.AgainstNull(channelChannelProviderService), Guard.AgainstNull(personaService), Guard.AgainstNull(templateEngineFactory), Guard.AgainstNull(deliveryReportService))
+public sealed class DefaultDispatchCoordinatorService(IChannelChannelProviderService channelChannelProviderService, IPersonaService personaService, ITemplateEngineFactory templateEngineFactory, IModelResolverService modelResolverService, IDeliveryReportService deliveryReportService)
+	: BaseDispatchCoordinatorService(Guard.AgainstNull(channelChannelProviderService), Guard.AgainstNull(personaService), Guard.AgainstNull(templateEngineFactory), Guard.AgainstNull(modelResolverService), Guard.AgainstNull(deliveryReportService))
 {
 
 }

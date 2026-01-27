@@ -14,6 +14,7 @@
 
 using System.Globalization;
 using Transmitly.Delivery;
+using Transmitly.Model.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 
@@ -28,6 +29,7 @@ internal class InternalDispatchCommunicationContext(ITransactionModel? transacti
 	string pipelineIntent,
 	string? pipelineId,
 	BasePipelineDeliveryStrategyProvider strategyProvider,
+	IModelResolverService modelResolverService,
 	MessagePriority messagePriority = MessagePriority.Normal,
 	TransportPriority transportPriority = TransportPriority.Normal) : IInternalDispatchCommunicationContext
 {
@@ -54,4 +56,8 @@ internal class InternalDispatchCommunicationContext(ITransactionModel? transacti
 	public string? PipelineId => pipelineId;
 
 	public BasePipelineDeliveryStrategyProvider StrategyProvider { get; } = Guard.AgainstNull(strategyProvider);
+
+	public IModelResolverService ModelResolverService { get; } = Guard.AgainstNull(modelResolverService);
+
+	public IContentModel? ContentModel { get; set; }
 }

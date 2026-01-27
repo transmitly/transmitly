@@ -24,7 +24,7 @@ public class CompositeCommunicationClientMiddlewareTests
 	{
 		var composite = new CompositeCommunicationClientMiddleware();
 
-		Assert.ThrowsException<CommunicationsException>(() =>
+		Assert.ThrowsExactly<CommunicationsException>(() =>
 			composite.CreateClient(Mock.Of<ICreateCommunicationsClientContext>(), null));
 	}
 
@@ -101,9 +101,9 @@ public class CompositeCommunicationClientMiddlewareTests
 		var composite = new CompositeCommunicationClientMiddleware();
 		var mockMiddleware = new Mock<ICommunicationClientMiddleware>();
 
-		Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+		Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
 			composite.Add(mockMiddleware.Object, -1));
-		Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+		Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
 			composite.Add(mockMiddleware.Object, 1));
 	}
 
@@ -144,7 +144,7 @@ public class CompositeCommunicationClientMiddlewareTests
 
 		composite.Add(mockMiddleware.Object, null);
 
-		Assert.ThrowsException<CommunicationsException>(() =>
+		Assert.ThrowsExactly<CommunicationsException>(() =>
 			composite.CreateClient(Mock.Of<ICreateCommunicationsClientContext>(), null));
 	}
 }

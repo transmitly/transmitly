@@ -12,9 +12,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using System;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
+using Transmitly.Model.Configuration;
 
 namespace Transmitly.Delivery;
 
@@ -53,7 +53,9 @@ public abstract class BasePipelineDeliveryStrategyProvider
 
 		var filteredProfiles = FilterToASingleIdentityWithSingleSupportedAddress(channel, context);
 
-		var contentModel = new ContentModel(context.TransactionModel, filteredProfiles);
+		var contentModel = context.ContentModel != null
+			? new ContentModel(context.ContentModel, filteredProfiles)
+			: new ContentModel(context.TransactionModel, filteredProfiles);
 		var dispatchingContext = new DispatchCommunicationContext(contentModel,
 			context.ChannelConfiguration,
 			filteredProfiles,
@@ -66,6 +68,17 @@ public abstract class BasePipelineDeliveryStrategyProvider
 			context.TransportPriority,
 			channel.Id,
 			provider.Id);
+
+		if (await context.ModelResolverService.HasResolversAsync(ModelResolverScope.PerChannel).ConfigureAwait(false))
+		{
+			var resolvedModel = await context.ModelResolverService.ResolveAsync(
+				dispatchingContext,
+				contentModel,
+				ModelResolverScope.PerChannel,
+				cancellationToken).ConfigureAwait(false);
+
+			dispatchingContext.ContentModel = resolvedModel;
+		}
 
 
 		var communication = await GetChannelCommunicationAsync(channel, dispatchingContext).ConfigureAwait(false);
