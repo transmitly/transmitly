@@ -30,10 +30,10 @@ namespace Tandely.Notifications.Service
 
 		string? IPlatformIdentityProfile.Id { get => Id.ToString(); }
 		string? IPlatformIdentityProfile.Type { get => nameof(Customer); }
-		IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses
-		{
-			get
-			{
+                IReadOnlyCollection<IPlatformIdentityAddress> IPlatformIdentityProfile.Addresses
+                {
+                        get
+                        {
 				var result = new List<IPlatformIdentityAddress>();
 				if (!string.IsNullOrWhiteSpace(MobilePhone))
 					result.Add(new PlatformIdentityAddress(MobilePhone));
@@ -41,8 +41,10 @@ namespace Tandely.Notifications.Service
 					result.Add(new PlatformIdentityAddress(EmailAddress, Name));
 				if (!string.IsNullOrWhiteSpace(DeviceToken))
 					result.Add(new PlatformIdentityAddress(DeviceToken, type: PlatformIdentityAddress.Types.DeviceToken()));
-				return result;
-			}
-		}
-	}
+                                return result;
+                        }
+                }
+
+                IReadOnlyCollection<string> IPlatformIdentityProfile.ChannelPreferences => Array.Empty<string>();
+        }
 }
