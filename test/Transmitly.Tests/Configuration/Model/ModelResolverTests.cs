@@ -85,9 +85,34 @@ public sealed class ModelResolverServiceTests
 
 		var resolved = await service.ResolveAsync(context, model, ModelResolverScope.PerChannel);
 		var resolvedBag = (IDictionary<string, object?>)resolved.Model;
+		var originalBag = (IDictionary<string, object?>)model.Model;
 
+		Assert.AreNotSame(model, resolved);
+		Assert.IsFalse(originalBag.ContainsKey("Marker"));
 		Assert.AreEqual("replaced", resolvedBag["Marker"]);
 		CollectionAssert.AreEqual(new[] { "replace", "inspect" }, ModelResolverRecorder.Calls.ToArray());
+	}
+
+	[TestMethod]
+	public async Task ResolveAsync_AllowsAsyncExternalReplacement()
+	{
+		ModelResolverRecorder.Reset();
+
+		var registrations = new List<IModelResolverRegistration>
+		{
+			new ModelResolverRegistration(typeof(DelayedReplaceResolver), ModelResolverScope.PerChannel, true, null, 0),
+			new ModelResolverRegistration(typeof(ExternalInspectResolver), ModelResolverScope.PerChannel, true, null, 1)
+		};
+
+		var service = new DefaultModelResolverService(new DefaultModelResolverRegistrationFactory(registrations));
+		var context = CreateDispatchContext();
+		var model = CreateContentModel(context.PlatformIdentities);
+
+		var resolved = await service.ResolveAsync(context, model, ModelResolverScope.PerChannel);
+		var resolvedBag = (IDictionary<string, object?>)resolved.Model;
+
+		Assert.AreEqual("external", resolvedBag["Marker"]);
+		CollectionAssert.AreEqual(new[] { "delayed-replace", "external-inspect" }, ModelResolverRecorder.Calls.ToArray());
 	}
 
 	[TestMethod]
@@ -308,6 +333,17 @@ public sealed class ModelResolverServiceTests
 		}
 	}
 
+	public sealed class DelayedReplaceResolver : IModelResolver
+	{
+		public async Task<IContentModel?> ResolveAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			ModelResolverRecorder.Record("delayed-replace");
+			await Task.Delay(25, cancellationToken);
+			var replacement = new ContentModel(TransactionModel.Create(new { Marker = "external" }), context.PlatformIdentities);
+			return replacement;
+		}
+	}
+
 	public sealed class InspectResolver : IModelResolver
 	{
 		public Task<IContentModel?> ResolveAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
@@ -316,6 +352,19 @@ public sealed class ModelResolverServiceTests
 			if (bag.TryGetValue("Marker", out var value) && value?.ToString() == "replaced")
 			{
 				ModelResolverRecorder.Record("inspect");
+			}
+			return Task.FromResult<IContentModel?>(currentModel);
+		}
+	}
+
+	public sealed class ExternalInspectResolver : IModelResolver
+	{
+		public Task<IContentModel?> ResolveAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			var bag = (IDictionary<string, object?>)currentModel.Model;
+			if (bag.TryGetValue("Marker", out var value) && value?.ToString() == "external")
+			{
+				ModelResolverRecorder.Record("external-inspect");
 			}
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
