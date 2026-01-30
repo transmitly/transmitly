@@ -14,6 +14,7 @@
 
 using System.Globalization;
 using Transmitly.Delivery;
+using Transmitly.Model.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 
@@ -22,6 +23,14 @@ namespace Transmitly;
 internal interface IInternalDispatchCommunicationContext
 {
 	BasePipelineDeliveryStrategyProvider StrategyProvider { get; }
+	/// <summary>
+	/// Gets the model resolver service.
+	/// </summary>
+	IModelResolverService ModelResolverService { get; }
+	/// <summary>
+	/// Gets or sets the resolved content model.
+	/// </summary>
+	IContentModel? ContentModel { get; set; }
 	/// <summary>
 	/// Gets or sets the content model.
 	/// </summary>
