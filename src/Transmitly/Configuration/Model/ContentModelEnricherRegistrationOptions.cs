@@ -14,18 +14,16 @@
 
 namespace Transmitly.Model.Configuration;
 
-public sealed class DefaultModelEnricherRegistrationFactory(IEnumerable<IModelEnricherRegistration> registrations) : IModelEnricherFactory
+/// <summary>
+/// Options for registering a content model enricher.
+/// </summary>
+public sealed class ContentModelEnricherRegistrationOptions
 {
-	private readonly List<IModelEnricherRegistration> _registrations = [.. Guard.AgainstNull(registrations)];
+	public ContentModelEnricherScope Scope { get; set; } = ContentModelEnricherScope.PerChannel;
 
-	public Task<IReadOnlyList<IModelEnricherRegistration>> GetAllEnrichersAsync()
-	{
-		return Task.FromResult<IReadOnlyList<IModelEnricherRegistration>>(_registrations);
-	}
+	public bool ContinueOnEnrichedModel { get; set; } = true;
 
-	public Task<IModelEnricher?> GetEnricher(IModelEnricherRegistration registration)
-	{
-		Guard.AgainstNull(registration);
-		return Task.FromResult(Activator.CreateInstance(registration.EnricherType) as IModelEnricher);
-	}
+	public Func<IDispatchCommunicationContext, bool>? Predicate { get; set; }
+
+	public int? Order { get; set; }
 }

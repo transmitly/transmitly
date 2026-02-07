@@ -1,4 +1,4 @@
-// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -16,36 +16,34 @@ using Transmitly.Exceptions;
 
 namespace Transmitly.Model.Configuration;
 
-public sealed class DefaultModelEnricherService(IModelEnricherFactory enricherFactory) : IModelEnricherService
+public sealed class DefaultTransactionModelEnricherService(ITransactionModelEnricherFactory enricherFactory) : ITransactionModelEnricherService
 {
-	private readonly IModelEnricherFactory _enricherFactory = Guard.AgainstNull(enricherFactory);
+	private readonly ITransactionModelEnricherFactory _enricherFactory = Guard.AgainstNull(enricherFactory);
 
-	public async Task<bool> HasEnrichersAsync(ModelEnricherScope scope)
+	public async Task<bool> HasEnrichersAsync()
 	{
 		var allEnrichers = await _enricherFactory.GetAllEnrichersAsync().ConfigureAwait(false);
-		return allEnrichers.Any(r => r.Scope == scope);
+		return allEnrichers.Count > 0;
 	}
 
-	public async Task<IContentModel> EnrichAsync(
+	public async Task<ITransactionModel> EnrichAsync(
 		IDispatchCommunicationContext context,
-		IContentModel contentModel,
-		ModelEnricherScope scope,
+		ITransactionModel transactionModel,
 		CancellationToken cancellationToken = default)
 	{
 		Guard.AgainstNull(context);
-		Guard.AgainstNull(contentModel);
+		Guard.AgainstNull(transactionModel);
 
 		var allEnrichers = await _enricherFactory.GetAllEnrichersAsync().ConfigureAwait(false);
 
 		var orderedEnrichers = allEnrichers
 			.Select((registration, index) => new { registration, index })
-			.Where(x => x.registration.Scope == scope)
 			.OrderBy(x => x.registration.Order ?? int.MaxValue)
 			.ThenBy(x => x.index)
 			.Select(x => x.registration)
 			.ToList();
 
-		var currentModel = contentModel;
+		var currentModel = transactionModel;
 		foreach (var registration in orderedEnrichers)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
@@ -54,7 +52,7 @@ public sealed class DefaultModelEnricherService(IModelEnricherFactory enricherFa
 				continue;
 
 			var enricherInstance = await _enricherFactory.GetEnricher(registration).ConfigureAwait(false)
-				?? throw new CommunicationsException("Unable to get an instance of model enricher");
+				?? throw new CommunicationsException("Unable to get an instance of transaction model enricher");
 
 			var enrichedModel = await enricherInstance.EnrichAsync(context, currentModel, cancellationToken).ConfigureAwait(false);
 			if (enrichedModel != null)

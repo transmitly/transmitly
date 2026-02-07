@@ -1,4 +1,4 @@
-// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
 
 namespace Transmitly.Model.Configuration;
 
-/// <summary>
-/// Options for registering a model enricher.
-/// </summary>
-public sealed class ModelEnricherRegistrationOptions
+internal sealed class TransactionModelEnricherRegistration(
+	Type enricherType,
+	bool continueOnEnrichedModel,
+	Func<IDispatchCommunicationContext, bool>? predicate,
+	int? order) : ITransactionModelEnricherRegistration
 {
-	public ModelEnricherScope Scope { get; set; } = ModelEnricherScope.PerChannel;
+	public Type EnricherType => enricherType;
 
-	public bool ContinueOnEnrichedModel { get; set; } = true;
+	public bool ContinueOnEnrichedModel => continueOnEnrichedModel;
 
-	public Func<IDispatchCommunicationContext, bool>? Predicate { get; set; }
+	public Func<IDispatchCommunicationContext, bool>? Predicate => predicate;
 
-	public int? Order { get; set; }
+	public int? Order => order;
 }

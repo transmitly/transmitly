@@ -26,13 +26,15 @@ public abstract class BaseDispatchCoordinatorService(
 	IChannelChannelProviderService channelChannelProviderService,
 	IPersonaService personaService,
 	ITemplateEngineFactory templateEngineFactory,
-	IModelEnricherService modelEnricherService,
+	ITransactionModelEnricherService transactionModelEnricherService,
+	IContentModelEnricherService contentModelEnricherService,
 	IDeliveryReportService deliveryReportService) : IDispatchCoordinatorService
 {
 	private readonly IChannelChannelProviderService _channelChannelProviderService = channelChannelProviderService;
 	private readonly IPersonaService _personaService = personaService;
 	private readonly ITemplateEngineFactory _templateEngineFactory = templateEngineFactory;
-	private readonly IModelEnricherService _modelEnricherService = modelEnricherService;
+	private readonly ITransactionModelEnricherService _transactionModelEnricherService = transactionModelEnricherService;
+	private readonly IContentModelEnricherService _contentModelEnricherService = contentModelEnricherService;
 	private readonly IDeliveryReportService _deliveryReportProvider = deliveryReportService;
 
 	public virtual async Task<IReadOnlyCollection<RecipientDispatchCommunicationContext>> CreateRecipientContexts(
@@ -44,17 +46,36 @@ public abstract class BaseDispatchCoordinatorService(
 	{
 		var recipientContexts = new List<RecipientDispatchCommunicationContext>();
 		var templateEngine = _templateEngineFactory.Get();
-		var hasPerRecipientEnrichers = await _modelEnricherService.HasEnrichersAsync(ModelEnricherScope.PerRecipient).ConfigureAwait(false);
+		var hasTransactionEnrichers = await _transactionModelEnricherService.HasEnrichersAsync().ConfigureAwait(false);
+		var hasPerRecipientEnrichers = await _contentModelEnricherService.HasEnrichersAsync(ContentModelEnricherScope.PerRecipient).ConfigureAwait(false);
 
 		foreach (var pipeline in pipelines)
 		{
 			var pipelineConfiguration = pipeline.Configuration;
 			var filteredPlatformIdentities = await _personaService.FilterPlatformIdentityPersonasAsync(platformIdentityProfiles, pipelineConfiguration.PersonaFilters).ConfigureAwait(false);
+			var pipelineTransactionModel = transactionalModel;
+
+			if (hasTransactionEnrichers)
+			{
+				var transactionContext = new DispatchCommunicationContext(
+					null,
+					pipelineConfiguration,
+					filteredPlatformIdentities,
+					templateEngine,
+					_deliveryReportProvider,
+					cultureInfo,
+					pipeline.Intent,
+					pipeline.Id);
+
+				pipelineTransactionModel = await _transactionModelEnricherService.EnrichAsync(
+					transactionContext,
+					pipelineTransactionModel).ConfigureAwait(false);
+			}
 
 			foreach (var platformIdentity in filteredPlatformIdentities)
 			{
 				var context = new InternalDispatchCommunicationContext(
-					transactionalModel,
+					pipelineTransactionModel,
 					pipelineConfiguration,
 					new[] { platformIdentity },
 					templateEngine,
@@ -63,11 +84,11 @@ public abstract class BaseDispatchCoordinatorService(
 					pipeline.Intent,
 					pipeline.Id,
 					pipelineConfiguration.PipelineDeliveryStrategyProvider,
-					_modelEnricherService);
+					_contentModelEnricherService);
 
 				if (hasPerRecipientEnrichers)
 				{
-					var baseContentModel = new ContentModel(transactionalModel, new[] { platformIdentity });
+					var baseContentModel = new ContentModel(pipelineTransactionModel, new[] { platformIdentity });
 					var enricherContext = new DispatchCommunicationContext(
 						baseContentModel,
 						pipelineConfiguration,
@@ -78,10 +99,10 @@ public abstract class BaseDispatchCoordinatorService(
 						pipeline.Intent,
 						pipeline.Id);
 
-					context.ContentModel = await _modelEnricherService.EnrichAsync(
+					context.ContentModel = await _contentModelEnricherService.EnrichAsync(
 						enricherContext,
 						baseContentModel,
-						ModelEnricherScope.PerRecipient).ConfigureAwait(false);
+						ContentModelEnricherScope.PerRecipient).ConfigureAwait(false);
 				}
 
 				var orderedChannels = SetPipelineChannelOrderPreference(dispatchChannelPreferences, pipelineConfiguration);

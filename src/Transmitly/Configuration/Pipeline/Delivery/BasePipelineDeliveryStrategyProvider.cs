@@ -69,12 +69,12 @@ public abstract class BasePipelineDeliveryStrategyProvider
 			channel.Id,
 			provider.Id);
 
-		if (await context.ModelEnricherService.HasEnrichersAsync(ModelEnricherScope.PerChannel).ConfigureAwait(false))
+		if (await context.ContentModelEnricherService.HasEnrichersAsync(ContentModelEnricherScope.PerChannel).ConfigureAwait(false))
 		{
-			var enrichedModel = await context.ModelEnricherService.EnrichAsync(
+			var enrichedModel = await context.ContentModelEnricherService.EnrichAsync(
 				dispatchingContext,
 				contentModel,
-				ModelEnricherScope.PerChannel,
+				ContentModelEnricherScope.PerChannel,
 				cancellationToken).ConfigureAwait(false);
 
 			dispatchingContext.ContentModel = enrichedModel;

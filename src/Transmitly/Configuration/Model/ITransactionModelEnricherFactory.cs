@@ -1,4 +1,4 @@
-// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -14,11 +14,9 @@
 
 namespace Transmitly.Model.Configuration;
 
-/// <summary>
-/// Defines when a model enricher should execute.
-/// </summary>
-public enum ModelEnricherScope
+public interface ITransactionModelEnricherFactory
 {
-	PerRecipient,
-	PerChannel
+	Task<IReadOnlyList<ITransactionModelEnricherRegistration>> GetAllEnrichersAsync();
+
+	Task<ITransactionModelEnricher?> GetEnricher(ITransactionModelEnricherRegistration registration);
 }

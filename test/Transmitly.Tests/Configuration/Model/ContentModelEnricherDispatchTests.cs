@@ -21,17 +21,17 @@ using Transmitly.Tests.Mocks;
 namespace Transmitly.Tests.Configuration.Model;
 
 [TestClass]
-public sealed class ModelEnricherDispatchTests
+public sealed class ContentModelEnricherDispatchTests
 {
 	[TestMethod]
-	public async Task ModelEnrichers_RunPerRecipientAndPerChannel()
+	public async Task ContentModelEnrichers_RunPerRecipientAndPerChannel()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 		RecordingDispatcher.Reset();
 
 		var builder = new CommunicationsClientBuilder()
-			.AddModelEnricher<PerRecipientEnricher>(options => options.Scope = ModelEnricherScope.PerRecipient)
-			.AddModelEnricher<PerChannelEnricher>(options => options.Scope = ModelEnricherScope.PerChannel)
+			.AddContentModelEnricher<PerRecipientEnricher>(options => options.Scope = ContentModelEnricherScope.PerRecipient)
+			.AddContentModelEnricher<PerChannelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
 			.ChannelProvider.Add<RecordingDispatcher, UnitTestCommunication>("provider", "channel-a", "channel-b")
 			.AddPipeline("intent", options =>
 			{
@@ -53,21 +53,21 @@ public sealed class ModelEnricherDispatchTests
 			TransactionModel.Create(new { }),
 			Array.Empty<string>());
 
-		Assert.AreEqual(1, ModelEnricherRecorder.PerRecipientCount);
-		Assert.AreEqual(2, ModelEnricherRecorder.PerChannelCount);
+		Assert.AreEqual(1, ContentModelEnricherRecorder.PerRecipientCount);
+		Assert.AreEqual(2, ContentModelEnricherRecorder.PerChannelCount);
 		CollectionAssert.AreEquivalent(
 			new[] { "recipient:channel-a", "recipient:channel-b" },
 			RecordingDispatcher.Subjects.ToArray());
 	}
 
 	[TestMethod]
-	public async Task ModelEnrichers_PerRecipientRunsOnceWithMultipleProviders()
+	public async Task ContentModelEnrichers_PerRecipientRunsOnceWithMultipleProviders()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 
 		var builder = new CommunicationsClientBuilder()
-			.AddModelEnricher<PerRecipientEnricher>(options => options.Scope = ModelEnricherScope.PerRecipient)
-			.AddModelEnricher<PerChannelEnricher>(options => options.Scope = ModelEnricherScope.PerChannel)
+			.AddContentModelEnricher<PerRecipientEnricher>(options => options.Scope = ContentModelEnricherScope.PerRecipient)
+			.AddContentModelEnricher<PerChannelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
 			.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("provider-1", "channel-a")
 			.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("provider-2", "channel-a")
 			.AddPipeline("intent", options =>
@@ -89,17 +89,17 @@ public sealed class ModelEnricherDispatchTests
 			TransactionModel.Create(new { }),
 			Array.Empty<string>());
 
-		Assert.AreEqual(1, ModelEnricherRecorder.PerRecipientCount);
-		Assert.AreEqual(2, ModelEnricherRecorder.PerChannelCount);
+		Assert.AreEqual(1, ContentModelEnricherRecorder.PerRecipientCount);
+		Assert.AreEqual(2, ContentModelEnricherRecorder.PerChannelCount);
 	}
 
 	[TestMethod]
-	public async Task ModelEnrichers_PreserveResourcesAndLinkedResourcesAcrossScopes()
+	public async Task ContentModelEnrichers_PreserveResourcesAndLinkedResourcesAcrossScopes()
 	{
 		RecordingDispatcher.Reset();
 
 		var builder = new CommunicationsClientBuilder()
-			.AddModelEnricher<NoopPerRecipientEnricher>(options => options.Scope = ModelEnricherScope.PerRecipient)
+			.AddContentModelEnricher<NoopPerRecipientEnricher>(options => options.Scope = ContentModelEnricherScope.PerRecipient)
 			.ChannelProvider.Add<RecordingDispatcher, UnitTestCommunication>("provider", "channel-resources")
 			.AddPipeline("intent", options =>
 			{
@@ -132,16 +132,16 @@ public sealed class ModelEnricherDispatchTests
 	}
 
 	[TestMethod]
-	public async Task ModelEnrichers_ReplaceContentModelForDispatchContext()
+	public async Task ContentModelEnrichers_ReplaceContentModelForDispatchContext()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 		ModelReplacementRecorder.Reset();
 		RecordingDispatcher.Reset();
 		ModelObserverChannel.Reset();
 
 		var builder = new CommunicationsClientBuilder()
-			.AddModelEnricher<ReplacePerRecipientEnricher>(options => options.Scope = ModelEnricherScope.PerRecipient)
-			.AddModelEnricher<ReplacePerChannelEnricher>(options => options.Scope = ModelEnricherScope.PerChannel)
+			.AddContentModelEnricher<ReplacePerRecipientEnricher>(options => options.Scope = ContentModelEnricherScope.PerRecipient)
+			.AddContentModelEnricher<ReplacePerChannelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
 			.ChannelProvider.Add<RecordingDispatcher, UnitTestCommunication>("provider", "channel-a")
 			.AddPipeline("intent", options =>
 			{
@@ -162,8 +162,8 @@ public sealed class ModelEnricherDispatchTests
 			TransactionModel.Create(new { shared = "original" }),
 			Array.Empty<string>());
 
-		Assert.AreEqual(1, ModelEnricherRecorder.PerRecipientCount);
-		Assert.AreEqual(1, ModelEnricherRecorder.PerChannelCount);
+		Assert.AreEqual(1, ContentModelEnricherRecorder.PerRecipientCount);
+		Assert.AreEqual(1, ContentModelEnricherRecorder.PerChannelCount);
 		Assert.IsNotNull(ModelReplacementRecorder.PerRecipientInput);
 		Assert.IsNotNull(ModelReplacementRecorder.PerRecipientOutput);
 		Assert.IsNotNull(ModelReplacementRecorder.PerChannelInput);
@@ -175,15 +175,15 @@ public sealed class ModelEnricherDispatchTests
 	}
 
 	[TestMethod]
-	public async Task ModelEnrichers_AllowAsyncExternalModelReplacement()
+	public async Task ContentModelEnrichers_AllowAsyncExternalModelReplacement()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 		ModelReplacementRecorder.Reset();
 		RecordingDispatcher.Reset();
 		ModelObserverChannel.Reset();
 
 		var builder = new CommunicationsClientBuilder()
-			.AddModelEnricher<DelayedExternalPerChannelEnricher>(options => options.Scope = ModelEnricherScope.PerChannel)
+			.AddContentModelEnricher<DelayedExternalPerChannelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
 			.ChannelProvider.Add<RecordingDispatcher, UnitTestCommunication>("provider", "channel-a")
 			.AddPipeline("intent", options =>
 			{
@@ -204,7 +204,7 @@ public sealed class ModelEnricherDispatchTests
 			TransactionModel.Create(new { paymentId = "pay_123" }),
 			Array.Empty<string>());
 
-		Assert.AreEqual(1, ModelEnricherRecorder.PerChannelCount);
+		Assert.AreEqual(1, ContentModelEnricherRecorder.PerChannelCount);
 		Assert.IsNotNull(ModelReplacementRecorder.PerChannelInput);
 		Assert.IsNotNull(ModelReplacementRecorder.PerChannelOutput);
 		Assert.AreNotSame(ModelReplacementRecorder.PerChannelInput, ModelReplacementRecorder.PerChannelOutput);
@@ -212,7 +212,7 @@ public sealed class ModelEnricherDispatchTests
 		CollectionAssert.AreEqual(new[] { "payment:pay_123" }, RecordingDispatcher.Subjects.ToArray());
 	}
 
-	private static class ModelEnricherRecorder
+	private static class ContentModelEnricherRecorder
 	{
 		public static int PerRecipientCount { get; private set; }
 		public static int PerChannelCount { get; private set; }
@@ -244,11 +244,11 @@ public sealed class ModelEnricherDispatchTests
 		}
 	}
 
-	public sealed class PerRecipientEnricher : IModelEnricher
+	public sealed class PerRecipientEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.RecordPerRecipient();
+			ContentModelEnricherRecorder.RecordPerRecipient();
 			if (currentModel.Model is IDictionary<string, object?> bag)
 			{
 				bag["shared"] = "recipient";
@@ -257,11 +257,11 @@ public sealed class ModelEnricherDispatchTests
 		}
 	}
 
-	public sealed class ReplacePerRecipientEnricher : IModelEnricher
+	public sealed class ReplacePerRecipientEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.RecordPerRecipient();
+			ContentModelEnricherRecorder.RecordPerRecipient();
 			ModelReplacementRecorder.PerRecipientInput = currentModel;
 
 			var replacement = new ContentModel(
@@ -273,11 +273,11 @@ public sealed class ModelEnricherDispatchTests
 		}
 	}
 
-	public sealed class PerChannelEnricher : IModelEnricher
+	public sealed class PerChannelEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.RecordPerChannel();
+			ContentModelEnricherRecorder.RecordPerChannel();
 			if (currentModel.Model is IDictionary<string, object?> bag)
 			{
 				var baseValue = bag.TryGetValue("shared", out var value) ? value?.ToString() : "missing";
@@ -287,11 +287,11 @@ public sealed class ModelEnricherDispatchTests
 		}
 	}
 
-	public sealed class ReplacePerChannelEnricher : IModelEnricher
+	public sealed class ReplacePerChannelEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.RecordPerChannel();
+			ContentModelEnricherRecorder.RecordPerChannel();
 			ModelReplacementRecorder.PerChannelInput = currentModel;
 
 			var bag = (IDictionary<string, object?>)currentModel.Model;
@@ -305,11 +305,11 @@ public sealed class ModelEnricherDispatchTests
 		}
 	}
 
-	public sealed class DelayedExternalPerChannelEnricher : IModelEnricher
+	public sealed class DelayedExternalPerChannelEnricher : IContentModelEnricher
 	{
 		public async Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.RecordPerChannel();
+			ContentModelEnricherRecorder.RecordPerChannel();
 			ModelReplacementRecorder.PerChannelInput = currentModel;
 
 			string paymentId = "missing";
@@ -331,7 +331,7 @@ public sealed class ModelEnricherDispatchTests
 		}
 	}
 
-	public sealed class NoopPerRecipientEnricher : IModelEnricher
+	public sealed class NoopPerRecipientEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{

@@ -1,0 +1,37 @@
+// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+//  
+//  Licensed under the Apache License, Version 2.0 (the "License")
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//  
+//      http://www.apache.org/licenses/LICENSE-2.0
+//  
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
+namespace Transmitly.Model.Configuration;
+
+public interface IContentModelEnricherService
+{
+	/// <summary>
+	/// Gets if enrichers exist for the given scope.
+	/// </summary>
+	Task<bool> HasEnrichersAsync(ContentModelEnricherScope scope);
+
+	/// <summary>
+	/// Enriches the content model for the given scope.
+	/// </summary>
+	/// <param name="context">Dispatch context.</param>
+	/// <param name="contentModel">Current content model.</param>
+	/// <param name="scope">Enricher scope.</param>
+	/// <param name="cancellationToken">Cancellation token.</param>
+	/// <returns>Enriched content model.</returns>
+	Task<IContentModel> EnrichAsync(
+		IDispatchCommunicationContext context,
+		IContentModel contentModel,
+		ContentModelEnricherScope scope,
+		CancellationToken cancellationToken = default);
+}

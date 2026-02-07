@@ -1,4 +1,4 @@
-// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -14,20 +14,22 @@
 
 namespace Transmitly.Model.Configuration;
 
-/// <summary>
-/// Enriches or mutates the current content model for a dispatch.
-/// </summary>
-public interface IModelEnricher
+public interface ITransactionModelEnricherService
 {
 	/// <summary>
-	/// Enriches the content model.
+	/// Gets if enrichers exist.
 	/// </summary>
-	/// <param name="context">Dispatch communication context.</param>
-	/// <param name="currentModel">Current content model.</param>
+	Task<bool> HasEnrichersAsync();
+
+	/// <summary>
+	/// Enriches the transaction model.
+	/// </summary>
+	/// <param name="context">Dispatch context.</param>
+	/// <param name="transactionModel">Current transaction model.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	/// <returns>The enriched model; otherwise null to keep the current model.</returns>
-	Task<IContentModel?> EnrichAsync(
+	/// <returns>Enriched transaction model.</returns>
+	Task<ITransactionModel> EnrichAsync(
 		IDispatchCommunicationContext context,
-		IContentModel currentModel,
+		ITransactionModel transactionModel,
 		CancellationToken cancellationToken = default);
 }

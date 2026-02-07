@@ -1,4 +1,4 @@
-// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -15,39 +15,38 @@
 namespace Transmitly.Model.Configuration;
 
 /// <summary>
-/// Represents a builder for configuring model enrichers in the communications configuration.
+/// Represents a builder for configuring transaction model enrichers in the communications configuration.
 /// </summary>
-public sealed class ModelEnricherConfigurationBuilder
+public sealed class TransactionModelEnricherConfigurationBuilder
 {
 	private readonly CommunicationsClientBuilder _communicationsConfiguration;
-	private readonly Action<IModelEnricherRegistration> _addModelEnricher;
+	private readonly Action<ITransactionModelEnricherRegistration> _addTransactionModelEnricher;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="ModelEnricherConfigurationBuilder"/> class.
+	/// Initializes a new instance of the <see cref="TransactionModelEnricherConfigurationBuilder"/> class.
 	/// </summary>
 	/// <param name="communicationsConfiguration">The communications configuration builder.</param>
-	/// <param name="addModelEnricher">The action to add a model enricher.</param>
-	internal ModelEnricherConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IModelEnricherRegistration> addModelEnricher)
+	/// <param name="addTransactionModelEnricher">The action to add a transaction model enricher.</param>
+	internal TransactionModelEnricherConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<ITransactionModelEnricherRegistration> addTransactionModelEnricher)
 	{
 		_communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
-		_addModelEnricher = Guard.AgainstNull(addModelEnricher);
+		_addTransactionModelEnricher = Guard.AgainstNull(addTransactionModelEnricher);
 	}
 
 	/// <summary>
-	/// Adds a model enricher to the communications configuration.
+	/// Adds a transaction model enricher to the communications configuration.
 	/// </summary>
-	/// <typeparam name="TEnricher">Concrete model enricher type.</typeparam>
+	/// <typeparam name="TEnricher">Concrete transaction model enricher type.</typeparam>
 	/// <param name="options">Optional configuration for the registration.</param>
 	/// <returns>The communications configuration builder.</returns>
-	public CommunicationsClientBuilder Add<TEnricher>(Action<ModelEnricherRegistrationOptions>? options = null)
-		where TEnricher : IModelEnricher
+	public CommunicationsClientBuilder Add<TEnricher>(Action<TransactionModelEnricherRegistrationOptions>? options = null)
+		where TEnricher : ITransactionModelEnricher
 	{
-		var registrationOptions = new ModelEnricherRegistrationOptions();
+		var registrationOptions = new TransactionModelEnricherRegistrationOptions();
 		options?.Invoke(registrationOptions);
 
-		_addModelEnricher(new ModelEnricherRegistration(
+		_addTransactionModelEnricher(new TransactionModelEnricherRegistration(
 			typeof(TEnricher),
-			registrationOptions.Scope,
 			registrationOptions.ContinueOnEnrichedModel,
 			registrationOptions.Predicate,
 			registrationOptions.Order));

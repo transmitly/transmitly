@@ -14,16 +14,16 @@
 
 namespace Transmitly.Model.Configuration;
 
-internal sealed class ModelEnricherRegistration(
+internal sealed class ContentModelEnricherRegistration(
 	Type enricherType,
-	ModelEnricherScope scope,
+	ContentModelEnricherScope scope,
 	bool continueOnEnrichedModel,
 	Func<IDispatchCommunicationContext, bool>? predicate,
-	int? order) : IModelEnricherRegistration
+	int? order) : IContentModelEnricherRegistration
 {
 	public Type EnricherType => enricherType;
 
-	public ModelEnricherScope Scope => scope;
+	public ContentModelEnricherScope Scope => scope;
 
 	public bool ContinueOnEnrichedModel => continueOnEnrichedModel;
 

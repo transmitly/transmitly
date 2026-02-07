@@ -1,4 +1,4 @@
-// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -15,19 +15,14 @@
 namespace Transmitly.Model.Configuration;
 
 /// <summary>
-/// Represents a model enricher registration.
+/// Represents a transaction model enricher registration.
 /// </summary>
-public interface IModelEnricherRegistration
+public interface ITransactionModelEnricherRegistration
 {
 	/// <summary>
 	/// Gets the enricher type.
 	/// </summary>
 	Type EnricherType { get; }
-
-	/// <summary>
-	/// Gets the enricher scope.
-	/// </summary>
-	ModelEnricherScope Scope { get; }
 
 	/// <summary>
 	/// Gets whether to continue invoking additional enrichers when a model is enriched.

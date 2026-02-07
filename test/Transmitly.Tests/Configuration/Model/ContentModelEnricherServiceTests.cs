@@ -21,210 +21,210 @@ using Transmitly.Tests.Mocks;
 namespace Transmitly.Tests.Configuration.Model;
 
 [TestClass]
-public sealed class ModelEnricherServiceTests
+public sealed class ContentModelEnricherServiceTests
 {
 	[TestMethod]
 	public async Task EnrichAsync_OrdersByOrderThenRegistrationIndex()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 
-		var registrations = new List<IModelEnricherRegistration>
+		var registrations = new List<IContentModelEnricherRegistration>
 		{
-			new ModelEnricherRegistration(typeof(SecondEnricher), ModelEnricherScope.PerChannel, true, null, 2),
-			new ModelEnricherRegistration(typeof(FirstEnricher), ModelEnricherScope.PerChannel, true, null, 1),
-			new ModelEnricherRegistration(typeof(UnorderedEnricher), ModelEnricherScope.PerChannel, true, null, null)
+			new ContentModelEnricherRegistration(typeof(SecondEnricher), ContentModelEnricherScope.PerChannel, true, null, 2),
+			new ContentModelEnricherRegistration(typeof(FirstEnricher), ContentModelEnricherScope.PerChannel, true, null, 1),
+			new ContentModelEnricherRegistration(typeof(UnorderedEnricher), ContentModelEnricherScope.PerChannel, true, null, null)
 		};
 
-		var service = new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(registrations));
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 
-		await service.EnrichAsync(context, model, ModelEnricherScope.PerChannel);
+		await service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel);
 
-		CollectionAssert.AreEqual(new[] { "first", "second", "unordered" }, ModelEnricherRecorder.Calls.ToArray());
+		CollectionAssert.AreEqual(new[] { "first", "second", "unordered" }, ContentModelEnricherRecorder.Calls.ToArray());
 	}
 
 	[TestMethod]
 	public async Task EnrichAsync_PreservesModelWhenEnricherReturnsNull()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 
-		var registrations = new List<IModelEnricherRegistration>
+		var registrations = new List<IContentModelEnricherRegistration>
 		{
-			new ModelEnricherRegistration(typeof(NullEnricher), ModelEnricherScope.PerChannel, true, null, 0),
-			new ModelEnricherRegistration(typeof(AfterEnricher), ModelEnricherScope.PerChannel, true, null, 1)
+			new ContentModelEnricherRegistration(typeof(NullEnricher), ContentModelEnricherScope.PerChannel, true, null, 0),
+			new ContentModelEnricherRegistration(typeof(AfterEnricher), ContentModelEnricherScope.PerChannel, true, null, 1)
 		};
 
-		var service = new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(registrations));
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 		var bag = (IDictionary<string, object?>)model.Model;
 		bag["value"] = "original";
 
-		var enriched = await service.EnrichAsync(context, model, ModelEnricherScope.PerChannel);
+		var enriched = await service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel);
 
 		Assert.AreSame(model, enriched);
 		Assert.AreEqual("after", bag["value"]);
-		CollectionAssert.AreEqual(new[] { "null", "after" }, ModelEnricherRecorder.Calls.ToArray());
+		CollectionAssert.AreEqual(new[] { "null", "after" }, ContentModelEnricherRecorder.Calls.ToArray());
 	}
 
 	[TestMethod]
 	public async Task EnrichAsync_ReplacesModelAndDownstreamSeesNewModel()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 
-		var registrations = new List<IModelEnricherRegistration>
+		var registrations = new List<IContentModelEnricherRegistration>
 		{
-			new ModelEnricherRegistration(typeof(ReplaceEnricher), ModelEnricherScope.PerChannel, true, null, 0),
-			new ModelEnricherRegistration(typeof(InspectEnricher), ModelEnricherScope.PerChannel, true, null, 1)
+			new ContentModelEnricherRegistration(typeof(ReplaceEnricher), ContentModelEnricherScope.PerChannel, true, null, 0),
+			new ContentModelEnricherRegistration(typeof(InspectEnricher), ContentModelEnricherScope.PerChannel, true, null, 1)
 		};
 
-		var service = new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(registrations));
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 
-		var enriched = await service.EnrichAsync(context, model, ModelEnricherScope.PerChannel);
+		var enriched = await service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel);
 		var enrichedBag = (IDictionary<string, object?>)enriched.Model;
 		var originalBag = (IDictionary<string, object?>)model.Model;
 
 		Assert.AreNotSame(model, enriched);
 		Assert.IsFalse(originalBag.ContainsKey("Marker"));
 		Assert.AreEqual("replaced", enrichedBag["Marker"]);
-		CollectionAssert.AreEqual(new[] { "replace", "inspect" }, ModelEnricherRecorder.Calls.ToArray());
+		CollectionAssert.AreEqual(new[] { "replace", "inspect" }, ContentModelEnricherRecorder.Calls.ToArray());
 	}
 
 	[TestMethod]
 	public async Task EnrichAsync_AllowsAsyncExternalReplacement()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 
-		var registrations = new List<IModelEnricherRegistration>
+		var registrations = new List<IContentModelEnricherRegistration>
 		{
-			new ModelEnricherRegistration(typeof(DelayedReplaceEnricher), ModelEnricherScope.PerChannel, true, null, 0),
-			new ModelEnricherRegistration(typeof(ExternalInspectEnricher), ModelEnricherScope.PerChannel, true, null, 1)
+			new ContentModelEnricherRegistration(typeof(DelayedReplaceEnricher), ContentModelEnricherScope.PerChannel, true, null, 0),
+			new ContentModelEnricherRegistration(typeof(ExternalInspectEnricher), ContentModelEnricherScope.PerChannel, true, null, 1)
 		};
 
-		var service = new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(registrations));
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 
-		var enriched = await service.EnrichAsync(context, model, ModelEnricherScope.PerChannel);
+		var enriched = await service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel);
 		var enrichedBag = (IDictionary<string, object?>)enriched.Model;
 
 		Assert.AreEqual("external", enrichedBag["Marker"]);
-		CollectionAssert.AreEqual(new[] { "delayed-replace", "external-inspect" }, ModelEnricherRecorder.Calls.ToArray());
+		CollectionAssert.AreEqual(new[] { "delayed-replace", "external-inspect" }, ContentModelEnricherRecorder.Calls.ToArray());
 	}
 
 	[TestMethod]
 	public async Task EnrichAsync_RespectsPredicateUsingChannelId()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 
-		var registrations = new List<IModelEnricherRegistration>
+		var registrations = new List<IContentModelEnricherRegistration>
 		{
-			new ModelEnricherRegistration(typeof(ChannelPredicateEnricher), ModelEnricherScope.PerChannel, true, ctx => ctx.ChannelId == "channel-a", null),
-			new ModelEnricherRegistration(typeof(SecondEnricher), ModelEnricherScope.PerChannel, true, ctx => ctx.ChannelId == "channel-b", null)
+			new ContentModelEnricherRegistration(typeof(ChannelPredicateEnricher), ContentModelEnricherScope.PerChannel, true, ctx => ctx.ChannelId == "channel-a", null),
+			new ContentModelEnricherRegistration(typeof(SecondEnricher), ContentModelEnricherScope.PerChannel, true, ctx => ctx.ChannelId == "channel-b", null)
 		};
 
-		var service = new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(registrations));
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
 		var context = CreateDispatchContext(channelId: "channel-a");
 		var model = CreateContentModel(context.PlatformIdentities);
 
-		await service.EnrichAsync(context, model, ModelEnricherScope.PerChannel);
+		await service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel);
 
-		CollectionAssert.AreEqual(new[] { "channel" }, ModelEnricherRecorder.Calls.ToArray());
+		CollectionAssert.AreEqual(new[] { "channel" }, ContentModelEnricherRecorder.Calls.ToArray());
 	}
 
 	[TestMethod]
 	public async Task EnrichAsync_SkipsPredicateWhenFalse()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 
-		var registrations = new List<IModelEnricherRegistration>
+		var registrations = new List<IContentModelEnricherRegistration>
 		{
-			new ModelEnricherRegistration(typeof(FirstEnricher), ModelEnricherScope.PerChannel, true, ctx => ctx.PipelineIntent == "match", null),
-			new ModelEnricherRegistration(typeof(SecondEnricher), ModelEnricherScope.PerChannel, true, ctx => ctx.PipelineIntent == "nope", null)
+			new ContentModelEnricherRegistration(typeof(FirstEnricher), ContentModelEnricherScope.PerChannel, true, ctx => ctx.PipelineIntent == "match", null),
+			new ContentModelEnricherRegistration(typeof(SecondEnricher), ContentModelEnricherScope.PerChannel, true, ctx => ctx.PipelineIntent == "nope", null)
 		};
 
-		var service = new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(registrations));
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
 		var context = CreateDispatchContext(pipelineIntent: "match");
 		var model = CreateContentModel(context.PlatformIdentities);
 
-		await service.EnrichAsync(context, model, ModelEnricherScope.PerChannel);
+		await service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel);
 
-		CollectionAssert.AreEqual(new[] { "first" }, ModelEnricherRecorder.Calls.ToArray());
+		CollectionAssert.AreEqual(new[] { "first" }, ContentModelEnricherRecorder.Calls.ToArray());
 	}
 
 	[TestMethod]
 	public async Task EnrichAsync_RespectsRegistrationOrderWhenOrderIsNull()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 
-		var registrations = new List<IModelEnricherRegistration>
+		var registrations = new List<IContentModelEnricherRegistration>
 		{
-			new ModelEnricherRegistration(typeof(NullOrderedFirstEnricher), ModelEnricherScope.PerChannel, true, null, null),
-			new ModelEnricherRegistration(typeof(NullOrderedSecondEnricher), ModelEnricherScope.PerChannel, true, null, null)
+			new ContentModelEnricherRegistration(typeof(NullOrderedFirstEnricher), ContentModelEnricherScope.PerChannel, true, null, null),
+			new ContentModelEnricherRegistration(typeof(NullOrderedSecondEnricher), ContentModelEnricherScope.PerChannel, true, null, null)
 		};
 
-		var service = new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(registrations));
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 
-		await service.EnrichAsync(context, model, ModelEnricherScope.PerChannel);
+		await service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel);
 
-		CollectionAssert.AreEqual(new[] { "null-first", "null-second" }, ModelEnricherRecorder.Calls.ToArray());
+		CollectionAssert.AreEqual(new[] { "null-first", "null-second" }, ContentModelEnricherRecorder.Calls.ToArray());
 	}
 
 	[TestMethod]
 	public async Task EnrichAsync_ShortCircuitsWhenConfigured()
 	{
-		ModelEnricherRecorder.Reset();
+		ContentModelEnricherRecorder.Reset();
 
-		var registrations = new List<IModelEnricherRegistration>
+		var registrations = new List<IContentModelEnricherRegistration>
 		{
-			new ModelEnricherRegistration(typeof(ShortCircuitEnricher), ModelEnricherScope.PerChannel, false, null, 0),
-			new ModelEnricherRegistration(typeof(SecondEnricher), ModelEnricherScope.PerChannel, true, null, 1)
+			new ContentModelEnricherRegistration(typeof(ShortCircuitEnricher), ContentModelEnricherScope.PerChannel, false, null, 0),
+			new ContentModelEnricherRegistration(typeof(SecondEnricher), ContentModelEnricherScope.PerChannel, true, null, 1)
 		};
 
-		var service = new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(registrations));
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 
-		await service.EnrichAsync(context, model, ModelEnricherScope.PerChannel);
+		await service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel);
 
-		CollectionAssert.AreEqual(new[] { "short" }, ModelEnricherRecorder.Calls.ToArray());
+		CollectionAssert.AreEqual(new[] { "short" }, ContentModelEnricherRecorder.Calls.ToArray());
 	}
 
 	[TestMethod]
 	public async Task HasEnrichersAsync_ReportsByScope()
 	{
-		var registrations = new List<IModelEnricherRegistration>
+		var registrations = new List<IContentModelEnricherRegistration>
 		{
-			new ModelEnricherRegistration(typeof(FirstEnricher), ModelEnricherScope.PerRecipient, true, null, null)
+			new ContentModelEnricherRegistration(typeof(FirstEnricher), ContentModelEnricherScope.PerRecipient, true, null, null)
 		};
 
-		var service = new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(registrations));
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
 
-		Assert.IsTrue(await service.HasEnrichersAsync(ModelEnricherScope.PerRecipient));
-		Assert.IsFalse(await service.HasEnrichersAsync(ModelEnricherScope.PerChannel));
+		Assert.IsTrue(await service.HasEnrichersAsync(ContentModelEnricherScope.PerRecipient));
+		Assert.IsFalse(await service.HasEnrichersAsync(ContentModelEnricherScope.PerChannel));
 	}
 
 	[TestMethod]
 	public async Task EnrichAsync_ThrowsOnCanceledToken()
 	{
-		var registrations = new List<IModelEnricherRegistration>
+		var registrations = new List<IContentModelEnricherRegistration>
 		{
-			new ModelEnricherRegistration(typeof(FirstEnricher), ModelEnricherScope.PerChannel, true, null, null)
+			new ContentModelEnricherRegistration(typeof(FirstEnricher), ContentModelEnricherScope.PerChannel, true, null, null)
 		};
 
-		var service = new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(registrations));
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 		using var cts = new CancellationTokenSource();
 		cts.Cancel();
 
 		await Assert.ThrowsExactlyAsync<OperationCanceledException>(() =>
-			service.EnrichAsync(context, model, ModelEnricherScope.PerChannel, cts.Token));
+			service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel, cts.Token));
 	}
 
 	private static DispatchCommunicationContext CreateDispatchContext(string pipelineIntent = "intent", string? channelId = null, string? channelProviderId = null)
@@ -261,7 +261,7 @@ public sealed class ModelEnricherServiceTests
 			recipients);
 	}
 
-	private static class ModelEnricherRecorder
+	private static class ContentModelEnricherRecorder
 	{
 		private static readonly ConcurrentQueue<string> _calls = new();
 		public static IReadOnlyCollection<string> Calls => _calls.ToArray();
@@ -274,43 +274,43 @@ public sealed class ModelEnricherServiceTests
 		public static void Record(string value) => _calls.Enqueue(value);
 	}
 
-	public sealed class FirstEnricher : IModelEnricher
+	public sealed class FirstEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.Record("first");
+			ContentModelEnricherRecorder.Record("first");
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
 	}
 
-	public sealed class SecondEnricher : IModelEnricher
+	public sealed class SecondEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.Record("second");
+			ContentModelEnricherRecorder.Record("second");
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
 	}
 
-	public sealed class UnorderedEnricher : IModelEnricher
+	public sealed class UnorderedEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.Record("unordered");
+			ContentModelEnricherRecorder.Record("unordered");
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
 	}
 
-	public sealed class NullEnricher : IModelEnricher
+	public sealed class NullEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.Record("null");
+			ContentModelEnricherRecorder.Record("null");
 			return Task.FromResult<IContentModel?>(null);
 		}
 	}
 
-	public sealed class AfterEnricher : IModelEnricher
+	public sealed class AfterEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
@@ -318,90 +318,90 @@ public sealed class ModelEnricherServiceTests
 			{
 				bag["value"] = "after";
 			}
-			ModelEnricherRecorder.Record("after");
+			ContentModelEnricherRecorder.Record("after");
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
 	}
 
-	public sealed class ReplaceEnricher : IModelEnricher
+	public sealed class ReplaceEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.Record("replace");
+			ContentModelEnricherRecorder.Record("replace");
 			var replacement = new ContentModel(TransactionModel.Create(new { Marker = "replaced" }), context.PlatformIdentities);
 			return Task.FromResult<IContentModel?>(replacement);
 		}
 	}
 
-	public sealed class DelayedReplaceEnricher : IModelEnricher
+	public sealed class DelayedReplaceEnricher : IContentModelEnricher
 	{
 		public async Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.Record("delayed-replace");
+			ContentModelEnricherRecorder.Record("delayed-replace");
 			await Task.Delay(25, cancellationToken);
 			var replacement = new ContentModel(TransactionModel.Create(new { Marker = "external" }), context.PlatformIdentities);
 			return replacement;
 		}
 	}
 
-	public sealed class InspectEnricher : IModelEnricher
+	public sealed class InspectEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
 			var bag = (IDictionary<string, object?>)currentModel.Model;
 			if (bag.TryGetValue("Marker", out var value) && value?.ToString() == "replaced")
 			{
-				ModelEnricherRecorder.Record("inspect");
+				ContentModelEnricherRecorder.Record("inspect");
 			}
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
 	}
 
-	public sealed class ExternalInspectEnricher : IModelEnricher
+	public sealed class ExternalInspectEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
 			var bag = (IDictionary<string, object?>)currentModel.Model;
 			if (bag.TryGetValue("Marker", out var value) && value?.ToString() == "external")
 			{
-				ModelEnricherRecorder.Record("external-inspect");
+				ContentModelEnricherRecorder.Record("external-inspect");
 			}
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
 	}
 
-	public sealed class ChannelPredicateEnricher : IModelEnricher
+	public sealed class ChannelPredicateEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.Record("channel");
+			ContentModelEnricherRecorder.Record("channel");
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
 	}
 
-	public sealed class NullOrderedFirstEnricher : IModelEnricher
+	public sealed class NullOrderedFirstEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.Record("null-first");
+			ContentModelEnricherRecorder.Record("null-first");
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
 	}
 
-	public sealed class NullOrderedSecondEnricher : IModelEnricher
+	public sealed class NullOrderedSecondEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.Record("null-second");
+			ContentModelEnricherRecorder.Record("null-second");
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
 	}
 
-	public sealed class ShortCircuitEnricher : IModelEnricher
+	public sealed class ShortCircuitEnricher : IContentModelEnricher
 	{
 		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
 		{
-			ModelEnricherRecorder.Record("short");
+			ContentModelEnricherRecorder.Record("short");
 			return Task.FromResult<IContentModel?>(currentModel);
 		}
 	}

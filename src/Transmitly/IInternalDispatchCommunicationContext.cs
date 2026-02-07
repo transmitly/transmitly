@@ -26,7 +26,7 @@ internal interface IInternalDispatchCommunicationContext
 	/// <summary>
 	/// Gets the model enricher service.
 	/// </summary>
-	IModelEnricherService ModelEnricherService { get; }
+	IContentModelEnricherService ContentModelEnricherService { get; }
 	/// <summary>
 	/// Gets or sets the enriched content model.
 	/// </summary>
