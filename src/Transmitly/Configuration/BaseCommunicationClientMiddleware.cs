@@ -36,7 +36,7 @@ public abstract class BaseCommunicationClientMiddleware : ICommunicationClientMi
 				new DefaultChannelChannelProviderService(new DefaultChannelProviderFactory(context.ChannelProviders)),
 				new DefaultPersonaService(new DefaultPersonaFactory(context.Personas)),
 				new DefaultTemplateEngineFactory(context.TemplateEngines),
-				new DefaultModelResolverService(new DefaultModelResolverRegistrationFactory(context.ModelResolvers)),
+				new DefaultModelEnricherService(new DefaultModelEnricherRegistrationFactory(context.ModelEnrichers)),
 				deliveryReportService
 			),
 			new DefaultPlatformIdentityService(new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers)),

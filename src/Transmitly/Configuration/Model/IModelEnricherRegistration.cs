@@ -14,24 +14,33 @@
 
 namespace Transmitly.Model.Configuration;
 
-public interface IModelResolverService
+/// <summary>
+/// Represents a model enricher registration.
+/// </summary>
+public interface IModelEnricherRegistration
 {
 	/// <summary>
-	/// Gets if resolvers exist for the given scope.
+	/// Gets the enricher type.
 	/// </summary>
-	Task<bool> HasResolversAsync(ModelResolverScope scope);
+	Type EnricherType { get; }
 
 	/// <summary>
-	/// Resolves the content model for the given scope.
+	/// Gets the enricher scope.
 	/// </summary>
-	/// <param name="context">Dispatch context.</param>
-	/// <param name="contentModel">Current content model.</param>
-	/// <param name="scope">Resolver scope.</param>
-	/// <param name="cancellationToken">Cancellation token.</param>
-	/// <returns>Resolved content model.</returns>
-	Task<IContentModel> ResolveAsync(
-		IDispatchCommunicationContext context,
-		IContentModel contentModel,
-		ModelResolverScope scope,
-		CancellationToken cancellationToken = default);
+	ModelEnricherScope Scope { get; }
+
+	/// <summary>
+	/// Gets whether to continue invoking additional enrichers when a model is enriched.
+	/// </summary>
+	bool ContinueOnEnrichedModel { get; }
+
+	/// <summary>
+	/// Gets the optional filter predicate.
+	/// </summary>
+	Func<IDispatchCommunicationContext, bool>? Predicate { get; }
+
+	/// <summary>
+	/// Gets the optional order for this enricher.
+	/// </summary>
+	int? Order { get; }
 }

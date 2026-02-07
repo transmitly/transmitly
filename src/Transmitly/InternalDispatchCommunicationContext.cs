@@ -29,7 +29,7 @@ internal class InternalDispatchCommunicationContext(ITransactionModel? transacti
 	string pipelineIntent,
 	string? pipelineId,
 	BasePipelineDeliveryStrategyProvider strategyProvider,
-	IModelResolverService modelResolverService,
+	IModelEnricherService modelEnricherService,
 	MessagePriority messagePriority = MessagePriority.Normal,
 	TransportPriority transportPriority = TransportPriority.Normal) : IInternalDispatchCommunicationContext
 {
@@ -57,7 +57,7 @@ internal class InternalDispatchCommunicationContext(ITransactionModel? transacti
 
 	public BasePipelineDeliveryStrategyProvider StrategyProvider { get; } = Guard.AgainstNull(strategyProvider);
 
-	public IModelResolverService ModelResolverService { get; } = Guard.AgainstNull(modelResolverService);
+	public IModelEnricherService ModelEnricherService { get; } = Guard.AgainstNull(modelEnricherService);
 
 	public IContentModel? ContentModel { get; set; }
 }

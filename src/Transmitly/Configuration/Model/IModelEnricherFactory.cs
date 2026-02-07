@@ -14,11 +14,9 @@
 
 namespace Transmitly.Model.Configuration;
 
-/// <summary>
-/// Defines when a model resolver should execute.
-/// </summary>
-public enum ModelResolverScope
+public interface IModelEnricherFactory
 {
-	PerRecipient,
-	PerChannel
+	Task<IReadOnlyList<IModelEnricherRegistration>> GetAllEnrichersAsync();
+
+	Task<IModelEnricher?> GetEnricher(IModelEnricherRegistration registration);
 }

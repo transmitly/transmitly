@@ -39,7 +39,7 @@ public sealed class CommunicationsClientBuilder
 	private readonly List<IPersonaRegistration> _personaRegistrations = [];
 	private readonly List<IObserver<DeliveryReport>> _deliveryReportObservers = [];
 	private readonly List<IDispatchMiddleware> _middlewares = [];
-	private readonly List<IModelResolverRegistration> _modelResolvers = [];
+	private readonly List<IModelEnricherRegistration> _modelEnrichers = [];
 
 	/// <summary>
 	/// Creates an instance of the class
@@ -49,7 +49,7 @@ public sealed class CommunicationsClientBuilder
 		ChannelProvider = new(this, _channelProviders.Add);
 		Pipeline = new(this, _pipelines.Add);
 		PlatformIdentityResolver = new(this, _platformIdentityResolvers.Add);
-		ModelResolver = new(this, _modelResolvers.Add);
+		ModelEnricher = new(this, _modelEnrichers.Add);
 		TemplateEngine = new(this, _templateEngines.Add);
 		DeliveryReport = new(this, _deliveryReportObservers.Add);
 		Persona = new(this, _personaRegistrations.Add);
@@ -71,9 +71,9 @@ public sealed class CommunicationsClientBuilder
 	public PlatformIdentityResolverConfigurationBuilder PlatformIdentityResolver { get; }
 
 	/// <summary>
-	/// Gets the model resolver configuration builder.
+	/// Gets the model enricher configuration builder.
 	/// </summary>
-	public ModelResolverConfigurationBuilder ModelResolver { get; }
+	public ModelEnricherConfigurationBuilder ModelEnricher { get; }
 
 	/// <summary>
 	/// Gets the template engine configuration builder.
@@ -152,14 +152,14 @@ public sealed class CommunicationsClientBuilder
 		PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
 
 	/// <summary>
-	/// Adds a model resolver to the configuration.
+	/// Adds a model enricher to the configuration.
 	/// </summary>
-	/// <typeparam name="TResolver">Model resolver to register.</typeparam>
+	/// <typeparam name="TEnricher">Model enricher to register.</typeparam>
 	/// <param name="options">Optional registration options.</param>
 	/// <returns>The configuration builder.</returns>
-	public CommunicationsClientBuilder AddModelResolver<TResolver>(Action<ModelResolverRegistrationOptions>? options = null)
-		where TResolver : IModelResolver =>
-		ModelResolver.Add<TResolver>(options);
+	public CommunicationsClientBuilder AddModelEnricher<TEnricher>(Action<ModelEnricherRegistrationOptions>? options = null)
+		where TEnricher : IModelEnricher =>
+		ModelEnricher.Add<TEnricher>(options);
 
 	/// <summary>
 	/// Add a persona filter to the configuration.
@@ -204,7 +204,7 @@ public sealed class CommunicationsClientBuilder
 						_pipelines,
 						_templateEngines,
 						_platformIdentityResolvers,
-						_modelResolvers,
+						_modelEnrichers,
 						_personaRegistrations,
 						_deliveryReportObservers
 				),

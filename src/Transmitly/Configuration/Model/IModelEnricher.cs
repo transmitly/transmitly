@@ -14,18 +14,20 @@
 
 namespace Transmitly.Model.Configuration;
 
-public sealed class DefaultModelResolverRegistrationFactory(IEnumerable<IModelResolverRegistration> registrations) : IModelResolverFactory
+/// <summary>
+/// Enriches or mutates the current content model for a dispatch.
+/// </summary>
+public interface IModelEnricher
 {
-	private readonly List<IModelResolverRegistration> _registrations = [.. Guard.AgainstNull(registrations)];
-
-	public Task<IReadOnlyList<IModelResolverRegistration>> GetAllResolversAsync()
-	{
-		return Task.FromResult<IReadOnlyList<IModelResolverRegistration>>(_registrations);
-	}
-
-	public Task<IModelResolver?> GetResolver(IModelResolverRegistration registration)
-	{
-		Guard.AgainstNull(registration);
-		return Task.FromResult(Activator.CreateInstance(registration.ResolverType) as IModelResolver);
-	}
+	/// <summary>
+	/// Enriches the content model.
+	/// </summary>
+	/// <param name="context">Dispatch communication context.</param>
+	/// <param name="currentModel">Current content model.</param>
+	/// <param name="cancellationToken">Cancellation token.</param>
+	/// <returns>The enriched model; otherwise null to keep the current model.</returns>
+	Task<IContentModel?> EnrichAsync(
+		IDispatchCommunicationContext context,
+		IContentModel currentModel,
+		CancellationToken cancellationToken = default);
 }

@@ -15,40 +15,40 @@
 namespace Transmitly.Model.Configuration;
 
 /// <summary>
-/// Represents a builder for configuring model resolvers in the communications configuration.
+/// Represents a builder for configuring model enrichers in the communications configuration.
 /// </summary>
-public sealed class ModelResolverConfigurationBuilder
+public sealed class ModelEnricherConfigurationBuilder
 {
 	private readonly CommunicationsClientBuilder _communicationsConfiguration;
-	private readonly Action<IModelResolverRegistration> _addModelResolver;
+	private readonly Action<IModelEnricherRegistration> _addModelEnricher;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="ModelResolverConfigurationBuilder"/> class.
+	/// Initializes a new instance of the <see cref="ModelEnricherConfigurationBuilder"/> class.
 	/// </summary>
 	/// <param name="communicationsConfiguration">The communications configuration builder.</param>
-	/// <param name="addModelResolver">The action to add a model resolver.</param>
-	internal ModelResolverConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IModelResolverRegistration> addModelResolver)
+	/// <param name="addModelEnricher">The action to add a model enricher.</param>
+	internal ModelEnricherConfigurationBuilder(CommunicationsClientBuilder communicationsConfiguration, Action<IModelEnricherRegistration> addModelEnricher)
 	{
 		_communicationsConfiguration = Guard.AgainstNull(communicationsConfiguration);
-		_addModelResolver = Guard.AgainstNull(addModelResolver);
+		_addModelEnricher = Guard.AgainstNull(addModelEnricher);
 	}
 
 	/// <summary>
-	/// Adds a model resolver to the communications configuration.
+	/// Adds a model enricher to the communications configuration.
 	/// </summary>
-	/// <typeparam name="TResolver">Concrete model resolver type.</typeparam>
+	/// <typeparam name="TEnricher">Concrete model enricher type.</typeparam>
 	/// <param name="options">Optional configuration for the registration.</param>
 	/// <returns>The communications configuration builder.</returns>
-	public CommunicationsClientBuilder Add<TResolver>(Action<ModelResolverRegistrationOptions>? options = null)
-		where TResolver : IModelResolver
+	public CommunicationsClientBuilder Add<TEnricher>(Action<ModelEnricherRegistrationOptions>? options = null)
+		where TEnricher : IModelEnricher
 	{
-		var registrationOptions = new ModelResolverRegistrationOptions();
+		var registrationOptions = new ModelEnricherRegistrationOptions();
 		options?.Invoke(registrationOptions);
 
-		_addModelResolver(new ModelResolverRegistration(
-			typeof(TResolver),
+		_addModelEnricher(new ModelEnricherRegistration(
+			typeof(TEnricher),
 			registrationOptions.Scope,
-			registrationOptions.ContinueOnResolvedModel,
+			registrationOptions.ContinueOnEnrichedModel,
 			registrationOptions.Predicate,
 			registrationOptions.Order));
 

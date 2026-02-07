@@ -14,9 +14,16 @@
 
 namespace Transmitly.Model.Configuration;
 
-public interface IModelResolverFactory
+/// <summary>
+/// Options for registering a model enricher.
+/// </summary>
+public sealed class ModelEnricherRegistrationOptions
 {
-	Task<IReadOnlyList<IModelResolverRegistration>> GetAllResolversAsync();
+	public ModelEnricherScope Scope { get; set; } = ModelEnricherScope.PerChannel;
 
-	Task<IModelResolver?> GetResolver(IModelResolverRegistration registration);
+	public bool ContinueOnEnrichedModel { get; set; } = true;
+
+	public Func<IDispatchCommunicationContext, bool>? Predicate { get; set; }
+
+	public int? Order { get; set; }
 }

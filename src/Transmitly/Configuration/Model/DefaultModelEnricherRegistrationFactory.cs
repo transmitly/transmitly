@@ -14,20 +14,18 @@
 
 namespace Transmitly.Model.Configuration;
 
-internal sealed class ModelResolverRegistration(
-	Type resolverType,
-	ModelResolverScope scope,
-	bool continueOnResolvedModel,
-	Func<IDispatchCommunicationContext, bool>? predicate,
-	int? order) : IModelResolverRegistration
+public sealed class DefaultModelEnricherRegistrationFactory(IEnumerable<IModelEnricherRegistration> registrations) : IModelEnricherFactory
 {
-	public Type ResolverType => resolverType;
+	private readonly List<IModelEnricherRegistration> _registrations = [.. Guard.AgainstNull(registrations)];
 
-	public ModelResolverScope Scope => scope;
+	public Task<IReadOnlyList<IModelEnricherRegistration>> GetAllEnrichersAsync()
+	{
+		return Task.FromResult<IReadOnlyList<IModelEnricherRegistration>>(_registrations);
+	}
 
-	public bool ContinueOnResolvedModel => continueOnResolvedModel;
-
-	public Func<IDispatchCommunicationContext, bool>? Predicate => predicate;
-
-	public int? Order => order;
+	public Task<IModelEnricher?> GetEnricher(IModelEnricherRegistration registration)
+	{
+		Guard.AgainstNull(registration);
+		return Task.FromResult(Activator.CreateInstance(registration.EnricherType) as IModelEnricher);
+	}
 }

@@ -15,32 +15,10 @@
 namespace Transmitly.Model.Configuration;
 
 /// <summary>
-/// Represents a model resolver registration.
+/// Defines when a model enricher should execute.
 /// </summary>
-public interface IModelResolverRegistration
+public enum ModelEnricherScope
 {
-	/// <summary>
-	/// Gets the resolver type.
-	/// </summary>
-	Type ResolverType { get; }
-
-	/// <summary>
-	/// Gets the resolver scope.
-	/// </summary>
-	ModelResolverScope Scope { get; }
-
-	/// <summary>
-	/// Gets whether to continue invoking additional resolvers when a model is resolved.
-	/// </summary>
-	bool ContinueOnResolvedModel { get; }
-
-	/// <summary>
-	/// Gets the optional filter predicate.
-	/// </summary>
-	Func<IDispatchCommunicationContext, bool>? Predicate { get; }
-
-	/// <summary>
-	/// Gets the optional order for this resolver.
-	/// </summary>
-	int? Order { get; }
+	PerRecipient,
+	PerChannel
 }

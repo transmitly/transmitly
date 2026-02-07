@@ -29,6 +29,6 @@ public interface ICreateCommunicationsClientContext
 	IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
 	IReadOnlyCollection<IObserver<DeliveryReport>> DeliveryReportObservers { get; }
 	IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; }
-	IReadOnlyCollection<IModelResolverRegistration> ModelResolvers { get; }
+	IReadOnlyCollection<IModelEnricherRegistration> ModelEnrichers { get; }
 	IReadOnlyCollection<IPersonaRegistration> Personas { get; }
 }

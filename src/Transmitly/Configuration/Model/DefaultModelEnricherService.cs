@@ -16,28 +16,28 @@ using Transmitly.Exceptions;
 
 namespace Transmitly.Model.Configuration;
 
-public sealed class DefaultModelResolverService(IModelResolverFactory resolverFactory) : IModelResolverService
+public sealed class DefaultModelEnricherService(IModelEnricherFactory enricherFactory) : IModelEnricherService
 {
-	private readonly IModelResolverFactory _resolverFactory = Guard.AgainstNull(resolverFactory);
+	private readonly IModelEnricherFactory _enricherFactory = Guard.AgainstNull(enricherFactory);
 
-	public async Task<bool> HasResolversAsync(ModelResolverScope scope)
+	public async Task<bool> HasEnrichersAsync(ModelEnricherScope scope)
 	{
-		var allResolvers = await _resolverFactory.GetAllResolversAsync().ConfigureAwait(false);
-		return allResolvers.Any(r => r.Scope == scope);
+		var allEnrichers = await _enricherFactory.GetAllEnrichersAsync().ConfigureAwait(false);
+		return allEnrichers.Any(r => r.Scope == scope);
 	}
 
-	public async Task<IContentModel> ResolveAsync(
+	public async Task<IContentModel> EnrichAsync(
 		IDispatchCommunicationContext context,
 		IContentModel contentModel,
-		ModelResolverScope scope,
+		ModelEnricherScope scope,
 		CancellationToken cancellationToken = default)
 	{
 		Guard.AgainstNull(context);
 		Guard.AgainstNull(contentModel);
 
-		var allResolvers = await _resolverFactory.GetAllResolversAsync().ConfigureAwait(false);
+		var allEnrichers = await _enricherFactory.GetAllEnrichersAsync().ConfigureAwait(false);
 
-		var orderedResolvers = allResolvers
+		var orderedEnrichers = allEnrichers
 			.Select((registration, index) => new { registration, index })
 			.Where(x => x.registration.Scope == scope)
 			.OrderBy(x => x.registration.Order ?? int.MaxValue)
@@ -46,21 +46,21 @@ public sealed class DefaultModelResolverService(IModelResolverFactory resolverFa
 			.ToList();
 
 		var currentModel = contentModel;
-		foreach (var registration in orderedResolvers)
+		foreach (var registration in orderedEnrichers)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
 			if (registration.Predicate != null && !registration.Predicate(context))
 				continue;
 
-			var resolverInstance = await _resolverFactory.GetResolver(registration).ConfigureAwait(false)
-				?? throw new CommunicationsException("Unable to get an instance of model resolver");
+			var enricherInstance = await _enricherFactory.GetEnricher(registration).ConfigureAwait(false)
+				?? throw new CommunicationsException("Unable to get an instance of model enricher");
 
-			var resolvedModel = await resolverInstance.ResolveAsync(context, currentModel, cancellationToken).ConfigureAwait(false);
-			if (resolvedModel != null)
+			var enrichedModel = await enricherInstance.EnrichAsync(context, currentModel, cancellationToken).ConfigureAwait(false);
+			if (enrichedModel != null)
 			{
-				currentModel = resolvedModel;
-				if (!registration.ContinueOnResolvedModel)
+				currentModel = enrichedModel;
+				if (!registration.ContinueOnEnrichedModel)
 					break;
 			}
 		}

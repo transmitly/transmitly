@@ -14,20 +14,20 @@
 
 namespace Transmitly.Model.Configuration;
 
-/// <summary>
-/// Resolves or mutates the current content model for a dispatch.
-/// </summary>
-public interface IModelResolver
+internal sealed class ModelEnricherRegistration(
+	Type enricherType,
+	ModelEnricherScope scope,
+	bool continueOnEnrichedModel,
+	Func<IDispatchCommunicationContext, bool>? predicate,
+	int? order) : IModelEnricherRegistration
 {
-	/// <summary>
-	/// Resolves the content model.
-	/// </summary>
-	/// <param name="context">Dispatch communication context.</param>
-	/// <param name="currentModel">Current content model.</param>
-	/// <param name="cancellationToken">Cancellation token.</param>
-	/// <returns>The resolved model; otherwise null to keep the current model.</returns>
-	Task<IContentModel?> ResolveAsync(
-		IDispatchCommunicationContext context,
-		IContentModel currentModel,
-		CancellationToken cancellationToken = default);
+	public Type EnricherType => enricherType;
+
+	public ModelEnricherScope Scope => scope;
+
+	public bool ContinueOnEnrichedModel => continueOnEnrichedModel;
+
+	public Func<IDispatchCommunicationContext, bool>? Predicate => predicate;
+
+	public int? Order => order;
 }

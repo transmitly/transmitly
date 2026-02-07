@@ -24,11 +24,11 @@ internal interface IInternalDispatchCommunicationContext
 {
 	BasePipelineDeliveryStrategyProvider StrategyProvider { get; }
 	/// <summary>
-	/// Gets the model resolver service.
+	/// Gets the model enricher service.
 	/// </summary>
-	IModelResolverService ModelResolverService { get; }
+	IModelEnricherService ModelEnricherService { get; }
 	/// <summary>
-	/// Gets or sets the resolved content model.
+	/// Gets or sets the enriched content model.
 	/// </summary>
 	IContentModel? ContentModel { get; set; }
 	/// <summary>

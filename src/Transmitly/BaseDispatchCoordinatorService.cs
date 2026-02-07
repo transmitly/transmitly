@@ -26,13 +26,13 @@ public abstract class BaseDispatchCoordinatorService(
 	IChannelChannelProviderService channelChannelProviderService,
 	IPersonaService personaService,
 	ITemplateEngineFactory templateEngineFactory,
-	IModelResolverService modelResolverService,
+	IModelEnricherService modelEnricherService,
 	IDeliveryReportService deliveryReportService) : IDispatchCoordinatorService
 {
 	private readonly IChannelChannelProviderService _channelChannelProviderService = channelChannelProviderService;
 	private readonly IPersonaService _personaService = personaService;
 	private readonly ITemplateEngineFactory _templateEngineFactory = templateEngineFactory;
-	private readonly IModelResolverService _modelResolverService = modelResolverService;
+	private readonly IModelEnricherService _modelEnricherService = modelEnricherService;
 	private readonly IDeliveryReportService _deliveryReportProvider = deliveryReportService;
 
 	public virtual async Task<IReadOnlyCollection<RecipientDispatchCommunicationContext>> CreateRecipientContexts(
@@ -44,7 +44,7 @@ public abstract class BaseDispatchCoordinatorService(
 	{
 		var recipientContexts = new List<RecipientDispatchCommunicationContext>();
 		var templateEngine = _templateEngineFactory.Get();
-		var hasPerRecipientResolvers = await _modelResolverService.HasResolversAsync(ModelResolverScope.PerRecipient).ConfigureAwait(false);
+		var hasPerRecipientEnrichers = await _modelEnricherService.HasEnrichersAsync(ModelEnricherScope.PerRecipient).ConfigureAwait(false);
 
 		foreach (var pipeline in pipelines)
 		{
@@ -63,12 +63,12 @@ public abstract class BaseDispatchCoordinatorService(
 					pipeline.Intent,
 					pipeline.Id,
 					pipelineConfiguration.PipelineDeliveryStrategyProvider,
-					_modelResolverService);
+					_modelEnricherService);
 
-				if (hasPerRecipientResolvers)
+				if (hasPerRecipientEnrichers)
 				{
 					var baseContentModel = new ContentModel(transactionalModel, new[] { platformIdentity });
-					var resolverContext = new DispatchCommunicationContext(
+					var enricherContext = new DispatchCommunicationContext(
 						baseContentModel,
 						pipelineConfiguration,
 						new[] { platformIdentity },
@@ -78,10 +78,10 @@ public abstract class BaseDispatchCoordinatorService(
 						pipeline.Intent,
 						pipeline.Id);
 
-					context.ContentModel = await _modelResolverService.ResolveAsync(
-						resolverContext,
+					context.ContentModel = await _modelEnricherService.EnrichAsync(
+						enricherContext,
 						baseContentModel,
-						ModelResolverScope.PerRecipient).ConfigureAwait(false);
+						ModelEnricherScope.PerRecipient).ConfigureAwait(false);
 				}
 
 				var orderedChannels = SetPipelineChannelOrderPreference(dispatchChannelPreferences, pipelineConfiguration);

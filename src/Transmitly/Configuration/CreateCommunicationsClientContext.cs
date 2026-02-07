@@ -28,7 +28,7 @@ internal sealed class CreateCommunicationsClientContext(
 	IReadOnlyCollection<IPipeline> pipelines,
 	IReadOnlyCollection<ITemplateEngineRegistration> templateEngines,
 	IReadOnlyCollection<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations,
-	IReadOnlyCollection<IModelResolverRegistration> modelResolverRegistrations,
+	IReadOnlyCollection<IModelEnricherRegistration> modelEnricherRegistrations,
 	IReadOnlyCollection<IPersonaRegistration> personaRegistrations,
 	IReadOnlyCollection<IObserver<DeliveryReport>> deliveryReportObservers
 ) : ICreateCommunicationsClientContext
@@ -41,7 +41,7 @@ internal sealed class CreateCommunicationsClientContext(
 
 	public IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; } = platformIdentityResolverRegistrations;
 
-	public IReadOnlyCollection<IModelResolverRegistration> ModelResolvers { get; } = modelResolverRegistrations;
+	public IReadOnlyCollection<IModelEnricherRegistration> ModelEnrichers { get; } = modelEnricherRegistrations;
 
 	public IReadOnlyCollection<IPersonaRegistration> Personas { get; } = personaRegistrations;
 
