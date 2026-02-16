@@ -56,8 +56,11 @@ public class BasePersonaFactoryTests : BaseUnitTest
 		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => sut.AnyMatch<UnitTestPersona>(fixture.Create<string>(), null!));
 	}
 
+#pragma warning disable S2094 // Classes should not be empty
 	class UnitTestPersona
+
 	{
 
 	}
+#pragma warning restore S2094 // Classes should not be empty
 }

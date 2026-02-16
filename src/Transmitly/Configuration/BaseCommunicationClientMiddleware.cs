@@ -38,6 +38,7 @@ public abstract class BaseCommunicationClientMiddleware : ICommunicationClientMi
 				deliveryReportService
 			),
 			new DefaultPlatformIdentityService(new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers)),
+			new DefaultPlatformIdentityProfileEnricherService(new DefaultPlatformIdentityProfileEnricherRegistrationFactory(context.PlatformIdentityProfileEnrichers)),
 			deliveryReportService
 		);
 	}

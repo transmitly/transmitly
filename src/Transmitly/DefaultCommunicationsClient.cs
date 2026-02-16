@@ -24,11 +24,13 @@ public sealed class DefaultCommunicationsClient(
 	IPipelineService pipelineService,
 	IDispatchCoordinatorService dispatchCoordinatorService,
 	IPlatformIdentityService platformIdentityService,
+	IPlatformIdentityProfileEnricherService platformIdentityProfileEnricherService,
 	IDeliveryReportService deliveryReportHandler)
 	: ICommunicationsClient
 {
 	private readonly IDeliveryReportService _deliveryReportProvider = Guard.AgainstNull(deliveryReportHandler);
 	private readonly IPlatformIdentityService _platformIdentityResolvers = Guard.AgainstNull(platformIdentityService);
+	private readonly IPlatformIdentityProfileEnricherService _platformIdentityProfileEnrichers = Guard.AgainstNull(platformIdentityProfileEnricherService);
 	private readonly IPipelineService _pipelineLookupService = Guard.AgainstNull(pipelineService);
 	private readonly IDispatchCoordinatorService _dispatchCoordinatorService = Guard.AgainstNull(dispatchCoordinatorService);
 
@@ -71,6 +73,15 @@ public sealed class DefaultCommunicationsClient(
 	private async Task<IDispatchCommunicationResult> DispatchAsync(IReadOnlyCollection<IPipeline> pipelines, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, CultureInfo? cultureInfo = null, CancellationToken cancellationToken = default)
 	{
 		var cultureInfoSafe = GuardCulture.AgainstNull(cultureInfo);
+
+		try
+		{
+			await _platformIdentityProfileEnrichers.EnrichIdentityProfilesAsync(platformIdentities).ConfigureAwait(false);
+		}
+		catch
+		{
+			return new DispatchCommunicationResult([new DispatchResult(PredefinedCommunicationStatuses.PlatformIdentityProfileEnrichmentFailed)]);
+		}
 
 		var recipientContexts = await _dispatchCoordinatorService.CreateRecipientContexts(pipelines, platformIdentities, transactionalModel, dispatchChannelPreferences, cultureInfoSafe).ConfigureAwait(false);
 
