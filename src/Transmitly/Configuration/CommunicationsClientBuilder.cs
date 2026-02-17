@@ -34,6 +34,7 @@ public sealed class CommunicationsClientBuilder
 	private readonly List<IChannelProviderRegistration> _channelProviders = [];
 	private readonly List<IPipeline> _pipelines = [];
 	private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolvers = [];
+	private readonly List<IPlatformIdentityProfileEnricherRegistration> _platformIdentityProfileEnrichers = [];
 	private readonly List<ITemplateEngineRegistration> _templateEngines = [];
 	private readonly List<IPersonaRegistration> _personaRegistrations = [];
 	private readonly List<IObserver<DeliveryReport>> _deliveryReportObservers = [];
@@ -47,6 +48,7 @@ public sealed class CommunicationsClientBuilder
 		ChannelProvider = new(this, _channelProviders.Add);
 		Pipeline = new(this, _pipelines.Add);
 		PlatformIdentityResolver = new(this, _platformIdentityResolvers.Add);
+		PlatformIdentityProfileEnricher = new(this, _platformIdentityProfileEnrichers.Add);
 		TemplateEngine = new(this, _templateEngines.Add);
 		DeliveryReport = new(this, _deliveryReportObservers.Add);
 		Persona = new(this, _personaRegistrations.Add);
@@ -66,6 +68,11 @@ public sealed class CommunicationsClientBuilder
 	/// Gets the platform identity resolver configuration builder.
 	/// </summary>
 	public PlatformIdentityResolverConfigurationBuilder PlatformIdentityResolver { get; }
+
+	/// <summary>
+	/// Gets the platform identity profile enricher configuration builder.
+	/// </summary>
+	public PlatformIdentityProfileEnricherConfigurationBuilder PlatformIdentityProfileEnricher { get; }
 
 	/// <summary>
 	/// Gets the template engine configuration builder.
@@ -144,6 +151,17 @@ public sealed class CommunicationsClientBuilder
 		PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
 
 	/// <summary>
+	/// Adds a platform identity profile enricher to the configuration.
+	/// </summary>
+	/// <typeparam name="TEnricher">Platform identity profile enricher to register.</typeparam>
+	/// <param name="platformIdentityType">Limit this enricher to only profiles with the provided type.</param>
+	/// <param name="order">Deterministic execution order. Lower values run first.</param>
+	/// <returns>The configuration builder.</returns>
+	public CommunicationsClientBuilder AddPlatformIdentityProfileEnricher<TEnricher>(string? platformIdentityType = null, int order = 0)
+		where TEnricher : IPlatformIdentityProfileEnricher =>
+		PlatformIdentityProfileEnricher.Add<TEnricher>(platformIdentityType, order);
+
+	/// <summary>
 	/// Add a persona filter to the configuration.
 	/// </summary>
 	/// <typeparam name="TPersona">Concrete persona type.</typeparam>
@@ -186,6 +204,7 @@ public sealed class CommunicationsClientBuilder
 						_pipelines,
 						_templateEngines,
 						_platformIdentityResolvers,
+						_platformIdentityProfileEnrichers,
 						_personaRegistrations,
 						_deliveryReportObservers
 				),

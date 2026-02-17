@@ -19,44 +19,36 @@ namespace Transmitly;
 /// <summary>
 /// Context information for dispatch middleware.
 /// </summary>
-public sealed class DispatchMiddlewareContext
+public sealed class DispatchMiddlewareContext(IChannelProvider provider,
+		IDispatchCommunicationContext context,
+		object communication,
+		IChannelProviderDispatcher dispatcher,
+		CancellationToken token)
 {
-        public DispatchMiddlewareContext(IChannelProvider provider,
-                IDispatchCommunicationContext context,
-                object communication,
-                IChannelProviderDispatcher dispatcher,
-                CancellationToken token)
-        {
-                Provider = Guard.AgainstNull(provider);
-                Context = Guard.AgainstNull(context);
-                Communication = Guard.AgainstNull(communication);
-                Dispatcher = Guard.AgainstNull(dispatcher);
-                Token = token;
-        }
 
-        /// <summary>
-        /// Gets the channel provider used for dispatching.
-        /// </summary>
-        public IChannelProvider Provider { get; }
+	/// <summary>
+	/// Gets the channel provider used for dispatching.
+	/// </summary>
+	public IChannelProvider Provider { get; } = Guard.AgainstNull(provider);
 
-        /// <summary>
-        /// Gets the dispatch communication context.
-        /// </summary>
-        public IDispatchCommunicationContext Context { get; }
+	/// <summary>
+	/// Gets the dispatch communication context.
+	/// </summary>
+	public IDispatchCommunicationContext Context { get; } = Guard.AgainstNull(context);
 
-        /// <summary>
-        /// Gets the channel communication being dispatched.
-        /// </summary>
-        public object Communication { get; }
+	/// <summary>
+	/// Gets the channel communication being dispatched.
+	/// </summary>
+	public object Communication { get; } = Guard.AgainstNull(communication);
 
-        /// <summary>
-        /// Gets the dispatcher instance.
-        /// </summary>
-        public IChannelProviderDispatcher Dispatcher { get; }
+	/// <summary>
+	/// Gets the dispatcher instance.
+	/// </summary>
+	public IChannelProviderDispatcher Dispatcher { get; } = Guard.AgainstNull(dispatcher);
 
-        /// <summary>
-        /// Gets the cancellation token.
-        /// </summary>
-        public CancellationToken Token { get; }
+	/// <summary>
+	/// Gets the cancellation token.
+	/// </summary>
+	public CancellationToken Token { get; } = token;
 }
 

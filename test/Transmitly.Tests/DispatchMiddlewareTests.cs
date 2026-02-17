@@ -43,7 +43,6 @@ public class DispatchMiddlewareTests
 	private sealed class FlagDispatcher : IChannelProviderDispatcher<object>
 	{
 		public static bool WasCalled;
-		public FlagDispatcher() => WasCalled = false;
 		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 		{
 			WasCalled = true;

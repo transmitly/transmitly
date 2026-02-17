@@ -32,11 +32,13 @@ public class DefaultCommunicationsDeliveryClientTests
 		var pipelineService = new Mock<IPipelineService>().Object;
 		var dispatchCoordinatorService = new Mock<IDispatchCoordinatorService>().Object;
 		var platformIdentityService = new Mock<IPlatformIdentityService>().Object;
+		var platformIdentityProfileEnricherService = new Mock<IPlatformIdentityProfileEnricherService>().Object;
 
 		_client = new DefaultCommunicationsClient(
 			pipelineService,
 			dispatchCoordinatorService,
 			platformIdentityService,
+			platformIdentityProfileEnricherService,
 			_deliveryReportServiceMock.Object
 		);
 	}
