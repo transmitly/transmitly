@@ -91,11 +91,11 @@ That's it! You're dispatching emails like a champ. But you might think that seem
   
 
 ### Changing Channel Providers
-Want to try out a new service to send out your emails? Twilio? Infobip? With Transmitly it's as easy as adding a your preferred channel provider and a few lines of configuration. In the example below, we'll try out SendGrid.
+Want to try out a new service to send out your emails? Twilio? Infobip? With Transmitly it's as easy as adding your preferred channel provider and a few lines of configuration. In the example below, we'll try out SendGrid.
 
 For the next example we'll start using SendGrid to send our emails. 
 ```shell
-dotnet install Transmitly.ChannelProvider.Sendgrid
+dotnet add package Transmitly.ChannelProvider.SendGrid
 ```
 
 Next we'll update our configuration. Notice we've removed SmtpSupport and added SendGridSupport. 
@@ -165,6 +165,7 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
        email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
        email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
     });
+})
 .BuildClient();
 
 builder.Services.AddSingleton(communicationsClient);
@@ -172,20 +173,20 @@ builder.Services.AddSingleton(communicationsClient);
 
 Adding the `AddDeliveryReportHandler` gives us the option of passing in a func that will be executed during different lifecycles of the communications being dispatched. In this case, we're listening to any report for any channel/channel provider. If you'd like a bit more [fine grained control check out the wiki](https://github.com/transmitly/transmitly/wiki/Delivery-Reports#filters) for information on how you can dial in the data you want. Delivery reports are built to give you the most flexibility to handle the changes to communications as part of your communications strategy. With a delivery report you could retry a failed send, notify stakeholders of important messages and more commonly, store the contents of communications being sent.
 
-Note: As mentioned earlier, using 3rd party services usually means you will have asynchronous updates to the status of the communication. In general, most providers will push this information to you in the form of a webhook. Transmitly can help with these webhooks with the Mvc libraries.
+Note: As mentioned earlier, using 3rd party services usually means you will have asynchronous updates to the status of the communication. In general, most providers will push this information to you in the form of a webhook. Transmitly can help with these webhooks with the MVC libraries.
 
-Using the Transmitly Mvc libraries you're able to configure all of your channel providers to send to the endpoint you define. Transmitly will manage wrapping the data up and calling your delivery report handlers. [[AspNetCore.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc) [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.AspnetCore.Mvc?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Aspnetcore.Mvc)] [[AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc) [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Aspnet.Mvc?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Aspnet.Mvc)]
+Using the Transmitly MVC libraries you're able to configure all of your channel providers to send to the endpoint you define. Transmitly will manage wrapping the data up and calling your delivery report handlers. [[AspNetCore.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc) [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.AspnetCore.Mvc?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Aspnetcore.Mvc)] [[AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc) [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Aspnet.Mvc?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Aspnet.Mvc)]
 
-[See the wiki for more on delivery reports]([wiki/Delivery-Reports](https://github.com/transmitly/transmitly/wiki/Delivery-Reports))
+[See the wiki for more on delivery reports](https://github.com/transmitly/transmitly/wiki/Delivery-Reports)
 
 ### Template Engines
 Templating is not supported out of the box. This is by design to allow you to choose the template engine you prefer, or even further, integrating a bespoke engine that you'd really like to keep using. As of today, Transmitly has two officially supported template engines; Fluid & Scriban. As with any other feature, it's as simple as adding the template engine to your project. For this example, we'll use Scriban
 
 ```bash
-dotnet add Transmitly.TemplateEngines.Scriban
+dotnet add package Transmitly.TemplateEngine.Scriban
 ```
 
-Building upon our example, we can add support by adding the `AddScribanTemplateEngine()`. Along with adding the template engine, we'll want to update date our email template to actually do some templating
+Building upon our example, we can add support by adding the `AddScribanTemplateEngine()`. Along with adding the template engine, we'll want to update our email template to actually do some templating
 
 ```csharp
 using Transmitly;
@@ -209,6 +210,7 @@ ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
        email.HtmlBody.AddStringTemplate("{{firstName}}, check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
        email.TextBody.AddStringTemplate("{{firstName}}, check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
     });
+})
 .BuildClient();
 
 builder.Services.AddSingleton(communicationsClient);
@@ -255,8 +257,9 @@ We've only scratched the surface. Transmitly can do a **LOT** more to _deliver_ 
 ### Supported Dependency Injection Containers
 |Container |  Project | Package | 
 | -------- | -------- | --------- |
-| Microsoft.Microsoft.Extensions.DependencyInjection | [Transmitly.Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Extensions.DependencyInjection?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Extensions.DependencyInjection) |
+| Microsoft.Extensions.DependencyInjection | [Transmitly.Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Extensions.DependencyInjection?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Extensions.DependencyInjection) |
 
 ---
-_Copyright © Code Impressions, LLC.  This open-source project is sponsored and maintained by Code Impressions
+_Copyright (c) Code Impressions, LLC.  This open-source project is sponsored and maintained by Code Impressions
 and is licensed under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html)._
+
