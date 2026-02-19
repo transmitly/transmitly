@@ -59,12 +59,23 @@ public sealed class DefaultContentModelEnricherService(IContentModelEnricherFact
 			var enrichedModel = await enricherInstance.EnrichAsync(context, currentModel, cancellationToken).ConfigureAwait(false);
 			if (enrichedModel != null)
 			{
-				currentModel = enrichedModel;
+				currentModel = PreserveProtectedProperties(currentModel, enrichedModel);
 				if (!registration.ContinueOnEnrichedModel)
 					break;
 			}
 		}
 
 		return currentModel;
+	}
+
+	private static IContentModel PreserveProtectedProperties(IContentModel source, IContentModel target)
+	{
+		if (source.Model is DynamicContentModel sourceDynamic &&
+			target.Model is DynamicContentModel targetDynamic)
+		{
+			targetDynamic.CopyProtectedPropertiesFrom(sourceDynamic);
+		}
+
+		return target;
 	}
 }

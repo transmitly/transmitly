@@ -32,7 +32,12 @@ internal sealed class ContentModel : IContentModel
 	{
 		Resources = resources ?? [];
 		LinkedResources = linkedResources ?? [];
-		Model = new DynamicContentModel(model, platformIdentities, resources, linkedResources);
+		Model = new DynamicContentModel(
+			model,
+			platformIdentities,
+			resources,
+			linkedResources,
+			protectedKeys: DynamicContentModel.ProtectedContentPropertyKeys);
 	}
 
 	public object Model { get; }

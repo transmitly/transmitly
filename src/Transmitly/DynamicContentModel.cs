@@ -21,11 +21,16 @@ namespace Transmitly;
 internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDictionary<string, object?>
 {
 	private readonly Dictionary<string, object?> _bag = [];
+	private readonly HashSet<string> _protectedKeys;
+	private readonly bool _isReadOnly;
 
 	private const string TransactionPropertyKey = "trx";
 	private const string PlatformIdentityPropertyKey = "pid";
 	private const string ResourcePropertyKey = "att";
 	private const string LinkedResourcePropertyKey = "lnk";
+
+	internal static IReadOnlyCollection<string> ProtectedContentPropertyKeys { get; } =
+		new[] { TransactionPropertyKey, PlatformIdentityPropertyKey };
 
 	bool IDictionary.IsFixedSize => false;
 	bool IDictionary.IsReadOnly => false;
@@ -42,7 +47,11 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 	object? IDictionary<string, object?>.this[string key]
 	{
 		get => _bag[key];
-		set => _bag[key] = value;
+		set
+		{
+			EnsureWritableForKey(key);
+			_bag[key] = value;
+		}
 	}
 
 	object? IDictionary.this[object key]
@@ -55,6 +64,7 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		set
 		{
 			var k = ValidateKey(key);
+			EnsureWritableForKey(k);
 			_bag[k] = value;
 		}
 	}
@@ -68,8 +78,15 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		object? model,
 		IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities,
 		IReadOnlyList<Resource>? resources,
-		IReadOnlyList<LinkedResource>? linkedResources)
+		IReadOnlyList<LinkedResource>? linkedResources,
+		bool isReadOnly = false,
+		IEnumerable<string>? protectedKeys = null)
 	{
+		_isReadOnly = isReadOnly;
+		_protectedKeys = protectedKeys != null
+			? new HashSet<string>(protectedKeys, StringComparer.OrdinalIgnoreCase)
+			: new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
 		if (model == null)
 			return;
 
@@ -84,12 +101,12 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		foreach (var identity in Guard.AgainstNull(platformIdentities).Where(id => !string.IsNullOrWhiteSpace(id.Id)))
 		{
 			_bag.Add(identity.Id!, identity);
-			_bag.Add(PlatformIdentityPropertyKey, ConvertToDynamic(identity));
+			_bag.Add(PlatformIdentityPropertyKey, ConvertToDynamic(identity, isReadOnly: true));
 		}
 		//hack end
 		_bag[ResourcePropertyKey] = ConvertToDynamic(resources?.Select(s => new { s.Name, s.ContentType }).ToList());
 		_bag[LinkedResourcePropertyKey] = ConvertToDynamic(linkedResources?.Select(s => new { s.Name, s.Id, s.ContentType }).ToList());
-		_bag[TransactionPropertyKey] = ConvertToDynamic(model);
+		_bag[TransactionPropertyKey] = ConvertToDynamic(model, isReadOnly: true);
 
 		if (model is IDictionary<string, object?> expandoObj)
 		{
@@ -121,7 +138,7 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 	// Recursively converts any object to a dynamic-friendly format.
 	// Primitives and strings are returned as-is. Dictionaries and enumerables
 	// are recursively processed, and other objects are wrapped in a DynamicContentModel.
-	private static object? ConvertToDynamic(object? input)
+	private static object? ConvertToDynamic(object? input, bool isReadOnly = false)
 	{
 		if (input == null)
 			return null;
@@ -138,10 +155,10 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		// Handle generic dictionaries.
 		if (input is IDictionary<string, object?> dict)
 		{
-			var newDict = new DynamicContentModel(null, new List<IPlatformIdentityProfile>(), null, null);
+			var newDict = new DynamicContentModel(null, new List<IPlatformIdentityProfile>(), null, null, isReadOnly: isReadOnly);
 			foreach (var kvp in dict)
 			{
-				newDict._bag[kvp.Key] = ConvertToDynamic(kvp.Value);
+				newDict._bag[kvp.Key] = ConvertToDynamic(kvp.Value, isReadOnly);
 			}
 			return newDict;
 		}
@@ -149,11 +166,11 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		// Handle non-generic dictionaries.
 		if (input is IDictionary nonGen)
 		{
-			var newDict = new DynamicContentModel(null, new List<IPlatformIdentityProfile>(), null, null);
+			var newDict = new DynamicContentModel(null, new List<IPlatformIdentityProfile>(), null, null, isReadOnly: isReadOnly);
 			foreach (DictionaryEntry entry in nonGen)
 			{
 				string key = entry.Key?.ToString() ?? "";
-				newDict._bag[key] = ConvertToDynamic(entry.Value);
+				newDict._bag[key] = ConvertToDynamic(entry.Value, isReadOnly);
 			}
 			return newDict;
 		}
@@ -164,23 +181,23 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 			var list = new List<object?>();
 			foreach (var item in enumerable)
 			{
-				list.Add(ConvertToDynamic(item));
+				list.Add(ConvertToDynamic(item, isReadOnly));
 			}
 			return list;
 		}
 
 		// Otherwise, assume it's a custom object and create a dynamic wrapper.
-		return CreateDynamicFromObject(input);
+		return CreateDynamicFromObject(input, isReadOnly);
 	}
 
-	private static DynamicContentModel CreateDynamicFromObject(object model)
+	private static DynamicContentModel CreateDynamicFromObject(object model, bool isReadOnly)
 	{
-		var result = new DynamicContentModel(null, new List<IPlatformIdentityProfile>(), null, null);
+		var result = new DynamicContentModel(null, new List<IPlatformIdentityProfile>(), null, null, isReadOnly: isReadOnly);
 		foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(model))
 		{
 			if (!result._bag.ContainsKey(prop.Name))
 			{
-				result._bag[prop.Name] = ConvertToDynamic(prop.GetValue(model));
+				result._bag[prop.Name] = ConvertToDynamic(prop.GetValue(model), isReadOnly);
 			}
 		}
 		return result;
@@ -199,6 +216,7 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 
 	public override bool TrySetMember(SetMemberBinder binder, object? value)
 	{
+		EnsureWritableForKey(binder.Name);
 		_bag[binder.Name] = value;
 		return true;
 	}
@@ -215,27 +233,68 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		return false;
 	}
 
-	public void Add(object key, object? value) => _bag.Add(ValidateKey(key), value);
-	public void Clear() => _bag.Clear();
+	public void Add(object key, object? value)
+	{
+		var k = ValidateKey(key);
+		EnsureWritableForKey(k);
+		_bag.Add(k, value);
+	}
+
+	public void Clear()
+	{
+		EnsureWritable();
+
+		if (_protectedKeys.Any(_bag.ContainsKey))
+			throw CreateProtectedPropertyException("clear");
+
+		_bag.Clear();
+	}
+
 	public bool Contains(object key) => _bag.ContainsKey(ValidateKey(key));
 	IDictionaryEnumerator IDictionary.GetEnumerator() => ((IDictionary)_bag).GetEnumerator();
-	public void Remove(object key) => _bag.Remove(ValidateKey(key));
+	public void Remove(object key)
+	{
+		var k = ValidateKey(key);
+		EnsureWritableForKey(k);
+		_bag.Remove(k);
+	}
+
 	public void CopyTo(Array array, int index) => ((ICollection)_bag).CopyTo(array, index);
 
 	// IDictionary<string, object?> implementation
 	public bool ContainsKey(string key) => _bag.ContainsKey(key);
-	public void Add(string key, object? value) => _bag.Add(key, value);
-	public bool Remove(string key) => _bag.Remove(key);
+	public void Add(string key, object? value)
+	{
+		EnsureWritableForKey(key);
+		_bag.Add(key, value);
+	}
+
+	public bool Remove(string key)
+	{
+		EnsureWritableForKey(key);
+		return _bag.Remove(key);
+	}
+
 	public bool TryGetValue(string key, out object? value) => _bag.TryGetValue(key, out value);
 
 	// ICollection<KeyValuePair<string, object?>> implementation
-	public void Add(KeyValuePair<string, object?> item) => _bag.Add(item.Key, item.Value);
-	public void ClearItems() => _bag.Clear();
+	public void Add(KeyValuePair<string, object?> item)
+	{
+		EnsureWritableForKey(item.Key);
+		_bag.Add(item.Key, item.Value);
+	}
+
+	public void ClearItems() => Clear();
+
 	public bool Contains(KeyValuePair<string, object?> item) => _bag.Contains(item);
 	public void CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex) =>
 		((ICollection<KeyValuePair<string, object?>>)_bag).CopyTo(array, arrayIndex);
-	public bool Remove(KeyValuePair<string, object?> item) =>
-		((ICollection<KeyValuePair<string, object?>>)_bag).Remove(item);
+
+	public bool Remove(KeyValuePair<string, object?> item)
+	{
+		EnsureWritableForKey(item.Key);
+		return ((ICollection<KeyValuePair<string, object?>>)_bag).Remove(item);
+	}
 
 	IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => _bag.GetEnumerator();
 	IEnumerator IEnumerable.GetEnumerator() => _bag.GetEnumerator();
@@ -251,4 +310,33 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		var binder = new InternalGetMemberBinder(member, true);
 		return TryGetMember(binder, out result);
 	}
+
+	internal void CopyProtectedPropertiesFrom(DynamicContentModel source)
+	{
+		Guard.AgainstNull(source);
+
+		foreach (var key in _protectedKeys)
+		{
+			if (source._bag.TryGetValue(key, out var value))
+			{
+				_bag[key] = value;
+			}
+		}
+	}
+
+	private void EnsureWritable()
+	{
+		if (_isReadOnly)
+			throw new InvalidOperationException("This content model section is read-only.");
+	}
+
+	private void EnsureWritableForKey(string key)
+	{
+		EnsureWritable();
+		if (_protectedKeys.Contains(key))
+			throw CreateProtectedPropertyException(key);
+	}
+
+	private static InvalidOperationException CreateProtectedPropertyException(string key) =>
+		new($"The content model property '{key}' is protected and cannot be modified by content model enrichers.");
 }

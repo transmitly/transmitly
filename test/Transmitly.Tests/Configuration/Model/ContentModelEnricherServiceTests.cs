@@ -94,6 +94,58 @@ public sealed class ContentModelEnricherServiceTests
 	}
 
 	[TestMethod]
+	public async Task EnrichAsync_ThrowsWhenEnricherOverridesProtectedTrxProperty()
+	{
+		var registrations = new List<IContentModelEnricherRegistration>
+		{
+			new ContentModelEnricherRegistration(typeof(ReplaceProtectedTrxPropertyEnricher), ContentModelEnricherScope.PerChannel, true, null, 0)
+		};
+
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var context = CreateDispatchContext();
+		var model = CreateContentModel(context.PlatformIdentities, new { Value = "original" });
+
+		await Assert.ThrowsExactlyAsync<InvalidOperationException>(() =>
+			service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel));
+	}
+
+	[TestMethod]
+	public async Task EnrichAsync_ThrowsWhenEnricherMutatesProtectedTrxObject()
+	{
+		var registrations = new List<IContentModelEnricherRegistration>
+		{
+			new ContentModelEnricherRegistration(typeof(MutateProtectedTrxObjectEnricher), ContentModelEnricherScope.PerChannel, true, null, 0)
+		};
+
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var context = CreateDispatchContext();
+		var model = CreateContentModel(context.PlatformIdentities, new { Value = "original" });
+
+		await Assert.ThrowsExactlyAsync<InvalidOperationException>(() =>
+			service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel));
+	}
+
+	[TestMethod]
+	public async Task EnrichAsync_PreservesProtectedPropertiesWhenModelIsReplaced()
+	{
+		var registrations = new List<IContentModelEnricherRegistration>
+		{
+			new ContentModelEnricherRegistration(typeof(ReplaceModelOverridingProtectedPropertiesEnricher), ContentModelEnricherScope.PerChannel, true, null, 0)
+		};
+
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var context = CreateDispatchContext();
+		var model = CreateContentModel(context.PlatformIdentities, new { Value = "original" });
+
+		var enriched = await service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel);
+		var bag = (IDictionary<string, object?>)enriched.Model;
+		var trx = (IDictionary<string, object?>)bag["trx"]!;
+
+		Assert.AreEqual("original", trx["Value"]);
+		Assert.AreEqual("custom-value", bag["custom"]);
+	}
+
+	[TestMethod]
 	public async Task EnrichAsync_AllowsAsyncExternalReplacement()
 	{
 		ContentModelEnricherRecorder.Reset();
@@ -254,10 +306,10 @@ public sealed class ContentModelEnricherServiceTests
 			ChannelProviderId: channelProviderId);
 	}
 
-	private static ContentModel CreateContentModel(IReadOnlyCollection<IPlatformIdentityProfile> recipients)
+	private static ContentModel CreateContentModel(IReadOnlyCollection<IPlatformIdentityProfile> recipients, object? model = null)
 	{
 		return new ContentModel(
-			TransactionModel.Create(new { }),
+			TransactionModel.Create(model ?? new { }),
 			recipients);
 	}
 
@@ -341,6 +393,38 @@ public sealed class ContentModelEnricherServiceTests
 			await Task.Delay(25, cancellationToken);
 			var replacement = new ContentModel(TransactionModel.Create(new { Marker = "external" }), context.PlatformIdentities);
 			return replacement;
+		}
+	}
+
+	public sealed class ReplaceProtectedTrxPropertyEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			var bag = (IDictionary<string, object?>)currentModel.Model;
+			bag["trx"] = new { Value = "mutated" };
+			return Task.FromResult<IContentModel?>(currentModel);
+		}
+	}
+
+	public sealed class MutateProtectedTrxObjectEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			var bag = (IDictionary<string, object?>)currentModel.Model;
+			var trx = (IDictionary<string, object?>)bag["trx"]!;
+			trx["Value"] = "mutated";
+			return Task.FromResult<IContentModel?>(currentModel);
+		}
+	}
+
+	public sealed class ReplaceModelOverridingProtectedPropertiesEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			var replacement = new ContentModel(
+				TransactionModel.Create(new { Value = "replacement", custom = "custom-value" }),
+				context.PlatformIdentities);
+			return Task.FromResult<IContentModel?>(replacement);
 		}
 	}
 

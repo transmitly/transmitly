@@ -104,6 +104,34 @@ public class ContentModelTests
 	}
 
 	[TestMethod]
+	public void ContentModel_ProtectsTrxAndPidFromMutation()
+	{
+		var contentModel = new ContentModel(
+			TransactionModel.Create(new { Value = "original" }),
+			[new MockPlatformIdentity1("123")]);
+
+		var bag = (IDictionary<string, object?>)contentModel.Model;
+		var trx = (IDictionary<string, object?>)bag["trx"]!;
+
+		Assert.ThrowsExactly<InvalidOperationException>(() => bag["trx"] = new { Value = "mutated" });
+		Assert.ThrowsExactly<InvalidOperationException>(() => bag.Remove("pid"));
+		Assert.ThrowsExactly<InvalidOperationException>(() => trx["Value"] = "mutated");
+	}
+
+	[TestMethod]
+	public void ContentModel_AllowsAddingCustomProperties()
+	{
+		var contentModel = new ContentModel(
+			TransactionModel.Create(new { Value = "original" }),
+			[new MockPlatformIdentity1("123")]);
+
+		var bag = (IDictionary<string, object?>)contentModel.Model;
+		bag["custom"] = "value";
+
+		Assert.AreEqual("value", bag["custom"]);
+	}
+
+	[TestMethod]
 	public void Create_WithResources_SplitsAttachmentsAndLinkedResources()
 	{
 		var attachment1 = new Resource("file1.txt", "text/plain", new MemoryStream());

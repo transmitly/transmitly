@@ -39,7 +39,6 @@ public sealed class CommunicationsClientBuilder
 	private readonly List<IPersonaRegistration> _personaRegistrations = [];
 	private readonly List<IObserver<DeliveryReport>> _deliveryReportObservers = [];
 	private readonly List<IDispatchMiddleware> _middlewares = [];
-	private readonly List<ITransactionModelEnricherRegistration> _transactionModelEnrichers = [];
 	private readonly List<IContentModelEnricherRegistration> _contentModelEnrichers = [];
 
 	/// <summary>
@@ -50,7 +49,6 @@ public sealed class CommunicationsClientBuilder
 		ChannelProvider = new(this, _channelProviders.Add);
 		Pipeline = new(this, _pipelines.Add);
 		PlatformIdentityResolver = new(this, _platformIdentityResolvers.Add);
-		TransactionModelEnricher = new(this, _transactionModelEnrichers.Add);
 		ContentModelEnricher = new(this, _contentModelEnrichers.Add);
 		TemplateEngine = new(this, _templateEngines.Add);
 		DeliveryReport = new(this, _deliveryReportObservers.Add);
@@ -71,11 +69,6 @@ public sealed class CommunicationsClientBuilder
 	/// Gets the platform identity resolver configuration builder.
 	/// </summary>
 	public PlatformIdentityResolverConfigurationBuilder PlatformIdentityResolver { get; }
-
-	/// <summary>
-	/// Gets the transaction model enricher configuration builder.
-	/// </summary>
-	public TransactionModelEnricherConfigurationBuilder TransactionModelEnricher { get; }
 
 	/// <summary>
 	/// Gets the content model enricher configuration builder.
@@ -159,16 +152,6 @@ public sealed class CommunicationsClientBuilder
 		PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
 
 	/// <summary>
-	/// Adds a transaction model enricher to the configuration.
-	/// </summary>
-	/// <typeparam name="TEnricher">Transaction model enricher to register.</typeparam>
-	/// <param name="options">Optional registration options.</param>
-	/// <returns>The configuration builder.</returns>
-	public CommunicationsClientBuilder AddTransactionModelEnricher<TEnricher>(Action<TransactionModelEnricherRegistrationOptions>? options = null)
-		where TEnricher : ITransactionModelEnricher =>
-		TransactionModelEnricher.Add<TEnricher>(options);
-
-	/// <summary>
 	/// Adds a content model enricher to the configuration.
 	/// </summary>
 	/// <typeparam name="TEnricher">Content model enricher to register.</typeparam>
@@ -221,7 +204,6 @@ public sealed class CommunicationsClientBuilder
 						_pipelines,
 						_templateEngines,
 						_platformIdentityResolvers,
-						_transactionModelEnrichers,
 						_contentModelEnrichers,
 						_personaRegistrations,
 						_deliveryReportObservers
