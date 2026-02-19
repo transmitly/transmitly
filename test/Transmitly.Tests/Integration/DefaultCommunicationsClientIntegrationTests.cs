@@ -62,7 +62,8 @@ public partial class DefaultCommunicationsClientTests
 		Assert.IsNotNull(result.Results);
 		Assert.AreEqual(1, result.Results.Count);
 		var singleResult = result.Results.First();
-		Assert.IsTrue(singleResult?.Status.IsSuccess());
+		Assert.IsNotNull(singleResult);
+		Assert.IsTrue(singleResult.Status.IsSuccess());
 	}
 
 

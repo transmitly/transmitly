@@ -29,9 +29,9 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	[DataRow(null)]
 	public void ShouldGuardEmptyPipelineIntent(string value)
 	{
-		var (pipeline, coordinator, identity, reportHandler) = GetStores();
+		var (pipeline, coordinator, identity, identityProfileEnricher, reportHandler) = GetStores();
 
-		var client = new DefaultCommunicationsClient(pipeline.Object, coordinator.Object, identity.Object, reportHandler.Object);
+		var client = new DefaultCommunicationsClient(pipeline.Object, coordinator.Object, identity.Object, identityProfileEnricher.Object, reportHandler.Object);
 		Assert.ThrowsExactlyAsync<ArgumentNullException>(() => client.DispatchAsync(value, "test", new { }));
 	}
 
@@ -64,6 +64,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 		Mock<IPipelineService> pipeline,
 		Mock<IDispatchCoordinatorService> coordinator,
 		Mock<IPlatformIdentityService> identity,
+		Mock<IPlatformIdentityProfileEnricherService> identityProfileEnricher,
 		Mock<IDeliveryReportService> deliveryReportHandler
 		) GetStores()
 	{
@@ -72,6 +73,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 			new Mock<IPipelineService>(),
 			new Mock<IDispatchCoordinatorService>(),
 			new Mock<IPlatformIdentityService>(),
+			new Mock<IPlatformIdentityProfileEnricherService>(),
 			new Mock<IDeliveryReportService>()
 		);
 	}

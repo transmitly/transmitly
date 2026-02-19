@@ -13,8 +13,9 @@
 //  limitations under the License.
 
 using Moq;
-using Transmitly;
 using Transmitly.Exceptions;
+
+namespace Transmitly.Tests.Configuration;
 
 [TestClass]
 public class CompositeCommunicationClientMiddlewareTests

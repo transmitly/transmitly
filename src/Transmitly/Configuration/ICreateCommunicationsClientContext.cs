@@ -30,5 +30,6 @@ public interface ICreateCommunicationsClientContext
 	IReadOnlyCollection<IObserver<DeliveryReport>> DeliveryReportObservers { get; }
 	IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; }
 	IReadOnlyCollection<IContentModelEnricherRegistration> ContentModelEnrichers { get; }
+	IReadOnlyCollection<IPlatformIdentityProfileEnricherRegistration> PlatformIdentityProfileEnrichers { get; }
 	IReadOnlyCollection<IPersonaRegistration> Personas { get; }
 }
