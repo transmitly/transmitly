@@ -76,6 +76,8 @@ public sealed class CommunicationsClientBuilder
 	/// Gets the content model enricher configuration builder.
 	/// </summary>
 	public ContentModelEnricherConfigurationBuilder ContentModelEnricher { get; }
+
+	///<summary>
 	/// Gets the platform identity profile enricher configuration builder.
 	/// </summary>
 	public PlatformIdentityProfileEnricherConfigurationBuilder PlatformIdentityProfileEnricher { get; }
@@ -165,6 +167,8 @@ public sealed class CommunicationsClientBuilder
 	public CommunicationsClientBuilder AddContentModelEnricher<TEnricher>(Action<ContentModelEnricherRegistrationOptions>? options = null)
 		where TEnricher : IContentModelEnricher =>
 		ContentModelEnricher.Add<TEnricher>(options);
+
+	/// <summary>
 	/// Adds a platform identity profile enricher to the configuration.
 	/// </summary>
 	/// <typeparam name="TEnricher">Platform identity profile enricher to register.</typeparam>
@@ -239,7 +243,7 @@ public sealed class CommunicationsClientBuilder
 			.Reverse()
 			.Aggregate(
 				(Func<DispatchMiddlewareContext, Task<IReadOnlyCollection<IDispatchResult?>>>)BasePipelineDeliveryStrategyProvider.DefaultInvoke,
-				(next, middleware) => 
+				(next, middleware) =>
 					context => middleware.InvokeAsync(context, next)
 			);
 

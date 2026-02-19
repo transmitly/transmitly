@@ -146,6 +146,28 @@ public sealed class ContentModelEnricherServiceTests
 	}
 
 	[TestMethod]
+	public async Task EnrichAsync_PreservesProtectedPropertiesForNonDynamicReplacementModel()
+	{
+		var registrations = new List<IContentModelEnricherRegistration>
+		{
+			new ContentModelEnricherRegistration(typeof(ReplaceWithExternalModelOverridingProtectedPropertiesEnricher), ContentModelEnricherScope.PerChannel, true, null, 0)
+		};
+
+		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var context = CreateDispatchContext();
+		var model = CreateContentModel(context.PlatformIdentities, new { Value = "original" });
+
+		var enriched = await service.EnrichAsync(context, model, ContentModelEnricherScope.PerChannel);
+		var bag = (IDictionary<string, object?>)enriched.Model;
+		var trx = (IDictionary<string, object?>)bag["trx"]!;
+		var pid = (IDictionary<string, object?>)bag["pid"]!;
+
+		Assert.AreEqual("original", trx["Value"]);
+		Assert.AreEqual("id", pid["Id"]);
+		Assert.AreEqual("custom-value", bag["custom"]);
+	}
+
+	[TestMethod]
 	public async Task EnrichAsync_AllowsAsyncExternalReplacement()
 	{
 		ContentModelEnricherRecorder.Reset();
@@ -426,6 +448,28 @@ public sealed class ContentModelEnricherServiceTests
 				context.PlatformIdentities);
 			return Task.FromResult<IContentModel?>(replacement);
 		}
+	}
+
+	public sealed class ReplaceWithExternalModelOverridingProtectedPropertiesEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			IDictionary<string, object?> replacementModel = new Dictionary<string, object?>
+			{
+				["trx"] = new Dictionary<string, object?> { ["Value"] = "malicious" },
+				["pid"] = new Dictionary<string, object?> { ["Id"] = "malicious-id" },
+				["custom"] = "custom-value"
+			};
+
+			return Task.FromResult<IContentModel?>(new ExternalContentModel(replacementModel));
+		}
+	}
+
+	private sealed class ExternalContentModel(object model) : IContentModel
+	{
+		public object Model { get; } = model;
+		public IReadOnlyList<Resource> Resources { get; } = [];
+		public IReadOnlyList<LinkedResource> LinkedResources { get; } = [];
 	}
 
 	public sealed class InspectEnricher : IContentModelEnricher

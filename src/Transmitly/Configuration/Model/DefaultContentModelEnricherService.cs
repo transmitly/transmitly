@@ -59,7 +59,7 @@ public sealed class DefaultContentModelEnricherService(IContentModelEnricherFact
 			var enrichedModel = await enricherInstance.EnrichAsync(context, currentModel, cancellationToken).ConfigureAwait(false);
 			if (enrichedModel != null)
 			{
-				currentModel = PreserveProtectedProperties(currentModel, enrichedModel);
+				currentModel = PreserveProtectedProperties(context, currentModel, enrichedModel);
 				if (!registration.ContinueOnEnrichedModel)
 					break;
 			}
@@ -68,14 +68,25 @@ public sealed class DefaultContentModelEnricherService(IContentModelEnricherFact
 		return currentModel;
 	}
 
-	private static IContentModel PreserveProtectedProperties(IContentModel source, IContentModel target)
+	private static IContentModel PreserveProtectedProperties(IDispatchCommunicationContext context, IContentModel source, IContentModel target)
 	{
-		if (source.Model is DynamicContentModel sourceDynamic &&
-			target.Model is DynamicContentModel targetDynamic)
+		var normalizedSource = NormalizeModelForProtection(source, context.PlatformIdentities);
+		var normalizedTarget = NormalizeModelForProtection(target, context.PlatformIdentities);
+
+		if (normalizedSource.Model is DynamicContentModel sourceDynamic &&
+			normalizedTarget.Model is DynamicContentModel targetDynamic)
 		{
 			targetDynamic.CopyProtectedPropertiesFrom(sourceDynamic);
 		}
 
-		return target;
+		return normalizedTarget;
+	}
+
+	private static IContentModel NormalizeModelForProtection(IContentModel model, IReadOnlyCollection<IPlatformIdentityProfile> platformIdentities)
+	{
+		if (model.Model is DynamicContentModel)
+			return model;
+
+		return new ContentModel(model, platformIdentities);
 	}
 }

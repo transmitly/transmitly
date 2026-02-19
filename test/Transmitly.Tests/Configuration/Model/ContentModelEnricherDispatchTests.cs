@@ -16,6 +16,7 @@ using System.Collections.Concurrent;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 using Transmitly.Model.Configuration;
+using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Tests.Mocks;
 
 namespace Transmitly.Tests.Configuration.Model;
@@ -212,6 +213,37 @@ public sealed class ContentModelEnricherDispatchTests
 		CollectionAssert.AreEqual(new[] { "payment:pay_123" }, RecordingDispatcher.Subjects.ToArray());
 	}
 
+	[TestMethod]
+	public async Task ContentModelEnrichers_PreserveProtectedPidWithIdentityProfileEnricherAndExternalReplacement()
+	{
+		RecordingDispatcher.Reset();
+
+		var builder = new CommunicationsClientBuilder()
+			.AddPlatformIdentityProfileEnricher<SetEnrichedIdentityIdProfileEnricher>()
+			.AddContentModelEnricher<ReplacePerChannelWithExternalModelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
+			.ChannelProvider.Add<RecordingDispatcher, UnitTestCommunication>("provider", "channel-a")
+			.AddPipeline("intent", options =>
+			{
+				options.AddChannel(new PidAndCustomSubjectChannel("channel-a"));
+				options.UseAnyMatchPipelineDeliveryStrategy();
+			});
+
+		var client = builder.BuildClient();
+
+		var recipient = new PlatformIdentityProfile(
+			"original-id",
+			"type",
+			new[] { "unit-test-address".AsIdentityAddress() });
+
+		await client.DispatchAsync(
+			"intent",
+			new[] { recipient },
+			TransactionModel.Create(new { Value = "original" }),
+			Array.Empty<string>());
+
+		CollectionAssert.AreEqual(new[] { "identity-enriched:custom-value:original" }, RecordingDispatcher.Subjects.ToArray());
+	}
+
 	private static class ContentModelEnricherRecorder
 	{
 		public static int PerRecipientCount { get; private set; }
@@ -339,6 +371,41 @@ public sealed class ContentModelEnricherDispatchTests
 		}
 	}
 
+	private sealed class SetEnrichedIdentityIdProfileEnricher : IPlatformIdentityProfileEnricher
+	{
+		public Task EnrichIdentityProfileAsync(IPlatformIdentityProfile identityProfile)
+		{
+			if (identityProfile is PlatformIdentityProfile profile)
+			{
+				profile.Id = "identity-enriched";
+			}
+
+			return Task.CompletedTask;
+		}
+	}
+
+	private sealed class ReplacePerChannelWithExternalModelEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			IDictionary<string, object?> replacementModel = new Dictionary<string, object?>
+			{
+				["pid"] = new Dictionary<string, object?> { ["Id"] = "malicious-id" },
+				["trx"] = new Dictionary<string, object?> { ["Value"] = "malicious" },
+				["custom"] = "custom-value"
+			};
+
+			return Task.FromResult<IContentModel?>(new ExternalContentModel(replacementModel));
+		}
+	}
+
+	private sealed class ExternalContentModel(object model) : IContentModel
+	{
+		public object Model { get; } = model;
+		public IReadOnlyList<Resource> Resources { get; } = [];
+		public IReadOnlyList<LinkedResource> LinkedResources { get; } = [];
+	}
+
 	private sealed class ModelObserverChannel(string channelId) : IChannel
 	{
 		public static IContentModel? LastContentModel { get; private set; }
@@ -426,13 +493,47 @@ public sealed class ContentModelEnricherDispatchTests
 		}
 	}
 
+	private sealed class PidAndCustomSubjectChannel(string channelId) : IChannel
+	{
+		public IEnumerable<string> AllowedChannelProviderIds => Array.Empty<string>();
+		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+		public Type CommunicationType => typeof(UnitTestCommunication);
+		public string Id { get; } = channelId;
+
+		public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
+		{
+			return identityAddress.Value?.StartsWith("unit-test", StringComparison.OrdinalIgnoreCase) ?? false;
+		}
+
+		public Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
+		{
+			var subject = "missing";
+			if (communicationContext.ContentModel?.Model is IDictionary<string, object?> bag &&
+				bag.TryGetValue("pid", out var pidObj) &&
+				pidObj is IDictionary<string, object?> pidBag &&
+				pidBag.TryGetValue("Id", out var idValue) &&
+				idValue != null &&
+				bag.TryGetValue("custom", out var customValue) &&
+				customValue != null &&
+				bag.TryGetValue("trx", out var trxObj) &&
+				trxObj is IDictionary<string, object?> trxBag &&
+				trxBag.TryGetValue("Value", out var trxValue) &&
+				trxValue != null)
+			{
+				subject = $"{idValue}:{customValue}:{trxValue}";
+			}
+
+			return Task.FromResult<object>(new UnitTestCommunication(subject));
+		}
+	}
+
 	public sealed class RecordingDispatcher : IChannelProviderDispatcher<UnitTestCommunication>
 	{
 		public static readonly ConcurrentQueue<string> Subjects = new();
 
 		public static void Reset()
 		{
-			while (Subjects.TryDequeue(out _)) { }
+			while (Subjects.TryDequeue(out _)) { /*empty*/ }
 		}
 
 		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(UnitTestCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
