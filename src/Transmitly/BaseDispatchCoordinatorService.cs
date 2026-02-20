@@ -16,6 +16,7 @@ using System.Globalization;
 using Transmitly.Channel.Configuration;
 using Transmitly.ChannelProvider;
 using Transmitly.Delivery;
+using Transmitly.Model.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.Template.Configuration;
 
@@ -25,11 +26,13 @@ public abstract class BaseDispatchCoordinatorService(
 	IChannelChannelProviderService channelChannelProviderService,
 	IPersonaService personaService,
 	ITemplateEngineFactory templateEngineFactory,
+	IContentModelEnricherService contentModelEnricherService,
 	IDeliveryReportService deliveryReportService) : IDispatchCoordinatorService
 {
 	private readonly IChannelChannelProviderService _channelChannelProviderService = channelChannelProviderService;
 	private readonly IPersonaService _personaService = personaService;
 	private readonly ITemplateEngineFactory _templateEngineFactory = templateEngineFactory;
+	private readonly IContentModelEnricherService _contentModelEnricherService = contentModelEnricherService;
 	private readonly IDeliveryReportService _deliveryReportProvider = deliveryReportService;
 
 	public virtual async Task<IReadOnlyCollection<RecipientDispatchCommunicationContext>> CreateRecipientContexts(
@@ -41,6 +44,7 @@ public abstract class BaseDispatchCoordinatorService(
 	{
 		var recipientContexts = new List<RecipientDispatchCommunicationContext>();
 		var templateEngine = _templateEngineFactory.Get();
+		var hasPerRecipientEnrichers = await _contentModelEnricherService.HasEnrichersAsync(ContentModelEnricherScope.PerRecipient).ConfigureAwait(false);
 
 		foreach (var pipeline in pipelines)
 		{
@@ -58,7 +62,27 @@ public abstract class BaseDispatchCoordinatorService(
 					cultureInfo,
 					pipeline.Intent,
 					pipeline.Id,
-					pipelineConfiguration.PipelineDeliveryStrategyProvider);
+					pipelineConfiguration.PipelineDeliveryStrategyProvider,
+					_contentModelEnricherService);
+
+				if (hasPerRecipientEnrichers)
+				{
+					var baseContentModel = new ContentModel(transactionalModel, new[] { platformIdentity });
+					var enricherContext = new DispatchCommunicationContext(
+						baseContentModel,
+						pipelineConfiguration,
+						new[] { platformIdentity },
+						templateEngine,
+						_deliveryReportProvider,
+						cultureInfo,
+						pipeline.Intent,
+						pipeline.Id);
+
+					context.ContentModel = await _contentModelEnricherService.EnrichAsync(
+						enricherContext,
+						baseContentModel,
+						ContentModelEnricherScope.PerRecipient).ConfigureAwait(false);
+				}
 
 				var orderedChannels = SetPipelineChannelOrderPreference(dispatchChannelPreferences, pipelineConfiguration);
 

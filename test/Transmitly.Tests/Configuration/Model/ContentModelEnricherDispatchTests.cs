@@ -1,0 +1,551 @@
+﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+//  
+//  Licensed under the Apache License, Version 2.0 (the "License")
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//  
+//      http://www.apache.org/licenses/LICENSE-2.0
+//  
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+
+using System.Collections.Concurrent;
+using Transmitly.Channel.Configuration;
+using Transmitly.ChannelProvider;
+using Transmitly.Model.Configuration;
+using Transmitly.PlatformIdentity.Configuration;
+using Transmitly.Tests.Mocks;
+
+namespace Transmitly.Tests.Configuration.Model;
+
+[TestClass]
+public sealed class ContentModelEnricherDispatchTests
+{
+	[TestMethod]
+	public async Task ContentModelEnrichers_RunPerRecipientAndPerChannel()
+	{
+		ContentModelEnricherRecorder.Reset();
+		RecordingDispatcher.Reset();
+
+		var builder = new CommunicationsClientBuilder()
+			.AddContentModelEnricher<PerRecipientEnricher>(options => options.Scope = ContentModelEnricherScope.PerRecipient)
+			.AddContentModelEnricher<PerChannelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
+			.ChannelProvider.Add<RecordingDispatcher, UnitTestCommunication>("provider", "channel-a", "channel-b")
+			.AddPipeline("intent", options =>
+			{
+				options.AddChannel(new ModelSubjectChannel("channel-a"));
+				options.AddChannel(new ModelSubjectChannel("channel-b"));
+				options.UseAnyMatchPipelineDeliveryStrategy();
+			});
+
+		var client = builder.BuildClient();
+
+		var recipient = new PlatformIdentityProfile(
+			"id",
+			"type",
+			new[] { "unit-test-address".AsIdentityAddress() });
+
+		await client.DispatchAsync(
+			"intent",
+			new[] { recipient },
+			TransactionModel.Create(new { }),
+			Array.Empty<string>());
+
+		Assert.AreEqual(1, ContentModelEnricherRecorder.PerRecipientCount);
+		Assert.AreEqual(2, ContentModelEnricherRecorder.PerChannelCount);
+		CollectionAssert.AreEquivalent(
+			new[] { "recipient:channel-a", "recipient:channel-b" },
+			RecordingDispatcher.Subjects.ToArray());
+	}
+
+	[TestMethod]
+	public async Task ContentModelEnrichers_PerRecipientRunsOnceWithMultipleProviders()
+	{
+		ContentModelEnricherRecorder.Reset();
+
+		var builder = new CommunicationsClientBuilder()
+			.AddContentModelEnricher<PerRecipientEnricher>(options => options.Scope = ContentModelEnricherScope.PerRecipient)
+			.AddContentModelEnricher<PerChannelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
+			.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("provider-1", "channel-a")
+			.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("provider-2", "channel-a")
+			.AddPipeline("intent", options =>
+			{
+				options.AddChannel(new ModelSubjectChannel("channel-a"));
+				options.UseAnyMatchPipelineDeliveryStrategy();
+			});
+
+		var client = builder.BuildClient();
+
+		var recipient = new PlatformIdentityProfile(
+			"id",
+			"type",
+			new[] { "unit-test-address".AsIdentityAddress() });
+
+		await client.DispatchAsync(
+			"intent",
+			new[] { recipient },
+			TransactionModel.Create(new { }),
+			Array.Empty<string>());
+
+		Assert.AreEqual(1, ContentModelEnricherRecorder.PerRecipientCount);
+		Assert.AreEqual(2, ContentModelEnricherRecorder.PerChannelCount);
+	}
+
+	[TestMethod]
+	public async Task ContentModelEnrichers_PreserveResourcesAndLinkedResourcesAcrossScopes()
+	{
+		RecordingDispatcher.Reset();
+
+		var builder = new CommunicationsClientBuilder()
+			.AddContentModelEnricher<NoopPerRecipientEnricher>(options => options.Scope = ContentModelEnricherScope.PerRecipient)
+			.ChannelProvider.Add<RecordingDispatcher, UnitTestCommunication>("provider", "channel-resources")
+			.AddPipeline("intent", options =>
+			{
+				options.AddChannel(new ResourceSubjectChannel("channel-resources"));
+				options.UseAnyMatchPipelineDeliveryStrategy();
+			});
+
+		var client = builder.BuildClient();
+
+		var recipient = new PlatformIdentityProfile(
+			"id",
+			"type",
+			new[] { "unit-test-address".AsIdentityAddress() });
+
+		using var resourceStream = new MemoryStream();
+		using var linkedStream = new MemoryStream();
+
+		var transactionModel = TransactionModel.Create(
+			new { },
+			new Resource("res", "text/plain", resourceStream),
+			new LinkedResource("lnk", linkedStream));
+
+		await client.DispatchAsync(
+			"intent",
+			new[] { recipient },
+			transactionModel,
+			Array.Empty<string>());
+
+		CollectionAssert.AreEqual(new[] { "res:1-lnk:1" }, RecordingDispatcher.Subjects.ToArray());
+	}
+
+	[TestMethod]
+	public async Task ContentModelEnrichers_ReplaceContentModelForDispatchContext()
+	{
+		ContentModelEnricherRecorder.Reset();
+		ModelReplacementRecorder.Reset();
+		RecordingDispatcher.Reset();
+		ModelObserverChannel.Reset();
+
+		var builder = new CommunicationsClientBuilder()
+			.AddContentModelEnricher<ReplacePerRecipientEnricher>(options => options.Scope = ContentModelEnricherScope.PerRecipient)
+			.AddContentModelEnricher<ReplacePerChannelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
+			.ChannelProvider.Add<RecordingDispatcher, UnitTestCommunication>("provider", "channel-a")
+			.AddPipeline("intent", options =>
+			{
+				options.AddChannel(new ModelObserverChannel("channel-a"));
+				options.UseAnyMatchPipelineDeliveryStrategy();
+			});
+
+		var client = builder.BuildClient();
+
+		var recipient = new PlatformIdentityProfile(
+			"id",
+			"type",
+			new[] { "unit-test-address".AsIdentityAddress() });
+
+		await client.DispatchAsync(
+			"intent",
+			new[] { recipient },
+			TransactionModel.Create(new { shared = "original" }),
+			Array.Empty<string>());
+
+		Assert.AreEqual(1, ContentModelEnricherRecorder.PerRecipientCount);
+		Assert.AreEqual(1, ContentModelEnricherRecorder.PerChannelCount);
+		Assert.IsNotNull(ModelReplacementRecorder.PerRecipientInput);
+		Assert.IsNotNull(ModelReplacementRecorder.PerRecipientOutput);
+		Assert.IsNotNull(ModelReplacementRecorder.PerChannelInput);
+		Assert.IsNotNull(ModelReplacementRecorder.PerChannelOutput);
+		Assert.AreNotSame(ModelReplacementRecorder.PerRecipientInput, ModelReplacementRecorder.PerRecipientOutput);
+		Assert.AreNotSame(ModelReplacementRecorder.PerChannelInput, ModelReplacementRecorder.PerChannelOutput);
+		Assert.AreSame(ModelReplacementRecorder.PerChannelOutput, ModelObserverChannel.LastContentModel);
+		CollectionAssert.AreEqual(new[] { "per-recipient:channel-a" }, RecordingDispatcher.Subjects.ToArray());
+	}
+
+	[TestMethod]
+	public async Task ContentModelEnrichers_AllowAsyncExternalModelReplacement()
+	{
+		ContentModelEnricherRecorder.Reset();
+		ModelReplacementRecorder.Reset();
+		RecordingDispatcher.Reset();
+		ModelObserverChannel.Reset();
+
+		var builder = new CommunicationsClientBuilder()
+			.AddContentModelEnricher<DelayedExternalPerChannelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
+			.ChannelProvider.Add<RecordingDispatcher, UnitTestCommunication>("provider", "channel-a")
+			.AddPipeline("intent", options =>
+			{
+				options.AddChannel(new ModelObserverChannel("channel-a"));
+				options.UseAnyMatchPipelineDeliveryStrategy();
+			});
+
+		var client = builder.BuildClient();
+
+		var recipient = new PlatformIdentityProfile(
+			"id",
+			"type",
+			new[] { "unit-test-address".AsIdentityAddress() });
+
+		await client.DispatchAsync(
+			"intent",
+			new[] { recipient },
+			TransactionModel.Create(new { paymentId = "pay_123" }),
+			Array.Empty<string>());
+
+		Assert.AreEqual(1, ContentModelEnricherRecorder.PerChannelCount);
+		Assert.IsNotNull(ModelReplacementRecorder.PerChannelInput);
+		Assert.IsNotNull(ModelReplacementRecorder.PerChannelOutput);
+		Assert.AreNotSame(ModelReplacementRecorder.PerChannelInput, ModelReplacementRecorder.PerChannelOutput);
+		Assert.AreSame(ModelReplacementRecorder.PerChannelOutput, ModelObserverChannel.LastContentModel);
+		CollectionAssert.AreEqual(new[] { "payment:pay_123" }, RecordingDispatcher.Subjects.ToArray());
+	}
+
+	[TestMethod]
+	public async Task ContentModelEnrichers_PreserveProtectedPidWithIdentityProfileEnricherAndExternalReplacement()
+	{
+		RecordingDispatcher.Reset();
+
+		var builder = new CommunicationsClientBuilder()
+			.AddPlatformIdentityProfileEnricher<SetEnrichedIdentityIdProfileEnricher>()
+			.AddContentModelEnricher<ReplacePerChannelWithExternalModelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
+			.ChannelProvider.Add<RecordingDispatcher, UnitTestCommunication>("provider", "channel-a")
+			.AddPipeline("intent", options =>
+			{
+				options.AddChannel(new PidAndCustomSubjectChannel("channel-a"));
+				options.UseAnyMatchPipelineDeliveryStrategy();
+			});
+
+		var client = builder.BuildClient();
+
+		var recipient = new PlatformIdentityProfile(
+			"original-id",
+			"type",
+			new[] { "unit-test-address".AsIdentityAddress() });
+
+		await client.DispatchAsync(
+			"intent",
+			new[] { recipient },
+			TransactionModel.Create(new { Value = "original" }),
+			Array.Empty<string>());
+
+		CollectionAssert.AreEqual(new[] { "identity-enriched:custom-value:original" }, RecordingDispatcher.Subjects.ToArray());
+	}
+
+	private static class ContentModelEnricherRecorder
+	{
+		public static int PerRecipientCount { get; private set; }
+		public static int PerChannelCount { get; private set; }
+
+		public static void Reset()
+		{
+			PerRecipientCount = 0;
+			PerChannelCount = 0;
+		}
+
+		public static void RecordPerRecipient() => PerRecipientCount++;
+
+		public static void RecordPerChannel() => PerChannelCount++;
+	}
+
+	private static class ModelReplacementRecorder
+	{
+		public static IContentModel? PerRecipientInput { get; set; }
+		public static IContentModel? PerRecipientOutput { get; set; }
+		public static IContentModel? PerChannelInput { get; set; }
+		public static IContentModel? PerChannelOutput { get; set; }
+
+		public static void Reset()
+		{
+			PerRecipientInput = null;
+			PerRecipientOutput = null;
+			PerChannelInput = null;
+			PerChannelOutput = null;
+		}
+	}
+
+	public sealed class PerRecipientEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			ContentModelEnricherRecorder.RecordPerRecipient();
+			if (currentModel.Model is IDictionary<string, object?> bag)
+			{
+				bag["shared"] = "recipient";
+			}
+			return Task.FromResult<IContentModel?>(currentModel);
+		}
+	}
+
+	public sealed class ReplacePerRecipientEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			ContentModelEnricherRecorder.RecordPerRecipient();
+			ModelReplacementRecorder.PerRecipientInput = currentModel;
+
+			var replacement = new ContentModel(
+				TransactionModel.Create(new { shared = "per-recipient" }),
+				context.PlatformIdentities);
+
+			ModelReplacementRecorder.PerRecipientOutput = replacement;
+			return Task.FromResult<IContentModel?>(replacement);
+		}
+	}
+
+	public sealed class PerChannelEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			ContentModelEnricherRecorder.RecordPerChannel();
+			if (currentModel.Model is IDictionary<string, object?> bag)
+			{
+				var baseValue = bag.TryGetValue("shared", out var value) ? value?.ToString() : "missing";
+				bag["shared"] = $"{baseValue}:{context.ChannelId}";
+			}
+			return Task.FromResult<IContentModel?>(currentModel);
+		}
+	}
+
+	public sealed class ReplacePerChannelEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			ContentModelEnricherRecorder.RecordPerChannel();
+			ModelReplacementRecorder.PerChannelInput = currentModel;
+
+			var bag = (IDictionary<string, object?>)currentModel.Model;
+			var baseValue = bag.TryGetValue("shared", out var value) ? value?.ToString() : "missing";
+			var replacement = new ContentModel(
+				TransactionModel.Create(new { shared = $"{baseValue}:{context.ChannelId}" }),
+				context.PlatformIdentities);
+
+			ModelReplacementRecorder.PerChannelOutput = replacement;
+			return Task.FromResult<IContentModel?>(replacement);
+		}
+	}
+
+	public sealed class DelayedExternalPerChannelEnricher : IContentModelEnricher
+	{
+		public async Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			ContentModelEnricherRecorder.RecordPerChannel();
+			ModelReplacementRecorder.PerChannelInput = currentModel;
+
+			string paymentId = "missing";
+			if (currentModel.Model is IDictionary<string, object?> bag &&
+				bag.TryGetValue("paymentId", out var value) &&
+				value != null)
+			{
+				paymentId = value.ToString() ?? "missing";
+			}
+
+			await Task.Delay(25, cancellationToken);
+
+			var replacement = new ContentModel(
+				TransactionModel.Create(new { payment = new { id = paymentId } }),
+				context.PlatformIdentities);
+
+			ModelReplacementRecorder.PerChannelOutput = replacement;
+			return replacement;
+		}
+	}
+
+	public sealed class NoopPerRecipientEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			return Task.FromResult<IContentModel?>(currentModel);
+		}
+	}
+
+	private sealed class SetEnrichedIdentityIdProfileEnricher : IPlatformIdentityProfileEnricher
+	{
+		public Task EnrichIdentityProfileAsync(IPlatformIdentityProfile identityProfile)
+		{
+			if (identityProfile is PlatformIdentityProfile profile)
+			{
+				profile.Id = "identity-enriched";
+			}
+
+			return Task.CompletedTask;
+		}
+	}
+
+	private sealed class ReplacePerChannelWithExternalModelEnricher : IContentModelEnricher
+	{
+		public Task<IContentModel?> EnrichAsync(IDispatchCommunicationContext context, IContentModel currentModel, CancellationToken cancellationToken = default)
+		{
+			IDictionary<string, object?> replacementModel = new Dictionary<string, object?>
+			{
+				["pid"] = new Dictionary<string, object?> { ["Id"] = "malicious-id" },
+				["trx"] = new Dictionary<string, object?> { ["Value"] = "malicious" },
+				["custom"] = "custom-value"
+			};
+
+			return Task.FromResult<IContentModel?>(new ExternalContentModel(replacementModel));
+		}
+	}
+
+	private sealed class ExternalContentModel(object model) : IContentModel
+	{
+		public object Model { get; } = model;
+		public IReadOnlyList<Resource> Resources { get; } = [];
+		public IReadOnlyList<LinkedResource> LinkedResources { get; } = [];
+	}
+
+	private sealed class ModelObserverChannel(string channelId) : IChannel
+	{
+		public static IContentModel? LastContentModel { get; private set; }
+
+		public static void Reset()
+		{
+			LastContentModel = null;
+		}
+
+		public IEnumerable<string> AllowedChannelProviderIds => Array.Empty<string>();
+		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+		public Type CommunicationType => typeof(UnitTestCommunication);
+		public string Id { get; } = channelId;
+
+		public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
+		{
+			return identityAddress.Value?.StartsWith("unit-test", StringComparison.OrdinalIgnoreCase) ?? false;
+		}
+
+		public Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
+		{
+			LastContentModel = communicationContext.ContentModel;
+
+			var subject = "missing";
+			if (communicationContext.ContentModel?.Model is IDictionary<string, object?> bag &&
+				bag.TryGetValue("shared", out var value) &&
+				value != null)
+			{
+				subject = value.ToString() ?? "missing";
+			}
+			else if (communicationContext.ContentModel?.Model is IDictionary<string, object?> fallbackBag &&
+				fallbackBag.TryGetValue("payment", out var paymentObj) &&
+				paymentObj is IDictionary<string, object?> paymentBag &&
+				paymentBag.TryGetValue("id", out var paymentId) &&
+				paymentId != null)
+			{
+				subject = $"payment:{paymentId}";
+			}
+			return Task.FromResult<object>(new UnitTestCommunication(subject));
+		}
+	}
+
+	private sealed class ModelSubjectChannel(string channelId) : IChannel
+	{
+		public IEnumerable<string> AllowedChannelProviderIds => Array.Empty<string>();
+		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+		public Type CommunicationType => typeof(UnitTestCommunication);
+		public string Id { get; } = channelId;
+
+		public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
+		{
+			return identityAddress.Value?.StartsWith("unit-test", StringComparison.OrdinalIgnoreCase) ?? false;
+		}
+
+		public Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
+		{
+			var subject = "missing";
+			if (communicationContext.ContentModel?.Model is IDictionary<string, object?> bag &&
+				bag.TryGetValue("shared", out var value) &&
+				value != null)
+			{
+				subject = value.ToString() ?? "missing";
+			}
+			return Task.FromResult<object>(new UnitTestCommunication(subject));
+		}
+	}
+
+	private sealed class ResourceSubjectChannel(string channelId) : IChannel
+	{
+		public IEnumerable<string> AllowedChannelProviderIds => Array.Empty<string>();
+		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+		public Type CommunicationType => typeof(UnitTestCommunication);
+		public string Id { get; } = channelId;
+
+		public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
+		{
+			return identityAddress.Value?.StartsWith("unit-test", StringComparison.OrdinalIgnoreCase) ?? false;
+		}
+
+		public Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
+		{
+			var resources = communicationContext.ContentModel?.Resources?.Count ?? 0;
+			var linked = communicationContext.ContentModel?.LinkedResources?.Count ?? 0;
+			return Task.FromResult<object>(new UnitTestCommunication($"res:{resources}-lnk:{linked}"));
+		}
+	}
+
+	private sealed class PidAndCustomSubjectChannel(string channelId) : IChannel
+	{
+		public IEnumerable<string> AllowedChannelProviderIds => Array.Empty<string>();
+		public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+		public Type CommunicationType => typeof(UnitTestCommunication);
+		public string Id { get; } = channelId;
+
+		public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
+		{
+			return identityAddress.Value?.StartsWith("unit-test", StringComparison.OrdinalIgnoreCase) ?? false;
+		}
+
+		public Task<object> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
+		{
+			var subject = "missing";
+			if (communicationContext.ContentModel?.Model is IDictionary<string, object?> bag &&
+				bag.TryGetValue("pid", out var pidObj) &&
+				pidObj is IDictionary<string, object?> pidBag &&
+				pidBag.TryGetValue("Id", out var idValue) &&
+				idValue != null &&
+				bag.TryGetValue("custom", out var customValue) &&
+				customValue != null &&
+				bag.TryGetValue("trx", out var trxObj) &&
+				trxObj is IDictionary<string, object?> trxBag &&
+				trxBag.TryGetValue("Value", out var trxValue) &&
+				trxValue != null)
+			{
+				subject = $"{idValue}:{customValue}:{trxValue}";
+			}
+
+			return Task.FromResult<object>(new UnitTestCommunication(subject));
+		}
+	}
+
+	public sealed class RecordingDispatcher : IChannelProviderDispatcher<UnitTestCommunication>
+	{
+		public static readonly ConcurrentQueue<string> Subjects = new();
+
+		public static void Reset()
+		{
+			while (Subjects.TryDequeue(out _)) { /*empty*/ }
+		}
+
+		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(UnitTestCommunication communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+		{
+			Subjects.Enqueue(communication.Subject);
+			IReadOnlyCollection<IDispatchResult?> results = [new DispatchResult(CommunicationsStatus.Success("ok"))];
+			return Task.FromResult(results);
+		}
+
+		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+		{
+			return DispatchAsync((UnitTestCommunication)communication, communicationContext, cancellationToken);
+		}
+	}
+}

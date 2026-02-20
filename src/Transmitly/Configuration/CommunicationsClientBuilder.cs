@@ -16,6 +16,7 @@ using System.Linq.Expressions;
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
 using Transmitly.Delivery.Configuration;
+using Transmitly.Model.Configuration;
 using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
@@ -39,6 +40,7 @@ public sealed class CommunicationsClientBuilder
 	private readonly List<IPersonaRegistration> _personaRegistrations = [];
 	private readonly List<IObserver<DeliveryReport>> _deliveryReportObservers = [];
 	private readonly List<IDispatchMiddleware> _middlewares = [];
+	private readonly List<IContentModelEnricherRegistration> _contentModelEnrichers = [];
 
 	/// <summary>
 	/// Creates an instance of the class
@@ -48,6 +50,7 @@ public sealed class CommunicationsClientBuilder
 		ChannelProvider = new(this, _channelProviders.Add);
 		Pipeline = new(this, _pipelines.Add);
 		PlatformIdentityResolver = new(this, _platformIdentityResolvers.Add);
+		ContentModelEnricher = new(this, _contentModelEnrichers.Add);
 		PlatformIdentityProfileEnricher = new(this, _platformIdentityProfileEnrichers.Add);
 		TemplateEngine = new(this, _templateEngines.Add);
 		DeliveryReport = new(this, _deliveryReportObservers.Add);
@@ -70,6 +73,11 @@ public sealed class CommunicationsClientBuilder
 	public PlatformIdentityResolverConfigurationBuilder PlatformIdentityResolver { get; }
 
 	/// <summary>
+	/// Gets the content model enricher configuration builder.
+	/// </summary>
+	public ContentModelEnricherConfigurationBuilder ContentModelEnricher { get; }
+
+	///<summary>
 	/// Gets the platform identity profile enricher configuration builder.
 	/// </summary>
 	public PlatformIdentityProfileEnricherConfigurationBuilder PlatformIdentityProfileEnricher { get; }
@@ -151,6 +159,16 @@ public sealed class CommunicationsClientBuilder
 		PlatformIdentityResolver.Add<TResolver>(platformIdentityType);
 
 	/// <summary>
+	/// Adds a content model enricher to the configuration.
+	/// </summary>
+	/// <typeparam name="TEnricher">Content model enricher to register.</typeparam>
+	/// <param name="options">Optional registration options.</param>
+	/// <returns>The configuration builder.</returns>
+	public CommunicationsClientBuilder AddContentModelEnricher<TEnricher>(Action<ContentModelEnricherRegistrationOptions>? options = null)
+		where TEnricher : IContentModelEnricher =>
+		ContentModelEnricher.Add<TEnricher>(options);
+
+	/// <summary>
 	/// Adds a platform identity profile enricher to the configuration.
 	/// </summary>
 	/// <typeparam name="TEnricher">Platform identity profile enricher to register.</typeparam>
@@ -204,6 +222,7 @@ public sealed class CommunicationsClientBuilder
 						_pipelines,
 						_templateEngines,
 						_platformIdentityResolvers,
+						_contentModelEnrichers,
 						_platformIdentityProfileEnrichers,
 						_personaRegistrations,
 						_deliveryReportObservers
@@ -224,7 +243,7 @@ public sealed class CommunicationsClientBuilder
 			.Reverse()
 			.Aggregate(
 				(Func<DispatchMiddlewareContext, Task<IReadOnlyCollection<IDispatchResult?>>>)BasePipelineDeliveryStrategyProvider.DefaultInvoke,
-				(next, middleware) => 
+				(next, middleware) =>
 					context => middleware.InvokeAsync(context, next)
 			);
 

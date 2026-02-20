@@ -14,6 +14,7 @@
 
 using Transmitly.ChannelProvider.Configuration;
 using Transmitly.Delivery;
+using Transmitly.Model.Configuration;
 using Transmitly.Persona.Configuration;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
@@ -28,6 +29,7 @@ public interface ICreateCommunicationsClientContext
 	IReadOnlyCollection<ITemplateEngineRegistration> TemplateEngines { get; }
 	IReadOnlyCollection<IObserver<DeliveryReport>> DeliveryReportObservers { get; }
 	IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; }
+	IReadOnlyCollection<IContentModelEnricherRegistration> ContentModelEnrichers { get; }
 	IReadOnlyCollection<IPlatformIdentityProfileEnricherRegistration> PlatformIdentityProfileEnrichers { get; }
 	IReadOnlyCollection<IPersonaRegistration> Personas { get; }
 }
