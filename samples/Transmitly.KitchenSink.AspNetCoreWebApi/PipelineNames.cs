@@ -18,6 +18,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 	{
 		public const string OtpCode = "otp-code";
 		public const string FirstPipeline = "first-pipeline";
+		public const string OrderShipmentUpdate = "order-shipment-update";
 		public const string SendGridTemplate = "send-grid-template";
 		public const string AppointmentReminder = "appointment-reminder";
 	}

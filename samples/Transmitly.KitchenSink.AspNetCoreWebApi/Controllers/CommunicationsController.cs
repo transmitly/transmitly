@@ -66,6 +66,35 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi.Controllers
 			return GetActionResult(result);
 		}
 
+		[HttpPost("dispatch/order-shipment-update", Name = "DispatchOrderShipmentUpdate")]
+		[ProducesResponseType(200, Type = typeof(IDispatchCommunicationResult))]
+		[ProducesResponseType(500, Type = typeof(IDispatchCommunicationResult))]
+		public async Task<IActionResult> DispatchOrderShipmentUpdate(OrderShipmentUpdateVM request, CancellationToken cancellationToken)
+		{
+			// This route is intentionally explicit and separate from "dispatch".
+			// It demonstrates how profile/content enrichers can complete communication data
+			// from read models in other bounded contexts (Customer, Loyalty, Orders, Fulfillment).
+			var recipient = new DispatchPlatformIdentityProfile
+			{
+				Id = request.CustomerId,
+				Type = request.CustomerType,
+				Addresses = [.. request.Addresses],
+				Attributes = new Dictionary<string, string> { ["orderId"] = request.OrderId }
+			};
+
+			var result = await _communicationsClient.DispatchAsync(
+					PipelineName.OrderShipmentUpdate,
+					[recipient],
+					TransactionModel.Create(new { orderId = request.OrderId }),
+					request.AllowedChannelIds,
+					null,
+					request.Culture,
+					cancellationToken
+			);
+
+			return GetActionResult(result);
+		}
+
 		[HttpPost("channel/provider/update", Name = "DeliveryReport")]
 		public IActionResult ChannelProviderDeliveryReport(ChannelProviderDeliveryReportRequest providerReport)
 		{

@@ -12,18 +12,19 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Microsoft.Extensions.DependencyInjection;
 using Transmitly;
 
 namespace Tandely.Notifications.Client
 {
 	public static class NotificationClientTransmitlyExtensions
 	{
-		public static CommunicationsClientBuilder UseTandelyNotifications(this CommunicationsClientBuilder builder, Action<NotificationsOptions> options)
+		public static IServiceCollection UseTandelyNotifications(this IServiceCollection services, Action<NotificationsOptions> options)
 		{
 			var opts = new NotificationsOptions();
 			options(opts);
-			builder.RegisterClientFactory(new NotificationsClientFactory(opts));
-			return builder;
+			services.AddTransmitly(tly=>tly.AddClientMiddleware(new NotificationsClientFactory(opts)));
+			return services;
 		}
 	}
 }

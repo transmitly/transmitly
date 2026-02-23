@@ -16,6 +16,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Transmitly;
 using Transmitly.Delivery;
+using Transmitly.Model.Configuration;
 using Transmitly.Samples.Shared;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
@@ -77,6 +78,37 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				//This will give us the ability to replace and generate content in our templates.
 				//In this case, we can use Fluid style templating.
 				.AddFluidTemplateEngine(options => { })
+				// Enricher examples:
+				// 1) Platform Identity Profile enrichers can assemble a richer recipient profile from read models.
+				//    Here we simulate Customer + Loyalty service lookups and merge their data into the profile.
+				// 2) Content model enrichers can project domain data into the template model.
+				//    Here we pull Order + Fulfillment read models so templates stay focused on rendering.
+				// 3) The push-specific enricher demonstrates ContinueOnEnrichedModel=false to short-circuit
+				//    downstream enrichers when channel-specific constraints exist.
+				.AddPlatformIdentityProfileEnricher<HydrateCustomerProfileFromReadModelsEnricher>("kitchensink-member", order: 10)
+				.AddContentModelEnricher<HydrateOrderAndFulfillmentContentModelEnricher>(options =>
+				{
+					options.Scope = ContentModelEnricherScope.PerRecipient;
+					options.Order = 10;
+					options.Predicate = ctx => string.Equals(ctx.PipelineIntent, PipelineName.OrderShipmentUpdate, StringComparison.OrdinalIgnoreCase);
+				})
+				.AddContentModelEnricher<PushChannelShortCircuitContentModelEnricher>(options =>
+				{
+					options.Scope = ContentModelEnricherScope.PerChannel;
+					options.Order = 10;
+					options.ContinueOnEnrichedModel = false;
+					options.Predicate = ctx =>
+						string.Equals(ctx.PipelineIntent, PipelineName.OrderShipmentUpdate, StringComparison.OrdinalIgnoreCase) &&
+						string.Equals(ctx.ChannelId, Id.Channel.PushNotification(), StringComparison.OrdinalIgnoreCase);
+				})
+				.AddContentModelEnricher<AddChannelDeliveryContextContentModelEnricher>(options =>
+				{
+					options.Scope = ContentModelEnricherScope.PerChannel;
+					options.Order = 20;
+					options.Predicate = ctx =>
+						string.Equals(ctx.PipelineIntent, PipelineName.OrderShipmentUpdate, StringComparison.OrdinalIgnoreCase) &&
+						!string.Equals(ctx.ChannelId, Id.Channel.PushNotification(), StringComparison.OrdinalIgnoreCase);
+				})
 				// We can use delivery report handlers for doing things like logging and storing
 				// the generated communications even firing off webhooks to notify other systems.
 				.AddDeliveryReportHandler((report) =>
@@ -159,6 +191,57 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 						sms.Message.AddStringTemplate($"Check out Transmit.ly! {Emoji.Robot}");
 						//sms.AddDeliveryReportCallbackUrlResolver((ctx) => Task.FromResult<string?>("https://domain.com/communications/channel/provider/update"));
 
+					});
+				})
+				// See Dispatch route in Controllers.CommunicationsController.cs.
+				// This pipeline models a real-world order shipment update use case.
+				.AddPipeline(PipelineName.OrderShipmentUpdate, pipeline =>
+				{
+					// We use any-match so all supported channels can run and trigger per-channel enrichers.
+					pipeline.UseAnyMatchPipelineDeliveryStrategy();
+
+					pipeline.AddEmail(tlyConfig.DefaultEmailFromAddress.AsIdentityAddress("The Transmit.ly group"), email =>
+					{
+						email.Subject.AddStringTemplate("{{channelMessagePrefix}} {{orderNumber}} for {{customerDisplayName}}");
+						email.HtmlBody.AddStringTemplate(
+							"""
+								Hello <strong>{{customerDisplayName}}</strong><br />
+								Order: {{orderNumber}} ({{orderStatus}})<br />
+								Total: {{orderTotal}} {{orderCurrency}}<br />
+								Loyalty Tier: {{customerLoyaltyTier}}<br />
+								Carrier: {{shipmentCarrier}}<br />
+								Tracking: <a href="{{shipmentTrackingUrl}}">{{shipmentTrackingNumber}}</a><br />
+								ETA (UTC): {{shipmentEstimatedDeliveryUtc}}<br />
+								Channel: {{deliveryChannel}}<br />
+								Provider: {{deliveryProvider}}<br />
+								Note: {{channelNote}}
+							"""
+							);
+						email.TextBody.AddStringTemplate(
+							"""
+								Hello {{customerDisplayName}}
+								Order: {{orderNumber}} ({{orderStatus}})
+								Total: {{orderTotal}} {{orderCurrency}}
+								Loyalty Tier: {{customerLoyaltyTier}}
+								Carrier: {{shipmentCarrier}}
+								Tracking: {{shipmentTrackingNumber}} {{shipmentTrackingUrl}}
+								ETA (UTC): {{shipmentEstimatedDeliveryUtc}}
+								Channel: {{deliveryChannel}}
+								Provider: {{deliveryProvider}}
+								Note: {{channelNote}}
+							"""
+							);
+					});
+
+					pipeline.AddSms(tlyConfig.DefaultSmsFromAddress.AsIdentityAddress(), sms =>
+					{
+						sms.Message.AddStringTemplate("{{channelMessagePrefix}} {{orderNumber}} ({{orderStatus}}). {{shipmentCarrier}} {{shipmentTrackingNumber}} ETA {{shipmentEstimatedDeliveryUtc}}.");
+					});
+
+					pipeline.AddPushNotification(push =>
+					{
+						push.Title.AddStringTemplate("Order Shipment Update");
+						push.Body.AddStringTemplate("{{channelMessagePrefix}} {{orderNumber}} {{orderStatus}}");
 					});
 				})
 				//See: OTPCode route in Controllers.CommunicationsController.cs

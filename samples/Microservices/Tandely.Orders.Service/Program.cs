@@ -54,17 +54,11 @@ namespace Tandely.Orders.Service
 			var notificationsServiceUrl = Guard.AgainstNullOrWhiteSpace(builder.Configuration.GetValue<string>("NotificationsService:Url"));
 			var apiKey = builder.Configuration.GetValue<string?>("NotificationsService:ApiKey");
 
-			var clientBuilder = new CommunicationsClientBuilder();
-
-			clientBuilder.UseTandelyNotifications(options =>
+			builder.Services.UseTandelyNotifications(options =>
 			{
 				options.BasePath = new Uri(notificationsServiceUrl);
 				options.ApiKey = apiKey;
 			});
-
-			var client = clientBuilder.BuildClient();
-
-			builder.Services.AddSingleton(client);
 
 			builder.Services.AddSwaggerGen(c =>
 			{

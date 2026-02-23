@@ -15,40 +15,17 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Transmitly;
-using Transmitly.Channel.Configuration;
-using Transmitly.Delivery;
-using Transmitly.Persona.Configuration;
-using Transmitly.Pipeline.Configuration;
-using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Samples.Shared;
-using Transmitly.Template.Configuration;
 using Transmitly.Util;
 
 namespace Tandely.Notifications.Client
 {
-	sealed class NotificationsClientFactory(NotificationsOptions options) : ICommunicationClientFactory
+	sealed class NotificationsClientFactory(NotificationsOptions options) : ICommunicationClientMiddleware
 	{
 		private readonly NotificationsOptions _options = Guard.AgainstNull(options);
 
-		public ICommunicationsClient CreateClient(ICreateCommunicationsClientContext context)
+		public ICommunicationsClient? CreateClient(ICreateCommunicationsClientContext context, ICommunicationsClient? previous)
 		{
-			DefaultPipelineService pipelineService = new(new DefaultPipelineFactory(context.Pipelines));
-			DefaultTemplateEngineFactory templateEngineRegistrations = new(context.TemplateEngines);
-			DefaultPlatformIdentityService platformIdentitys = new(new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers));
-			DefaultDeliveryReportService deliveryReports = new(context.DeliveryReportObservers);
-			DefaultPersonaService personaService = new(new DefaultPersonaFactory(context.Personas));
-			DefaultPlatformIdentityResolverRegistrationFactory platformIdentityResolverRegistrations = new(context.PlatformIdentityResolvers);
-			DefaultChannelChannelProviderService channelChannelProviders = new(new DefaultChannelProviderFactory(context.ChannelProviders));
-			DefaultDispatchCoordinatorService dispatchCoordinator = new(channelChannelProviders, personaService, templateEngineRegistrations, deliveryReports);
-
-			var defaultClient = new DefaultCommunicationsClient(
-				pipelineService,
-				dispatchCoordinator,
-				platformIdentitys,
-				deliveryReports
-
-
-			);
 			var jsonOptions = new JsonSerializerOptions()
 			{
 				PropertyNameCaseInsensitive = true,
@@ -57,7 +34,7 @@ namespace Tandely.Notifications.Client
 			jsonOptions.Converters.Add(new JsonExceptionConverter());
 			jsonOptions.Converters.Add(new JsonStringEnumConverter());
 			jsonOptions.Converters.Add(new ObjectToInferredTypesConverter());
-			return new NotificationsCommunicationsClient(defaultClient, context, platformIdentityResolverRegistrations, _options, jsonOptions);
+			return new NotificationsCommunicationsClient(previous!, context, _options, jsonOptions);
 		}
 	}
 }

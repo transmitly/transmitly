@@ -27,11 +27,13 @@ namespace Tandely.Notifications.Client
 		readonly JsonSerializerOptions _jsonOptions;
 		readonly static Lazy<HttpClient> _httpClient = new(() => CreateHttpClient(_options));
 		static NotificationsOptions? _options;
-		readonly DefaultCommunicationsClient _defaultClient;
+		readonly ICommunicationsClient _defaultClient;
 		readonly IReadOnlyCollection<IPersonaRegistration>? _pipelinePersonas;
 
-		internal NotificationsCommunicationsClient(DefaultCommunicationsClient defaultClient, ICreateCommunicationsClientContext context,
-			IPlatformIdentityResolverFactory platformIdentityResolverFactory, NotificationsOptions options,
+		internal NotificationsCommunicationsClient(
+			ICommunicationsClient defaultClient, 
+			ICreateCommunicationsClientContext context,
+			NotificationsOptions options,
 			JsonSerializerOptions jsonOptions
 		)
 		{
