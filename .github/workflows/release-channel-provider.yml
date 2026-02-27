@@ -42,7 +42,3 @@ jobs:
         run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }} --configuration ${{inputs.buildConfiguration}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
       - name: Publish Nuget
         run: dotnet nuget push src\${{inputs.channelProviderName}}\bin\${{inputs.buildConfiguration}}\${{inputs.channelProviderName}}*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
-      - name: Add github source
-        run: dotnet nuget add source --username ${{ secrets.PUBLISH_GITHUB_USERNAME }} --password ${{ secrets.PUBLISH_GITHUB_PACKAGE_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/transmitly/index.json"
-      - name: Publish (Github)
-        run: dotnet nuget push src\${{inputs.channelProviderName}}\bin\${{inputs.buildConfiguration}}\${{inputs.channelProviderName}}*.nupkg --api-key ${{secrets.PUBLISH_GITHUB_PACKAGE_API_KEY}} --source "github"
