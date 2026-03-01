@@ -14,13 +14,33 @@
 
 namespace Transmitly.Channel.Push;
 
-internal sealed class PushNotificationCommunication(IReadOnlyCollection<IPlatformIdentityAddress> identityAddresses, IExtendedProperties extendedProperties, string? title, string? body, string? imageUrl) : IPushNotification
+internal sealed class PushNotificationCommunication(
+	IReadOnlyCollection<IPlatformIdentityAddress> identityAddresses,
+	IExtendedProperties extendedProperties,
+	string? title,
+	string? body,
+	string? imageUrl,
+	IReadOnlyDictionary<string, string>? data = null,
+	IReadOnlyDictionary<string, string>? headers = null,
+	IAndroidPushNotificationContent? android = null,
+	IApplePushNotificationContent? apple = null,
+	IWebPushNotificationContent? web = null) : IPushNotification
 {
-	public string? Title { get; set; } = title;
+	public string? Title { get; internal set; } = title;
 
-	public string? Body { get; set; } = body;
+	public string? Body { get; internal set; } = body;
 
-	public string? ImageUrl { get; set; } = imageUrl;
+	public string? ImageUrl { get; internal set; } = imageUrl;
+
+	public IReadOnlyDictionary<string, string>? Data { get; internal set; } = data;
+
+	public IReadOnlyDictionary<string, string>? Headers { get; internal set; } = headers;
+
+	public IAndroidPushNotificationContent? Android { get; internal set; } = android;
+
+	public IApplePushNotificationContent? Apple { get; internal set; } = apple;
+
+	public IWebPushNotificationContent? Web { get; internal set; } = web;
 
 	public IReadOnlyCollection<IPlatformIdentityAddress> Recipient { get; } = Guard.AgainstNull(identityAddresses);
 

@@ -12,19 +12,23 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly;
+namespace Transmitly.Channel.Configuration.Push;
 
-public interface IVoice
+/// <summary>
+/// Direction for displaying Web push notification text.
+/// </summary>
+public enum WebPushDisplayDirection
 {
-	IPlatformIdentityAddress? From { get; }
-	IPlatformIdentityAddress[]? To { get; }
-	IVoiceType? VoiceType { get; }
-	string Message { get; }
-	MachineDetection MachineDetection { get; }
-	TransportPriority TransportPriority { get; }
-	IExtendedProperties ExtendedProperties { get; }
 	/// <summary>
-	/// A resolver that will return The URL to call for status updates for the dispatched communication.
+	/// Uses browser default behavior.
 	/// </summary>
-	Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; }
+	Auto,
+	/// <summary>
+	/// Displays text left to right.
+	/// </summary>
+	LeftToRight,
+	/// <summary>
+	/// Displays text right to left.
+	/// </summary>
+	RightToLeft
 }

@@ -18,11 +18,24 @@ namespace Transmitly.Channel.Configuration.Push;
 
 internal sealed class PushNotificationChannelConfiguration() : IPushNotificationChannelConfiguration
 {
+	private Dictionary<string, IContentTemplateConfiguration>? _data;
+	private Dictionary<string, IContentTemplateConfiguration>? _headers;
+
 	public IContentTemplateConfiguration Title { get; } = new ContentTemplateConfiguration();
 
 	public IContentTemplateConfiguration Body { get; } = new ContentTemplateConfiguration();
 
 	public IContentTemplateConfiguration ImageUrl { get; } = new ContentTemplateConfiguration();
+
+	public IReadOnlyDictionary<string, IContentTemplateConfiguration>? Data => _data;
+
+	public IReadOnlyDictionary<string, IContentTemplateConfiguration>? Headers => _headers;
+
+	public IAndroidPushNotification? Android { get; } = new AndroidPushNotification();
+
+	public IApplePushNotification? Apple { get; } = new ApplePushNotification();
+
+	public IWebPushNotification? Web { get; } = new WebPushNotification();
 
 	public IReadOnlyCollection<string>? RecipientAddressPurposes { get; private set; }
 
@@ -35,6 +48,7 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; private set; }
 
 	private readonly Lazy<IExtendedProperties> _extendedProprties = new(() => new ExtendedProperties());
+
 	public IExtendedProperties ExtendedProperties => _extendedProprties.Value;
 
 	public IChannelConfiguration AddBlindCopyRecipientAddressPurpose(params string[] purposes)
@@ -64,6 +78,64 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 	public IChannelConfiguration AddRecipientAddressPurpose(params string[] purposes)
 	{
 		RecipientAddressPurposes = purposes;
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddData(string key, Action<IContentTemplateConfiguration> content)
+	{
+		_data ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_data, key, content);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddData(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
+	{
+		_data ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_data, key, contentResolver);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content)
+	{
+		_headers ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_headers, key, content);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddHeader(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
+	{
+		_headers ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_headers, key, contentResolver);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddAndroid(Action<IAndroidPushNotificationConfiguration> android)
+	{
+		Guard.AgainstNull(android);
+		if (Android is IAndroidPushNotificationConfiguration androidConfiguration)
+		{
+			android(androidConfiguration);
+		}
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddApple(Action<IApplePushNotificationConfiguration> apple)
+	{
+		Guard.AgainstNull(apple);
+		if (Apple is IApplePushNotificationConfiguration appleConfiguration)
+		{
+			apple(appleConfiguration);
+		}
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddWeb(Action<IWebPushNotificationConfiguration> web)
+	{
+		Guard.AgainstNull(web);
+		if (Web is IWebPushNotificationConfiguration webConfiguration)
+		{
+			web(webConfiguration);
+		}
 		return this;
 	}
 }

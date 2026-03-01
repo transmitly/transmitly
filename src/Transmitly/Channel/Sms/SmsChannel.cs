@@ -36,7 +36,7 @@ internal sealed class SmsChannel(ISmsChannelConfiguration configuration) : IChan
 
 	public IEnumerable<string> AllowedChannelProviderIds => _configuration.ChannelProviderFilter ?? Array.Empty<string>();
 
-	public IExtendedProperties ExtendedProperties => new ExtendedProperties();
+	public IExtendedProperties ExtendedProperties => _configuration.ExtendedProperties;
 
 	public async Task<ISms> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 	{

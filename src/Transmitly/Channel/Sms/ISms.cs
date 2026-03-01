@@ -25,5 +25,5 @@ public interface ISms
 	TransportPriority TransportPriority { get; }
 	IReadOnlyCollection<ISmsAttachment> Attachments { get; }
 	IExtendedProperties ExtendedProperties { get; }
-	Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+	Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; }
 }

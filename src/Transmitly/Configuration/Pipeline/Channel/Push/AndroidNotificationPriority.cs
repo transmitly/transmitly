@@ -12,19 +12,19 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly;
+namespace Transmitly.Channel.Configuration.Push;
 
-public interface IVoice
+/// <summary>
+/// Android push notification delivery priority.
+/// </summary>
+public enum AndroidNotificationPriority
 {
-	IPlatformIdentityAddress? From { get; }
-	IPlatformIdentityAddress[]? To { get; }
-	IVoiceType? VoiceType { get; }
-	string Message { get; }
-	MachineDetection MachineDetection { get; }
-	TransportPriority TransportPriority { get; }
-	IExtendedProperties ExtendedProperties { get; }
 	/// <summary>
-	/// A resolver that will return The URL to call for status updates for the dispatched communication.
+	/// Normal priority message.
 	/// </summary>
-	Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; }
+	Normal,
+	/// <summary>
+	/// High priority message.
+	/// </summary>
+	High
 }

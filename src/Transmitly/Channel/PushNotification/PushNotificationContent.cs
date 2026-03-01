@@ -12,19 +12,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly;
+namespace Transmitly.Channel.Push;
 
-public interface IVoice
+internal abstract class PushNotificationContent : IPushNotificationContent
 {
-	IPlatformIdentityAddress? From { get; }
-	IPlatformIdentityAddress[]? To { get; }
-	IVoiceType? VoiceType { get; }
-	string Message { get; }
-	MachineDetection MachineDetection { get; }
-	TransportPriority TransportPriority { get; }
-	IExtendedProperties ExtendedProperties { get; }
-	/// <summary>
-	/// A resolver that will return The URL to call for status updates for the dispatched communication.
-	/// </summary>
-	Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; }
+	public string? Title { get; internal set; }
+
+	public string? Body { get; internal set; }
+
+	public string? ImageUrl { get; internal set; }
+
+	public IReadOnlyDictionary<string, string>? Data { get; internal set; }
+
+	public IReadOnlyDictionary<string, string>? Headers { get; internal set; }
 }

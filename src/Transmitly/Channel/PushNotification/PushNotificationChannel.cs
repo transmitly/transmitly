@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using Transmitly.Channel.Configuration;
 using Transmitly.Channel.Configuration.Push;
 using Transmitly.Channel.Push;
+using Transmitly.Template.Configuration;
 
 namespace Transmitly;
 
@@ -43,21 +44,32 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 
 	public IEnumerable<string> AllowedChannelProviderIds => _configuration.ChannelProviderFilter ?? Array.Empty<string>();
 
-	public IExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
+	public IExtendedProperties ExtendedProperties => _configuration.ExtendedProperties;
 
 	public async Task<IPushNotification> GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)
 	{
+		Guard.AgainstNull(communicationContext);
+
 		var title = await _configuration.Title.RenderAsync(communicationContext);
 		var body = await _configuration.Body.RenderAsync(communicationContext);
 		var imageUrl = await _configuration.ImageUrl.RenderAsync(communicationContext);
-
+		var data = await RenderTemplateDictionaryAsync(_configuration.Data, communicationContext);
+		var headers = await RenderTemplateDictionaryAsync(_configuration.Headers, communicationContext);
+		var android = await RenderAndroidContentAsync(_configuration.Android, communicationContext);
+		var apple = await RenderAppleContentAsync(_configuration.Apple, communicationContext);
+		var web = await RenderWebContentAsync(_configuration.Web, communicationContext);
 		var recipients = communicationContext.PlatformIdentities.SelectMany(a => a.Addresses).ToList();
 
-		return new PushNotificationCommunication(recipients, ExtendedProperties, title, body, imageUrl);
+		return new PushNotificationCommunication(recipients, ExtendedProperties, title, body, imageUrl, data, headers, android, apple, web);
 	}
 
 	public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
 	{
+		if (identityAddress == null)
+		{
+			return false;
+		}
+
 		if (identityAddress.Type is string type && _supportedAddressTypes.Contains(type))
 		{
 			return true;
@@ -110,6 +122,211 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 		}
 
 		return identityAddress.Attributes.Keys.Any(keys.Contains);
+	}
+
+	private static async Task<IReadOnlyDictionary<string, string>?> RenderTemplateDictionaryAsync(
+		IReadOnlyDictionary<string, IContentTemplateConfiguration>? templateDictionary,
+		IDispatchCommunicationContext communicationContext)
+	{
+		if (templateDictionary is null || templateDictionary.Count == 0)
+		{
+			return null;
+		}
+
+		var values = new Dictionary<string, string>(templateDictionary.Count, StringComparer.Ordinal);
+		foreach (var template in templateDictionary)
+		{
+			var renderedValue = await template.Value.RenderAsync(communicationContext, false);
+			if (renderedValue is not null && !string.IsNullOrWhiteSpace(renderedValue))
+			{
+				values[template.Key] = renderedValue;
+			}
+		}
+
+		return values.Count == 0 ? null : values;
+	}
+
+	private static async Task<(string? Title, string? Body, string? ImageUrl, IReadOnlyDictionary<string, string>? Data, IReadOnlyDictionary<string, string>? Headers)>
+		RenderContentAsync(IPushContent content, IDispatchCommunicationContext communicationContext)
+	{
+		var title = await content.Title.RenderAsync(communicationContext, false);
+		var body = await content.Body.RenderAsync(communicationContext, false);
+		var imageUrl = await content.ImageUrl.RenderAsync(communicationContext, false);
+		var data = await RenderTemplateDictionaryAsync(content.Data, communicationContext);
+		var headers = await RenderTemplateDictionaryAsync(content.Headers, communicationContext);
+		return (title, body, imageUrl, data, headers);
+	}
+
+	private static bool HasRenderedContent(
+		string? title,
+		string? body,
+		string? imageUrl,
+		IReadOnlyDictionary<string, string>? data,
+		IReadOnlyDictionary<string, string>? headers)
+	{
+		return !string.IsNullOrWhiteSpace(title) ||
+			!string.IsNullOrWhiteSpace(body) ||
+			!string.IsNullOrWhiteSpace(imageUrl) ||
+			(data?.Count > 0) ||
+			(headers?.Count > 0);
+	}
+
+	private static async Task<IAndroidPushNotificationContent?> RenderAndroidContentAsync(
+		IAndroidPushNotification? android,
+		IDispatchCommunicationContext communicationContext)
+	{
+		if (android is null)
+		{
+			return null;
+		}
+
+		var (Title, Body, ImageUrl, Data, Headers) = await RenderContentAsync(android, communicationContext);
+		var hasOptionValues = !string.IsNullOrWhiteSpace(android.CollapseId) ||
+			android.Priority.HasValue ||
+			android.TimeToLive.HasValue ||
+			!string.IsNullOrWhiteSpace(android.TargetApplicationId) ||
+			android.AllowDeliveryBeforeFirstUnlock.HasValue;
+
+		if (!HasRenderedContent(
+			Title,
+			Body,
+			ImageUrl,
+			Data,
+			Headers) &&
+			!hasOptionValues)
+		{
+			return null;
+		}
+
+		return new AndroidPushNotificationContent
+		{
+			Title = Title,
+			Body = Body,
+			ImageUrl = ImageUrl,
+			Data = Data,
+			Headers = Headers,
+			CollapseId = android.CollapseId,
+			Priority = android.Priority,
+			TimeToLive = android.TimeToLive,
+			TargetApplicationId = android.TargetApplicationId,
+			AllowDeliveryBeforeFirstUnlock = android.AllowDeliveryBeforeFirstUnlock
+		};
+	}
+
+	private static async Task<IApplePushNotificationContent?> RenderAppleContentAsync(
+		IApplePushNotification? apple,
+		IDispatchCommunicationContext communicationContext)
+	{
+		if (apple is null)
+		{
+			return null;
+		}
+
+		var (Title, Body, ImageUrl, Data, Headers) = await RenderContentAsync(apple, communicationContext);
+		var hasOptionValues = !string.IsNullOrWhiteSpace(apple.Subtitle) ||
+			!string.IsNullOrWhiteSpace(apple.SubtitleLocalizationKey) ||
+			apple.SubtitleLocalizationArguments.Count > 0 ||
+			!string.IsNullOrWhiteSpace(apple.ActionLocalizationKey) ||
+			!string.IsNullOrWhiteSpace(apple.BodyLocalizationKey) ||
+			(apple.BodyLocalizationArguments?.Count > 0) ||
+			!string.IsNullOrWhiteSpace(apple.TitleLocalizationKey) ||
+			(apple.TitleLocalizationArguments?.Count > 0) ||
+			apple.Badge.HasValue ||
+			!string.IsNullOrWhiteSpace(apple.Sound) ||
+			apple.IsBackgroundUpdate.HasValue ||
+			apple.IsContentMutable.HasValue ||
+			!string.IsNullOrWhiteSpace(apple.Category) ||
+			!string.IsNullOrWhiteSpace(apple.ThreadId);
+
+		if (!HasRenderedContent(
+			Title,
+			Body,
+			ImageUrl,
+			Data,
+			Headers) &&
+			!hasOptionValues)
+		{
+			return null;
+		}
+
+		return new ApplePushNotificationContent
+		{
+			Title = Title,
+			Body = Body,
+			ImageUrl = ImageUrl,
+			Data = Data,
+			Headers = Headers,
+			Subtitle = apple.Subtitle,
+			SubtitleLocalizationKey = apple.SubtitleLocalizationKey,
+			SubtitleLocalizationArguments = apple.SubtitleLocalizationArguments,
+			ActionLocalizationKey = apple.ActionLocalizationKey,
+			BodyLocalizationKey = apple.BodyLocalizationKey,
+			BodyLocalizationArguments = apple.BodyLocalizationArguments,
+			TitleLocalizationKey = apple.TitleLocalizationKey,
+			TitleLocalizationArguments = apple.TitleLocalizationArguments,
+			Badge = apple.Badge,
+			Sound = apple.Sound,
+			IsBackgroundUpdate = apple.IsBackgroundUpdate,
+			IsContentMutable = apple.IsContentMutable,
+			Category = apple.Category,
+			ThreadId = apple.ThreadId
+		};
+	}
+
+	private static async Task<IWebPushNotificationContent?> RenderWebContentAsync(
+		IWebPushNotification? web,
+		IDispatchCommunicationContext communicationContext)
+	{
+		if (web is null)
+		{
+			return null;
+		}
+
+		var (Title, Body, ImageUrl, Data, Headers) = await RenderContentAsync(web, communicationContext);
+		var icon = await web.Icon.RenderAsync(communicationContext, false);
+		var badge = await web.Badge.RenderAsync(communicationContext, false);
+		var language = await web.Language.RenderAsync(communicationContext, false);
+
+		var hasOptionValues = !string.IsNullOrWhiteSpace(icon) ||
+			!string.IsNullOrWhiteSpace(badge) ||
+			!string.IsNullOrWhiteSpace(language) ||
+			web.Renotify.HasValue ||
+			web.RequireInteraction.HasValue ||
+			web.IsSilent.HasValue ||
+			!string.IsNullOrWhiteSpace(web.Tag) ||
+			web.Timestamp.HasValue ||
+			(web.VibratePattern?.Count > 0) ||
+			web.Direction.HasValue;
+
+		if (!HasRenderedContent(
+			Title,
+			Body,
+			ImageUrl,
+			Data,
+			Headers) &&
+			!hasOptionValues)
+		{
+			return null;
+		}
+
+		return new WebPushNotificationContent
+		{
+			Title = Title,
+			Body = Body,
+			ImageUrl = ImageUrl,
+			Data = Data,
+			Headers = Headers,
+			Icon = icon,
+			Badge = badge,
+			Language = language,
+			Renotify = web.Renotify,
+			RequireInteraction = web.RequireInteraction,
+			IsSilent = web.IsSilent,
+			Tag = web.Tag,
+			Timestamp = web.Timestamp,
+			VibratePattern = web.VibratePattern,
+			Direction = web.Direction
+		};
 	}
 
 	private const string DeviceTokenPattern = @"^(?:[A-Fa-f0-9]{64}|[A-Za-z0-9_-]{20,})$";

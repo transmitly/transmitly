@@ -41,5 +41,5 @@ internal sealed class EmailCommunication(IPlatformIdentityAddress from, IExtende
 
 	public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 
-	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; internal set; }
 }

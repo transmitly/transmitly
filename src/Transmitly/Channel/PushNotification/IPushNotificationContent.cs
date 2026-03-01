@@ -14,17 +14,29 @@
 
 namespace Transmitly;
 
-public interface IVoice
+/// <summary>
+/// Base push notification content payload.
+/// </summary>
+public interface IPushNotificationContent
 {
-	IPlatformIdentityAddress? From { get; }
-	IPlatformIdentityAddress[]? To { get; }
-	IVoiceType? VoiceType { get; }
-	string Message { get; }
-	MachineDetection MachineDetection { get; }
-	TransportPriority TransportPriority { get; }
-	IExtendedProperties ExtendedProperties { get; }
 	/// <summary>
-	/// A resolver that will return The URL to call for status updates for the dispatched communication.
+	/// Push notification title.
 	/// </summary>
-	Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; }
+	string? Title { get; }
+	/// <summary>
+	/// Push notification body.
+	/// </summary>
+	string? Body { get; }
+	/// <summary>
+	/// Push notification image URL.
+	/// </summary>
+	string? ImageUrl { get; }
+	/// <summary>
+	/// Push notification custom data values.
+	/// </summary>
+	IReadOnlyDictionary<string, string>? Data { get; }
+	/// <summary>
+	/// Push notification header values.
+	/// </summary>
+	IReadOnlyDictionary<string, string>? Headers { get; }
 }

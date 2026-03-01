@@ -18,26 +18,26 @@ namespace Transmitly.Channel.Voice;
 internal sealed class VoiceCommunication(string message, IExtendedProperties extendedProperties) : IVoice
 {
 	///<inheritdoc/>
-	public IPlatformIdentityAddress? From { get; set; }
+	public IPlatformIdentityAddress? From { get; internal set; }
 
 	///<inheritdoc/>
-	public IPlatformIdentityAddress[]? To { get; set; }
+	public IPlatformIdentityAddress[]? To { get; internal set; }
 
 	///<inheritdoc/>
-	public IVoiceType? VoiceType { get; set; }
+	public IVoiceType? VoiceType { get; internal set; }
 
 	///<inheritdoc/>
-	public string Message { get; set; } = Guard.AgainstNullOrWhiteSpace(message);
+	public string Message { get; internal set; } = Guard.AgainstNullOrWhiteSpace(message);
 
 	///<inheritdoc/>
-	public TransportPriority TransportPriority { get; set; }
+	public TransportPriority TransportPriority { get; internal set; }
 
 	///<inheritdoc/>
 	public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 
 	///<inheritdoc/>
-	public MachineDetection MachineDetection { get; set; }
+	public MachineDetection MachineDetection { get; internal set; }
 
 	///<inheritdoc/>
-	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; internal set; }
 }

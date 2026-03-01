@@ -37,4 +37,16 @@ public interface IVoiceChannelConfiguration : IChannelConfiguration
 	/// Level of machine detection.
 	/// </summary>
 	MachineDetection MachineDetection { get; }
+	/// <summary>
+	/// Sets the details of the voice to use.
+	/// </summary>
+	/// <param name="voiceType">Details of the voice to use.</param>
+	/// <returns></returns>
+	IChannelConfiguration AddVoiceType(IVoiceType voiceType);
+	/// <summary>
+	/// Sets the level of machine detection.
+	/// </summary>
+	/// <param name="machineDetection">Level of machine detection.</param>
+	/// <returns></returns>
+	IChannelConfiguration AddMachineDetection(MachineDetection machineDetection);
 }

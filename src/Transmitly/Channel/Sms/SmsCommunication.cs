@@ -17,19 +17,19 @@ namespace Transmitly.Channel.Sms;
 /// <inheritdoc cref="ISms"/>
 internal class SmsCommunication(IExtendedProperties extendedProperties) : ISms
 {
-	public IPlatformIdentityAddress[]? To { get; set; }
+	public IPlatformIdentityAddress[]? To { get; internal set; }
 
-	public string? Message { get; set; }
+	public string? Message { get; internal set; }
 
-	public MessagePriority Priority { get; set; }
+	public MessagePriority Priority { get; internal set; }
 
-	public TransportPriority TransportPriority { get; set; }
+	public TransportPriority TransportPriority { get; internal set; }
 
-	public IReadOnlyCollection<ISmsAttachment> Attachments { get; set; } = [];
+	public IReadOnlyCollection<ISmsAttachment> Attachments { get; internal set; } = [];
 
-	public IPlatformIdentityAddress? From { get; set; }
+	public IPlatformIdentityAddress? From { get; internal set; }
 
 	public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
 
-	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; set; }
+	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; internal set; }
 }

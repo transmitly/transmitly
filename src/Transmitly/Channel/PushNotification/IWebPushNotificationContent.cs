@@ -11,54 +11,54 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
+
+using Transmitly.Channel.Configuration.Push;
+
 namespace Transmitly;
 
 /// <summary>
-/// Push notification communication payload.
+/// Web specific push notification content payload.
 /// </summary>
-public interface IPushNotification
+public interface IWebPushNotificationContent : IPushNotificationContent
 {
 	/// <summary>
-	/// Default push notification title.
+	/// Web notification icon URL.
 	/// </summary>
-	string? Title { get; }
+	string? Icon { get; }
 	/// <summary>
-	/// Default push notification body.
+	/// Web notification badge URL.
 	/// </summary>
-	string? Body { get; }
+	string? Badge { get; }
 	/// <summary>
-	/// Default push notification image URL.
+	/// Web notification language tag.
 	/// </summary>
-	string? ImageUrl { get; }
-
+	string? Language { get; }
 	/// <summary>
-	/// Default push notification custom data values.
+	/// Whether existing notifications should be renotified.
 	/// </summary>
-	IReadOnlyDictionary<string, string>? Data { get; }
+	bool? Renotify { get; }
 	/// <summary>
-	/// Default push notification header values.
+	/// Whether the notification should remain active until user interaction.
 	/// </summary>
-	IReadOnlyDictionary<string, string>? Headers { get; }
-
+	bool? RequireInteraction { get; }
 	/// <summary>
-	/// Android specific push notification content.
+	/// Whether the notification should be silent.
 	/// </summary>
-	IAndroidPushNotificationContent? Android { get; }
+	bool? IsSilent { get; }
 	/// <summary>
-	/// Apple specific push notification content.
+	/// Web notification tag.
 	/// </summary>
-	IApplePushNotificationContent? Apple { get; }
+	string? Tag { get; }
 	/// <summary>
-	/// Web specific push notification content.
+	/// Web notification timestamp.
 	/// </summary>
-	IWebPushNotificationContent? Web { get; }
-
+	DateTimeOffset? Timestamp { get; }
 	/// <summary>
-	/// The recipients of the push notification.
+	/// Web notification vibration pattern.
 	/// </summary>
-	IReadOnlyCollection<IPlatformIdentityAddress> Recipient { get; }
+	IReadOnlyCollection<int>? VibratePattern { get; }
 	/// <summary>
-	/// Extended properties of the push notification.
+	/// Web notification text direction.
 	/// </summary>
-	IExtendedProperties ExtendedProperties { get; }
+	WebPushDisplayDirection? Direction { get; }
 }
