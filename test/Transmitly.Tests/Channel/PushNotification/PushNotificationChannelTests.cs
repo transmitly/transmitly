@@ -258,6 +258,83 @@ public class PushNotificationChannelTests : BaseUnitTest
 	}
 
 	[TestMethod]
+	public async Task GenerateCommunicationAsyncShouldRenderAddDataAndAddHeaderConvenienceMethods()
+	{
+		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
+		mockContext.SetupGet(x => x.TemplateEngine).Returns(new UnitTestTemplateEngine());
+		var context = mockContext.Object;
+
+		var config = new PushNotificationChannelConfiguration();
+		config
+			.AddData("static-data", "static-value")
+			.AddDataIfNotNull("template-data", c => c.AddStringTemplate("template-value"))
+			.AddDataIfNotNull("template-data-null", c => c.AddTemplateResolver(_ => Task.FromResult<string?>(null)))
+			.AddDataIfNotNull("resolver-data", _ => Task.FromResult<string?>("resolver-value"))
+			.AddDataIfNotNull("resolver-data-null", _ => Task.FromResult<string?>(null))
+			.AddData("condition-data", c => c.AddStringTemplate("condition-value"), _ => true)
+			.AddData("condition-data-false", c => c.AddStringTemplate("should-not-render"), _ => false)
+			.AddDataIfNotNull("condition-resolver-data", _ => Task.FromResult<string?>("condition-resolver-value"), _ => true)
+			.AddDataIfNotNull("condition-resolver-data-false", _ => Task.FromResult<string?>("should-not-render"), _ => false)
+			.AddHeader("static-header", "static-header-value")
+			.AddHeaderIfNotNull("template-header", c => c.AddStringTemplate("template-header-value"))
+			.AddHeaderIfNotNull("template-header-null", c => c.AddTemplateResolver(_ => Task.FromResult<string?>(null)))
+			.AddHeaderIfNotNull("resolver-header", _ => Task.FromResult<string?>("resolver-header-value"))
+			.AddHeaderIfNotNull("resolver-header-null", _ => Task.FromResult<string?>(null))
+			.AddHeader("condition-header", c => c.AddStringTemplate("condition-header-value"), _ => true)
+			.AddHeader("condition-header-false", c => c.AddStringTemplate("should-not-render"), _ => false)
+			.AddHeaderIfNotNull("condition-resolver-header", _ => Task.FromResult<string?>("condition-resolver-header-value"), _ => true)
+			.AddHeaderIfNotNull("condition-resolver-header-false", _ => Task.FromResult<string?>("should-not-render"), _ => false);
+
+		config.AddAndroid(android =>
+		{
+			android
+				.AddData("android-static-data", "android-static-value")
+				.AddData("android-condition-data", c => c.AddStringTemplate("android-condition-value"), _ => true)
+				.AddDataIfNotNull("android-condition-data-false", _ => Task.FromResult<string?>("should-not-render"), _ => false)
+				.AddHeader("android-static-header", "android-static-header-value")
+				.AddHeaderIfNotNull("android-condition-header", _ => Task.FromResult<string?>("android-condition-header-value"), _ => true)
+				.AddHeaderIfNotNull("android-condition-header-false", _ => Task.FromResult<string?>("should-not-render"), _ => false);
+		});
+
+		var channel = new PushNotificationChannel(config);
+		var result = await channel.GenerateCommunicationAsync(context);
+
+		Assert.IsNotNull(result.Data);
+		Assert.AreEqual("static-value", result.Data["static-data"]);
+		Assert.AreEqual("template-value", result.Data["template-data"]);
+		Assert.AreEqual("resolver-value", result.Data["resolver-data"]);
+		Assert.AreEqual("condition-value", result.Data["condition-data"]);
+		Assert.AreEqual("condition-resolver-value", result.Data["condition-resolver-data"]);
+		Assert.IsFalse(result.Data.ContainsKey("template-data-null"));
+		Assert.IsFalse(result.Data.ContainsKey("resolver-data-null"));
+		Assert.IsFalse(result.Data.ContainsKey("condition-data-false"));
+		Assert.IsFalse(result.Data.ContainsKey("condition-resolver-data-false"));
+
+		Assert.IsNotNull(result.Headers);
+		Assert.AreEqual("static-header-value", result.Headers["static-header"]);
+		Assert.AreEqual("template-header-value", result.Headers["template-header"]);
+		Assert.AreEqual("resolver-header-value", result.Headers["resolver-header"]);
+		Assert.AreEqual("condition-header-value", result.Headers["condition-header"]);
+		Assert.AreEqual("condition-resolver-header-value", result.Headers["condition-resolver-header"]);
+		Assert.IsFalse(result.Headers.ContainsKey("template-header-null"));
+		Assert.IsFalse(result.Headers.ContainsKey("resolver-header-null"));
+		Assert.IsFalse(result.Headers.ContainsKey("condition-header-false"));
+		Assert.IsFalse(result.Headers.ContainsKey("condition-resolver-header-false"));
+
+		Assert.IsNotNull(result.Android);
+		Assert.IsNotNull(result.Android.Data);
+		Assert.AreEqual("android-static-value", result.Android.Data["android-static-data"]);
+		Assert.AreEqual("android-condition-value", result.Android.Data["android-condition-data"]);
+		Assert.IsFalse(result.Android.Data.ContainsKey("android-condition-data-false"));
+
+		Assert.IsNotNull(result.Android.Headers);
+		Assert.AreEqual("android-static-header-value", result.Android.Headers["android-static-header"]);
+		Assert.AreEqual("android-condition-header-value", result.Android.Headers["android-condition-header"]);
+		Assert.IsFalse(result.Android.Headers.ContainsKey("android-condition-header-false"));
+	}
+
+	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldRenderWebStringHelpersAndIgnoreWhitespace()
 	{
 		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();

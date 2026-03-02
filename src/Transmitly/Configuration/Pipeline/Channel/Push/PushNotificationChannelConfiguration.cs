@@ -88,10 +88,48 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 		return this;
 	}
 
+	public IPushNotificationChannelConfiguration AddData(string key, string? value)
+	{
+		_data ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_data, key, value);
+		return this;
+	}
+
 	public IPushNotificationChannelConfiguration AddData(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
 	{
 		_data ??= [];
 		PushNotificationTemplateConfigurationHelpers.AddTemplate(_data, key, contentResolver);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddDataIfNotNull(string key, Action<IContentTemplateConfiguration> content)
+	{
+		_data ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_data, key, content);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddDataIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
+	{
+		_data ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_data, key, contentResolver);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		_data ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_data, key, content, addIfCondition);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddDataIfNotNull(
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		_data ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_data, key, contentResolver, addIfCondition);
 		return this;
 	}
 
@@ -102,10 +140,48 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 		return this;
 	}
 
+	public IPushNotificationChannelConfiguration AddHeader(string key, string? value)
+	{
+		_headers ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_headers, key, value);
+		return this;
+	}
+
 	public IPushNotificationChannelConfiguration AddHeader(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
 	{
 		_headers ??= [];
 		PushNotificationTemplateConfigurationHelpers.AddTemplate(_headers, key, contentResolver);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddHeaderIfNotNull(string key, Action<IContentTemplateConfiguration> content)
+	{
+		_headers ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_headers, key, content);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddHeaderIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
+	{
+		_headers ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_headers, key, contentResolver);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		_headers ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_headers, key, content, addIfCondition);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddHeaderIfNotNull(
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		_headers ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_headers, key, contentResolver, addIfCondition);
 		return this;
 	}
 

@@ -54,9 +54,42 @@ internal sealed class ApplePushNotification : PushContentConfigurationBase, IApp
 		return this;
 	}
 
+	public IApplePushNotificationConfiguration AddData(string key, string? value)
+	{
+		AddDataTemplate(key, value);
+		return this;
+	}
+
 	public IApplePushNotificationConfiguration AddData(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
 	{
 		AddDataTemplate(key, contentResolver);
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddDataIfNotNull(string key, Action<IContentTemplateConfiguration> content)
+	{
+		AddDataTemplateIfNotNull(key, content);
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddDataIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
+	{
+		AddDataTemplateIfNotNull(key, contentResolver);
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddDataTemplate(key, content, addIfCondition);
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddDataIfNotNull(
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddDataTemplateIfNotNull(key, contentResolver, addIfCondition);
 		return this;
 	}
 
@@ -66,9 +99,42 @@ internal sealed class ApplePushNotification : PushContentConfigurationBase, IApp
 		return this;
 	}
 
+	public IApplePushNotificationConfiguration AddHeader(string key, string? value)
+	{
+		AddHeaderTemplate(key, value);
+		return this;
+	}
+
 	public IApplePushNotificationConfiguration AddHeader(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
 	{
 		AddHeaderTemplate(key, contentResolver);
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddHeaderIfNotNull(string key, Action<IContentTemplateConfiguration> content)
+	{
+		AddHeaderTemplateIfNotNull(key, content);
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddHeaderIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
+	{
+		AddHeaderTemplateIfNotNull(key, contentResolver);
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddHeaderTemplate(key, content, addIfCondition);
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddHeaderIfNotNull(
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddHeaderTemplateIfNotNull(key, contentResolver, addIfCondition);
 		return this;
 	}
 

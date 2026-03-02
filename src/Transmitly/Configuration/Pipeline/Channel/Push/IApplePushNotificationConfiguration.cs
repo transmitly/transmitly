@@ -21,12 +21,26 @@ namespace Transmitly.Channel.Configuration.Push;
 public interface IApplePushNotificationConfiguration : IApplePushNotification
 {
 	/// <summary>
+	/// Adds an Apple custom data value.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="value">Custom data value.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddData(string key, string? value);
+	/// <summary>
 	/// Adds an Apple custom data template.
 	/// </summary>
 	/// <param name="key">Custom data key.</param>
 	/// <param name="content">Template configuration action.</param>
 	/// <returns></returns>
 	IApplePushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content);
+	/// <summary>
+	/// Adds an Apple custom data template that will be emitted when the rendered value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="content">Template configuration action.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddDataIfNotNull(string key, Action<IContentTemplateConfiguration> content);
 	/// <summary>
 	/// Adds an Apple custom data resolver.
 	/// </summary>
@@ -35,6 +49,39 @@ public interface IApplePushNotificationConfiguration : IApplePushNotification
 	/// <returns></returns>
 	IApplePushNotificationConfiguration AddData(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
 	/// <summary>
+	/// Adds an Apple custom data resolver that will be emitted when the resolved value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="contentResolver">Resolver for custom data content.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddDataIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
+	/// <summary>
+	/// Adds an Apple custom data template when the provided condition returns true.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="content">Template configuration action.</param>
+	/// <param name="addIfCondition">Condition that controls whether the key should be emitted.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition);
+	/// <summary>
+	/// Adds an Apple custom data resolver that will be emitted when the value is not null or whitespace and the condition returns true.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="contentResolver">Resolver for custom data content.</param>
+	/// <param name="addIfCondition">Condition that controls whether the key should be emitted.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddDataIfNotNull(
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition);
+	/// <summary>
+	/// Adds an Apple header value.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="value">Header value.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddHeader(string key, string? value);
+	/// <summary>
 	/// Adds an Apple header template.
 	/// </summary>
 	/// <param name="key">Header key.</param>
@@ -42,12 +89,45 @@ public interface IApplePushNotificationConfiguration : IApplePushNotification
 	/// <returns></returns>
 	IApplePushNotificationConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content);
 	/// <summary>
+	/// Adds an Apple header template that will be emitted when the rendered value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="content">Template configuration action.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddHeaderIfNotNull(string key, Action<IContentTemplateConfiguration> content);
+	/// <summary>
 	/// Adds an Apple header resolver.
 	/// </summary>
 	/// <param name="key">Header key.</param>
 	/// <param name="contentResolver">Resolver for header content.</param>
 	/// <returns></returns>
 	IApplePushNotificationConfiguration AddHeader(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
+	/// <summary>
+	/// Adds an Apple header resolver that will be emitted when the resolved value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="contentResolver">Resolver for header content.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddHeaderIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
+	/// <summary>
+	/// Adds an Apple header template when the provided condition returns true.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="content">Template configuration action.</param>
+	/// <param name="addIfCondition">Condition that controls whether the key should be emitted.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition);
+	/// <summary>
+	/// Adds an Apple header resolver that will be emitted when the value is not null or whitespace and the condition returns true.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="contentResolver">Resolver for header content.</param>
+	/// <param name="addIfCondition">Condition that controls whether the key should be emitted.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddHeaderIfNotNull(
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition);
 	/// <summary>
 	/// Sets Apple notification subtitle.
 	/// </summary>

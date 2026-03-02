@@ -55,12 +55,26 @@ public interface IPushNotificationChannelConfiguration : IChannelConfiguration
 	IReadOnlyDictionary<string, IContentTemplateConfiguration>? Headers { get; }
 
 	/// <summary>
+	/// Adds a default custom data value.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="value">Custom data value.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddData(string key, string? value);
+	/// <summary>
 	/// Adds a default custom data template.
 	/// </summary>
 	/// <param name="key">Custom data key.</param>
 	/// <param name="content">Template configuration action.</param>
 	/// <returns></returns>
 	IPushNotificationChannelConfiguration AddData(string key, Action<IContentTemplateConfiguration> content);
+	/// <summary>
+	/// Adds a default custom data template that will be emitted when the rendered value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="content">Template configuration action.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddDataIfNotNull(string key, Action<IContentTemplateConfiguration> content);
 	/// <summary>
 	/// Adds a default custom data resolver.
 	/// </summary>
@@ -69,6 +83,39 @@ public interface IPushNotificationChannelConfiguration : IChannelConfiguration
 	/// <returns></returns>
 	IPushNotificationChannelConfiguration AddData(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
 	/// <summary>
+	/// Adds a default custom data resolver that will be emitted when the resolved value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="contentResolver">Resolver for custom data content.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddDataIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
+	/// <summary>
+	/// Adds a default custom data template when the provided condition returns true.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="content">Template configuration action.</param>
+	/// <param name="addIfCondition">Condition that controls whether the key should be emitted.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition);
+	/// <summary>
+	/// Adds a default custom data resolver that will be emitted when the value is not null or whitespace and the condition returns true.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="contentResolver">Resolver for custom data content.</param>
+	/// <param name="addIfCondition">Condition that controls whether the key should be emitted.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddDataIfNotNull(
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition);
+	/// <summary>
+	/// Adds a default header value.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="value">Header value.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddHeader(string key, string? value);
+	/// <summary>
 	/// Adds a default header template.
 	/// </summary>
 	/// <param name="key">Header key.</param>
@@ -76,12 +123,45 @@ public interface IPushNotificationChannelConfiguration : IChannelConfiguration
 	/// <returns></returns>
 	IPushNotificationChannelConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content);
 	/// <summary>
+	/// Adds a default header template that will be emitted when the rendered value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="content">Template configuration action.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddHeaderIfNotNull(string key, Action<IContentTemplateConfiguration> content);
+	/// <summary>
 	/// Adds a default header resolver.
 	/// </summary>
 	/// <param name="key">Header key.</param>
 	/// <param name="contentResolver">Resolver for header content.</param>
 	/// <returns></returns>
 	IPushNotificationChannelConfiguration AddHeader(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
+	/// <summary>
+	/// Adds a default header resolver that will be emitted when the resolved value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="contentResolver">Resolver for header content.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddHeaderIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
+	/// <summary>
+	/// Adds a default header template when the provided condition returns true.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="content">Template configuration action.</param>
+	/// <param name="addIfCondition">Condition that controls whether the key should be emitted.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition);
+	/// <summary>
+	/// Adds a default header resolver that will be emitted when the value is not null or whitespace and the condition returns true.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="contentResolver">Resolver for header content.</param>
+	/// <param name="addIfCondition">Condition that controls whether the key should be emitted.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddHeaderIfNotNull(
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition);
 	/// <summary>
 	/// Configures Android specific push settings.
 	/// </summary>

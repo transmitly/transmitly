@@ -22,6 +22,22 @@ internal static class PushNotificationTemplateConfigurationHelpers
 	internal static void AddTemplate(
 		Dictionary<string, IContentTemplateConfiguration> templates,
 		string key,
+		string? value)
+	{
+		Guard.AgainstNull(templates);
+		key = Guard.AgainstNullOrWhiteSpace(key);
+
+		if (value is null)
+		{
+			return;
+		}
+
+		AddTemplate(templates, key, c => c.AddStringTemplate(value));
+	}
+
+	internal static void AddTemplate(
+		Dictionary<string, IContentTemplateConfiguration> templates,
+		string key,
 		Action<IContentTemplateConfiguration> content)
 	{
 		Guard.AgainstNull(templates);
@@ -42,9 +58,91 @@ internal static class PushNotificationTemplateConfigurationHelpers
 	internal static void AddTemplate(
 		Dictionary<string, IContentTemplateConfiguration> templates,
 		string key,
+		Action<IContentTemplateConfiguration> content,
+		Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		Guard.AgainstNull(addIfCondition);
+		var template = BuildTemplate(content);
+		AddTemplate(templates, key, context => ResolveTemplateAsync(template, context, addIfCondition, addIfNotNull: false));
+	}
+
+	internal static void AddTemplateIfNotNull(
+		Dictionary<string, IContentTemplateConfiguration> templates,
+		string key,
+		Action<IContentTemplateConfiguration> content)
+	{
+		var template = BuildTemplate(content);
+		AddTemplate(templates, key, context => ResolveTemplateAsync(template, context, addIfCondition: null, addIfNotNull: true));
+	}
+
+	internal static void AddTemplate(
+		Dictionary<string, IContentTemplateConfiguration> templates,
+		string key,
 		Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
 	{
 		Guard.AgainstNull(contentResolver);
 		AddTemplate(templates, key, c => c.AddTemplateResolver(contentResolver));
+	}
+
+	internal static void AddTemplateIfNotNull(
+		Dictionary<string, IContentTemplateConfiguration> templates,
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
+	{
+		Guard.AgainstNull(contentResolver);
+		AddTemplate(templates, key, context => ResolveContentAsync(contentResolver, context, addIfCondition: null, addIfNotNull: true));
+	}
+
+	internal static void AddTemplateIfNotNull(
+		Dictionary<string, IContentTemplateConfiguration> templates,
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		Guard.AgainstNull(addIfCondition);
+		Guard.AgainstNull(contentResolver);
+		AddTemplate(templates, key, context => ResolveContentAsync(contentResolver, context, addIfCondition, addIfNotNull: true));
+	}
+
+	private static ContentTemplateConfiguration BuildTemplate(Action<IContentTemplateConfiguration> content)
+	{
+		Guard.AgainstNull(content);
+		var template = new ContentTemplateConfiguration();
+		content(template);
+		return template;
+	}
+
+	private static async Task<string?> ResolveTemplateAsync(
+		IContentTemplateConfiguration content,
+		IDispatchCommunicationContext context,
+		Func<IDispatchCommunicationContext, bool>? addIfCondition,
+		bool addIfNotNull)
+	{
+		if (addIfCondition is not null && !addIfCondition(context))
+		{
+			return null;
+		}
+
+		var value = await content.RenderAsync(context, false);
+		return addIfNotNull && string.IsNullOrWhiteSpace(value)
+			? null
+			: value;
+	}
+
+	private static async Task<string?> ResolveContentAsync(
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		IDispatchCommunicationContext context,
+		Func<IDispatchCommunicationContext, bool>? addIfCondition,
+		bool addIfNotNull)
+	{
+		if (addIfCondition is not null && !addIfCondition(context))
+		{
+			return null;
+		}
+
+		var value = await contentResolver(context);
+		return addIfNotNull && string.IsNullOrWhiteSpace(value)
+			? null
+			: value;
 	}
 }

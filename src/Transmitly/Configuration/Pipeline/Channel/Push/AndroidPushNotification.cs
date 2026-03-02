@@ -34,9 +34,42 @@ internal sealed class AndroidPushNotification : PushContentConfigurationBase, IA
 		return this;
 	}
 
+	public IAndroidPushNotificationConfiguration AddData(string key, string? value)
+	{
+		AddDataTemplate(key, value);
+		return this;
+	}
+
 	public IAndroidPushNotificationConfiguration AddData(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
 	{
 		AddDataTemplate(key, contentResolver);
+		return this;
+	}
+
+	public IAndroidPushNotificationConfiguration AddDataIfNotNull(string key, Action<IContentTemplateConfiguration> content)
+	{
+		AddDataTemplateIfNotNull(key, content);
+		return this;
+	}
+
+	public IAndroidPushNotificationConfiguration AddDataIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
+	{
+		AddDataTemplateIfNotNull(key, contentResolver);
+		return this;
+	}
+
+	public IAndroidPushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddDataTemplate(key, content, addIfCondition);
+		return this;
+	}
+
+	public IAndroidPushNotificationConfiguration AddDataIfNotNull(
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddDataTemplateIfNotNull(key, contentResolver, addIfCondition);
 		return this;
 	}
 
@@ -46,9 +79,42 @@ internal sealed class AndroidPushNotification : PushContentConfigurationBase, IA
 		return this;
 	}
 
+	public IAndroidPushNotificationConfiguration AddHeader(string key, string? value)
+	{
+		AddHeaderTemplate(key, value);
+		return this;
+	}
+
 	public IAndroidPushNotificationConfiguration AddHeader(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
 	{
 		AddHeaderTemplate(key, contentResolver);
+		return this;
+	}
+
+	public IAndroidPushNotificationConfiguration AddHeaderIfNotNull(string key, Action<IContentTemplateConfiguration> content)
+	{
+		AddHeaderTemplateIfNotNull(key, content);
+		return this;
+	}
+
+	public IAndroidPushNotificationConfiguration AddHeaderIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
+	{
+		AddHeaderTemplateIfNotNull(key, contentResolver);
+		return this;
+	}
+
+	public IAndroidPushNotificationConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddHeaderTemplate(key, content, addIfCondition);
+		return this;
+	}
+
+	public IAndroidPushNotificationConfiguration AddHeaderIfNotNull(
+		string key,
+		Func<IDispatchCommunicationContext, Task<string?>> contentResolver,
+		Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddHeaderTemplateIfNotNull(key, contentResolver, addIfCondition);
 		return this;
 	}
 
