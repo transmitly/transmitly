@@ -60,6 +60,10 @@ public interface IApplePushNotification : IPushContent
 	/// </summary>
 	string? Sound { get; }
 	/// <summary>
+	/// Apple critical sound configuration.
+	/// </summary>
+	AppleCriticalSound? CriticalSound { get; }
+	/// <summary>
 	/// Whether this is a background update notification.
 	/// </summary>
 	bool? IsBackgroundUpdate { get; }
@@ -75,4 +79,24 @@ public interface IApplePushNotification : IPushContent
 	/// Apple notification thread identifier.
 	/// </summary>
 	string? ThreadId { get; }
+	/// <summary>
+	/// Apple notification launch image.
+	/// </summary>
+	string? LaunchImage { get; }
+	/// <summary>
+	/// Apple live activity token.
+	/// </summary>
+	string? LiveActivityToken { get; }
+	/// <summary>
+	/// Apple notification interruption level.
+	/// </summary>
+	AppleNotificationInterruptionLevel? InterruptionLevel { get; }
+	/// <summary>
+	/// Apple notification relevance score.
+	/// </summary>
+	double? RelevanceScore { get; }
+	/// <summary>
+	/// Apple target content identifier.
+	/// </summary>
+	string? TargetContentId { get; }
 }

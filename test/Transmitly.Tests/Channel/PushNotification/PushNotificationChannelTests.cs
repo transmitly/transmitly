@@ -1,4 +1,4 @@
-﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -91,7 +91,34 @@ public class PushNotificationChannelTests : BaseUnitTest
 				.AddPriority(AndroidNotificationPriority.High)
 				.AddTimeToLive(TimeSpan.FromMinutes(5))
 				.AddTargetApplicationId("test-app")
-				.AddAllowDeliveryBeforeFirstUnlock(true);
+				.AddAllowDeliveryBeforeFirstUnlock(true)
+				.AddIcon("ic-status")
+				.AddAccentColor("#336699")
+				.AddSound("ding-android")
+				.AddTag("android-tag")
+				.AddClickAction("open-app")
+				.AddTitleLocalizationKey("android-title-loc")
+				.AddTitleLocalizationArguments("ta1", "ta2")
+				.AddBodyLocalizationKey("android-body-loc")
+				.AddBodyLocalizationArguments("ba1", "ba2")
+				.AddNotificationChannelId("channel-general")
+				.AddTicker("ticker-text")
+				.AddSticky(true)
+				.AddEventTimestamp(new DateTimeOffset(2025, 1, 1, 1, 2, 4, TimeSpan.Zero))
+				.AddLocalOnly(true)
+				.AddDisplayPriority(AndroidNotificationDisplayPriority.Maximum)
+				.AddVibrateTimings(TimeSpan.FromMilliseconds(150), TimeSpan.FromMilliseconds(250))
+				.AddUseDefaultVibrateTimings(false)
+				.AddUseDefaultSound(false)
+				.AddLightSettings(new AndroidNotificationLightSettings
+				{
+					Color = "#FFAA00",
+					OnDuration = TimeSpan.FromMilliseconds(500),
+					OffDuration = TimeSpan.FromMilliseconds(700)
+				})
+				.AddUseDefaultLightSettings(false)
+				.AddVisibility(AndroidNotificationVisibility.Private)
+				.AddNotificationCount(9);
 		});
 
 		config.AddApple(apple =>
@@ -112,10 +139,21 @@ public class PushNotificationChannelTests : BaseUnitTest
 				.AddTitleLocalizationArguments("ta")
 				.AddBadge(7)
 				.AddSound("ding")
+				.AddCriticalSound(new AppleCriticalSound
+				{
+					IsCritical = true,
+					Name = "critical-ding",
+					Volume = 0.8
+				})
 				.AddBackgroundUpdate(true)
 				.AddContentMutable(true)
 				.AddCategory("category")
-				.AddThreadId("thread");
+				.AddThreadId("thread")
+				.AddLaunchImage("launch-image")
+				.AddLiveActivityToken("live-activity-token")
+				.AddInterruptionLevel(AppleNotificationInterruptionLevel.TimeSensitive)
+				.AddRelevanceScore(0.75)
+				.AddTargetContentId("target-content-id");
 		});
 
 		config.AddWeb(web =>
@@ -135,7 +173,9 @@ public class PushNotificationChannelTests : BaseUnitTest
 				.AddTag("web-tag")
 				.AddTimestamp(new DateTimeOffset(2025, 1, 1, 1, 2, 3, TimeSpan.Zero))
 				.AddVibratePattern(100, 200)
-				.AddDirection(WebPushDisplayDirection.Auto);
+				.AddDirection(WebPushDisplayDirection.Auto)
+				.AddAction("view", "View")
+				.AddAction(new WebPushNotificationAction("dismiss", "Dismiss", "dismiss-icon"));
 		});
 
 		var channel = new PushNotificationChannel(config);
@@ -167,6 +207,31 @@ public class PushNotificationChannelTests : BaseUnitTest
 		Assert.AreEqual(TimeSpan.FromMinutes(5), result.Android.TimeToLive);
 		Assert.AreEqual("test-app", result.Android.TargetApplicationId);
 		Assert.IsTrue(result.Android.AllowDeliveryBeforeFirstUnlock);
+		Assert.AreEqual("ic-status", result.Android.Icon);
+		Assert.AreEqual("#336699", result.Android.AccentColor);
+		Assert.AreEqual("ding-android", result.Android.Sound);
+		Assert.AreEqual("android-tag", result.Android.Tag);
+		Assert.AreEqual("open-app", result.Android.ClickAction);
+		Assert.AreEqual("android-title-loc", result.Android.TitleLocalizationKey);
+		CollectionAssert.AreEqual(new[] { "ta1", "ta2" }, result.Android.TitleLocalizationArguments!.ToArray());
+		Assert.AreEqual("android-body-loc", result.Android.BodyLocalizationKey);
+		CollectionAssert.AreEqual(new[] { "ba1", "ba2" }, result.Android.BodyLocalizationArguments!.ToArray());
+		Assert.AreEqual("channel-general", result.Android.NotificationChannelId);
+		Assert.AreEqual("ticker-text", result.Android.Ticker);
+		Assert.IsTrue(result.Android.IsSticky);
+		Assert.AreEqual(new DateTimeOffset(2025, 1, 1, 1, 2, 4, TimeSpan.Zero), result.Android.EventTimestamp);
+		Assert.IsTrue(result.Android.IsLocalOnly);
+		Assert.AreEqual(AndroidNotificationDisplayPriority.Maximum, result.Android.DisplayPriority);
+		CollectionAssert.AreEqual(new[] { TimeSpan.FromMilliseconds(150), TimeSpan.FromMilliseconds(250) }, result.Android.VibrateTimings!.ToArray());
+		Assert.IsFalse(result.Android.UseDefaultVibrateTimings);
+		Assert.IsFalse(result.Android.UseDefaultSound);
+		Assert.IsNotNull(result.Android.LightSettings);
+		Assert.AreEqual("#FFAA00", result.Android.LightSettings.Color);
+		Assert.AreEqual(TimeSpan.FromMilliseconds(500), result.Android.LightSettings.OnDuration);
+		Assert.AreEqual(TimeSpan.FromMilliseconds(700), result.Android.LightSettings.OffDuration);
+		Assert.IsFalse(result.Android.UseDefaultLightSettings);
+		Assert.AreEqual(AndroidNotificationVisibility.Private, result.Android.Visibility);
+		Assert.AreEqual(9, result.Android.NotificationCount);
 
 		Assert.IsNotNull(result.Apple);
 		Assert.AreEqual("apple-title", result.Apple.Title);
@@ -186,10 +251,19 @@ public class PushNotificationChannelTests : BaseUnitTest
 		CollectionAssert.AreEquivalent(new[] { "ta" }, result.Apple.TitleLocalizationArguments!.ToArray());
 		Assert.AreEqual(7, result.Apple.Badge);
 		Assert.AreEqual("ding", result.Apple.Sound);
+		Assert.IsNotNull(result.Apple.CriticalSound);
+		Assert.IsTrue(result.Apple.CriticalSound.IsCritical);
+		Assert.AreEqual("critical-ding", result.Apple.CriticalSound.Name);
+		Assert.AreEqual(0.8, result.Apple.CriticalSound.Volume);
 		Assert.IsTrue(result.Apple.IsBackgroundUpdate);
 		Assert.IsTrue(result.Apple.IsContentMutable);
 		Assert.AreEqual("category", result.Apple.Category);
 		Assert.AreEqual("thread", result.Apple.ThreadId);
+		Assert.AreEqual("launch-image", result.Apple.LaunchImage);
+		Assert.AreEqual("live-activity-token", result.Apple.LiveActivityToken);
+		Assert.AreEqual(AppleNotificationInterruptionLevel.TimeSensitive, result.Apple.InterruptionLevel);
+		Assert.AreEqual(0.75, result.Apple.RelevanceScore);
+		Assert.AreEqual("target-content-id", result.Apple.TargetContentId);
 
 		Assert.IsNotNull(result.Web);
 		Assert.AreEqual("web-title", result.Web.Title);
@@ -209,6 +283,14 @@ public class PushNotificationChannelTests : BaseUnitTest
 		Assert.AreEqual(new DateTimeOffset(2025, 1, 1, 1, 2, 3, TimeSpan.Zero), result.Web.Timestamp);
 		CollectionAssert.AreEqual(new[] { 100, 200 }, result.Web.VibratePattern!.ToArray());
 		Assert.AreEqual(WebPushDisplayDirection.Auto, result.Web.Direction);
+		Assert.IsNotNull(result.Web.Actions);
+		Assert.AreEqual(2, result.Web.Actions.Count);
+		Assert.AreEqual("view", result.Web.Actions.First().Action);
+		Assert.AreEqual("View", result.Web.Actions.First().Title);
+		Assert.IsNull(result.Web.Actions.First().Icon);
+		Assert.AreEqual("dismiss", result.Web.Actions.Last().Action);
+		Assert.AreEqual("Dismiss", result.Web.Actions.Last().Title);
+		Assert.AreEqual("dismiss-icon", result.Web.Actions.Last().Icon);
 	}
 
 	[TestMethod]

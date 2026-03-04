@@ -12,6 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Channel.Configuration.Push;
+
 namespace Transmitly;
 
 /// <summary>
@@ -60,6 +62,10 @@ public interface IApplePushNotificationContent : IPushNotificationContent
 	/// </summary>
 	string? Sound { get; }
 	/// <summary>
+	/// Apple critical sound configuration.
+	/// </summary>
+	AppleCriticalSound? CriticalSound { get; }
+	/// <summary>
 	/// Whether this is a background update notification.
 	/// </summary>
 	bool? IsBackgroundUpdate { get; }
@@ -75,4 +81,24 @@ public interface IApplePushNotificationContent : IPushNotificationContent
 	/// Apple notification thread identifier.
 	/// </summary>
 	string? ThreadId { get; }
+	/// <summary>
+	/// Apple notification launch image.
+	/// </summary>
+	string? LaunchImage { get; }
+	/// <summary>
+	/// Apple live activity token.
+	/// </summary>
+	string? LiveActivityToken { get; }
+	/// <summary>
+	/// Apple notification interruption level.
+	/// </summary>
+	AppleNotificationInterruptionLevel? InterruptionLevel { get; }
+	/// <summary>
+	/// Apple notification relevance score.
+	/// </summary>
+	double? RelevanceScore { get; }
+	/// <summary>
+	/// Apple target content identifier.
+	/// </summary>
+	string? TargetContentId { get; }
 }

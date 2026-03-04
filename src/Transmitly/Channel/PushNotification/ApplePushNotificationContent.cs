@@ -12,6 +12,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+using Transmitly.Channel.Configuration.Push;
+
 namespace Transmitly.Channel.Push;
 
 internal sealed class ApplePushNotificationContent : PushNotificationContent, IApplePushNotificationContent
@@ -36,6 +38,8 @@ internal sealed class ApplePushNotificationContent : PushNotificationContent, IA
 
 	public string? Sound { get; internal set; }
 
+	public AppleCriticalSound? CriticalSound { get; internal set; }
+
 	public bool? IsBackgroundUpdate { get; internal set; }
 
 	public bool? IsContentMutable { get; internal set; }
@@ -43,4 +47,14 @@ internal sealed class ApplePushNotificationContent : PushNotificationContent, IA
 	public string? Category { get; internal set; }
 
 	public string? ThreadId { get; internal set; }
+
+	public string? LaunchImage { get; internal set; }
+
+	public string? LiveActivityToken { get; internal set; }
+
+	public AppleNotificationInterruptionLevel? InterruptionLevel { get; internal set; }
+
+	public double? RelevanceScore { get; internal set; }
+
+	public string? TargetContentId { get; internal set; }
 }

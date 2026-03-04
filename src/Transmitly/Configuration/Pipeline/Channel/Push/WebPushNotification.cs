@@ -1,4 +1,4 @@
-﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ internal sealed class WebPushNotification : PushContentConfigurationBase, IWebPu
 	public IReadOnlyCollection<int>? VibratePattern { get; private set; }
 
 	public WebPushDisplayDirection? Direction { get; private set; }
+
+	public IReadOnlyCollection<WebPushNotificationAction>? Actions { get; private set; }
 
 	public IWebPushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content)
 	{
@@ -195,5 +197,20 @@ internal sealed class WebPushNotification : PushContentConfigurationBase, IWebPu
 	{
 		Direction = direction;
 		return this;
+	}
+
+	public IWebPushNotificationConfiguration AddAction(WebPushNotificationAction action)
+	{
+		Guard.AgainstNull(action);
+
+		var existingActions = Actions?.ToList() ?? [];
+		existingActions.Add(action);
+		Actions = existingActions;
+		return this;
+	}
+
+	public IWebPushNotificationConfiguration AddAction(string action, string title, string? icon = null)
+	{
+		return AddAction(new WebPushNotificationAction(action, title, icon));
 	}
 }

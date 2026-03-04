@@ -1,4 +1,4 @@
-﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -61,4 +61,8 @@ public interface IWebPushNotification : IPushContent
 	/// Web notification text direction.
 	/// </summary>
 	WebPushDisplayDirection? Direction { get; }
+	/// <summary>
+	/// Actions shown by the Web notification.
+	/// </summary>
+	IReadOnlyCollection<WebPushNotificationAction>? Actions { get; }
 }

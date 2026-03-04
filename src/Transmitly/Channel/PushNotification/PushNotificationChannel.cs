@@ -1,4 +1,4 @@
-﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -185,7 +185,29 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 			android.Priority.HasValue ||
 			android.TimeToLive.HasValue ||
 			!string.IsNullOrWhiteSpace(android.TargetApplicationId) ||
-			android.AllowDeliveryBeforeFirstUnlock.HasValue;
+			android.AllowDeliveryBeforeFirstUnlock.HasValue ||
+			!string.IsNullOrWhiteSpace(android.Icon) ||
+			!string.IsNullOrWhiteSpace(android.AccentColor) ||
+			!string.IsNullOrWhiteSpace(android.Sound) ||
+			!string.IsNullOrWhiteSpace(android.Tag) ||
+			!string.IsNullOrWhiteSpace(android.ClickAction) ||
+			!string.IsNullOrWhiteSpace(android.TitleLocalizationKey) ||
+			(android.TitleLocalizationArguments?.Count > 0) ||
+			!string.IsNullOrWhiteSpace(android.BodyLocalizationKey) ||
+			(android.BodyLocalizationArguments?.Count > 0) ||
+			!string.IsNullOrWhiteSpace(android.NotificationChannelId) ||
+			!string.IsNullOrWhiteSpace(android.Ticker) ||
+			android.IsSticky.HasValue ||
+			android.EventTimestamp.HasValue ||
+			android.IsLocalOnly.HasValue ||
+			android.DisplayPriority.HasValue ||
+			(android.VibrateTimings?.Count > 0) ||
+			android.UseDefaultVibrateTimings.HasValue ||
+			android.UseDefaultSound.HasValue ||
+			android.LightSettings != null ||
+			android.UseDefaultLightSettings.HasValue ||
+			android.Visibility.HasValue ||
+			android.NotificationCount.HasValue;
 
 		if (!HasRenderedContent(
 			Title,
@@ -209,7 +231,29 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 			Priority = android.Priority,
 			TimeToLive = android.TimeToLive,
 			TargetApplicationId = android.TargetApplicationId,
-			AllowDeliveryBeforeFirstUnlock = android.AllowDeliveryBeforeFirstUnlock
+			AllowDeliveryBeforeFirstUnlock = android.AllowDeliveryBeforeFirstUnlock,
+			Icon = android.Icon,
+			AccentColor = android.AccentColor,
+			Sound = android.Sound,
+			Tag = android.Tag,
+			ClickAction = android.ClickAction,
+			TitleLocalizationKey = android.TitleLocalizationKey,
+			TitleLocalizationArguments = android.TitleLocalizationArguments,
+			BodyLocalizationKey = android.BodyLocalizationKey,
+			BodyLocalizationArguments = android.BodyLocalizationArguments,
+			NotificationChannelId = android.NotificationChannelId,
+			Ticker = android.Ticker,
+			IsSticky = android.IsSticky,
+			EventTimestamp = android.EventTimestamp,
+			IsLocalOnly = android.IsLocalOnly,
+			DisplayPriority = android.DisplayPriority,
+			VibrateTimings = android.VibrateTimings,
+			UseDefaultVibrateTimings = android.UseDefaultVibrateTimings,
+			UseDefaultSound = android.UseDefaultSound,
+			LightSettings = android.LightSettings,
+			UseDefaultLightSettings = android.UseDefaultLightSettings,
+			Visibility = android.Visibility,
+			NotificationCount = android.NotificationCount
 		};
 	}
 
@@ -233,10 +277,16 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 			(apple.TitleLocalizationArguments?.Count > 0) ||
 			apple.Badge.HasValue ||
 			!string.IsNullOrWhiteSpace(apple.Sound) ||
+			apple.CriticalSound != null ||
 			apple.IsBackgroundUpdate.HasValue ||
 			apple.IsContentMutable.HasValue ||
 			!string.IsNullOrWhiteSpace(apple.Category) ||
-			!string.IsNullOrWhiteSpace(apple.ThreadId);
+			!string.IsNullOrWhiteSpace(apple.ThreadId) ||
+			!string.IsNullOrWhiteSpace(apple.LaunchImage) ||
+			!string.IsNullOrWhiteSpace(apple.LiveActivityToken) ||
+			apple.InterruptionLevel.HasValue ||
+			apple.RelevanceScore.HasValue ||
+			!string.IsNullOrWhiteSpace(apple.TargetContentId);
 
 		if (!HasRenderedContent(
 			Title,
@@ -266,10 +316,16 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 			TitleLocalizationArguments = apple.TitleLocalizationArguments,
 			Badge = apple.Badge,
 			Sound = apple.Sound,
+			CriticalSound = apple.CriticalSound,
 			IsBackgroundUpdate = apple.IsBackgroundUpdate,
 			IsContentMutable = apple.IsContentMutable,
 			Category = apple.Category,
-			ThreadId = apple.ThreadId
+			ThreadId = apple.ThreadId,
+			LaunchImage = apple.LaunchImage,
+			LiveActivityToken = apple.LiveActivityToken,
+			InterruptionLevel = apple.InterruptionLevel,
+			RelevanceScore = apple.RelevanceScore,
+			TargetContentId = apple.TargetContentId
 		};
 	}
 
@@ -296,7 +352,8 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 			!string.IsNullOrWhiteSpace(web.Tag) ||
 			web.Timestamp.HasValue ||
 			(web.VibratePattern?.Count > 0) ||
-			web.Direction.HasValue;
+			web.Direction.HasValue ||
+			(web.Actions?.Count > 0);
 
 		if (!HasRenderedContent(
 			Title,
@@ -325,7 +382,8 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 			Tag = web.Tag,
 			Timestamp = web.Timestamp,
 			VibratePattern = web.VibratePattern,
-			Direction = web.Direction
+			Direction = web.Direction,
+			Actions = web.Actions
 		};
 	}
 

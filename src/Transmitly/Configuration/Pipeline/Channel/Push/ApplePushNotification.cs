@@ -40,6 +40,8 @@ internal sealed class ApplePushNotification : PushContentConfigurationBase, IApp
 
 	public string? Sound { get; private set; }
 
+	public AppleCriticalSound? CriticalSound { get; private set; }
+
 	public bool? IsBackgroundUpdate { get; private set; }
 
 	public bool? IsContentMutable { get; private set; }
@@ -47,6 +49,16 @@ internal sealed class ApplePushNotification : PushContentConfigurationBase, IApp
 	public string? Category { get; private set; }
 
 	public string? ThreadId { get; private set; }
+
+	public string? LaunchImage { get; private set; }
+
+	public string? LiveActivityToken { get; private set; }
+
+	public AppleNotificationInterruptionLevel? InterruptionLevel { get; private set; }
+
+	public double? RelevanceScore { get; private set; }
+
+	public string? TargetContentId { get; private set; }
 
 	public IApplePushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content)
 	{
@@ -198,6 +210,12 @@ internal sealed class ApplePushNotification : PushContentConfigurationBase, IApp
 		return this;
 	}
 
+	public IApplePushNotificationConfiguration AddCriticalSound(AppleCriticalSound? criticalSound)
+	{
+		CriticalSound = criticalSound;
+		return this;
+	}
+
 	public IApplePushNotificationConfiguration AddBackgroundUpdate(bool? isBackgroundUpdate)
 	{
 		IsBackgroundUpdate = isBackgroundUpdate;
@@ -219,6 +237,36 @@ internal sealed class ApplePushNotification : PushContentConfigurationBase, IApp
 	public IApplePushNotificationConfiguration AddThreadId(string? threadId)
 	{
 		ThreadId = threadId;
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddLaunchImage(string? launchImage)
+	{
+		LaunchImage = launchImage;
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddLiveActivityToken(string? liveActivityToken)
+	{
+		LiveActivityToken = liveActivityToken;
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddInterruptionLevel(AppleNotificationInterruptionLevel? interruptionLevel)
+	{
+		InterruptionLevel = interruptionLevel;
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddRelevanceScore(double? relevanceScore)
+	{
+		RelevanceScore = relevanceScore;
+		return this;
+	}
+
+	public IApplePushNotificationConfiguration AddTargetContentId(string? targetContentId)
+	{
+		TargetContentId = targetContentId;
 		return this;
 	}
 }

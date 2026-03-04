@@ -1,4 +1,4 @@
-﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
+
 using Transmitly.Template.Configuration;
 
 namespace Transmitly.Channel.Configuration.Push;
@@ -188,4 +189,18 @@ public interface IWebPushNotificationConfiguration : IWebPushNotification
 	/// <param name="direction">Display direction.</param>
 	/// <returns></returns>
 	IWebPushNotificationConfiguration AddDirection(WebPushDisplayDirection? direction);
+	/// <summary>
+	/// Adds a Web notification action.
+	/// </summary>
+	/// <param name="action">Action object.</param>
+	/// <returns></returns>
+	IWebPushNotificationConfiguration AddAction(WebPushNotificationAction action);
+	/// <summary>
+	/// Adds a Web notification action.
+	/// </summary>
+	/// <param name="action">Action identifier.</param>
+	/// <param name="title">Action title shown to the user.</param>
+	/// <param name="icon">Optional action icon URL.</param>
+	/// <returns></returns>
+	IWebPushNotificationConfiguration AddAction(string action, string title, string? icon = null);
 }

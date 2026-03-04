@@ -189,6 +189,12 @@ public interface IApplePushNotificationConfiguration : IApplePushNotification
 	/// <returns></returns>
 	IApplePushNotificationConfiguration AddSound(string? sound);
 	/// <summary>
+	/// Sets Apple critical sound configuration.
+	/// </summary>
+	/// <param name="criticalSound">Critical sound configuration.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddCriticalSound(AppleCriticalSound? criticalSound);
+	/// <summary>
 	/// Sets whether this is a background update notification.
 	/// </summary>
 	/// <param name="isBackgroundUpdate">Background update flag.</param>
@@ -212,4 +218,34 @@ public interface IApplePushNotificationConfiguration : IApplePushNotification
 	/// <param name="threadId">Thread identifier.</param>
 	/// <returns></returns>
 	IApplePushNotificationConfiguration AddThreadId(string? threadId);
+	/// <summary>
+	/// Sets Apple notification launch image.
+	/// </summary>
+	/// <param name="launchImage">Launch image.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddLaunchImage(string? launchImage);
+	/// <summary>
+	/// Sets Apple live activity token.
+	/// </summary>
+	/// <param name="liveActivityToken">Live activity token.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddLiveActivityToken(string? liveActivityToken);
+	/// <summary>
+	/// Sets Apple interruption level.
+	/// </summary>
+	/// <param name="interruptionLevel">Interruption level.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddInterruptionLevel(AppleNotificationInterruptionLevel? interruptionLevel);
+	/// <summary>
+	/// Sets Apple relevance score.
+	/// </summary>
+	/// <param name="relevanceScore">Relevance score.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddRelevanceScore(double? relevanceScore);
+	/// <summary>
+	/// Sets Apple target content identifier.
+	/// </summary>
+	/// <param name="targetContentId">Target content identifier.</param>
+	/// <returns></returns>
+	IApplePushNotificationConfiguration AddTargetContentId(string? targetContentId);
 }
