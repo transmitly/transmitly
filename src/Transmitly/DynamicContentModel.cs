@@ -26,11 +26,12 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 
 	private const string TransactionPropertyKey = "trx";
 	private const string PlatformIdentityPropertyKey = "pid";
+	private const string PlatformIdentityAliasPropertyKey = "to";
 	private const string ResourcePropertyKey = "att";
 	private const string LinkedResourcePropertyKey = "lnk";
 
 	internal static IReadOnlyCollection<string> ProtectedContentPropertyKeys { get; } =
-		new[] { TransactionPropertyKey, PlatformIdentityPropertyKey };
+		new[] { TransactionPropertyKey, PlatformIdentityPropertyKey, PlatformIdentityAliasPropertyKey };
 
 	bool IDictionary.IsFixedSize => false;
 	bool IDictionary.IsReadOnly => false;
@@ -100,8 +101,10 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 
 		foreach (var identity in Guard.AgainstNull(platformIdentities).Where(id => !string.IsNullOrWhiteSpace(id.Id)))
 		{
+			var dynamicIdentity = ConvertToDynamic(identity, isReadOnly: true);
 			_bag.Add(identity.Id!, identity);
-			_bag.Add(PlatformIdentityPropertyKey, ConvertToDynamic(identity, isReadOnly: true));
+			_bag.Add(PlatformIdentityPropertyKey, dynamicIdentity);
+			_bag.Add(PlatformIdentityAliasPropertyKey, dynamicIdentity);
 		}
 		//hack end
 		_bag[ResourcePropertyKey] = ConvertToDynamic(resources?.Select(s => new { s.Name, s.ContentType }).ToList());

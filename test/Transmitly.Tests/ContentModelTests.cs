@@ -119,6 +119,23 @@ public class ContentModelTests
 	}
 
 	[TestMethod]
+	public void ContentModel_ExposesToAliasForPidAndProtectsItFromMutation()
+	{
+		var expectedId = "123";
+		var contentModel = new ContentModel(
+			TransactionModel.Create(new { Value = "original" }),
+			[new MockPlatformIdentity1(expectedId)]);
+
+		dynamic model = contentModel.Model;
+		var bag = (IDictionary<string, object?>)contentModel.Model;
+
+		Assert.IsNotNull(model.to);
+		Assert.AreEqual(expectedId, model.to.Id);
+		Assert.ThrowsExactly<InvalidOperationException>(() => bag.Remove("to"));
+		Assert.ThrowsExactly<InvalidOperationException>(() => bag["to"] = new { Id = "mutated" });
+	}
+
+	[TestMethod]
 	public void ContentModel_AllowsAddingCustomProperties()
 	{
 		var contentModel = new ContentModel(
