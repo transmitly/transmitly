@@ -8,10 +8,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Transmitly" Version="0.2.2" />
-		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.2.2-9.0ece075" />
+		<PackageReference Include="Transmitly" Version="0.2.3-6.30853e7" />
+		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.2.2-13.56ef3d9" />
 		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.2.4-9.8dd6a45" />
-		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.2.2-9.00765df" />
+		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.2.2-10.e3df4f5" />
 		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.2.4-9.bf9a9ed" />
 		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="0.2.4-9.f5e2078" />
 

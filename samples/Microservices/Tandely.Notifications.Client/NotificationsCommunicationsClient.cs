@@ -22,7 +22,7 @@ using Transmitly.Util;
 
 namespace Tandely.Notifications.Client
 {
-	public sealed class NotificationsCommunicationsClient : ICommunicationsClient
+	internal sealed class NotificationsCommunicationsClient : ICommunicationsClient
 	{
 		readonly JsonSerializerOptions _jsonOptions;
 		readonly static Lazy<HttpClient> _httpClient = new(() => CreateHttpClient(_options));
@@ -69,6 +69,7 @@ namespace Tandely.Notifications.Client
 
 				var payload = JsonSerializer.Serialize(new DispatchNotificationModel
 				{
+
 					AllowedChannels = dispatchChannelPreferences,
 					CommunicationIntent = pipelineIntent,
 					CommunicationId = pipelineId,

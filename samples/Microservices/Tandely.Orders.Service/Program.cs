@@ -59,7 +59,7 @@ namespace Tandely.Orders.Service
 				options.BasePath = new Uri(notificationsServiceUrl);
 				options.ApiKey = apiKey;
 			});
-
+			
 			builder.Services.AddSwaggerGen(c =>
 			{
 				c.ExampleFilters();

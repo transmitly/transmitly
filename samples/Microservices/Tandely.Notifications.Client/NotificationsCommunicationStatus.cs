@@ -1,4 +1,4 @@
-﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -12,18 +12,12 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Tandely.Notifications.Client
 {
-	public static class NotificationClientTransmitlyExtensions
+	public sealed class NotificationsCommunicationStatus
 	{
-		public static IServiceCollection UseTandelyNotifications(this IServiceCollection services, Action<NotificationsOptions> options)
-		{
-			var opts = new NotificationsOptions();
-			options(opts);
-			services.AddTransmitly(tly=>tly.AddClientMiddleware(new NotificationsClientFactory(opts)));
-			return services;
-		}
+		public int Code { get; set; }
+		public string? Type { get; set; }
+		public string? Detail { get; set; }
 	}
 }

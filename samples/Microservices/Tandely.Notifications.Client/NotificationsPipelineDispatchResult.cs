@@ -12,16 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Transmitly;
-
 namespace Tandely.Notifications.Client
 {
 	public class NotificationsPipelineDispatchResult
 	{
-		public CommunicationsStatus Status { get; set; }
+		public NotificationsCommunicationStatus? Status { get; set; }
 		public string? ChannelId { get; set; }
 		public string? ChannelProviderId { get; set; }
 		public string? ResourceId { get; set; }
+		public string? PipelineId { get; set; }
+		public string? PipelineIntent { get; set; }
 		public Exception? Exception { get; set; }
 	}
 }

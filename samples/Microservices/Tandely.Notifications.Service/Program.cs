@@ -81,7 +81,7 @@ namespace Tandely.Notifications.Service
 				.AddPlatformIdentityResolver<CustomerRepository>("Customer")
 				.AddDeliveryReportHandler((report) =>
 				{
-					defaultLogger.LogInformation("SendGrid MessageId: {SendGridMessageId}", report.SendGrid().Email.MessageId);
+					//defaultLogger.LogInformation("SendGrid MessageId: {SendGridMessageId}", report.SendGrid().Email.MessageId);
 					defaultLogger.LogInformation("[DeliveryReport] Dispatched to {ChannelId} using {ChannelProvider} with result {DispatchStatus}", report.ChannelId, report.ChannelProviderId, report.Status);
 					return Task.CompletedTask;
 				})

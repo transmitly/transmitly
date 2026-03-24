@@ -58,6 +58,10 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				c.SchemaFilter<SkipExceptionSchemaFilter>();
 			});
 			builder.Services.AddSwaggerExamplesFromAssemblyOf(typeof(Program));
+			builder.Services.AddTransient<HydrateCustomerProfileFromReadModelsEnricher>();
+			builder.Services.AddTransient<HydrateOrderAndFulfillmentContentModelEnricher>();
+			builder.Services.AddTransient<PushChannelShortCircuitContentModelEnricher>();
+			builder.Services.AddTransient<AddChannelDeliveryContextContentModelEnricher>();
 
 			// The Transmitly.Microsoft.Extensions.DependencyInjection
 			// package is used to wire everything up using Microsoft's Dependency injection.

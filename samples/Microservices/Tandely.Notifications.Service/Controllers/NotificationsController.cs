@@ -24,7 +24,7 @@ namespace Tandely.Notifications.Service.Controllers
 		[HttpPost("dispatch", Name = "DispatchNotification")]
 		public async Task<IActionResult> DispatchAsync(DispatchTandelyNotification notification, CancellationToken cancellationToken)
 		{
-			if (notification == null || string.IsNullOrWhiteSpace(notification.CommunicationId) || notification.TransactionalModel == null)
+			if (notification == null || string.IsNullOrWhiteSpace(notification.CommunicationIntent) || notification.TransactionalModel == null)
 			{
 				return BadRequest();
 			}
@@ -32,24 +32,46 @@ namespace Tandely.Notifications.Service.Controllers
 			logger.LogDebug("Dispatching notification '{CommunicationId}' to {PlatformIdentities}", notification.CommunicationId, notification.PlatformIdentities);
 
 			var result = await communicationsClient.DispatchAsync(
-				notification.CommunicationId,
+				notification.CommunicationIntent,
 				notification.PlatformIdentities.Cast<IPlatformIdentityReference>().ToList(),
 				notification.TransactionalModel,
 				cancellationToken: cancellationToken
 			);
+
+			var response = new
+			{
+				Results = result.Results.Select(x => new
+				{
+					ResourceId = x?.ResourceId,
+					Status = x == null
+						? null
+						: new
+						{
+							x.Status.Code,
+							x.Status.Type,
+							x.Status.Detail
+						},
+					ChannelProviderId = x?.ChannelProviderId,
+					ChannelId = x?.ChannelId,
+					PipelineId = x?.PipelineId,
+					PipelineIntent = x?.PipelineIntent,
+					Exception = x?.Exception
+				}).ToList(),
+				result.IsSuccessful
+			};
 
 			var resultStatuses = string.Join(",", result.Results.Select(x => x!.Status.IsSuccess()));
 
 			if (!resultStatuses.Any())
 				resultStatuses = "No notifications dispatched";
 
-			logger.LogInformation("Dispatched notification '{CommunicationId}' to {PlatformIdentities} with result(s) {resultStatus}", notification.CommunicationId, notification.PlatformIdentities, resultStatuses);
+			logger.LogInformation("Dispatched notification '{CommunicationId}' to {PlatformIdentities} with result(s) {resultStatus}", notification.CommunicationIntent, notification.PlatformIdentities, resultStatuses);
 			if (result.IsSuccessful)
 			{
-				return Ok(result);
+				return Ok(response);
 			}
 
-			return BadRequest(result);
+			return BadRequest(response);
 		}
 	}
 }
