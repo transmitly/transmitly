@@ -78,9 +78,9 @@ public sealed class DefaultCommunicationsClient(
 		{
 			await _platformIdentityProfileEnrichers.EnrichIdentityProfilesAsync(platformIdentities).ConfigureAwait(false);
 		}
-		catch
+		catch(Exception e)
 		{
-			return new DispatchCommunicationResult([new DispatchResult(PredefinedCommunicationStatuses.PlatformIdentityProfileEnrichmentFailed)]);
+			return new DispatchCommunicationResult([new DispatchResult(PredefinedCommunicationStatuses.PlatformIdentityProfileEnrichmentFailed(e))]);
 		}
 
 		var recipientContexts = await _dispatchCoordinatorService.CreateRecipientContexts(pipelines, platformIdentities, transactionalModel, dispatchChannelPreferences, cultureInfoSafe).ConfigureAwait(false);
