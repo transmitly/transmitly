@@ -113,10 +113,16 @@ public class PlatformIdentityProfileEnricherTests
 		var profile = new PlatformIdentityProfile(Guid.NewGuid().ToString(), null, [new PlatformIdentityAddress("unit-test-address")]);
 
 		var result = await client.DispatchAsync(PipelineIntent, [profile], TransactionModel.Create(new { Code = "1234" }));
+		var dispatchResult = result.Results.Single();
+		var expectedStatus = PredefinedCommunicationStatuses.PlatformIdentityProfileEnrichmentFailed();
 
 		Assert.IsFalse(result.IsSuccessful);
 		Assert.AreEqual(1, result.Results.Count);
-		Assert.AreEqual(PredefinedCommunicationStatuses.PlatformIdentityProfileEnrichmentFailed, result.Results.Single()?.Status);
+		Assert.AreEqual(expectedStatus.Code, dispatchResult?.Status.Code);
+		Assert.AreEqual(expectedStatus.Type, dispatchResult?.Status.Type);
+		Assert.IsNotNull(dispatchResult?.Status.Detail);
+		StringAssert.Contains(dispatchResult.Status.Detail, nameof(InvalidOperationException));
+		StringAssert.Contains(dispatchResult.Status.Detail, "Expected test failure.");
 	}
 
 	[TestMethod]
