@@ -29,7 +29,11 @@ namespace Tandely.Notifications.Service.Controllers
 				return BadRequest();
 			}
 
-			logger.LogDebug("Dispatching notification '{CommunicationId}' to {PlatformIdentities}", notification.CommunicationId, notification.PlatformIdentities);
+			var sanitizedCommunicationId = SanitizeForLog(notification.CommunicationId);
+			var sanitizedCommunicationIntent = SanitizeForLog(notification.CommunicationIntent);
+			var sanitizedPlatformIdentities = FormatPlatformIdentitiesForLog(notification.PlatformIdentities);
+
+			logger.LogDebug("Dispatching user-supplied notification id '{CommunicationId}' to user-supplied platform identities {PlatformIdentities}", sanitizedCommunicationId, sanitizedPlatformIdentities);
 
 			var result = await communicationsClient.DispatchAsync(
 				notification.CommunicationIntent,
@@ -65,13 +69,31 @@ namespace Tandely.Notifications.Service.Controllers
 			if (!resultStatuses.Any())
 				resultStatuses = "No notifications dispatched";
 
-			logger.LogInformation("Dispatched notification '{CommunicationId}' to {PlatformIdentities} with result(s) {resultStatus}", notification.CommunicationIntent, notification.PlatformIdentities, resultStatuses);
+			logger.LogInformation("Dispatched user-supplied notification intent '{CommunicationIntent}' to user-supplied platform identities {PlatformIdentities} with result(s) {ResultStatus}", sanitizedCommunicationIntent, sanitizedPlatformIdentities, resultStatuses);
 			if (result.IsSuccessful)
 			{
 				return Ok(response);
 			}
 
 			return BadRequest(response);
+		}
+
+		private static string FormatPlatformIdentitiesForLog(IEnumerable<TandelyPlatformIdentity>? platformIdentities)
+		{
+			if (platformIdentities == null)
+				return string.Empty;
+
+			return string.Join(
+				", ",
+				platformIdentities.Select(identity => $"[{SanitizeForLog(identity?.Type)}:{SanitizeForLog(identity?.Id)}]")
+			);
+		}
+
+		private static string SanitizeForLog(string? value)
+		{
+			return string.IsNullOrEmpty(value)
+				? string.Empty
+				: value.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " ");
 		}
 	}
 }
