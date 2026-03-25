@@ -8,8 +8,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Options" Version="9.0.2" />
-		<PackageReference Include="Transmitly" Version="0.2.3-6.30853e7" />
-		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.2.2-16.b75cea3" />
+		<PackageReference Include="Transmitly" Version="0.3.0" />
+		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>
