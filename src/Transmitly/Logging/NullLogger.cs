@@ -1,4 +1,4 @@
-﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -12,17 +12,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Pipeline.Configuration;
+namespace Transmitly.Logging;
 
-public sealed class DefaultPipelineService : BasePipelineService
+internal sealed partial class NullLoggerFactory
 {
-	public DefaultPipelineService(IPipelineFactory pipelineFactory, ILoggerFactory loggerFactory)
-		: this(pipelineFactory, Guard.AgainstNull(loggerFactory).CreateLogger<DefaultPipelineService>())
+	private sealed class NullLogger : ILogger
 	{
-	}
-
-	internal DefaultPipelineService(IPipelineFactory pipelineFactory, ILogger logger)
-		: base(pipelineFactory, logger)
-	{
+		public string CategoryName => "Transmitly.NullLogger";
+		public bool IsEnabled(LogLevel level) => false;
+		public void Log(LogEntry entry)
+		{
+		}
 	}
 }

@@ -31,7 +31,8 @@ internal sealed class CreateCommunicationsClientContext(
 	IReadOnlyCollection<IContentModelEnricherRegistration> contentModelEnricherRegistrations,
 	IReadOnlyCollection<IPlatformIdentityProfileEnricherRegistration> platformIdentityProfileEnricherRegistrations,
 	IReadOnlyCollection<IPersonaRegistration> personaRegistrations,
-	IReadOnlyCollection<IObserver<DeliveryReport>> deliveryReportObservers
+	IReadOnlyCollection<IObserver<DeliveryReport>> deliveryReportObservers,
+	ILoggerFactory loggerFactory
 ) : ICreateCommunicationsClientContext
 {
 	public IReadOnlyCollection<IChannelProviderRegistration> ChannelProviders { get; } = channelProviders;
@@ -43,10 +44,12 @@ internal sealed class CreateCommunicationsClientContext(
 	public IReadOnlyCollection<IPlatformIdentityResolverRegistration> PlatformIdentityResolvers { get; } = platformIdentityResolverRegistrations;
 
 	public IReadOnlyCollection<IContentModelEnricherRegistration> ContentModelEnrichers { get; } = contentModelEnricherRegistrations;
-  
+
 	public IReadOnlyCollection<IPlatformIdentityProfileEnricherRegistration> PlatformIdentityProfileEnrichers { get; } = platformIdentityProfileEnricherRegistrations;
 
 	public IReadOnlyCollection<IPersonaRegistration> Personas { get; } = personaRegistrations;
 
 	public IReadOnlyCollection<IObserver<DeliveryReport>> DeliveryReportObservers { get; } = deliveryReportObservers;
+
+	public ILoggerFactory LoggerFactory { get; } = Guard.AgainstNull(loggerFactory);
 }

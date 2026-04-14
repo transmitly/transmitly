@@ -25,6 +25,7 @@ internal class InternalDispatchCommunicationContext(ITransactionModel? transacti
 	IReadOnlyCollection<IPlatformIdentityProfile> recipients,
 	ITemplateEngine templateEngine,
 	IDeliveryReportService deliveryReportManager,
+	ILoggerFactory loggerFactory,
 	CultureInfo cultureInfo,
 	string pipelineIntent,
 	string? pipelineId,
@@ -50,6 +51,8 @@ internal class InternalDispatchCommunicationContext(ITransactionModel? transacti
 	public ICollection<IDispatchResult> DispatchResults { get; } = [];
 
 	public IDeliveryReportService DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
+
+	public ILoggerFactory LoggerFactory { get; } = Guard.AgainstNull(loggerFactory);
 
 	public string PipelineIntent { get; } = Guard.AgainstNullOrWhiteSpace(pipelineIntent);
 

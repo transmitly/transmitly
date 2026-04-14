@@ -14,9 +14,10 @@
 
 namespace Transmitly.Model.Configuration;
 
-public sealed class DefaultContentModelEnricherRegistrationFactory(IEnumerable<IContentModelEnricherRegistration> registrations) : IContentModelEnricherFactory
+public sealed class DefaultContentModelEnricherRegistrationFactory(IEnumerable<IContentModelEnricherRegistration> registrations, ILoggerFactory loggerFactory) : IContentModelEnricherFactory
 {
 	private readonly List<IContentModelEnricherRegistration> _registrations = [.. Guard.AgainstNull(registrations)];
+	private readonly ILoggerFactory _loggerFactory = Guard.AgainstNull(loggerFactory);
 
 	public Task<IReadOnlyList<IContentModelEnricherRegistration>> GetAllEnrichersAsync()
 	{
@@ -26,6 +27,6 @@ public sealed class DefaultContentModelEnricherRegistrationFactory(IEnumerable<I
 	public Task<IContentModelEnricher?> GetEnricher(IContentModelEnricherRegistration registration)
 	{
 		Guard.AgainstNull(registration);
-		return Task.FromResult(Activator.CreateInstance(registration.EnricherType) as IContentModelEnricher);
+		return Task.FromResult(DefaultActivator.CreateInstance<IContentModelEnricher>(registration.EnricherType, _loggerFactory));
 	}
 }

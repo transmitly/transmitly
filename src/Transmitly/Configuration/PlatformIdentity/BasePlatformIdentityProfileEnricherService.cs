@@ -16,14 +16,29 @@ using Transmitly.Exceptions;
 
 namespace Transmitly.PlatformIdentity.Configuration;
 
-public abstract class BasePlatformIdentityProfileEnricherService(IPlatformIdentityProfileEnricherFactory identityProfileEnricherFactory) : IPlatformIdentityProfileEnricherService
+public abstract class BasePlatformIdentityProfileEnricherService(IPlatformIdentityProfileEnricherFactory identityProfileEnricherFactory, ILogger logger) : IPlatformIdentityProfileEnricherService
 {
 	private readonly IPlatformIdentityProfileEnricherFactory _platformIdentityProfileEnrichers = Guard.AgainstNull(identityProfileEnricherFactory);
+	private readonly ILogger _logger = Guard.AgainstNull(logger);
+
+	protected BasePlatformIdentityProfileEnricherService(IPlatformIdentityProfileEnricherFactory identityProfileEnricherFactory, ILoggerFactory loggerFactory)
+		: this(identityProfileEnricherFactory, Guard.AgainstNull(loggerFactory).CreateLogger<BasePlatformIdentityProfileEnricherService>())
+	{
+	}
 
 	public virtual async Task EnrichIdentityProfilesAsync(IReadOnlyCollection<IPlatformIdentityProfile> identityProfiles)
 	{
 		foreach (var profile in Guard.AgainstNull(identityProfiles))
 		{
+			_logger.LogDebug(
+				LogEvents.IdentityProfileEnrichmentStarted,
+				"Enriching platform identity profile.",
+				(ProfileId: profile.Id, ProfileType: profile.Type),
+				static state => new Dictionary<string, object?>
+				{
+					["profileId"] = state.ProfileId,
+					["profileType"] = state.ProfileType ?? string.Empty
+				});
 			IReadOnlyList<IPlatformIdentityProfileEnricherRegistration> enrichers;
 			if (profile.Type is { Length: > 0 } profileType)
 			{
@@ -41,6 +56,17 @@ public abstract class BasePlatformIdentityProfileEnricherService(IPlatformIdenti
 
 				await enricherInstance.EnrichIdentityProfileAsync(profile).ConfigureAwait(false);
 			}
+
+			_logger.LogDebug(
+				LogEvents.IdentityProfileEnrichmentCompleted,
+				"Platform identity profile enrichment completed.",
+				(ProfileId: profile.Id, ProfileType: profile.Type, EnricherCount: enrichers.Count),
+				static state => new Dictionary<string, object?>
+				{
+					["profileId"] = state.ProfileId,
+					["profileType"] = state.ProfileType ?? string.Empty,
+					["enricherCount"] = state.EnricherCount
+				});
 		}
 	}
 }

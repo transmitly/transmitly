@@ -87,7 +87,10 @@ dotnet_diagnostic.S4144.severity = silent
 dotnet_diagnostic.IDE0073.severity = error
 
 # CS1591: Missing XML comment for publicly visible type or member
-dotnet_diagnostic.CS1591.severity = none
+dotnet_diagnostic.CS1591.severity = suggestion
+
+# S1133: Deprecated code should be removed
+dotnet_diagnostic.S1133.severity = suggestion
 
 [*.{cs,vb}]
 #### Naming styles ####

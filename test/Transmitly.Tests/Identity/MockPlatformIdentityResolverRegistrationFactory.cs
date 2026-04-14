@@ -16,6 +16,6 @@ using Transmitly.PlatformIdentity.Configuration;
 
 namespace Transmitly.Tests.Identity;
 
-sealed class MockPlatformIdentityResolverRegistrationFactory(IEnumerable<IPlatformIdentityResolverRegistration> resolvers) : BasePlatformIdentityResolverRegistrationFactory(resolvers)
+sealed class MockPlatformIdentityResolverRegistrationFactory(IEnumerable<IPlatformIdentityResolverRegistration> resolvers) : BasePlatformIdentityResolverRegistrationFactory(resolvers, NullLoggerFactory.Instance)
 {
 }

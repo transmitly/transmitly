@@ -14,6 +14,9 @@
 
 using AutoFixture;
 using AutoFixture.AutoMoq;
+using System.Globalization;
+using Moq;
+using Transmitly.Tests.Mocks;
 
 namespace Transmitly.Tests;
 
@@ -30,5 +33,31 @@ public abstract class BaseUnitTest
 	{
 		var config = new AutoMoqCustomization() { ConfigureMembers = true };
 		fixture = new Fixture().Customize(config);
+		fixture.Customize<Mock<IDispatchCommunicationContext>>(customization =>
+			customization.Do(mock => mock.SetupGet(x => x.LoggerFactory).Returns(NullLoggerFactory.Instance)));
+	}
+
+	protected Mock<IDispatchCommunicationContext> CreateDispatchCommunicationContextMock()
+	{
+		var mock = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var recipients = new[]
+		{
+			new PlatformIdentityProfile(
+				"id",
+				"type",
+				["unit-test-address".AsIdentityAddress()])
+		};
+
+		mock.SetupGet(x => x.LoggerFactory).Returns(NullLoggerFactory.Instance);
+		mock.SetupGet(x => x.PlatformIdentities).Returns(recipients);
+		mock.SetupGet(x => x.TemplateEngine).Returns(new UnitTestTemplateEngine());
+		mock.SetupGet(x => x.ChannelConfiguration).Returns(new MockPipelineConfiguration());
+		mock.SetupGet(x => x.DeliveryReportManager).Returns(new MockDeliveryReportService([]));
+		mock.SetupGet(x => x.DispatchResults).Returns([]);
+		mock.SetupGet(x => x.CultureInfo).Returns(CultureInfo.InvariantCulture);
+		mock.SetupGet(x => x.MessagePriority).Returns(MessagePriority.Normal);
+		mock.SetupGet(x => x.TransportPriority).Returns(TransportPriority.Normal);
+		mock.SetupGet(x => x.PipelineIntent).Returns("test");
+		return mock;
 	}
 }

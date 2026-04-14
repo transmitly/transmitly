@@ -14,6 +14,15 @@
 
 namespace Transmitly.PlatformIdentity.Configuration;
 
-public sealed class DefaultPlatformIdentityService(IPlatformIdentityResolverFactory platformIdentityResolverRegistrations) : BasePlatformIdentityService(platformIdentityResolverRegistrations)
+public sealed class DefaultPlatformIdentityService : BasePlatformIdentityService
 {
+	public DefaultPlatformIdentityService(IPlatformIdentityResolverFactory platformIdentityResolverRegistrations, ILoggerFactory loggerFactory)
+		: this(platformIdentityResolverRegistrations, Guard.AgainstNull(loggerFactory).CreateLogger<DefaultPlatformIdentityService>())
+	{
+	}
+
+	internal DefaultPlatformIdentityService(IPlatformIdentityResolverFactory platformIdentityResolverRegistrations, ILogger logger)
+		: base(platformIdentityResolverRegistrations, logger)
+	{
+	}
 }

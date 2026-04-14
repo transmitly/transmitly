@@ -13,7 +13,6 @@
 //  limitations under the License.
 
 using AutoFixture;
-using Moq;
 using Transmitly.Channel.Configuration.Sms;
 using Transmitly.Exceptions;
 using Transmitly.Tests;
@@ -57,7 +56,7 @@ public class SmsChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldGenerateValidSmsCommunication()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;
 		var from = "8888".AsIdentityAddress();
@@ -91,7 +90,7 @@ public class SmsChannelTests : BaseUnitTest
 	[TestMethod]
 	public void GeneratingCommunicationShouldThrowWithoutMessageTemplate()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;
 		var sut = fixture.Create<SmsChannel>();
@@ -104,7 +103,7 @@ public class SmsChannelTests : BaseUnitTest
 	public async Task ShouldSetProvidedFromAddressResolver()
 	{
 		var from = fixture.Freeze<IPlatformIdentityAddress>();
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;
 		var body = fixture.Freeze<string>();
@@ -121,7 +120,7 @@ public class SmsChannelTests : BaseUnitTest
 	public async Task ContentModelResourceShouldAddSmsAttachment()
 	{
 		var from = fixture.Freeze<IPlatformIdentityAddress>();
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		var resource = new Resource("res", "ct", new MemoryStream());
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([resource]);
 		var context = mockContext.Object;

@@ -20,7 +20,7 @@ public class DispatchResultStatusExtensionsTests
 	[TestMethod]
 	public void IsSuccessReturnsTrueForSuccessCode()
 	{
-		var status = new CommunicationsStatus ("test", "test", 2000);
+		var status = new CommunicationsStatus("test", "test", 2000);
 
 		var result = status.IsSuccess();
 
@@ -30,7 +30,7 @@ public class DispatchResultStatusExtensionsTests
 	[TestMethod]
 	public void IsSuccessReturnsTrueForInfoCode()
 	{
-		var status = new CommunicationsStatus ("test", "test", 1500);
+		var status = new CommunicationsStatus("test", "test", 1500);
 
 		var result = status.IsSuccess();
 
@@ -40,7 +40,7 @@ public class DispatchResultStatusExtensionsTests
 	[TestMethod]
 	public void IsSuccessReturnsFalseForClientErrorCode()
 	{
-		var status = new CommunicationsStatus ("test", "test", 4000);
+		var status = new CommunicationsStatus("test", "test", 4000);
 
 		var result = status.IsSuccess();
 
@@ -50,7 +50,7 @@ public class DispatchResultStatusExtensionsTests
 	[TestMethod]
 	public void IsClientErrorReturnsTrueForClientErrorCode()
 	{
-		var status = new CommunicationsStatus ("test", "test", 4500);
+		var status = new CommunicationsStatus("test", "test", 4500);
 
 		var result = status.IsClientError();
 
@@ -60,7 +60,7 @@ public class DispatchResultStatusExtensionsTests
 	[TestMethod]
 	public void IsClientErrorReturnsFalseForServerErrorCode()
 	{
-		var status = new CommunicationsStatus ("test", "test", 5000);
+		var status = new CommunicationsStatus("test", "test", 5000);
 
 		var result = status.IsClientError();
 
@@ -70,7 +70,7 @@ public class DispatchResultStatusExtensionsTests
 	[TestMethod]
 	public void IsServerErrorReturnsTrueForServerErrorCode()
 	{
-		var status = new CommunicationsStatus ("test", "test", 5500);
+		var status = new CommunicationsStatus("test", "test", 5500);
 
 		var result = status.IsServerError();
 
@@ -80,7 +80,7 @@ public class DispatchResultStatusExtensionsTests
 	[TestMethod]
 	public void IsServerErrorReturnsFalseForClientErrorCode()
 	{
-		var status = new CommunicationsStatus ("test", "test", 4500);
+		var status = new CommunicationsStatus("test", "test", 4500);
 
 		var result = status.IsServerError();
 
@@ -110,7 +110,7 @@ public class DispatchResultStatusExtensionsTests
 	[TestMethod]
 	public void IsFailureReturnsFalseForSuccessCode()
 	{
-		var status = new CommunicationsStatus("test","test", 2000);
+		var status = new CommunicationsStatus("test", "test", 2000);
 
 		var result = status.IsFailure();
 

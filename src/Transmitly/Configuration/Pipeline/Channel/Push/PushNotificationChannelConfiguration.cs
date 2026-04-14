@@ -102,6 +102,14 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 		return this;
 	}
 
+	public IPushNotificationChannelConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		_data ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_data, key, content, addIfCondition);
+		return this;
+	}
+
+
 	public IPushNotificationChannelConfiguration AddDataIfNotNull(string key, Action<IContentTemplateConfiguration> content)
 	{
 		_data ??= [];
@@ -113,13 +121,6 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 	{
 		_data ??= [];
 		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_data, key, contentResolver);
-		return this;
-	}
-
-	public IPushNotificationChannelConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
-	{
-		_data ??= [];
-		PushNotificationTemplateConfigurationHelpers.AddTemplate(_data, key, content, addIfCondition);
 		return this;
 	}
 
@@ -154,6 +155,13 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 		return this;
 	}
 
+	public IPushNotificationChannelConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		_headers ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_headers, key, content, addIfCondition);
+		return this;
+	}
+
 	public IPushNotificationChannelConfiguration AddHeaderIfNotNull(string key, Action<IContentTemplateConfiguration> content)
 	{
 		_headers ??= [];
@@ -165,13 +173,6 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 	{
 		_headers ??= [];
 		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_headers, key, contentResolver);
-		return this;
-	}
-
-	public IPushNotificationChannelConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
-	{
-		_headers ??= [];
-		PushNotificationTemplateConfigurationHelpers.AddTemplate(_headers, key, content, addIfCondition);
 		return this;
 	}
 

@@ -30,8 +30,6 @@ internal sealed class VoiceChannel(IVoiceChannelConfiguration configuration) : I
 
 	private const RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture;
 
-	//		private readonly Func<IDispatchCommunicationContext, IIdentityAddress>? _fromAddressResolver;
-
 	private static readonly string[] _supportedAddressTypes = [PlatformIdentityAddress.Types.Cell(), PlatformIdentityAddress.Types.HomePhone(), PlatformIdentityAddress.Types.Phone(), PlatformIdentityAddress.Types.Mobile()];
 
 	private static readonly Regex _voiceMatchRegex = CreateRegEx();

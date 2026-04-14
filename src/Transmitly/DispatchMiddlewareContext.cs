@@ -50,5 +50,10 @@ public sealed class DispatchMiddlewareContext(IChannelProvider provider,
 	/// Gets the cancellation token.
 	/// </summary>
 	public CancellationToken Token { get; } = token;
+
+	/// <summary>
+	/// Gets the logger factory available for this dispatch.
+	/// </summary>
+	public ILoggerFactory LoggerFactory => Context.LoggerFactory;
 }
 

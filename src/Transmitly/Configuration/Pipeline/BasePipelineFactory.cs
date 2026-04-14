@@ -34,7 +34,7 @@ public abstract class BasePipelineFactory(IEnumerable<IPipeline> pipelines) : IP
 			_pipelines.Where(x =>
 				x.Intent == pipelineIntent &&
 				(
-					string.IsNullOrEmpty(pipelineId) || 
+					string.IsNullOrEmpty(pipelineId) ||
 					x.Id == pipelineId
 				)
 			)

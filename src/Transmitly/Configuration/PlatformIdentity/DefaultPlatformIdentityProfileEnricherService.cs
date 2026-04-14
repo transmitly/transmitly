@@ -14,7 +14,16 @@
 
 namespace Transmitly.PlatformIdentity.Configuration;
 
-public sealed class DefaultPlatformIdentityProfileEnricherService(IPlatformIdentityProfileEnricherFactory platformIdentityProfileEnricherFactory) : BasePlatformIdentityProfileEnricherService(platformIdentityProfileEnricherFactory)
+public sealed class DefaultPlatformIdentityProfileEnricherService : BasePlatformIdentityProfileEnricherService
 {
+	public DefaultPlatformIdentityProfileEnricherService(IPlatformIdentityProfileEnricherFactory platformIdentityProfileEnricherFactory, ILoggerFactory loggerFactory)
+		: this(platformIdentityProfileEnricherFactory, Guard.AgainstNull(loggerFactory).CreateLogger<DefaultPlatformIdentityProfileEnricherService>())
+	{
+	}
+
+	internal DefaultPlatformIdentityProfileEnricherService(IPlatformIdentityProfileEnricherFactory platformIdentityProfileEnricherFactory, ILogger logger)
+		: base(platformIdentityProfileEnricherFactory, logger)
+	{
+	}
 }
 

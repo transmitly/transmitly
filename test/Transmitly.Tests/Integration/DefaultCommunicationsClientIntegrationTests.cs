@@ -59,7 +59,6 @@ public partial class DefaultCommunicationsClientTests
 
 		Assert.IsNotNull(result);
 		Assert.IsTrue(result.IsSuccessful);
-		Assert.IsNotNull(result.Results);
 		Assert.AreEqual(1, result.Results.Count);
 		var singleResult = result.Results.First();
 		Assert.IsNotNull(singleResult);
@@ -112,7 +111,6 @@ public partial class DefaultCommunicationsClientTests
 		var result = await client.DispatchAsync(PipelineIntent, RecipientAddresses, TransactionModel.Create(new { Code = "123546" }));
 
 		Assert.IsNotNull(result);
-		Assert.IsNotNull(result.Results);
 		Assert.IsTrue(result.IsSuccessful);
 		Assert.AreEqual(1, result.Results.Count);
 		var singleResult = result.Results.First();

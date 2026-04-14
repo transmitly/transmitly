@@ -12,32 +12,26 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Configuration.Push;
+namespace Transmitly.Logging;
 
 /// <summary>
-/// Action entry shown by Web push notifications.
+/// Defines a logger that can be used to write log messages with various levels of severity and associated properties. 
 /// </summary>
-/// <remarks>
-/// Initializes a new instance of the <see cref="WebPushNotificationAction"/> class.
-/// </remarks>
-/// <param name="action">Action identifier.</param>
-/// <param name="title">Action label shown to the user.</param>
-/// <param name="icon">Optional action icon URL.</param>
-public sealed class WebPushNotificationAction(string action, string title, string? icon = null)
+public interface ILogger
 {
-
 	/// <summary>
-	/// Action identifier.
+	/// Gets the name of the category associated with this instance.
 	/// </summary>
-	public string Action { get; } = Guard.AgainstNullOrWhiteSpace(action);
-
+	string CategoryName { get; }
 	/// <summary>
-	/// Action label shown to the user.
+	/// Checks if the given log level is enabled for this logger. This can be used to avoid unnecessary processing of log messages when the log level is not enabled. 
 	/// </summary>
-	public string Title { get; } = Guard.AgainstNullOrWhiteSpace(title);
-
+	/// <param name="level">The log level to check if the logger is enabled for.</param>
+	/// <returns></returns>
+	bool IsEnabled(LogLevel level);
 	/// <summary>
-	/// Optional action icon URL.
+	/// Writes a log entry with the specified properties.
 	/// </summary>
-	public string? Icon { get; } = icon;
+	/// <param name="entry">The entry to log.</param>
+	void Log(LogEntry entry);
 }

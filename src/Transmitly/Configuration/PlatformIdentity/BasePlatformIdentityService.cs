@@ -16,13 +16,28 @@ using Transmitly.Exceptions;
 
 namespace Transmitly.PlatformIdentity.Configuration;
 
-public abstract class BasePlatformIdentityService(IPlatformIdentityResolverFactory identityResolverFactory) : IPlatformIdentityService
+public abstract class BasePlatformIdentityService(IPlatformIdentityResolverFactory identityResolverFactory, ILogger logger) : IPlatformIdentityService
 {
 	private readonly IPlatformIdentityResolverFactory _platformIdentityResolverRegistrations = Guard.AgainstNull(identityResolverFactory);
+	private readonly ILogger _logger = Guard.AgainstNull(logger);
+
+	protected BasePlatformIdentityService(IPlatformIdentityResolverFactory identityResolverFactory, ILoggerFactory loggerFactory)
+		: this(identityResolverFactory, Guard.AgainstNull(loggerFactory).CreateLogger<BasePlatformIdentityService>())
+	{
+	}
 
 	public virtual async Task<IReadOnlyCollection<IPlatformIdentityProfile>> ResolveIdentityProfilesAsync(IReadOnlyCollection<IPlatformIdentityReference> identityReferences)
 	{
 		var uniqueTypes = Guard.AgainstNullOrEmpty(identityReferences?.ToList()).Select(s => s.Type).Distinct().ToArray();
+		_logger.LogDebug(
+			LogEvents.IdentityResolutionStarted,
+			"Resolving platform identity references.",
+			(ReferenceCount: identityReferences.Count, TypeCount: uniqueTypes.Length),
+			static state => new Dictionary<string, object?>
+			{
+				["referenceCount"] = state.ReferenceCount,
+				["typeCount"] = state.TypeCount
+			});
 
 		var resolvers = await _platformIdentityResolverRegistrations.GetPlatformIdentityResolversByTypes(uniqueTypes).ConfigureAwait(false);
 
@@ -47,6 +62,14 @@ public abstract class BasePlatformIdentityService(IPlatformIdentityResolverFacto
 				results.AddRange(resolvedIdentities);
 		}
 
+		_logger.LogDebug(
+			LogEvents.IdentityResolutionCompleted,
+			"Resolved platform identity references.",
+			results.Count,
+			static resolvedIdentityCount => new Dictionary<string, object?>
+			{
+				["resolvedIdentityCount"] = resolvedIdentityCount
+			});
 		return results;
 	}
 }

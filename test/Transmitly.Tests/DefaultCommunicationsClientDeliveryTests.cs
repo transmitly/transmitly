@@ -39,7 +39,8 @@ public class DefaultCommunicationsDeliveryClientTests
 			dispatchCoordinatorService,
 			platformIdentityService,
 			platformIdentityProfileEnricherService,
-			_deliveryReportServiceMock.Object
+			_deliveryReportServiceMock.Object,
+			NullLoggerFactory.Instance
 		);
 	}
 

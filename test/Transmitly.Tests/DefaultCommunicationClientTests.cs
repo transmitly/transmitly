@@ -31,7 +31,7 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	{
 		var (pipeline, coordinator, identity, identityProfileEnricher, reportHandler) = GetStores();
 
-		var client = new DefaultCommunicationsClient(pipeline.Object, coordinator.Object, identity.Object, identityProfileEnricher.Object, reportHandler.Object);
+		var client = new DefaultCommunicationsClient(pipeline.Object, coordinator.Object, identity.Object, identityProfileEnricher.Object, reportHandler.Object, NullLoggerFactory.Instance);
 		Assert.ThrowsExactlyAsync<ArgumentNullException>(() => client.DispatchAsync(value, "test", new { }));
 	}
 

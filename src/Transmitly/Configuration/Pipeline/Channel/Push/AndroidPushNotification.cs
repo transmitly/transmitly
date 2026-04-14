@@ -92,6 +92,12 @@ internal sealed class AndroidPushNotification : PushContentConfigurationBase, IA
 		return this;
 	}
 
+	public IAndroidPushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddDataTemplate(key, content, addIfCondition);
+		return this;
+	}
+
 	public IAndroidPushNotificationConfiguration AddDataIfNotNull(string key, Action<IContentTemplateConfiguration> content)
 	{
 		AddDataTemplateIfNotNull(key, content);
@@ -104,11 +110,7 @@ internal sealed class AndroidPushNotification : PushContentConfigurationBase, IA
 		return this;
 	}
 
-	public IAndroidPushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
-	{
-		AddDataTemplate(key, content, addIfCondition);
-		return this;
-	}
+
 
 	public IAndroidPushNotificationConfiguration AddDataIfNotNull(
 		string key,
@@ -137,6 +139,12 @@ internal sealed class AndroidPushNotification : PushContentConfigurationBase, IA
 		return this;
 	}
 
+	public IAndroidPushNotificationConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddHeaderTemplate(key, content, addIfCondition);
+		return this;
+	}
+
 	public IAndroidPushNotificationConfiguration AddHeaderIfNotNull(string key, Action<IContentTemplateConfiguration> content)
 	{
 		AddHeaderTemplateIfNotNull(key, content);
@@ -146,12 +154,6 @@ internal sealed class AndroidPushNotification : PushContentConfigurationBase, IA
 	public IAndroidPushNotificationConfiguration AddHeaderIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
 	{
 		AddHeaderTemplateIfNotNull(key, contentResolver);
-		return this;
-	}
-
-	public IAndroidPushNotificationConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
-	{
-		AddHeaderTemplate(key, content, addIfCondition);
 		return this;
 	}
 

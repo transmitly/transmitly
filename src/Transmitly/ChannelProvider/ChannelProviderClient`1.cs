@@ -25,6 +25,18 @@ public abstract class ChannelProviderDispatcher<TCommunication> : IChannelProvid
 
 	public virtual void DispatchReport(string eventName, IDispatchCommunicationContext context, TCommunication communication, IReadOnlyCollection<IDispatchResult?> dispatchResults)
 	{
+		context.LoggerFactory.CreateLogger<ChannelProviderDispatcher<TCommunication>>()
+			.LogDebug(
+				LogEvents.DeliveryReportDispatch,
+				"Dispatching provider delivery report.",
+				(EventName: eventName, context.ChannelId, context.ChannelProviderId, DispatchResultCount: dispatchResults.Count),
+				static state => new Dictionary<string, object?>
+				{
+					["eventName"] = state.EventName,
+					["channelId"] = state.ChannelId ?? string.Empty,
+					["channelProviderId"] = state.ChannelProviderId ?? string.Empty,
+					["dispatchResultCount"] = state.DispatchResultCount
+				});
 		foreach (var result in dispatchResults.Where(r => r != null))
 			context.DeliveryReportManager.DispatchAsync(new DeliveryReport(eventName, context.ChannelId, context.ChannelProviderId, context.PipelineIntent, context.PipelineId, result!.ResourceId, result.Status, communication, context.ContentModel, result.Exception));
 	}

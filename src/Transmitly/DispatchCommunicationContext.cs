@@ -26,6 +26,7 @@ internal class DispatchCommunicationContext(
 	IReadOnlyCollection<IPlatformIdentityProfile> recipients,
 	ITemplateEngine templateEngine,
 	IDeliveryReportService deliveryReportManager,
+	ILoggerFactory loggerFactory,
 	CultureInfo cultureInfo,
 	string pipelineIntent,
 	string? pipelineId,
@@ -34,7 +35,7 @@ internal class DispatchCommunicationContext(
 	string? ChannelId = null, string? ChannelProviderId = null) : IDispatchCommunicationContext
 {
 	public DispatchCommunicationContext(IDispatchCommunicationContext context, IChannel channel, IChannelProvider channelProvider)
-		: this(context.ContentModel, context.ChannelConfiguration, context.PlatformIdentities, context.TemplateEngine, context.DeliveryReportManager,
+		: this(context.ContentModel, context.ChannelConfiguration, context.PlatformIdentities, context.TemplateEngine, context.DeliveryReportManager, context.LoggerFactory,
 			  context.CultureInfo, context.PipelineIntent, context.PipelineId, context.MessagePriority, context.TransportPriority, channel.Id, channelProvider.Id)
 	{
 
@@ -59,6 +60,8 @@ internal class DispatchCommunicationContext(
 	public ICollection<IDispatchResult> DispatchResults { get; } = [];
 
 	public IDeliveryReportService DeliveryReportManager { get; } = Guard.AgainstNull(deliveryReportManager);
+
+	public ILoggerFactory LoggerFactory { get; } = Guard.AgainstNull(loggerFactory);
 
 	public string PipelineIntent { get; } = Guard.AgainstNullOrWhiteSpace(pipelineIntent);
 

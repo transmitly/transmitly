@@ -22,19 +22,24 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly;
 
+
 public abstract class BaseDispatchCoordinatorService(
 	IChannelChannelProviderService channelChannelProviderService,
 	IPersonaService personaService,
 	ITemplateEngineFactory templateEngineFactory,
 	IContentModelEnricherService contentModelEnricherService,
-	IDeliveryReportService deliveryReportService) : IDispatchCoordinatorService
+	IDeliveryReportService deliveryReportService,
+	ILoggerFactory loggerFactory) : IDispatchCoordinatorService
 {
 	private readonly IChannelChannelProviderService _channelChannelProviderService = channelChannelProviderService;
 	private readonly IPersonaService _personaService = personaService;
 	private readonly ITemplateEngineFactory _templateEngineFactory = templateEngineFactory;
 	private readonly IContentModelEnricherService _contentModelEnricherService = contentModelEnricherService;
 	private readonly IDeliveryReportService _deliveryReportProvider = deliveryReportService;
+	private readonly ILoggerFactory _loggerFactory = Guard.AgainstNull(loggerFactory);
+	private readonly ILogger _logger = Guard.AgainstNull(loggerFactory).CreateLogger<BaseDispatchCoordinatorService>();
 
+	
 	public virtual async Task<IReadOnlyCollection<RecipientDispatchCommunicationContext>> CreateRecipientContexts(
 		IReadOnlyCollection<IPipeline> pipelines,
 		IReadOnlyCollection<IPlatformIdentityProfile> platformIdentityProfiles,
@@ -45,6 +50,15 @@ public abstract class BaseDispatchCoordinatorService(
 		var recipientContexts = new List<RecipientDispatchCommunicationContext>();
 		var templateEngine = _templateEngineFactory.Get();
 		var hasPerRecipientEnrichers = await _contentModelEnricherService.HasEnrichersAsync(ContentModelEnricherScope.PerRecipient).ConfigureAwait(false);
+		_logger.LogDebug(
+			LogEvents.IdentityProfileEnrichmentStarted,
+			"Creating recipient dispatch contexts.",
+			(PipelineCount: pipelines.Count, IdentityCount: platformIdentityProfiles.Count),
+			static state => new Dictionary<string, object?>
+			{
+				["pipelineCount"] = state.PipelineCount,
+				["identityCount"] = state.IdentityCount
+			});
 
 		foreach (var pipeline in pipelines)
 		{
@@ -59,6 +73,7 @@ public abstract class BaseDispatchCoordinatorService(
 					new[] { platformIdentity },
 					templateEngine,
 					_deliveryReportProvider,
+					_loggerFactory,
 					cultureInfo,
 					pipeline.Intent,
 					pipeline.Id,
@@ -74,6 +89,7 @@ public abstract class BaseDispatchCoordinatorService(
 						new[] { platformIdentity },
 						templateEngine,
 						_deliveryReportProvider,
+						_loggerFactory,
 						cultureInfo,
 						pipeline.Intent,
 						pipeline.Id);
@@ -99,6 +115,14 @@ public abstract class BaseDispatchCoordinatorService(
 			}
 		}
 
+		_logger.LogInformation(
+			LogEvents.RecipientContextsCreated,
+			"Created recipient dispatch contexts.",
+			recipientContexts.Count,
+			static recipientContextCount => new Dictionary<string, object?>
+			{
+				["recipientContextCount"] = recipientContextCount
+			});
 		return recipientContexts.AsReadOnly();
 	}
 

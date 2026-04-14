@@ -13,7 +13,6 @@
 //  limitations under the License.
 
 using AutoFixture;
-using Moq;
 using Transmitly.Channel.Configuration.Push;
 using Transmitly.Tests;
 
@@ -62,7 +61,7 @@ public class PushNotificationChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldRenderConfiguredDefaultAndPlatformContent()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		mockContext.SetupGet(x => x.TemplateEngine).Returns(new UnitTestTemplateEngine());
 		var context = mockContext.Object;
@@ -296,7 +295,7 @@ public class PushNotificationChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldCreatePlatformContentWhenOnlyPlatformOptionsAreConfigured()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		mockContext.SetupGet(x => x.TemplateEngine).Returns(new UnitTestTemplateEngine());
 		var context = mockContext.Object;
@@ -342,7 +341,7 @@ public class PushNotificationChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldRenderAddDataAndAddHeaderConvenienceMethods()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		mockContext.SetupGet(x => x.TemplateEngine).Returns(new UnitTestTemplateEngine());
 		var context = mockContext.Object;
@@ -419,7 +418,7 @@ public class PushNotificationChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldRenderWebStringHelpersAndIgnoreWhitespace()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		mockContext.SetupGet(x => x.TemplateEngine).Returns(new UnitTestTemplateEngine());
 		var context = mockContext.Object;
@@ -457,7 +456,7 @@ public class PushNotificationChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldLeavePlatformContentNullWhenNotConfigured()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		mockContext.SetupGet(x => x.TemplateEngine).Returns(new UnitTestTemplateEngine());
 		var context = mockContext.Object;

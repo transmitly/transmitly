@@ -79,6 +79,11 @@ public interface IDispatchCommunicationContext
 	ITemplateEngine TemplateEngine { get; }
 
 	/// <summary>
+	/// Gets the logger factory available for this dispatch.
+	/// </summary>
+	ILoggerFactory LoggerFactory { get; }
+
+	/// <summary>
 	/// Gets the current pipeline intent.
 	/// </summary>
 	string PipelineIntent { get; }

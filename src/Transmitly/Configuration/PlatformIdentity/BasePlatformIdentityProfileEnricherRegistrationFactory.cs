@@ -15,9 +15,10 @@
 namespace Transmitly.PlatformIdentity.Configuration;
 
 ///<inheritdoc cref="IPlatformIdentityProfileEnricherFactory"/>
-public abstract class BasePlatformIdentityProfileEnricherRegistrationFactory(IEnumerable<IPlatformIdentityProfileEnricherRegistration> enrichers) : IPlatformIdentityProfileEnricherFactory
+public abstract class BasePlatformIdentityProfileEnricherRegistrationFactory(IEnumerable<IPlatformIdentityProfileEnricherRegistration> enrichers, ILoggerFactory loggerFactory) : IPlatformIdentityProfileEnricherFactory
 {
 	private readonly List<IPlatformIdentityProfileEnricherRegistration> _platformIdentityProfileEnricherRegistrations = [.. Guard.AgainstNull(enrichers)];
+	private readonly ILoggerFactory _loggerFactory = Guard.AgainstNull(loggerFactory);
 	protected IReadOnlyCollection<IPlatformIdentityProfileEnricherRegistration> Registrations => _platformIdentityProfileEnricherRegistrations.AsReadOnly();
 
 	public virtual Task<IReadOnlyList<IPlatformIdentityProfileEnricherRegistration>> GetAllEnrichersAsync()
@@ -47,7 +48,7 @@ public abstract class BasePlatformIdentityProfileEnricherRegistrationFactory(IEn
 	{
 		Guard.AgainstNull(platformIdentityProfileEnricherRegistration);
 
-		return Task.FromResult(Activator.CreateInstance(platformIdentityProfileEnricherRegistration.EnricherType) as IPlatformIdentityProfileEnricher);
+		return Task.FromResult(DefaultActivator.CreateInstance<IPlatformIdentityProfileEnricher>(platformIdentityProfileEnricherRegistration.EnricherType, _loggerFactory));
 	}
 }
 

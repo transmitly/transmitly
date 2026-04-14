@@ -52,7 +52,7 @@ public class PipelinePersonaTests
 
 		Assert.IsNotNull(result);
 		Assert.IsTrue(result.IsSuccessful);
-		
+
 		Assert.AreEqual(1, result.Results.Count);
 		var singleResult = result.Results.First();
 		Assert.IsTrue(singleResult?.Status.IsSuccess());
