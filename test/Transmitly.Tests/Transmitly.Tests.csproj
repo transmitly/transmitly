@@ -16,15 +16,7 @@
 
 	<ItemGroup>
 		<None Remove="EmbeddedResources\has-content.txt" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<EmbeddedResource Include="EmbeddedResources\has-content.txt" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="..\..\.editorconfig" Link=".editorconfig" />
-		<None Include="Configuration\Template\TemplateRegistration\LocalFileContentTemplateRegistrationTests.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -75,7 +67,4 @@
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
 		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD;FEATURE_SOURCE_GEN;FEATURE_ACTIVITY</DefineConstants>
 	</PropertyGroup>
-	<ItemGroup>
-		<Compile Remove="obj\**\*.cs;bin\**\*.cs" />
-	</ItemGroup>
 </Project>

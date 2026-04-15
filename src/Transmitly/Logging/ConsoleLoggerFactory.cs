@@ -52,30 +52,6 @@ internal sealed class ConsoleLoggerFactory : ILoggerFactory
 				builder.Append(property.Value);
 			}
 
-			if (!string.IsNullOrWhiteSpace(entry.TraceId))
-			{
-				builder.Append(" | traceId=");
-				builder.Append(entry.TraceId);
-			}
-
-			if (!string.IsNullOrWhiteSpace(entry.SpanId))
-			{
-				builder.Append(" | spanId=");
-				builder.Append(entry.SpanId);
-			}
-
-			if (entry.TraceFlags.HasValue)
-			{
-				builder.Append(" | traceFlags=");
-				builder.Append(entry.TraceFlags.Value);
-			}
-
-			if (!string.IsNullOrWhiteSpace(entry.TraceState))
-			{
-				builder.Append(" | traceState=");
-				builder.Append(entry.TraceState);
-			}
-
 			if (entry.Exception != null)
 			{
 				builder.Append(" | exception=");
