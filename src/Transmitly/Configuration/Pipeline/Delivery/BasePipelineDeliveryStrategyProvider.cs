@@ -23,14 +23,14 @@ namespace Transmitly.Delivery;
 /// </summary>
 public abstract class BasePipelineDeliveryStrategyProvider
 {
-        private Func<DispatchMiddlewareContext, Task<IReadOnlyCollection<IDispatchResult?>>> _dispatchDelegate = DefaultInvoke;
+	private Func<DispatchMiddlewareContext, Task<IReadOnlyCollection<IDispatchResult?>>> _dispatchDelegate = DefaultInvoke;
 
-        /// <summary>
-        /// Sets the dispatch delegate used to invoke channel provider dispatchers.
-        /// </summary>
-        /// <param name="invoker">Delegate to invoke.</param>
-        internal void SetDispatchDelegate(Func<DispatchMiddlewareContext, Task<IReadOnlyCollection<IDispatchResult?>>> invoker)
-                => _dispatchDelegate = Guard.AgainstNull(invoker);
+	/// <summary>
+	/// Sets the dispatch delegate used to invoke channel provider dispatchers.
+	/// </summary>
+	/// <param name="invoker">Delegate to invoke.</param>
+	internal void SetDispatchDelegate(Func<DispatchMiddlewareContext, Task<IReadOnlyCollection<IDispatchResult?>>> invoker)
+			=> _dispatchDelegate = Guard.AgainstNull(invoker);
 	/// <summary>
 	/// Dispatches the communications(s) through the provided channel channel provider groups.
 	/// </summary>
@@ -50,6 +50,17 @@ public abstract class BasePipelineDeliveryStrategyProvider
 	protected async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationAsync(IChannel channel, IChannelProvider provider, RecipientDispatchCommunicationContext recipientContext, CancellationToken cancellationToken)
 	{
 		var context = recipientContext.Context;
+		var logger = context.LoggerFactory.CreateLogger<BasePipelineDeliveryStrategyProvider>();
+		logger.LogDebug(
+			LogEvents.StrategyDispatchStarted,
+			"Dispatch strategy is dispatching a channel/provider pair.",
+			(ChannelId: channel.Id, ChannelProviderId: provider.Id, context.PipelineIntent),
+			static state => new Dictionary<string, object?>
+			{
+				["channelId"] = state.ChannelId,
+				["channelProviderId"] = state.ChannelProviderId,
+				["pipelineIntent"] = state.PipelineIntent
+			});
 
 		var filteredProfiles = FilterToASingleIdentityWithSingleSupportedAddress(channel, context);
 
@@ -61,6 +72,7 @@ public abstract class BasePipelineDeliveryStrategyProvider
 			filteredProfiles,
 			context.TemplateEngine,
 			context.DeliveryReportManager,
+			context.LoggerFactory,
 			context.CultureInfo,
 			context.PipelineIntent,
 			context.PipelineId,
@@ -84,6 +96,16 @@ public abstract class BasePipelineDeliveryStrategyProvider
 		var communication = await GetChannelCommunicationAsync(channel, dispatchingContext).ConfigureAwait(false);
 
 		var dispatchResult = await DispatchCommunicationInternal(channel, provider, dispatchingContext, dispatchingContext.ContentModel, communication, cancellationToken).ConfigureAwait(false);
+		logger.LogDebug(
+			LogEvents.StrategyDispatchCompleted,
+			"Dispatch strategy completed a channel/provider pair.",
+			(ChannelId: channel.Id, ChannelProviderId: provider.Id, ResultCount: dispatchResult.Count),
+			static state => new Dictionary<string, object?>
+			{
+				["channelId"] = state.ChannelId,
+				["channelProviderId"] = state.ChannelProviderId,
+				["resultCount"] = state.ResultCount
+			});
 
 		if (dispatchResult.Count == 0 || dispatchResult.All(r => r == null))
 			return Array.Empty<IDispatchResult?>();
@@ -116,91 +138,172 @@ public abstract class BasePipelineDeliveryStrategyProvider
 		return identityProfiles;
 	}
 
-        private async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationInternal(IChannel channel, IChannelProvider provider, DispatchCommunicationContext context, IContentModel? contentModel, object communication, CancellationToken cancellationToken)
-        {
-                IReadOnlyCollection<IDispatchResult?>? results = null;
-                try
-                {
-                        if (!provider.CommunicationType.IsInstanceOfType(communication))
-                                return [];
+	private async Task<IReadOnlyCollection<IDispatchResult?>> DispatchCommunicationInternal(IChannel channel, IChannelProvider provider, DispatchCommunicationContext context, IContentModel? contentModel, object communication, CancellationToken cancellationToken)
+	{
+		var logger = context.LoggerFactory.CreateLogger<BasePipelineDeliveryStrategyProvider>();
+		IReadOnlyCollection<IDispatchResult?>? results = null;
+		try
+		{
+			if (!provider.CommunicationType.IsInstanceOfType(communication))
+				return [];
 
-                        var client = Guard.AgainstNull(await provider.DispatcherInstance());
-                        results = await InvokeDispatchAsync(provider, context, communication, client, cancellationToken).ConfigureAwait(false);
+			logger.LogInformation(
+					LogEvents.ProviderDispatchStarted,
+					"Dispatching communication to channel provider.",
+					(ChannelId: channel.Id, ChannelProviderId: provider.Id, context.PipelineIntent),
+					static state => new Dictionary<string, object?>
+					{
+						["channelId"] = state.ChannelId,
+						["channelProviderId"] = state.ChannelProviderId,
+						["pipelineIntent"] = state.PipelineIntent
+					});
+			var client = Guard.AgainstNull(await provider.DispatcherInstance());
+			results = await InvokeDispatchAsync(provider, context, communication, client, cancellationToken).ConfigureAwait(false);
 
-                        if (results == null || results.Count == 0)
-                                return [];
+			if (results == null || results.Count == 0)
+				return [];
 
-                        return results.Where(r => r != null).Select(r => new DispatchResult(r!, provider.Id, channel.Id)
-                        {
-                                PipelineIntent = context.PipelineIntent,
-                                PipelineId = context.PipelineId
-                        }).ToList();
-                }
-                catch (Exception ex)
-                {
-                        if (results != null)
-                        {
-                                var reports = results.Select(r =>
-                                        new DeliveryReport(
-                                                DeliveryReport.Event.Error(),
-                                                channel.Id,
-                                                provider.Id,
-                                                context.PipelineIntent,
-                                                context.PipelineId,
-                                                r!.ResourceId,
-                                                r.Status,
-                                                communication,
-                                                contentModel,
-                                                r.Exception
-                                        )
-                                ).ToList();
-                                await context.DeliveryReportManager.DispatchAsync(reports);
-                        }
-                        return [new DispatchResult(CommunicationsStatus.ClientError("Channel Provider Exception"), provider.Id, channel.Id) { Exception = ex }];
-                }
-        }
+			logger.LogInformation(
+					LogEvents.ProviderDispatchCompleted,
+					"Channel provider dispatch completed.",
+					(ChannelId: channel.Id, ChannelProviderId: provider.Id, ResultCount: results.Count),
+					static state => new Dictionary<string, object?>
+					{
+						["channelId"] = state.ChannelId,
+						["channelProviderId"] = state.ChannelProviderId,
+						["resultCount"] = state.ResultCount
+					});
+			return results.Where(r => r != null).Select(r => new DispatchResult(r!, provider.Id, channel.Id)
+			{
+				PipelineIntent = context.PipelineIntent,
+				PipelineId = context.PipelineId
+			}).ToList();
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(
+					LogEvents.ProviderDispatchFailed,
+					"Channel provider dispatch failed.",
+					ex,
+					(ChannelId: channel.Id, ChannelProviderId: provider.Id),
+					static state => new Dictionary<string, object?>
+					{
+						["channelId"] = state.ChannelId,
+						["channelProviderId"] = state.ChannelProviderId
+					});
+			if (results != null)
+			{
+				var reports = results.Select(r =>
+						new DeliveryReport(
+								DeliveryReport.Event.Error(),
+								channel.Id,
+								provider.Id,
+								context.PipelineIntent,
+								context.PipelineId,
+								r!.ResourceId,
+								r.Status,
+								communication,
+								contentModel,
+								r.Exception
+						)
+				).ToList();
+				await context.DeliveryReportManager.DispatchAsync(reports);
+			}
+			return [new DispatchResult(CommunicationsStatus.ClientError("Channel Provider Exception"), provider.Id, channel.Id) { Exception = ex }];
+		}
+	}
 
-        /// <summary>
-        /// Gets if the pipeline dispatch results are considered successful.
-        /// </summary>
-        /// <param name="allResults">Results to evaluate.</param>
-        /// <returns>Whether the pipeline is considered successful.</returns>
-        protected virtual bool IsPipelineSuccessful(IReadOnlyCollection<IDispatchResult?> allResults)
-        {
-                return allResults
-                        .GroupBy(g => g?.ChannelId)
-                        .All(a =>
-                                a.Any(x => x != null && x.Status.IsSuccess())
-                        );
-        }
+	/// <summary>
+	/// Gets if the pipeline dispatch results are considered successful.
+	/// </summary>
+	/// <param name="allResults">Results to evaluate.</param>
+	/// <returns>Whether the pipeline is considered successful.</returns>
+	protected virtual bool IsPipelineSuccessful(IReadOnlyCollection<IDispatchResult?> allResults)
+	{
+		return allResults
+				.GroupBy(g => g?.ChannelId)
+				.All(a =>
+						a.Any(x => x != null && x.Status.IsSuccess())
+				);
+	}
 
-        private Task<IReadOnlyCollection<IDispatchResult?>> InvokeDispatchAsync(IChannelProvider provider, IDispatchCommunicationContext internalContext, object communication, IChannelProviderDispatcher dispatcher, CancellationToken cancellationToken)
-                => _dispatchDelegate(new DispatchMiddlewareContext(provider, internalContext, communication, dispatcher, cancellationToken));
+	private Task<IReadOnlyCollection<IDispatchResult?>> InvokeDispatchAsync(IChannelProvider provider, IDispatchCommunicationContext internalContext, object communication, IChannelProviderDispatcher dispatcher, CancellationToken cancellationToken)
+			=> _dispatchDelegate(new DispatchMiddlewareContext(provider, internalContext, communication, dispatcher, cancellationToken));
 
-        /// <summary>
-        /// Default dispatcher invocation using reflection.
-        /// </summary>
-        /// <param name="ctx">Middleware context.</param>
-        /// <returns>Dispatch results.</returns>
-        public static async Task<IReadOnlyCollection<IDispatchResult?>> DefaultInvoke(DispatchMiddlewareContext ctx)
-        {
-                var method = typeof(IChannelProviderDispatcher<>).MakeGenericType(ctx.Provider.CommunicationType).GetMethod(nameof(IChannelProviderDispatcher.DispatchAsync));
-                Guard.AgainstNull(method);
+	/// <summary>
+	/// Default dispatcher invocation using reflection.
+	/// </summary>
+	/// <param name="ctx">Middleware context.</param>
+	/// <returns>Dispatch results.</returns>
+	public static async Task<IReadOnlyCollection<IDispatchResult?>> DefaultInvoke(DispatchMiddlewareContext ctx)
+	{
+		ctx.LoggerFactory.CreateLogger<BasePipelineDeliveryStrategyProvider>()
+				.LogDebug(
+						LogEvents.MiddlewareInvoked,
+						"Invoking dispatch middleware pipeline.",
+						(ChannelProviderId: ctx.Provider.Id, ctx.Context.ChannelId),
+						static state => new Dictionary<string, object?>
+						{
+							["channelProviderId"] = state.ChannelProviderId,
+							["channelId"] = state.ChannelId ?? string.Empty
+						});
+		var method = typeof(IChannelProviderDispatcher<>).MakeGenericType(ctx.Provider.CommunicationType).GetMethod(nameof(IChannelProviderDispatcher.DispatchAsync));
+		Guard.AgainstNull(method);
 
-                var comm = method.Invoke(ctx.Dispatcher, [ctx.Communication, ctx.Context, ctx.Token]);
-                Guard.AgainstNull(comm);
+		var comm = method.Invoke(ctx.Dispatcher, [ctx.Communication, ctx.Context, ctx.Token]);
+		Guard.AgainstNull(comm);
 
-                return await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);
-        }
+		return await ((Task<IReadOnlyCollection<IDispatchResult?>>)comm).ConfigureAwait(false);
+	}
 
-        /// <summary>
-        /// Gets the communication as rendered by the provided channel.
-        /// </summary>
-        /// <param name="channel">Channel to render the communication with.</param>
-        /// <param name="context">Context of the dispatch operation.</param>
-        /// <returns>Channel communication</returns>
-        protected virtual async Task<object> GetChannelCommunicationAsync(IChannel channel, IDispatchCommunicationContext context)
-        {
-                return await channel.GenerateCommunicationAsync(context);
-        }
+	/// <summary>
+	/// Gets the communication as rendered by the provided channel.
+	/// </summary>
+	/// <param name="channel">Channel to render the communication with.</param>
+	/// <param name="context">Context of the dispatch operation.</param>
+	/// <returns>Channel communication</returns>
+	protected virtual async Task<object> GetChannelCommunicationAsync(IChannel channel, IDispatchCommunicationContext context)
+	{
+		var logger = context.LoggerFactory.CreateLogger<BasePipelineDeliveryStrategyProvider>();
+		logger.LogDebug(
+				LogEvents.ChannelRenderingStarted,
+				"Rendering channel communication.",
+				(ChannelId: channel.Id, context.PipelineIntent),
+				static state => new Dictionary<string, object?>
+				{
+					["channelId"] = state.ChannelId,
+					["pipelineIntent"] = state.PipelineIntent
+				});
+
+		try
+		{
+			var communication = await channel.GenerateCommunicationAsync(context).ConfigureAwait(false);
+			logger.LogDebug(
+					LogEvents.ChannelRenderingCompleted,
+					"Rendered channel communication.",
+					(ChannelId: channel.Id, context.PipelineIntent, CommunicationType: channel.CommunicationType.FullName ?? channel.CommunicationType.Name),
+					static state => new Dictionary<string, object?>
+					{
+						["channelId"] = state.ChannelId,
+						["pipelineIntent"] = state.PipelineIntent,
+						["communicationType"] = state.CommunicationType
+					});
+			return communication;
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(
+					LogEvents.ChannelRenderingFailed,
+					"Channel communication rendering failed.",
+					ex,
+					(ChannelId: channel.Id, context.PipelineIntent, ChannelType: channel.GetType().FullName ?? channel.GetType().Name),
+					static state => new Dictionary<string, object?>
+					{
+						["channelId"] = state.ChannelId,
+						["pipelineIntent"] = state.PipelineIntent,
+						["channelType"] = state.ChannelType
+					});
+			throw;
+		}
+	}
 }

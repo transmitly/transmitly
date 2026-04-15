@@ -51,22 +51,16 @@ internal abstract class PushContentConfigurationBase : IPushContent
 		PushNotificationTemplateConfigurationHelpers.AddTemplate(_data, key, contentResolver);
 	}
 
-	protected void AddDataTemplateIfNotNull(string key, Action<IContentTemplateConfiguration> content)
-	{
-		_data ??= [];
-		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_data, key, content);
-	}
-
-	protected void AddDataTemplateIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
-	{
-		_data ??= [];
-		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_data, key, contentResolver);
-	}
-
 	protected void AddDataTemplate(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
 	{
 		_data ??= [];
 		PushNotificationTemplateConfigurationHelpers.AddTemplate(_data, key, content, addIfCondition);
+	}
+
+	protected void AddDataTemplateIfNotNull(string key, Action<IContentTemplateConfiguration> content)
+	{
+		_data ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_data, key, content);
 	}
 
 	protected void AddDataTemplateIfNotNull(
@@ -76,6 +70,12 @@ internal abstract class PushContentConfigurationBase : IPushContent
 	{
 		_data ??= [];
 		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_data, key, contentResolver, addIfCondition);
+	}
+
+	protected void AddDataTemplateIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
+	{
+		_data ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_data, key, contentResolver);
 	}
 
 	protected void AddHeaderTemplate(string key, Action<IContentTemplateConfiguration> content)
@@ -96,6 +96,12 @@ internal abstract class PushContentConfigurationBase : IPushContent
 		PushNotificationTemplateConfigurationHelpers.AddTemplate(_headers, key, contentResolver);
 	}
 
+	protected void AddHeaderTemplate(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		_headers ??= [];
+		PushNotificationTemplateConfigurationHelpers.AddTemplate(_headers, key, content, addIfCondition);
+	}
+
 	protected void AddHeaderTemplateIfNotNull(string key, Action<IContentTemplateConfiguration> content)
 	{
 		_headers ??= [];
@@ -106,12 +112,6 @@ internal abstract class PushContentConfigurationBase : IPushContent
 	{
 		_headers ??= [];
 		PushNotificationTemplateConfigurationHelpers.AddTemplateIfNotNull(_headers, key, contentResolver);
-	}
-
-	protected void AddHeaderTemplate(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
-	{
-		_headers ??= [];
-		PushNotificationTemplateConfigurationHelpers.AddTemplate(_headers, key, content, addIfCondition);
 	}
 
 	protected void AddHeaderTemplateIfNotNull(

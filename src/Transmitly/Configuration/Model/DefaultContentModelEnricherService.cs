@@ -16,9 +16,21 @@ using Transmitly.Exceptions;
 
 namespace Transmitly.Model.Configuration;
 
-public sealed class DefaultContentModelEnricherService(IContentModelEnricherFactory enricherFactory) : IContentModelEnricherService
+public sealed class DefaultContentModelEnricherService : IContentModelEnricherService
 {
-	private readonly IContentModelEnricherFactory _enricherFactory = Guard.AgainstNull(enricherFactory);
+	private readonly IContentModelEnricherFactory _enricherFactory;
+	private readonly ILogger _logger;
+
+	public DefaultContentModelEnricherService(IContentModelEnricherFactory enricherFactory, ILoggerFactory loggerFactory)
+		: this(enricherFactory, Guard.AgainstNull(loggerFactory).CreateLogger<DefaultContentModelEnricherService>())
+	{
+	}
+
+	internal DefaultContentModelEnricherService(IContentModelEnricherFactory enricherFactory, ILogger logger)
+	{
+		_enricherFactory = Guard.AgainstNull(enricherFactory);
+		_logger = Guard.AgainstNull(logger);
+	}
 
 	public async Task<bool> HasEnrichersAsync(ContentModelEnricherScope scope)
 	{
@@ -55,11 +67,29 @@ public sealed class DefaultContentModelEnricherService(IContentModelEnricherFact
 
 			var enricherInstance = await _enricherFactory.GetEnricher(registration).ConfigureAwait(false)
 				?? throw new CommunicationsException("Unable to get an instance of content model enricher");
+			_logger.LogDebug(
+				LogEvents.ContentEnrichmentStarted,
+				"Running content model enricher.",
+				(Scope: scope.ToString(), EnricherType: registration.EnricherType.FullName ?? registration.EnricherType.Name),
+				static state => new Dictionary<string, object?>
+				{
+					["scope"] = state.Scope,
+					["enricherType"] = state.EnricherType
+				});
 
 			var enrichedModel = await enricherInstance.EnrichAsync(context, currentModel, cancellationToken).ConfigureAwait(false);
 			if (enrichedModel != null)
 			{
 				currentModel = PreserveProtectedProperties(context, currentModel, enrichedModel);
+				_logger.LogDebug(
+					LogEvents.ContentEnrichmentCompleted,
+					"Content model enricher produced an updated model.",
+					(Scope: scope.ToString(), EnricherType: registration.EnricherType.FullName ?? registration.EnricherType.Name),
+					static state => new Dictionary<string, object?>
+					{
+						["scope"] = state.Scope,
+						["enricherType"] = state.EnricherType
+					});
 				if (!registration.ContinueOnEnrichedModel)
 					break;
 			}

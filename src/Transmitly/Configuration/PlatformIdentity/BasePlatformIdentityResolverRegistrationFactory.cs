@@ -15,9 +15,10 @@
 namespace Transmitly.PlatformIdentity.Configuration;
 
 ///<inheritdoc cref="IPlatformIdentityResolverFactory"/>
-public abstract class BasePlatformIdentityResolverRegistrationFactory(IEnumerable<IPlatformIdentityResolverRegistration> resolvers) : IPlatformIdentityResolverFactory
+public abstract class BasePlatformIdentityResolverRegistrationFactory(IEnumerable<IPlatformIdentityResolverRegistration> resolvers, ILoggerFactory loggerFactory) : IPlatformIdentityResolverFactory
 {
 	private readonly List<IPlatformIdentityResolverRegistration> _platformIdentityResolverRegistrations = [.. Guard.AgainstNull(resolvers)];
+	private readonly ILoggerFactory _loggerFactory = Guard.AgainstNull(loggerFactory);
 	protected IReadOnlyCollection<IPlatformIdentityResolverRegistration> Registrations => _platformIdentityResolverRegistrations.AsReadOnly();
 
 	public virtual Task<IReadOnlyList<IPlatformIdentityResolverRegistration>> GetAllResolversAsync()
@@ -38,6 +39,6 @@ public abstract class BasePlatformIdentityResolverRegistrationFactory(IEnumerabl
 	{
 		Guard.AgainstNull(platformIdentityResolverRegistration);
 
-		return Task.FromResult(Activator.CreateInstance(platformIdentityResolverRegistration.ResolverType) as IPlatformIdentityResolver);
+		return Task.FromResult(DefaultActivator.CreateInstance<IPlatformIdentityResolver>(platformIdentityResolverRegistration.ResolverType, _loggerFactory));
 	}
 }

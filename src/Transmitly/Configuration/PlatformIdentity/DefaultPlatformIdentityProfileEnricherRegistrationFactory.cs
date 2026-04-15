@@ -17,7 +17,7 @@ namespace Transmitly.PlatformIdentity.Configuration;
 /// <summary>
 /// Default platform identity profile enrichers factory.
 /// </summary>
-public sealed class DefaultPlatformIdentityProfileEnricherRegistrationFactory(IEnumerable<IPlatformIdentityProfileEnricherRegistration> platformIdentityProfileEnricherRegistrations) : BasePlatformIdentityProfileEnricherRegistrationFactory(platformIdentityProfileEnricherRegistrations)
+public sealed class DefaultPlatformIdentityProfileEnricherRegistrationFactory(IEnumerable<IPlatformIdentityProfileEnricherRegistration> platformIdentityProfileEnricherRegistrations, ILoggerFactory loggerFactory) : BasePlatformIdentityProfileEnricherRegistrationFactory(platformIdentityProfileEnricherRegistrations, loggerFactory)
 {
 }
 

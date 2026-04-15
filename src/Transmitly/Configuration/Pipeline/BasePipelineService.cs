@@ -17,12 +17,27 @@ namespace Transmitly.Pipeline.Configuration;
 /// <summary>
 /// Base implementation of a pipeline service that manages pipeline lookups and filtering.
 /// </summary>
+/// <remarks>
+/// Base implementation of a pipeline service that manages pipeline lookups and filtering.
+/// </remarks>
 /// <param name="pipelineFactory">The factory responsible for pipeline creation and retrieval.</param>
-public abstract class BasePipelineService(IPipelineFactory pipelineFactory) : IPipelineService
+/// <param name="logger">The logger instance to use.</param>
+public abstract class BasePipelineService(IPipelineFactory pipelineFactory, ILogger logger) : IPipelineService
 {
 	private readonly IReadOnlyCollection<IPipeline> EmptyPipelines = Array.Empty<IPipeline>();
 	private readonly IReadOnlyCollection<CommunicationsStatus> EmptyStatuses = Array.Empty<CommunicationsStatus>();
 	private readonly IPipelineFactory _pipelineFactory = Guard.AgainstNull(pipelineFactory);
+	private readonly ILogger _logger = Guard.AgainstNull(logger);
+
+	/// <summary>
+	/// Base implementation of a pipeline service that manages pipeline lookups and filtering.
+	/// </summary>
+	/// <param name="pipelineFactory">The factory responsible for pipeline creation and retrieval.</param>
+	/// <param name="loggerFactory">The logger factory used to create pipeline service loggers.</param>
+	protected BasePipelineService(IPipelineFactory pipelineFactory, ILoggerFactory loggerFactory)
+		: this(pipelineFactory, Guard.AgainstNull(loggerFactory).CreateLogger<BasePipelineService>())
+	{
+	}
 
 	/// <summary>
 	/// Retrieves pipelines matching the specified criteria and filters.
@@ -36,6 +51,15 @@ public abstract class BasePipelineService(IPipelineFactory pipelineFactory) : IP
 	{
 		Guard.AgainstNullOrWhiteSpace(pipelineIntent);
 		Guard.AgainstNull(allowedChannelFilter);
+		_logger.LogDebug(
+			LogEvents.PipelineLookupStarted,
+			"Starting pipeline lookup.",
+			(PipelineIntent: pipelineIntent, PipelineId: pipelineId),
+			static state => new Dictionary<string, object?>
+			{
+				["pipelineIntent"] = state.PipelineIntent,
+				["pipelineId"] = state.PipelineId ?? string.Empty
+			});
 
 		var pipelines = await _pipelineFactory.GetAsync(pipelineIntent, pipelineId).ConfigureAwait(false);
 
@@ -84,6 +108,15 @@ public abstract class BasePipelineService(IPipelineFactory pipelineFactory) : IP
 			return new(EmptyPipelines, results);
 		}
 
+		_logger.LogDebug(
+			LogEvents.PipelineLookupCompleted,
+			"Pipeline lookup finished.",
+			(PipelineIntent: pipelineIntent, PipelineCount: pipelines.Count),
+			static state => new Dictionary<string, object?>
+			{
+				["pipelineIntent"] = state.PipelineIntent,
+				["pipelineCount"] = state.PipelineCount
+			});
 		return new PipelineLookupResult(pipelines, EmptyStatuses);
 	}
 

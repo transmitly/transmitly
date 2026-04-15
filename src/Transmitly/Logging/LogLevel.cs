@@ -12,32 +12,45 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-namespace Transmitly.Channel.Configuration.Push;
+namespace Transmitly.Logging;
 
 /// <summary>
-/// Action entry shown by Web push notifications.
+/// Represents the severity level of a log entry.
 /// </summary>
-/// <remarks>
-/// Initializes a new instance of the <see cref="WebPushNotificationAction"/> class.
-/// </remarks>
-/// <param name="action">Action identifier.</param>
-/// <param name="title">Action label shown to the user.</param>
-/// <param name="icon">Optional action icon URL.</param>
-public sealed class WebPushNotificationAction(string action, string title, string? icon = null)
+public enum LogLevel
 {
+	/// <summary>
+	/// Logs that contain the most detailed diagnostic information.
+	/// </summary>
+	Trace = 0,
 
 	/// <summary>
-	/// Action identifier.
+	/// Logs that are useful for debugging.
 	/// </summary>
-	public string Action { get; } = Guard.AgainstNullOrWhiteSpace(action);
+	Debug = 1,
 
 	/// <summary>
-	/// Action label shown to the user.
+	/// Logs that track the general flow of application execution.
 	/// </summary>
-	public string Title { get; } = Guard.AgainstNullOrWhiteSpace(title);
+	Information = 2,
 
 	/// <summary>
-	/// Optional action icon URL.
+	/// Logs that highlight an abnormal or unexpected event that did not stop execution.
 	/// </summary>
-	public string? Icon { get; } = icon;
+	Warning = 3,
+
+	/// <summary>
+	/// Logs that indicate a failure in the current operation.
+	/// </summary>
+	Error = 4,
+
+	/// <summary>
+	/// Logs that indicate a critical or unrecoverable failure.
+	/// </summary>
+	Critical = 5,
+
+	/// <summary>
+	/// Disables logging.
+	/// </summary>
+	None = 6
 }

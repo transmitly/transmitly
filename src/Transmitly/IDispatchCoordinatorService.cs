@@ -17,13 +17,24 @@ using Transmitly.ChannelProvider;
 using Transmitly.Pipeline.Configuration;
 
 namespace Transmitly;
-
+/// <summary>
+/// Defines a contract for creating recipient dispatch contexts prior to strategy execution.
+/// </summary>
 public interface IDispatchCoordinatorService
 {
+	/// <summary>
+	/// Creates dispatch contexts for each eligible recipient and pipeline combination.
+	/// </summary>
+	/// <param name="pipelines">The pipelines selected for the current dispatch operation.</param>
+	/// <param name="platformIdentityProfiles">The platform identities to evaluate for dispatch.</param>
+	/// <param name="transactionalModel">The transactional model for the dispatch operation.</param>
+	/// <param name="dispatchChannelPreferences">The preferred channel order for dispatch.</param>
+	/// <param name="cultureInfo">The culture to use for culture-sensitive operations.</param>
+	/// <returns>A collection of recipient dispatch contexts ready for strategy execution.</returns>
 	Task<IReadOnlyCollection<RecipientDispatchCommunicationContext>> CreateRecipientContexts(
 		IReadOnlyCollection<IPipeline> pipelines,
 		IReadOnlyCollection<IPlatformIdentityProfile> platformIdentityProfiles,
 		ITransactionModel transactionalModel,
-		IReadOnlyCollection<string> dispatchChannelPreferences, 
+		IReadOnlyCollection<string> dispatchChannelPreferences,
 		CultureInfo cultureInfo);
 }

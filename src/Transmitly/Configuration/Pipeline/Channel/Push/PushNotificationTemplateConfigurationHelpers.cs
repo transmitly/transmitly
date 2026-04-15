@@ -66,15 +66,6 @@ internal static class PushNotificationTemplateConfigurationHelpers
 		AddTemplate(templates, key, context => ResolveTemplateAsync(template, context, addIfCondition, addIfNotNull: false));
 	}
 
-	internal static void AddTemplateIfNotNull(
-		Dictionary<string, IContentTemplateConfiguration> templates,
-		string key,
-		Action<IContentTemplateConfiguration> content)
-	{
-		var template = BuildTemplate(content);
-		AddTemplate(templates, key, context => ResolveTemplateAsync(template, context, addIfCondition: null, addIfNotNull: true));
-	}
-
 	internal static void AddTemplate(
 		Dictionary<string, IContentTemplateConfiguration> templates,
 		string key,
@@ -82,6 +73,15 @@ internal static class PushNotificationTemplateConfigurationHelpers
 	{
 		Guard.AgainstNull(contentResolver);
 		AddTemplate(templates, key, c => c.AddTemplateResolver(contentResolver));
+	}
+
+	internal static void AddTemplateIfNotNull(
+		Dictionary<string, IContentTemplateConfiguration> templates,
+		string key,
+		Action<IContentTemplateConfiguration> content)
+	{
+		var template = BuildTemplate(content);
+		AddTemplate(templates, key, context => ResolveTemplateAsync(template, context, addIfCondition: null, addIfNotNull: true));
 	}
 
 	internal static void AddTemplateIfNotNull(

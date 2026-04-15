@@ -14,6 +14,6 @@
 using Transmitly.Pipeline.Configuration;
 namespace Transmitly.Tests.Mocks;
 
-sealed class MockPipelineService(IPipelineFactory pipelineFactory) : BasePipelineService(pipelineFactory)
+sealed class MockPipelineService(IPipelineFactory pipelineFactory) : BasePipelineService(pipelineFactory, NullLoggerFactory.Instance)
 {
 }

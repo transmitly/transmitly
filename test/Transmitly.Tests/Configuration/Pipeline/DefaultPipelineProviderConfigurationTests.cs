@@ -69,19 +69,19 @@ public class DefaultPipelineProviderConfigurationTests
 		var result = config.AllowDispatchChannelPriorityPreference(false);
 
 		Assert.IsFalse(config.IsDispatchChannelPriorityPreferenceAllowed);
-		Assert.AreSame(config, result); 
+		Assert.AreSame(config, result);
 	}
 
 	[TestMethod]
 	public void AllowDispatchChannelPriorityPreference_SetsTrue_UpdatesPropertyCorrectly()
 	{
 		var config = new DefaultPipelineProviderConfiguration();
-		config.AllowDispatchChannelPriorityPreference(false); 
+		config.AllowDispatchChannelPriorityPreference(false);
 
 		var result = config.AllowDispatchChannelPriorityPreference(true);
 
 		Assert.IsTrue(config.IsDispatchChannelPriorityPreferenceAllowed);
-		Assert.AreSame(config, result); 
+		Assert.AreSame(config, result);
 	}
 
 	[TestMethod]
@@ -101,7 +101,7 @@ public class DefaultPipelineProviderConfigurationTests
 		var result = config.Id(expectedId);
 
 		Assert.AreEqual(expectedId, config.PipelineId);
-		Assert.AreSame(config, result); 
+		Assert.AreSame(config, result);
 	}
 
 	[TestMethod]

@@ -41,6 +41,7 @@ public sealed class CommunicationsClientBuilder
 	private readonly List<IObserver<DeliveryReport>> _deliveryReportObservers = [];
 	private readonly List<IDispatchMiddleware> _middlewares = [];
 	private readonly List<IContentModelEnricherRegistration> _contentModelEnrichers = [];
+	private ILoggerFactory _loggerFactory = NullLoggerFactory.Instance;
 
 	/// <summary>
 	/// Creates an instance of the class
@@ -203,6 +204,19 @@ public sealed class CommunicationsClientBuilder
 	}
 
 	/// <summary>
+	/// Sets the logger factory to be used for creating loggers within the communications client builder.
+	/// </summary>
+	/// <param name="loggerFactory">The logger factory to use for creating loggers. Cannot be null.</param>
+	/// <returns>The current instance of <see cref="CommunicationsClientBuilder"/> to allow method chaining.</returns>
+	internal CommunicationsClientBuilder SetLoggerFactory(ILoggerFactory loggerFactory)
+	{
+		_loggerFactory = Guard.AgainstNull(loggerFactory);
+		return this;
+	}
+
+	internal ILoggerFactory LoggerFactory => _loggerFactory;
+
+	/// <summary>
 	/// Creates an instance of the <see cref="ICommunicationsClient"/>.
 	/// </summary>
 	/// <returns>The communications client.</returns>
@@ -225,7 +239,8 @@ public sealed class CommunicationsClientBuilder
 						_contentModelEnrichers,
 						_platformIdentityProfileEnrichers,
 						_personaRegistrations,
-						_deliveryReportObservers
+						_deliveryReportObservers,
+						_loggerFactory
 				),
 				null
 		);

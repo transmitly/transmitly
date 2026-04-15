@@ -55,7 +55,7 @@ public class VoiceChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldGenerateValidVoiceCommunication()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;
 		var from = "8888".AsIdentityAddress();
@@ -88,7 +88,7 @@ public class VoiceChannelTests : BaseUnitTest
 	[TestMethod]
 	public void GeneratingCommunicationShouldThrowWithoutMessageTemplate()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;
 		var sut = fixture.Create<VoiceChannel>();
@@ -111,7 +111,7 @@ public class VoiceChannelTests : BaseUnitTest
 	public async Task ShouldSetProvidedFromAddressResolver()
 	{
 		var from = fixture.Freeze<IPlatformIdentityAddress>();
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;
 		var body = fixture.Freeze<string>();

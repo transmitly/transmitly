@@ -29,19 +29,28 @@ public abstract class BaseCommunicationClientMiddleware : ICommunicationClientMi
 		if (previous is not null)
 			return previous;
 
+		var loggerFactory = context.LoggerFactory;
 		var deliveryReportService = new DefaultDeliveryReportService(context.DeliveryReportObservers);
 		return new DefaultCommunicationsClient(
-			new DefaultPipelineService(new DefaultPipelineFactory(context.Pipelines)),
+			new DefaultPipelineService(new DefaultPipelineFactory(context.Pipelines), loggerFactory.CreateLogger<DefaultPipelineService>()),
 			new DefaultDispatchCoordinatorService(
-				new DefaultChannelChannelProviderService(new DefaultChannelProviderFactory(context.ChannelProviders)),
+				new DefaultChannelChannelProviderService(new DefaultChannelProviderFactory(context.ChannelProviders, loggerFactory)),
 				new DefaultPersonaService(new DefaultPersonaFactory(context.Personas)),
 				new DefaultTemplateEngineFactory(context.TemplateEngines),
-				new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(context.ContentModelEnrichers)),
-				deliveryReportService
+				new DefaultContentModelEnricherService(
+					new DefaultContentModelEnricherRegistrationFactory(context.ContentModelEnrichers, loggerFactory),
+					loggerFactory.CreateLogger<DefaultContentModelEnricherService>()),
+				deliveryReportService,
+				loggerFactory
 			),
-			new DefaultPlatformIdentityService(new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers)),
-			new DefaultPlatformIdentityProfileEnricherService(new DefaultPlatformIdentityProfileEnricherRegistrationFactory(context.PlatformIdentityProfileEnrichers)),
-			deliveryReportService
+			new DefaultPlatformIdentityService(
+				new DefaultPlatformIdentityResolverRegistrationFactory(context.PlatformIdentityResolvers, loggerFactory),
+				loggerFactory.CreateLogger<DefaultPlatformIdentityService>()),
+			new DefaultPlatformIdentityProfileEnricherService(
+				new DefaultPlatformIdentityProfileEnricherRegistrationFactory(context.PlatformIdentityProfileEnrichers, loggerFactory),
+				loggerFactory.CreateLogger<DefaultPlatformIdentityProfileEnricherService>()),
+			deliveryReportService,
+			loggerFactory.CreateLogger<DefaultCommunicationsClient>()
 		);
 	}
 }

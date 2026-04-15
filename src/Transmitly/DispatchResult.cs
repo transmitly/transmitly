@@ -50,7 +50,7 @@ public sealed class DispatchResult : IDispatchResult
 
 	public Exception? Exception { get; internal set; }
 
-	public string? PipelineId {get;internal set; }
+	public string? PipelineId { get; internal set; }
 
 	public string? PipelineIntent { get; internal set; }
 }

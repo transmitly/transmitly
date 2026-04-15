@@ -90,7 +90,7 @@ public class EmailChannelTests : BaseUnitTest
 	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldGenerateValidEmailCommunication()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;
 		var sut = NewEmailChannel();
@@ -124,7 +124,7 @@ public class EmailChannelTests : BaseUnitTest
 	[TestMethod]
 	public void GeneratingCommunicationShouldThrowWithoutSubject()
 	{
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 
 		var context = mockContext.Object;
@@ -149,7 +149,7 @@ public class EmailChannelTests : BaseUnitTest
 	public async Task ShouldSetProvidedFromAddressResolver()
 	{
 		var from = fixture.Freeze<IPlatformIdentityAddress>();
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
 		var context = mockContext.Object;
 		var body = fixture.Freeze<string>();
@@ -166,7 +166,7 @@ public class EmailChannelTests : BaseUnitTest
 	public async Task ContentModelResourceShouldAddEmailAttachment()
 	{
 		var from = fixture.Freeze<IPlatformIdentityAddress>();
-		var mockContext = fixture.Create<Mock<IDispatchCommunicationContext>>();
+		var mockContext = CreateDispatchCommunicationContextMock();
 		var resource = new Resource("res", "ct", new MemoryStream());
 		mockContext.Setup(x => x.ContentModel!.Resources).Returns([resource]);
 		var context = mockContext.Object;

@@ -78,6 +78,13 @@ internal sealed class ApplePushNotification : PushContentConfigurationBase, IApp
 		return this;
 	}
 
+
+	public IApplePushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddDataTemplate(key, content, addIfCondition);
+		return this;
+	}
+
 	public IApplePushNotificationConfiguration AddDataIfNotNull(string key, Action<IContentTemplateConfiguration> content)
 	{
 		AddDataTemplateIfNotNull(key, content);
@@ -87,12 +94,6 @@ internal sealed class ApplePushNotification : PushContentConfigurationBase, IApp
 	public IApplePushNotificationConfiguration AddDataIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
 	{
 		AddDataTemplateIfNotNull(key, contentResolver);
-		return this;
-	}
-
-	public IApplePushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
-	{
-		AddDataTemplate(key, content, addIfCondition);
 		return this;
 	}
 
@@ -123,6 +124,12 @@ internal sealed class ApplePushNotification : PushContentConfigurationBase, IApp
 		return this;
 	}
 
+	public IApplePushNotificationConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
+	{
+		AddHeaderTemplate(key, content, addIfCondition);
+		return this;
+	}
+
 	public IApplePushNotificationConfiguration AddHeaderIfNotNull(string key, Action<IContentTemplateConfiguration> content)
 	{
 		AddHeaderTemplateIfNotNull(key, content);
@@ -132,12 +139,6 @@ internal sealed class ApplePushNotification : PushContentConfigurationBase, IApp
 	public IApplePushNotificationConfiguration AddHeaderIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver)
 	{
 		AddHeaderTemplateIfNotNull(key, contentResolver);
-		return this;
-	}
-
-	public IApplePushNotificationConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition)
-	{
-		AddHeaderTemplate(key, content, addIfCondition);
 		return this;
 	}
 

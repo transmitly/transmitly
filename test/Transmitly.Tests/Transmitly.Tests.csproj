@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net9.0;net8.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>net10.0;net9.0;net8.0;net6.0</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup>
 		<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net48;net472;$(TargetFrameworks);</TargetFrameworks>
@@ -16,7 +16,6 @@
 
 	<ItemGroup>
 		<None Remove="EmbeddedResources\has-content.txt" />
-		<None Remove="Transmitly.Tests.v3.ncrunchproject" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -44,6 +43,9 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Transmitly\Transmitly.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+		<Using Include="Transmitly.Logging" />
+	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
 		<Reference Include="Microsoft.CSharp" />
 	</ItemGroup>
@@ -52,16 +54,28 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'net462' ">
-		<DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN</DefineConstants>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net471' ">
+		<DefineConstants>$(DefineConstants);FEATURE_ITUPLE</DefineConstants>
+		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
-		<DefineConstants>$(DefineConstants);TEST_FEATURE_APPDOMAIN;FEATURE_ITUPLE</DefineConstants>
+		<DefineConstants>$(DefineConstants);FEATURE_ITUPLE</DefineConstants>
+		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
 	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD;FEATURE_ACTIVITY</DefineConstants>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ITUPLE;FEATURE_ASYNCDISPOSABLE</DefineConstants>
+		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD;FEATURE_SOURCE_GEN;FEATURE_ACTIVITY</DefineConstants>
 	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
+		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD;FEATURE_SOURCE_GEN;FEATURE_ACTIVITY</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
+		<DefineConstants>$(DefineConstants);FEATURE_DEFAULT_INTERFACE;FEATURE_SPAN;FEATURE_ITUPLE;FEATURE_DATE_AND_TIME_ONLY;FEATURE_ASYNCDISPOSABLE;FEATURE_WRITE_STRINGBUILDER;FEATURE_TOHEXSTRING;FEATURE_DICTIONARYTRYADD;FEATURE_SOURCE_GEN;FEATURE_ACTIVITY</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="obj\**\*.cs;bin\**\*.cs" />
+	</ItemGroup>
 </Project>

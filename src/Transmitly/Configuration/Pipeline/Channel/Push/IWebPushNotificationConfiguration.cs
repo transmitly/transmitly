@@ -36,26 +36,12 @@ public interface IWebPushNotificationConfiguration : IWebPushNotification
 	/// <returns></returns>
 	IWebPushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content);
 	/// <summary>
-	/// Adds a Web custom data template that will be emitted when the rendered value is not null or whitespace.
-	/// </summary>
-	/// <param name="key">Custom data key.</param>
-	/// <param name="content">Template configuration action.</param>
-	/// <returns></returns>
-	IWebPushNotificationConfiguration AddDataIfNotNull(string key, Action<IContentTemplateConfiguration> content);
-	/// <summary>
 	/// Adds a Web custom data resolver.
 	/// </summary>
 	/// <param name="key">Custom data key.</param>
 	/// <param name="contentResolver">Resolver for custom data content.</param>
 	/// <returns></returns>
 	IWebPushNotificationConfiguration AddData(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
-	/// <summary>
-	/// Adds a Web custom data resolver that will be emitted when the resolved value is not null or whitespace.
-	/// </summary>
-	/// <param name="key">Custom data key.</param>
-	/// <param name="contentResolver">Resolver for custom data content.</param>
-	/// <returns></returns>
-	IWebPushNotificationConfiguration AddDataIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
 	/// <summary>
 	/// Adds a Web custom data template when the provided condition returns true.
 	/// </summary>
@@ -64,6 +50,20 @@ public interface IWebPushNotificationConfiguration : IWebPushNotification
 	/// <param name="addIfCondition">Condition that controls whether the key should be emitted.</param>
 	/// <returns></returns>
 	IWebPushNotificationConfiguration AddData(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition);
+	/// <summary>
+	/// Adds a Web custom data template that will be emitted when the rendered value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="content">Template configuration action.</param>
+	/// <returns></returns>
+	IWebPushNotificationConfiguration AddDataIfNotNull(string key, Action<IContentTemplateConfiguration> content);
+	/// <summary>
+	/// Adds a Web custom data resolver that will be emitted when the resolved value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Custom data key.</param>
+	/// <param name="contentResolver">Resolver for custom data content.</param>
+	/// <returns></returns>
+	IWebPushNotificationConfiguration AddDataIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
 	/// <summary>
 	/// Adds a Web custom data resolver that will be emitted when the value is not null or whitespace and the condition returns true.
 	/// </summary>
@@ -90,26 +90,12 @@ public interface IWebPushNotificationConfiguration : IWebPushNotification
 	/// <returns></returns>
 	IWebPushNotificationConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content);
 	/// <summary>
-	/// Adds a Web header template that will be emitted when the rendered value is not null or whitespace.
-	/// </summary>
-	/// <param name="key">Header key.</param>
-	/// <param name="content">Template configuration action.</param>
-	/// <returns></returns>
-	IWebPushNotificationConfiguration AddHeaderIfNotNull(string key, Action<IContentTemplateConfiguration> content);
-	/// <summary>
 	/// Adds a Web header resolver.
 	/// </summary>
 	/// <param name="key">Header key.</param>
 	/// <param name="contentResolver">Resolver for header content.</param>
 	/// <returns></returns>
 	IWebPushNotificationConfiguration AddHeader(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
-	/// <summary>
-	/// Adds a Web header resolver that will be emitted when the resolved value is not null or whitespace.
-	/// </summary>
-	/// <param name="key">Header key.</param>
-	/// <param name="contentResolver">Resolver for header content.</param>
-	/// <returns></returns>
-	IWebPushNotificationConfiguration AddHeaderIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
 	/// <summary>
 	/// Adds a Web header template when the provided condition returns true.
 	/// </summary>
@@ -118,6 +104,20 @@ public interface IWebPushNotificationConfiguration : IWebPushNotification
 	/// <param name="addIfCondition">Condition that controls whether the key should be emitted.</param>
 	/// <returns></returns>
 	IWebPushNotificationConfiguration AddHeader(string key, Action<IContentTemplateConfiguration> content, Func<IDispatchCommunicationContext, bool> addIfCondition);
+	/// <summary>
+	/// Adds a Web header template that will be emitted when the rendered value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="content">Template configuration action.</param>
+	/// <returns></returns>
+	IWebPushNotificationConfiguration AddHeaderIfNotNull(string key, Action<IContentTemplateConfiguration> content);
+	/// <summary>
+	/// Adds a Web header resolver that will be emitted when the resolved value is not null or whitespace.
+	/// </summary>
+	/// <param name="key">Header key.</param>
+	/// <param name="contentResolver">Resolver for header content.</param>
+	/// <returns></returns>
+	IWebPushNotificationConfiguration AddHeaderIfNotNull(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
 	/// <summary>
 	/// Adds a Web header resolver that will be emitted when the value is not null or whitespace and the condition returns true.
 	/// </summary>

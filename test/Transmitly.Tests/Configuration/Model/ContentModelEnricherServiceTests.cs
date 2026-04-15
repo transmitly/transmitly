@@ -35,7 +35,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(UnorderedEnricher), ContentModelEnricherScope.PerChannel, true, null, null)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 
@@ -55,7 +55,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(AfterEnricher), ContentModelEnricherScope.PerChannel, true, null, 1)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 		var bag = (IDictionary<string, object?>)model.Model;
@@ -79,7 +79,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(InspectEnricher), ContentModelEnricherScope.PerChannel, true, null, 1)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 
@@ -101,7 +101,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(ReplaceProtectedTrxPropertyEnricher), ContentModelEnricherScope.PerChannel, true, null, 0)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities, new { Value = "original" });
 
@@ -117,7 +117,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(MutateProtectedTrxObjectEnricher), ContentModelEnricherScope.PerChannel, true, null, 0)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities, new { Value = "original" });
 
@@ -133,7 +133,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(ReplaceModelOverridingProtectedPropertiesEnricher), ContentModelEnricherScope.PerChannel, true, null, 0)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities, new { Value = "original" });
 
@@ -153,7 +153,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(ReplaceWithExternalModelOverridingProtectedPropertiesEnricher), ContentModelEnricherScope.PerChannel, true, null, 0)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities, new { Value = "original" });
 
@@ -178,7 +178,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(ExternalInspectEnricher), ContentModelEnricherScope.PerChannel, true, null, 1)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 
@@ -200,7 +200,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(SecondEnricher), ContentModelEnricherScope.PerChannel, true, ctx => ctx.ChannelId == "channel-b", null)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext(channelId: "channel-a");
 		var model = CreateContentModel(context.PlatformIdentities);
 
@@ -220,7 +220,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(SecondEnricher), ContentModelEnricherScope.PerChannel, true, ctx => ctx.PipelineIntent == "nope", null)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext(pipelineIntent: "match");
 		var model = CreateContentModel(context.PlatformIdentities);
 
@@ -240,7 +240,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(NullOrderedSecondEnricher), ContentModelEnricherScope.PerChannel, true, null, null)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 
@@ -260,7 +260,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(SecondEnricher), ContentModelEnricherScope.PerChannel, true, null, 1)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 
@@ -277,7 +277,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(FirstEnricher), ContentModelEnricherScope.PerRecipient, true, null, null)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 
 		Assert.IsTrue(await service.HasEnrichersAsync(ContentModelEnricherScope.PerRecipient));
 		Assert.IsFalse(await service.HasEnrichersAsync(ContentModelEnricherScope.PerChannel));
@@ -291,7 +291,7 @@ public sealed class ContentModelEnricherServiceTests
 			new ContentModelEnricherRegistration(typeof(FirstEnricher), ContentModelEnricherScope.PerChannel, true, null, null)
 		};
 
-		var service = new DefaultContentModelEnricherService(new DefaultContentModelEnricherRegistrationFactory(registrations));
+		var service = CreateService(registrations);
 		var context = CreateDispatchContext();
 		var model = CreateContentModel(context.PlatformIdentities);
 		using var cts = new CancellationTokenSource();
@@ -319,6 +319,7 @@ public sealed class ContentModelEnricherServiceTests
 			recipients,
 			new UnitTestTemplateEngine(),
 			new MockDeliveryReportService([]),
+			NullLoggerFactory.Instance,
 			CultureInfo.InvariantCulture,
 			pipelineIntent,
 			pipelineId: null,
@@ -326,6 +327,13 @@ public sealed class ContentModelEnricherServiceTests
 			transportPriority: TransportPriority.Normal,
 			ChannelId: channelId,
 			ChannelProviderId: channelProviderId);
+	}
+
+	private static DefaultContentModelEnricherService CreateService(IEnumerable<IContentModelEnricherRegistration> registrations)
+	{
+		return new DefaultContentModelEnricherService(
+			new DefaultContentModelEnricherRegistrationFactory(registrations, NullLoggerFactory.Instance),
+			NullLoggerFactory.Instance);
 	}
 
 	private static ContentModel CreateContentModel(IReadOnlyCollection<IPlatformIdentityProfile> recipients, object? model = null)

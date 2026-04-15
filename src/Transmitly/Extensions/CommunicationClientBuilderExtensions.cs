@@ -18,8 +18,43 @@ using Transmitly.Template.Configuration;
 
 namespace Transmitly;
 
+/// <summary>
+/// Provides extension methods for configuring the communications client builder.
+/// </summary>
 public static class CommunicationClientBuilderExtensions
 {
+	/// <summary>
+	/// Enables logging for the communications client and configures logging options.
+	/// </summary>
+	/// <remarks>This method sets up logging using the specified or default logger factory and minimum log level.
+	/// Logging output is enabled for the communications client, which can assist with diagnostics and
+	/// monitoring.</remarks>
+	/// <param name="builder">The communications client builder to configure. Cannot be null.</param>
+	/// <param name="configure">An optional delegate to configure logging options. If null, default logging options are used.</param>
+	/// <returns>The same instance of <see cref="CommunicationsClientBuilder"/> with logging enabled.</returns>
+	public static CommunicationsClientBuilder AddLogging(this CommunicationsClientBuilder builder, Action<LoggingOptions>? configure = null)
+	{
+		Guard.AgainstNull(builder);
+
+		var options = new LoggingOptions();
+		configure?.Invoke(options);
+		
+		var loggerFactory = new MinimumLevelLoggerFactory(options.LoggerFactory ?? new ConsoleLoggerFactory(), options.MinimumLevel);
+		builder.SetLoggerFactory(loggerFactory);
+		loggerFactory.CreateLogger<CommunicationsClientBuilder>()
+			.LogDebug(
+				LogEvents.LoggingEnabled,
+				"Transmitly logging enabled.",
+				(options.MinimumLevel, FactoryType: loggerFactory.GetType().FullName),
+				static state => new Dictionary<string, object?>
+				{
+					["minimumLevel"] = state.MinimumLevel,
+					["factoryType"] = state.FactoryType
+				});
+
+		return builder;
+	}
+
 	/// <summary>
 	/// Adds a template engine to the configuration.
 	/// </summary>

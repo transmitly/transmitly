@@ -17,6 +17,6 @@ namespace Transmitly.PlatformIdentity.Configuration;
 /// <summary>
 /// Default platform identity resolvers factory.
 /// </summary>
-public sealed class DefaultPlatformIdentityResolverRegistrationFactory(IEnumerable<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations) : BasePlatformIdentityResolverRegistrationFactory(platformIdentityResolverRegistrations)
+public sealed class DefaultPlatformIdentityResolverRegistrationFactory(IEnumerable<IPlatformIdentityResolverRegistration> platformIdentityResolverRegistrations, ILoggerFactory loggerFactory) : BasePlatformIdentityResolverRegistrationFactory(platformIdentityResolverRegistrations, loggerFactory)
 {
 }

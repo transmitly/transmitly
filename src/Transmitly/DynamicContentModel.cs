@@ -206,6 +206,12 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		return result;
 	}
 
+	public bool TryGetMember(string member, out object? result)
+	{
+		var binder = new InternalGetMemberBinder(member, true);
+		return TryGetMember(binder, out result);
+	}
+
 	public override bool TryGetMember(GetMemberBinder binder, out object? result)
 	{
 		if (_bag.TryGetValue(binder.Name, out var value))
@@ -236,12 +242,7 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		return false;
 	}
 
-	public void Add(object key, object? value)
-	{
-		var k = ValidateKey(key);
-		EnsureWritableForKey(k);
-		_bag.Add(k, value);
-	}
+
 
 	public void Clear()
 	{
@@ -272,13 +273,12 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		_bag.Add(key, value);
 	}
 
-	public bool Remove(string key)
+	public void Add(object key, object? value)
 	{
-		EnsureWritableForKey(key);
-		return _bag.Remove(key);
+		var k = ValidateKey(key);
+		EnsureWritableForKey(k);
+		_bag.Add(k, value);
 	}
-
-	public bool TryGetValue(string key, out object? value) => _bag.TryGetValue(key, out value);
 
 	// ICollection<KeyValuePair<string, object?>> implementation
 	public void Add(KeyValuePair<string, object?> item)
@@ -286,6 +286,14 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 		EnsureWritableForKey(item.Key);
 		_bag.Add(item.Key, item.Value);
 	}
+
+	public bool Remove(string key)
+	{
+		EnsureWritableForKey(key);
+		return _bag.Remove(key);
+	}
+
+	public bool TryGetValue(string key, out object? value) => _bag.TryGetValue(key, out value);
 
 	public void ClearItems() => Clear();
 
@@ -306,12 +314,6 @@ internal sealed class DynamicContentModel : DynamicObject, IDictionary, IDiction
 	{
 		public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject? errorSuggestion) =>
 			throw new NotImplementedException();
-	}
-
-	public bool TryGetMember(string member, out object? result)
-	{
-		var binder = new InternalGetMemberBinder(member, true);
-		return TryGetMember(binder, out result);
 	}
 
 	internal void CopyProtectedPropertiesFrom(DynamicContentModel source)
