@@ -28,7 +28,7 @@ namespace Transmitly
 			var opts = new LoggingOptions();
 			options(opts);
 
-			builder.ChannelProvider.Add<LoggingDispatcher, object>("Transmitly.Logger", opts);
+			builder.ChannelProvider.Add<LoggingDispatcher, object>("Transmitly.Simulated", opts);
 			return builder;
 		}
 	}

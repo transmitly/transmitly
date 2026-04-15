@@ -99,16 +99,14 @@ namespace Transmitly
 			return tly;
 		}
 
-		public static CommunicationsClientBuilder AddDispatchLoggingSupport(this CommunicationsClientBuilder tly, TransmitlyConfiguration tlyConfig)
+		public static CommunicationsClientBuilder AddDispatchSimulationSupport(this CommunicationsClientBuilder tly, TransmitlyConfiguration tlyConfig)
 		{
 			// Adding the local Transmitly.ChannelProvider.Logger package
-			// allows us to add logging to the console for any channel type
 			foreach (var debuggerSetting in tlyConfig.ChannelProviders.Debugger.Where(s => s.IsEnabled))
 			{
 				tly.AddDispatchLoggingSupport(logger =>
 				{
 					logger.SimulateDispatchResult = debuggerSetting.SimulateDispatchResult;
-					logger.LogLevel = debuggerSetting.LogLevel;
 				});
 			}
 			return tly;

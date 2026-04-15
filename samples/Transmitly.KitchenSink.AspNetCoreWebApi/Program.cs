@@ -16,6 +16,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Transmitly;
 using Transmitly.Delivery;
+using Transmitly.Exceptions;
 using Transmitly.Model.Configuration;
 using Transmitly.Samples.Shared;
 
@@ -31,7 +32,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			/// !!! See appSettings.json for examples of how to configure with your own settings !!!
 			var tlyConfig = builder.Configuration.GetRequiredSection("Transmitly").Get<TransmitlyConfiguration>();
 			if (tlyConfig == null)
-				throw new Exception("Transmitly configuration is missing from configuration.");
+				throw new CommunicationsException("Transmitly configuration is missing from configuration.");
+			
 
 			// Add services to the container.
 			builder.Services
@@ -71,7 +73,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			{
 				// Configure channel providers loaded from appsettings.json
 				tly
-				.AddDispatchLoggingSupport(tlyConfig)//Console logging
+				.AddLogging(options => options.MinimumLevel = ResolveTransmitlyMinimumLogLevel(builder.Configuration))
+				.AddDispatchSimulationSupport(tlyConfig)//Console logging
 				.AddSmtpSupport(tlyConfig)//Email
 				.AddTwilioSupport(tlyConfig)//Email/SMS
 				.AddInfobipSupport(tlyConfig)//Email/Sms/Voice
@@ -314,6 +317,17 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			app.MapControllers();
 
 			app.Run();
+		}
+
+		private static Transmitly.Logging.LogLevel ResolveTransmitlyMinimumLogLevel(IConfiguration configuration)
+		{
+			var configuredLevel =
+				configuration["Logging:LogLevel:Transmitly"] ??
+				configuration["Logging:LogLevel:Default"];
+
+			return Enum.TryParse<Transmitly.Logging.LogLevel>(configuredLevel, ignoreCase: true, out var minimumLevel)
+				? minimumLevel
+				: Transmitly.Logging.LogLevel.Debug;
 		}
 	}
 }

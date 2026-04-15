@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Transmitly" Version="0.3.0" />
+		<PackageReference Include="Transmitly" Version="0.3.1-4.3eb4386" />
 	</ItemGroup>
 
 </Project>

@@ -12,34 +12,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Microsoft.Extensions.Logging;
-using System.Text.Json;
 using Transmitly.Delivery;
-using Transmitly.Util;
 
 namespace Transmitly.ChannelProvider.Debugging
 {
-	class LoggingDispatcher(LoggingOptions options, ILogger<LoggingDispatcher> logger) : IChannelProviderDispatcher<object>
+	class LoggingDispatcher(LoggingOptions options) : IChannelProviderDispatcher<object>
 	{
-		private static readonly JsonSerializerOptions _serializerOptions;
-		private readonly ILogger<LoggingDispatcher> _logger = Guard.AgainstNull(logger);
-		static LoggingDispatcher()
-		{
-			_serializerOptions = new JsonSerializerOptions { WriteIndented = true };
-		}
-
 		public async Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
 		{
-			_logger.Log(options.LogLevel, "Dispatching to Channel: '{ChannelId}' Content: {Content}.", communicationContext.ChannelId, JsonSerializer.Serialize(communication, _serializerOptions));
-
 			if (!options.SimulateDispatchResult)
 			{
-
 				return [];
 			}
 			else if (options.SimulateDispatchResultHandler == null)
 			{
-				communicationContext.DeliveryReportManager.DispatchAsync(
+				await communicationContext.DeliveryReportManager.DispatchAsync(
 					new DeliveryReport(
 						DeliveryReport.Event.Dispatched(),
 						communicationContext.ChannelId,
@@ -47,19 +34,19 @@ namespace Transmitly.ChannelProvider.Debugging
 						communicationContext.PipelineIntent,
 						communicationContext.PipelineId,
 						Guid.NewGuid().ToString(),
-						CommunicationsStatus.Success("Tly.Logger", "Dispatched"),
+						CommunicationsStatus.Success("Tly.Simulated", "Dispatched"),
 						communication,
 						communicationContext.ContentModel,
 						null
 					)
 				);
-				return [new DispatchResult(CommunicationsStatus.Success("Tly.Logger", "Dispatched"), Guid.NewGuid().ToString())];
+				return [new DispatchResult(CommunicationsStatus.Success("Tly.Simulated", "Dispatched"), Guid.NewGuid().ToString())];
 			}
 
 			var result = await options.SimulateDispatchResultHandler(communication, communicationContext).ConfigureAwait(false);
 
 			foreach (var r in result?.Where(x => x != null) ?? [])
-				communicationContext.DeliveryReportManager.DispatchAsync(
+				await communicationContext.DeliveryReportManager.DispatchAsync(
 						new DeliveryReport(
 							DeliveryReport.Event.Dispatched(),
 							r!.ChannelId,

@@ -7,12 +7,12 @@
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Transmitly" Version="0.3.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
-		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.3.0" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.201" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.6" />
+		<PackageReference Include="Transmitly" Version="0.3.1-4.3eb4386" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
+		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.3.1-1.2572683" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.202" PrivateAssets="All" />
 		<PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="All" />
 	</ItemGroup>
 </Project>

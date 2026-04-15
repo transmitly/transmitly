@@ -12,13 +12,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-using Microsoft.Extensions.Logging;
 
 namespace Transmitly
 {
 	public sealed class LoggingOptions
 	{
-		public LogLevel LogLevel { get; set; } = LogLevel.Information;
 		public bool SimulateDispatchResult { get; set; } = false;
 		public Func<object, IDispatchCommunicationContext, Task<IReadOnlyCollection<IDispatchResult?>>>? SimulateDispatchResultHandler { get; set; }
 	}

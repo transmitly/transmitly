@@ -72,7 +72,8 @@ namespace Tandely.Notifications.Service
 			{
 				// Configure channel providers loaded from appsettings.json
 				tly
-				.AddDispatchLoggingSupport(tlyConfig)//Console logging
+				.AddLogging(options => options.MinimumLevel = ResolveTransmitlyMinimumLogLevel(builder.Configuration))
+				.AddDispatchSimulationSupport(tlyConfig)//Dispatch simulation
 				.AddSmtpSupport(tlyConfig)//Email
 				.AddTwilioSupport(tlyConfig)//Email/SMS
 				.AddInfobipSupport(tlyConfig)//Email/Sms/Voice
@@ -159,5 +160,16 @@ namespace Tandely.Notifications.Service
 
 			app.Run();
 		}
+		private static Transmitly.Logging.LogLevel ResolveTransmitlyMinimumLogLevel(IConfiguration configuration)
+		{
+			var configuredLevel =
+				configuration["Logging:LogLevel:Transmitly"] ??
+				configuration["Logging:LogLevel:Default"];
+
+			return Enum.TryParse<Transmitly.Logging.LogLevel>(configuredLevel, ignoreCase: true, out var minimumLevel)
+				? minimumLevel
+				: Transmitly.Logging.LogLevel.Debug;
+		}
 	}
+
 }

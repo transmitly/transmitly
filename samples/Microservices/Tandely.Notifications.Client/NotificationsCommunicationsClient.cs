@@ -16,6 +16,7 @@ using System.Text.Json;
 using Transmitly;
 using Transmitly.Channel.Configuration;
 using Transmitly.Delivery;
+using Transmitly.Logging;
 using Transmitly.Persona.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Util;
@@ -24,14 +25,21 @@ namespace Tandely.Notifications.Client
 {
 	internal sealed class NotificationsCommunicationsClient : ICommunicationsClient
 	{
+		private const string ChannelId = "Tandely.Notifications";
+		private const string ChannelProviderId = "Tandely.Notifications";
+		private const string DispatchStartedEvent = "tandely.notifications.dispatch.started";
+		private const string DispatchCompletedEvent = "tandely.notifications.dispatch.completed";
+		private const string DispatchFailedEvent = "tandely.notifications.dispatch.failed";
+		private const string IdentityReferenceDispatchEvent = "tandely.notifications.dispatch.identityReferences";
 		readonly JsonSerializerOptions _jsonOptions;
+		private readonly ILogger _logger;
 		readonly static Lazy<HttpClient> _httpClient = new(() => CreateHttpClient(_options));
 		static NotificationsOptions? _options;
 		readonly ICommunicationsClient _defaultClient;
 		readonly IReadOnlyCollection<IPersonaRegistration>? _pipelinePersonas;
 
 		internal NotificationsCommunicationsClient(
-			ICommunicationsClient defaultClient, 
+			ICommunicationsClient defaultClient,
 			ICreateCommunicationsClientContext context,
 			NotificationsOptions options,
 			JsonSerializerOptions jsonOptions
@@ -41,6 +49,7 @@ namespace Tandely.Notifications.Client
 			_defaultClient = Guard.AgainstNull(defaultClient);
 			_options = Guard.AgainstNull(options);
 			_jsonOptions = Guard.AgainstNull(jsonOptions);
+			_logger = context.LoggerFactory.CreateLogger<NotificationsCommunicationsClient>();
 		}
 
 		private static HttpClient CreateHttpClient(NotificationsOptions? options)
@@ -66,6 +75,18 @@ namespace Tandely.Notifications.Client
 			{
 				var personFilters = _pipelinePersonas?.Select(x => x.Name);
 				var dispatchCorrelationId = Guid.NewGuid().ToString("N");
+				_logger.LogInformation(
+					DispatchStartedEvent,
+					"Dispatching notifications to the Tandely Notifications service.",
+					(PipelineIntent: pipelineIntent, PipelineId: pipelineId, IdentityCount: platformIdentities.Count, ChannelPreferenceCount: dispatchChannelPreferences.Count, DispatchCorrelationId: dispatchCorrelationId),
+					static state => new Dictionary<string, object?>
+					{
+						["pipelineIntent"] = state.PipelineIntent,
+						["pipelineId"] = state.PipelineId ?? string.Empty,
+						["identityCount"] = state.IdentityCount,
+						["channelPreferenceCount"] = state.ChannelPreferenceCount,
+						["dispatchCorrelationId"] = state.DispatchCorrelationId
+					});
 
 				var payload = JsonSerializer.Serialize(new DispatchNotificationModel
 				{
@@ -97,42 +118,84 @@ namespace Tandely.Notifications.Client
 
 				if (apiCallResult.IsSuccessStatusCode)
 				{
+					_logger.LogInformation(
+						DispatchCompletedEvent,
+						"Notifications service accepted the dispatch request.",
+						(dispatchCorrelationId, StatusCode: (int)apiCallResult.StatusCode, PipelineIntent: pipelineIntent),
+						static state => new Dictionary<string, object?>
+						{
+							["dispatchCorrelationId"] = state.dispatchCorrelationId,
+							["statusCode"] = state.StatusCode,
+							["pipelineIntent"] = state.PipelineIntent
+						});
 					return new DispatchCommunicationResult([new NotificationsDispatchResult
 						{
 							Status = CommunicationsStatus.Success("Tandely", "Dispatched"),
 							ResourceId = dispatchCorrelationId,
-							ChannelId = "Tandely.Notifications",
+							ChannelId = ChannelId,
 							Exception = null,
-							ChannelProviderId = "Tandely.Notifications"
+							ChannelProviderId = ChannelProviderId
 						}]);
 				}
 				else
 				{
+					_logger.LogWarning(
+						DispatchFailedEvent,
+						"Notifications service rejected the dispatch request.",
+						(dispatchCorrelationId, StatusCode: (int)apiCallResult.StatusCode, PipelineIntent: pipelineIntent, ResultCount: apiResult?.Results?.Count ?? 0),
+						static state => new Dictionary<string, object?>
+						{
+							["dispatchCorrelationId"] = state.dispatchCorrelationId,
+							["statusCode"] = state.StatusCode,
+							["pipelineIntent"] = state.PipelineIntent,
+							["resultCount"] = state.ResultCount
+						});
 					return new DispatchCommunicationResult([new NotificationsDispatchResult
 						{
 							Status = CommunicationsStatus.ServerError("Tandely", "Undeliverable"),
 							ResourceId = dispatchCorrelationId,
-							ChannelId = "Tandely.Notifications",
+							ChannelId = ChannelId,
 							Exception = new Exception(string.Join(", ", apiResult?.Results.Select(x => x.Exception?.ToString())??[])),
-							ChannelProviderId = "Tandely.Notifications"
+							ChannelProviderId = ChannelProviderId
 						}]);
 				}
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError(
+					DispatchFailedEvent,
+					"An exception occurred while dispatching notifications to the Tandely Notifications service.",
+					ex,
+					(pipelineIntent, PipelineId: pipelineId, IdentityCount: platformIdentities.Count),
+					static state => new Dictionary<string, object?>
+					{
+						["pipelineIntent"] = state.pipelineIntent,
+						["pipelineId"] = state.PipelineId ?? string.Empty,
+						["identityCount"] = state.IdentityCount
+					});
 				return new DispatchCommunicationResult([new NotificationsDispatchResult
 					{
 						Status = CommunicationsStatus.ClientError("Tandely", "Exception"),
 						ResourceId = null,
-						ChannelId = "Tandely.Notifications",
+						ChannelId = ChannelId,
 						Exception = new Exception("An exception occurred while attempting to dispatch communications to the Tandely Notifications services", ex),
-						ChannelProviderId = "Tandely.Notifications"
+						ChannelProviderId = ChannelProviderId
 					}]);
 			}
 		}
 
 		public Task<IDispatchCommunicationResult> DispatchAsync(string pipelineIntent, IReadOnlyCollection<IPlatformIdentityReference> identityReferences, ITransactionModel transactionalModel, IReadOnlyCollection<string> dispatchChannelPreferences, string? pipelineId = null, string? cultureInfo = null, CancellationToken cancellationToken = default)
 		{
+			_logger.LogDebug(
+				IdentityReferenceDispatchEvent,
+				"Dispatching notifications using identity references.",
+				(PipelineIntent: pipelineIntent, ReferenceCount: identityReferences.Count, ChannelPreferenceCount: dispatchChannelPreferences.Count),
+				static state => new Dictionary<string, object?>
+				{
+					["pipelineIntent"] = state.PipelineIntent,
+					["referenceCount"] = state.ReferenceCount,
+					["channelPreferenceCount"] = state.ChannelPreferenceCount
+				});
 			return DispatchAsync(pipelineIntent, identityReferences.Select(x => new PlatformIdentityProfile(x.Id, x.Type, [])).ToList(), transactionalModel, dispatchChannelPreferences, pipelineId, cultureInfo, cancellationToken);
 		}
 

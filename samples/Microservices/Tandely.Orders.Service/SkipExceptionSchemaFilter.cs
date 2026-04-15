@@ -11,13 +11,13 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 namespace Tandely.Orders.Service
 {
 	public class SkipExceptionSchemaFilter : ISchemaFilter
 	{
-		public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+		public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
 		{
 			if (schema?.Properties == null)
 			{

@@ -13,13 +13,13 @@
 //  limitations under the License.
 
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Transmitly.KitchenSink.AspNetCoreWebApi
 {
 	public class SkipExceptionSchemaFilter : ISchemaFilter
 	{
-		public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+		public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
 		{
 			if (schema?.Properties == null)
 			{

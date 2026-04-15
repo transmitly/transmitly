@@ -13,7 +13,7 @@
 //  limitations under the License.
 
 using Microsoft.Extensions.DependencyInjection;
-
+using Transmitly;
 namespace Tandely.Notifications.Client
 {
 	public static class NotificationClientTransmitlyExtensions
@@ -22,7 +22,7 @@ namespace Tandely.Notifications.Client
 		{
 			var opts = new NotificationsOptions();
 			options(opts);
-			services.AddTransmitly(tly=>tly.AddClientMiddleware(new NotificationsClientFactory(opts)));
+			services.AddTransmitly(tly=>tly.AddLogging(opts=>opts.MinimumLevel= Transmitly.Logging.LogLevel.Debug).AddClientMiddleware(new NotificationsClientFactory(opts)));
 			return services;
 		}
 	}
