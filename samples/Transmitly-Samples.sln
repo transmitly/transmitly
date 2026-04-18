@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.9.34518.117
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11605.296 insiders
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transmitly.KitchenSink.AspNetCoreWebApi", "Transmitly.KitchenSink.AspNetCoreWebApi\Transmitly.KitchenSink.AspNetCoreWebApi.csproj", "{306F996F-9366-4F62-8DB0-7B03ED6C21AE}"
 EndProject
@@ -14,8 +14,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.IntegrationEvents", "Microservices\Tandely.IntegrationEvents\Tandely.IntegrationEvents.csproj", "{1095E6DC-0E5E-AFFF-8177-EF47F7AB723D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Notifications.Service", "Microservices\Tandely.Notifications.Service\Tandely.Notifications.Service.csproj", "{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitly.ChannelProvider.Logger", "Transmitly.ChannelProvider.Logger\Transmitly.ChannelProvider.Logger.csproj", "{60FB5C1B-C12B-5573-8056-DF0F92EFA751}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tandely.Orders.Service", "Microservices\Tandely.Orders.Service\Tandely.Orders.Service.csproj", "{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}"
 EndProject
@@ -49,10 +47,6 @@ Global
 		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2807BBD-E25A-B4CA-3488-4B61FA4B02D0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60FB5C1B-C12B-5573-8056-DF0F92EFA751}.Release|Any CPU.Build.0 = Release|Any CPU
 		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2}.Release|Any CPU.ActiveCfg = Release|Any CPU

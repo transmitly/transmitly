@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Transmitly" Version="0.3.1-4.3eb4386" />
+		<PackageReference Include="Transmitly" Version="0.3.1-6.7ea7a14" />
 		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.3.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.3.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.3.0" />
@@ -17,9 +17,5 @@
 
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.202" PrivateAssets="All" />
 		<PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="All" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Transmitly.ChannelProvider.Logger\Transmitly.ChannelProvider.Logger.csproj" />
 	</ItemGroup>
 </Project>

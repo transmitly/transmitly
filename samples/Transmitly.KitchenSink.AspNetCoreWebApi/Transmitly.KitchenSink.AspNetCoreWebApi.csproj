@@ -11,7 +11,7 @@
 	<ItemGroup>
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="10.0.1" />
-		<PackageReference Include="Transmitly" Version="0.3.1-4.3eb4386" />
+		<PackageReference Include="Transmitly" Version="0.3.1-6.7ea7a14" />
 		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.3.0" />
 		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="0.3.0" />
 		<PackageReference Include="Transmitly.Microsoft.AspnetCore.Mvc" Version="0.3.0" />

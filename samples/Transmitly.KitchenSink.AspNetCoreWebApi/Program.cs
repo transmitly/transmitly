@@ -73,8 +73,8 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 			{
 				// Configure channel providers loaded from appsettings.json
 				tly
-				.AddLogging(options => options.MinimumLevel = ResolveTransmitlyMinimumLogLevel(builder.Configuration))
-				.AddDispatchSimulationSupport(tlyConfig)//Console logging
+				.AddLogging(options => options.MinimumLevel = ResolveTransmitlyMinimumLogLevel(builder.Configuration))//Console logging
+				.AddDispatchSimulationSupport(tlyConfig)//Simulated Channel Provider for testing and development
 				.AddSmtpSupport(tlyConfig)//Email
 				.AddTwilioSupport(tlyConfig)//Email/SMS
 				.AddInfobipSupport(tlyConfig)//Email/Sms/Voice
