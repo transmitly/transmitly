@@ -1,4 +1,4 @@
-﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -15,20 +15,17 @@
 namespace Transmitly;
 
 /// <summary>
-/// See <see cref="Id"/>
+/// Configures Transmitly dispatch simulation support.
 /// </summary>
-//[DebuggerStepThrough]
-public sealed class ChannelProviders
+public sealed class ChannelProviderSimulationOptions
 {
-	private const string DefaultProviderId = "";
+	/// <summary>
+	/// Gets or sets whether simulation returns simulated dispatch results.
+	/// </summary>
+	public bool SimulateDispatchResult { get; set; } = true;
 
-	internal ChannelProviders() { }
-
-#pragma warning disable S2325, CA1822// Mark members as static
-	public string GetId(string providerId, string? clientId = DefaultProviderId)
-#pragma warning restore S2325, CA1822// Mark members as static
-	{
-		Guard.AgainstNullOrWhiteSpace(providerId);
-		return string.Join(".", providerId, !string.IsNullOrWhiteSpace(clientId) ? clientId : DefaultProviderId).Trim('.');
-	}
+	/// <summary>
+	/// Gets or sets an optional handler used to override simulated dispatch behavior.
+	/// </summary>
+	public Func<object, IDispatchCommunicationContext, Task<IReadOnlyCollection<IDispatchResult?>>>? SimulateDispatchResultHandler { get; set; }
 }
