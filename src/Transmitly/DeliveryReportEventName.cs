@@ -30,6 +30,7 @@ public sealed class DeliveryReportEventName
 	public string Error() => Prefix + "Error";
 	public string Dispatched() => Prefix + "Dispatched";
 	public string Dispatch() => Prefix + "Dispatch";
+	public string Read() => Prefix + "Read";
 	public string StatusChanged() => Prefix + "StatusChanged";
 #pragma warning restore S2325, CA1822 // Mark members as static
 }

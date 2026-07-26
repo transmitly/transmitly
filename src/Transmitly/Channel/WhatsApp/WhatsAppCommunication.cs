@@ -1,0 +1,41 @@
+// Copyright (c) Code Impressions, LLC. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License")
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+namespace Transmitly.Channel.WhatsApp;
+
+/// <inheritdoc cref="IWhatsApp" />
+internal sealed class WhatsAppCommunication(IExtendedProperties extendedProperties) : IWhatsApp
+{
+	public IPlatformIdentityAddress[]? To { get; internal set; }
+
+	public IPlatformIdentityAddress? From { get; internal set; }
+
+	public string? Message { get; internal set; }
+
+	public MessagePriority Priority { get; internal set; }
+
+	public TransportPriority TransportPriority { get; internal set; }
+
+	public IReadOnlyCollection<IWhatsAppAttachment> Attachments { get; internal set; } = [];
+
+	public IWhatsAppLocation? Location { get; internal set; }
+
+	public IReadOnlyCollection<IWhatsAppContact> Contacts { get; internal set; } = [];
+
+	public IWhatsAppTemplate? Template { get; internal set; }
+
+	public IExtendedProperties ExtendedProperties { get; } = Guard.AgainstNull(extendedProperties);
+
+	public Func<IDispatchCommunicationContext, Task<string?>>? DeliveryReportCallbackUrlResolver { get; internal set; }
+}

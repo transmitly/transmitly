@@ -26,6 +26,7 @@ public class IdentityAddressNotificationExtensionsTests : BaseUnitTest
 		Assert.AreEqual("home-phone", Channel.IdentityAddressTeleNotificationExtensions.HomePhone(null));
 		Assert.AreEqual("phone", Channel.IdentityAddressTeleNotificationExtensions.Phone(null));
 		Assert.AreEqual("mobile-phone", Channel.IdentityAddressTeleNotificationExtensions.Mobile(null));
+		Assert.AreEqual("whatsapp", Channel.WhatsApp.IdentityAddressWhatsAppNotificationExtensions.WhatsApp(null));
 
 		Assert.AreEqual("device-token", Channel.Push.IdentityAddressPushNotificationExtensions.DeviceToken(null));
 		Assert.AreEqual("push-topic", Channel.Push.IdentityAddressPushNotificationExtensions.Topic(null));
