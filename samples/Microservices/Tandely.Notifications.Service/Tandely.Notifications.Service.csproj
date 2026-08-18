@@ -16,14 +16,14 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
-		<PackageReference Include="Transmitly" Version="0.3.1-6.7ea7a14" />
-		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.3.0" />
-		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.3.1-1.2572683" />
-		<PackageReference Include="Transmitly.TemplateEngine.Fluid" Version="0.3.0" />
-		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.3.0" />
-		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.3.0" />
-		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="0.3.0" />
-		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.3.0" />
+		<PackageReference Include="Transmitly" Version="0.4.0" />
+		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.4.0" />
+		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.4.0" />
+		<PackageReference Include="Transmitly.TemplateEngine.Fluid" Version="0.4.0" />
+		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.4.0" />
+		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.4.0" />
+		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="0.4.0" />
+		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.4.0" />
  	</ItemGroup>
 
 	<ItemGroup>

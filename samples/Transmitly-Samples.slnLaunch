@@ -28,5 +28,14 @@
         "Action": "Start"
       }
     ]
+  },
+  {
+    "Name": "Hello Transmitly Example",
+    "Projects": [
+      {
+        "Path": "HelloTransmitly\\HelloTransmitly.csproj",
+        "Action": "Start"
+      }
+    ]
   }
 ]
