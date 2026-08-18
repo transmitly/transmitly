@@ -2,6 +2,9 @@
 
 This directory contains sample projects to help demonstrates features of Transmitly in various scenarios.
 
+## [Hello Transmitly](https://github.com/transmitly/transmitly/tree/main/samples/HelloTransmitly)
+The smallest possible example of using Transmitly
+
 ## [Kitchen Sink](https://github.com/transmitly/transmitly/tree/main/samples/Transmitly.KitchenSink.AspNetCoreWebApi)
 Demonstrates as many features of Transmitly as possible in a single project. 
 
