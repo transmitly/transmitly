@@ -1,269 +1,204 @@
-# Transactional Communications
-Transmitly is a powerful and vendor-agnostic communication library designed to simplify and enhance the process of sending transactional messages across various platforms. With its easy-to-use API, developers can seamlessly integrate email, SMS, and other messaging services into their applications, ensuring reliable and efficient delivery of critical notifications. Built for flexibility and scalability, Transmitly supports multiple communication channels, allowing you to focus on building great applications while it handles the complexity of message transmission.
+Let your .NET application express it's intent to communicate without doing the work in your business logic.
 
-## Show me the code!
-Want to jump right into the code? Take a look at the [various sample projects](https://github.com/transmitly/transmitly/tree/main/samples).
+[![NuGet](https://img.shields.io/nuget/v/Transmitly?label=NuGet)](https://www.nuget.org/packages/Transmitly)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Transmitly)](https://www.nuget.org/packages/Transmitly)
+[![License](https://img.shields.io/github/license/transmitly/transmitly)](https://github.com/transmitly/transmitly/blob/main/LICENSE)
 
+Transmitly is an extensible transactional communications library for .NET. It keeps email, SMS, push, voice, message composition, provider configuration, and delivery handling out of your domain and application logic.
 
-### Quick Start
-Let's begin where most developers start: sending an email via an SMTP server.
-In Transmitly, Email is a `Channel`. A `Channel` is the medium through which your communication is dispatched. Out of the box, Transmitly supports `Email`, `SMS`, `Voice`, and `Push Notifications`.
+Your application expresses an intent:
 
-### Add the Transmitly NuGet package to your project
+```csharp
+var result = await _communicationsClient.DispatchAsync(
+    "WelcomeKit",
+    newAccount.EmailAddress,
+    new { firstName = newAccount.FirstName });
+```
+
+Elsewhere, Transmitly defines what `WelcomeKit` means: which channels are involved, how content is composed, which providers can deliver it, and how delivery events are handled.
+
+```text
+Application
+    |
+    | Dispatch("WelcomeKit")
+    v
+Pipeline: WelcomeKit
+    |
+    +-- Email ----> SMTP / SendGrid / Mailgun / Infobip
+    +-- SMS ------> Twilio / Infobip
+    +-- Push -----> Firebase
+    +-- Voice ----> Twilio / Infobip
+```
+
+That separation is the point of Transmitly.
+
+## When should I use it?
+
+Transmitly is a good fit when:
+
+- transactional communication is becoming infrastructure rather than a single `SendEmail(...)` call
+- provider SDKs, templates, channel decisions, or webhook behavior are leaking into application code
+- you have, or expect, multiple message types, channels, or providers
+- you want composition and delivery behavior managed in one place
+- you want provider or channel changes without rewriting the application workflow that requested the communication
+
+### When shouldn't I use it?
+
+If your application sends one kind of email through one provider and that is unlikely to change, a small `IEmailSender`-style abstraction may be enough.
+
+## Three concepts to get started
+
+- **Pipeline** — a domain-oriented communication intent such as `WelcomeKit`, `PasswordReset`, or `OrderProcessing`
+- **Channel** — how the recipient can receive it: Email, SMS, Voice, or Push Notification
+- **Channel Provider** — the infrastructure that delivers the channel, such as SMTP, SendGrid, Twilio, Infobip, Mailgun, or Firebase
+
+The pipeline is the stable boundary your application talks to. Channels, providers, templates, and delivery behavior can evolve behind it.
+
+## Try Transmitly without a provider account
+
+The core package includes simulation support, so your first dispatch does not require an SMTP server, API key, or third-party account.
+
 ```shell
 dotnet add package Transmitly
 ```
 
-### Choosing a channel provider
-As mentioned above, we're going to dispatch our email using an SMTP server. To make this happen in Transmitly, add the [SMTP Channel Provider library](https://github.com/transmitly/transmitly-channel-provider-smtp) to your project.
+```csharp
+using Transmitly;
 
-`Channel Providers` manage the delivery of your `channel` communications. You can think of a `Channel Provider` as a service like Twilio, Infobip, Firebase, or in this case, an SMTP server.
+var communicationsClient = new CommunicationsClientBuilder()
+    .AddSimulationSupport()
+    .AddPipeline("WelcomeKit", pipeline =>
+    {
+        pipeline.AddEmail(
+            "welcome@my.app".AsIdentityAddress("Welcome"),
+            email =>
+            {
+                email.Subject.AddStringTemplate("Thanks for signing up!");
+                email.TextBody.AddStringTemplate("Welcome to the app.");
+            });
+    })
+    .BuildClient();
+
+var result = await communicationsClient.DispatchAsync(
+    "WelcomeKit",
+    "developer@example.com",
+    new { });
+
+Console.WriteLine(result.IsSuccessful);
+```
+
+`AddSimulationSupport()` uses Transmitly's built-in simulation provider. By default, it returns a successful simulated dispatch result so you can exercise the same pipeline model without sending a real communication.
+
+## Send through a real provider
+
+When you're ready for real delivery, install only the provider your application uses. For SMTP:
 
 ```shell
 dotnet add package Transmitly.ChannelProvider.Smtp
 ```
 
-### Set Up a Pipeline
-Now it's time to configure a `Pipeline`. `Pipelines` give us flexibility as requirements evolve. For now, think of a `Pipeline` as a way to configure which channels and channel providers are involved when you dispatch a domain intent.
-In other words, you might start by sending a welcome email to a newly registered user. As your application grows, you may want to send an SMS or an email depending on which address the user provided at sign-up. With Transmitly, that behavior is managed in a single location, and your domain/business logic remains agnostic of which communications are sent and how.
-
 ```csharp
-using Transmitly;
-
-ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
-.AddSmtpSupport(options =>
-{
-  options.Host = "smtp.example.com";
-  options.Port = 587;
-  options.UserName = "MySMTPUsername";
-  options.Password = "MyPassword";
-})
-.AddPipeline("WelcomeKit", pipeline =>
-{
-    pipeline.AddEmail("welcome@my.app".AsIdentityAddress("Welcome Committee"), email =>
+var communicationsClient = new CommunicationsClientBuilder()
+    .AddSmtpSupport(options =>
     {
-       email.Subject.AddStringTemplate("Thanks for creating an account!");
-       email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
-       email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
-    });
-})
-.BuildClient();
-
-// Register ICommunicationsClient with the service collection.
-// If you install Transmitly.Microsoft.Extensions.DependencyInjection,
-// you can use builder.Services.AddTransmitly(...) instead of manual registration.
-builder.Services.AddSingleton(communicationsClient);
-```
-In our new account registration code:
-```csharp
-class AccountRegistrationService
-{
-  private readonly ICommunicationsClient _communicationsClient;
-  public AccountRegistrationService(ICommunicationsClient communicationsClient)
-  {
-    _communicationsClient = communicationsClient;
-  }
-
-  public async Task<Account> RegisterNewAccount(AccountVM account)
-  {
-    // Validate and create the account
-    var newAccount = CreateAccount(account);
-
-    // Dispatch (send) using our configured pipeline intent and recipient email address.
-    var result = await _communicationsClient.DispatchAsync("WelcomeKit", newAccount.EmailAddress, new { });
-
-    if(result.IsSuccessful)
-      return newAccount;
-
-    throw new Exception("Error sending communication!");
-  }
-}
-```
-
-That's it. You're dispatching email. It may seem like a lot of work compared to a simple `IEmailClient`, so let's break down what we gained by using Transmitly.
- * Vendor agnostic - We can change channel providers with a simple configuration change
-   * That means when we want to try out SendGrid, Twilio, Infobip or one of the many other services, it's a single change in a single location. :relaxed: 
- * Delivery configuration - The details of our (Email) communications are not cluttering up our code base.
-   * We've also managed to keep our domain/business logic clean by using pipeline intents rather than explicitly sending an email or other communication types.
- * Message composition - The details of how an email or SMS is generated are not scattered throughout your codebase.
-   * In the future we may want to send an SMS and/or push notification. We can now control that in a single location, not in our business logic.
- * We can now use a single service/client for all of our communication needs
-   * No more cluttering up your service constructors with `IEmailClient`, `ISmsClient`, etc.
-  
-
-### Changing Channel Providers
-Want to try out a new service to send your emails? Twilio? Infobip? With Transmitly, it's as easy as adding your preferred channel provider and a few lines of configuration. In the example below, we'll use SendGrid.
-
-For the next example, we'll start using SendGrid to send email.
-```shell
-dotnet add package Transmitly.ChannelProvider.SendGrid
-```
-
-Next we'll update our configuration. Notice we've removed `AddSmtpSupport(...)` and added `AddSendGridSupport(...)`.
-```csharp
-using Transmitly;
-
-ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
-//.AddSmtpSupport(options =>
-//{
-//  options.Host = "smtp.example.com";
-//  options.Port = 587;
-//  options.UserName = "MySMTPUsername";
-//  options.Password = "MyPassword";
-//})
-.AddSendGridSupport(options =>
-{
-    options.ApiKey = "MySendGridApi";
-})
-.AddPipeline("WelcomeKit", pipeline =>
-{
-    pipeline.AddEmail("welcome@my.app".AsIdentityAddress("Welcome Committee"), email =>
+        options.Host = "smtp.example.com";
+        options.Port = 587;
+        options.UserName = "MySMTPUsername";
+        options.Password = "MyPassword";
+    })
+    .AddPipeline("WelcomeKit", pipeline =>
     {
-        email.Subject.AddStringTemplate("Thanks for creating an account!");
-        email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
-        email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
-    });
-})
-.BuildClient();
-
-builder.Services.AddSingleton(communicationsClient);
+        pipeline.AddEmail(
+            "welcome@my.app".AsIdentityAddress("Welcome"),
+            email => email.Subject.AddStringTemplate("Thanks for signing up!"));
+    })
+    .BuildClient();
 ```
 
-That's right, we added a new channel provider package, removed our SMTP configuration, and configured SendGrid support. You don't need to change any other code. Our pipelines, channels, and domain/business logic stay the same. :open_mouth:
+Your application still dispatches `WelcomeKit`. It does not become SMTP-specific.
 
-### Supported Channel Providers
+### Change providers without changing application intent
 
-| Channel(s)  | Project | Package |
-| ------------- | ------------- | -------- | 
-| Email  | [Transmitly.ChannelProvider.Smtp](https://github.com/transmitly/transmitly-channel-provider-smtp)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Smtp?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Smtp) |
-| Email  | [Transmitly.ChannelProvider.SendGrid](https://github.com/transmitly/transmitly-channel-provider-sendgrid)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.SendGrid?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.SendGrid) |
-| Email  | [Transmitly.ChannelProvider.Mailgun](https://github.com/transmitly/transmitly-channel-provider-mailgun)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Mailgun?style=flat&color=01aef0&logo=mailgun)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Mailgun) |
-| Email, Sms, Voice | [Transmitly.ChannelProvider.Infobip](https://github.com/transmitly/transmitly-channel-provider-infobip)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Infobip?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Infobip) |
-| Sms, Voice  | [Transmitly.ChannelProvider.Twilio](https://github.com/transmitly/transmitly-channel-provider-twilio)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Twilio?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Twilio) |
-| Push Notifications  | [Transmitly.ChannelProvider.Firebase](https://github.com/transmitly/transmitly-channel-provider-firebase)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Firebase?style=flat&color=01aef0&logo=firebase)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Firebase) | 
+Moving email delivery from SMTP to SendGrid is a provider configuration change:
 
-### Delivery Reports
-Now that we are dispatching communications, the next questions are usually: how do I log activity, how do I store content, and what about status updates from third-party services? All great questions. To start, we'll focus on logging requests. In this simple example, we're using the SMTP library, which provides limited delivery visibility compared to third-party channel providers. As you adopt those providers, you can access richer dispatch and delivery data. Delivery reports let you manage those updates in a structured, consistent way across any channel provider or channel.
-
-```csharp
-using Transmitly;
-
-ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
-.AddSendGridSupport(options=>
-{
-    options.ApiKey = "MySendGridApi";
-})
-.AddDeliveryReportHandler((report) =>
-{
-   logger.LogInformation("[{channelId}:{channelProviderId}:Dispatched] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.ResourceId, JsonSerializer.Serialize(report.ChannelCommunication));
-   return Task.CompletedTask;
-})
-.AddPipeline("WelcomeKit", pipeline =>
-{
-    pipeline.AddEmail("welcome@my.app".AsIdentityAddress("Welcome Committee"), email =>
-    {
-       email.Subject.AddStringTemplate("Thanks for creating an account!");
-       email.HtmlBody.AddStringTemplate("Check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
-       email.TextBody.AddStringTemplate("Check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
-    });
-})
-.BuildClient();
-
-builder.Services.AddSingleton(communicationsClient);
+```diff
+- .AddSmtpSupport(options =>
+- {
+-     options.Host = "smtp.example.com";
+-     options.Port = 587;
+- })
++ .AddSendGridSupport(options =>
++ {
++     options.ApiKey = "MySendGridApi";
++ })
 ```
 
-Adding `AddDeliveryReportHandler(...)` lets you pass a function that executes during different stages of the communication lifecycle. In this case, we're listening to any report for any channel/channel provider. If you'd like more [fine-grained control, check out the wiki](https://github.com/transmitly/transmitly/wiki/Delivery-Reports#filters) for details on filtering the data you want. Delivery reports are designed to give you flexibility as your communications strategy evolves. For example, you can retry failed sends, notify stakeholders of important messages, or store dispatched content for auditing.
+After installing `Transmitly.ChannelProvider.SendGrid`, the pipeline and calling application can remain unchanged.
 
-Note: As mentioned earlier, using third-party services usually means you'll receive asynchronous status updates. In general, most providers push this information via webhooks. Transmitly can help with webhook handling through the MVC libraries.
+## The ecosystem is modular by design
 
-Using the Transmitly MVC libraries, you can configure channel providers to send webhook updates to a single endpoint you define. Transmitly then wraps provider-specific payloads and invokes your registered delivery report handlers.
+Most applications need the Transmitly core package, one or more provider integrations, and optionally a template integration.
 
-- [AspNetCore.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc) [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.AspnetCore.Mvc?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.AspnetCore.Mvc)
-- [AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc) [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Aspnet.Mvc?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Aspnet.Mvc)
+### Channel providers
 
-[See the wiki for more on delivery reports](https://github.com/transmitly/transmitly/wiki/Delivery-Reports)
+| Channel(s) | Integration | Package |  |
+| --- | --- | --- | --- |
+| Email | [SMTP](https://github.com/transmitly/transmitly-channel-provider-smtp) | [Transmitly.ChannelProvider.Smtp](https://www.nuget.org/packages/Transmitly.ChannelProvider.Smtp) | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Smtp?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Smtp) |
+| Email | [SendGrid](https://github.com/transmitly/transmitly-channel-provider-sendgrid) | [Transmitly.ChannelProvider.SendGrid](https://www.nuget.org/packages/Transmitly.ChannelProvider.SendGrid) | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.SendGrid?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.SendGrid) |
+| Email | [Mailgun](https://github.com/transmitly/transmitly-channel-provider-mailgun) | [Transmitly.ChannelProvider.Mailgun](https://www.nuget.org/packages/Transmitly.ChannelProvider.Mailgun) | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Mailgun?style=flat&color=01aef0&logo=mailgun)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Mailgun) |
+| Email, SMS, Voice | [Infobip](https://github.com/transmitly/transmitly-channel-provider-infobip) | [Transmitly.ChannelProvider.Infobip](https://www.nuget.org/packages/Transmitly.ChannelProvider.Infobip) | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Infobip?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Infobip) |
+| SMS, Voice | [Twilio](https://github.com/transmitly/transmitly-channel-provider-twilio) | [Transmitly.ChannelProvider.Twilio](https://www.nuget.org/packages/Transmitly.ChannelProvider.Twilio) | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Twilio?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Twilio) |
+| Push Notifications | [Firebase](https://github.com/transmitly/transmitly-channel-provider-firebase) | [Transmitly.ChannelProvider.Firebase](https://www.nuget.org/packages/Transmitly.ChannelProvider.Firebase) | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.ChannelProvider.Firebase?style=flat&color=01aef0&logo=firebase)](https://www.nuget.org/packages/Transmitly.ChannelProvider.Firebase) | 
 
-### Template Engines
-Templating is not supported out of the box by design. This lets you choose the engine you prefer, including a bespoke engine you may already use. Today, Transmitly has two officially supported template engines: Fluid and Scriban. As with other features, setup is as simple as adding the package to your project. For this example, we'll use Scriban.
+### Optional integrations
 
-```bash
-dotnet add package Transmitly.TemplateEngine.Scriban
-```
+- [Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)
+- [ASP.NET Core MVC](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc) and [AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc) for provider webhook/delivery-report integration
+- [Fluid](https://github.com/transmitly/transmitly-template-engine-fluid) and [Scriban](https://github.com/transmitly/transmitly-template-engine-scriban) for dynamic template rendering
 
-Building on our example, we can enable support by adding `AddScribanTemplateEngine()`. We'll also update our email templates to use placeholders.
+Literal/string message content can be configured directly in core. Dynamic template rendering is deliberately pluggable so you can choose the engine that fits your application.
 
-```csharp
-using Transmitly;
+## Delivery reports
 
-ICommunicationsClient communicationsClient = new CommunicationsClientBuilder()
-.AddSendGridSupport(options=>
-{
-    options.ApiKey = "MySendGridApi";
-})
-.AddScribanTemplateEngine()
-.AddDeliveryReportHandler((report) =>
-{
-   logger.LogInformation("[{channelId}:{channelProviderId}:Dispatched] Id={id}; Content={communication}", report.ChannelId, report.ChannelProviderId, report.ResourceId, JsonSerializer.Serialize(report.ChannelCommunication));
-   return Task.CompletedTask;
-})
-.AddPipeline("WelcomeKit", pipeline =>
-{
-    pipeline.AddEmail("welcome@my.app".AsIdentityAddress("Welcome Committee"), email =>
-    {
-       email.Subject.AddStringTemplate("Thanks for creating an account, {{firstName}}!");
-       email.HtmlBody.AddStringTemplate("{{firstName}}, check out the <a href=\"https://my.app/getting-started\">Getting Started</a> section to see all the cool things you can do!");
-       email.TextBody.AddStringTemplate("{{firstName}}, check out the Getting Started (https://my.app/getting-started) section to see all the cool things you can do!");
-    });
-})
-.BuildClient();
+Transmitly provides a consistent delivery-report model so application-level handling does not have to become provider-specific. Third-party providers commonly send later status updates through webhooks; the optional MVC integrations can route those provider-specific payloads into Transmitly's delivery-report handling.
 
-builder.Services.AddSingleton(communicationsClient);
-```
-We'll also update our dispatch call to provide a transactional model for the template engine.
+- [Delivery reports documentation](https://github.com/transmitly/transmitly/wiki/Delivery-Reports)
+- [ASP.NET Core MVC integration](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc)
+- [AspNet.Mvc integration](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc) 
 
-```csharp
-class AccountRegistrationService
-{
-  private readonly ICommunicationsClient _communicationsClient;
-  public AccountRegistrationService(ICommunicationsClient communicationsClient)
-  {
-    _communicationsClient = communicationsClient;
-  }
+## Compatibility
 
-  public async Task<Account> RegisterNewAccount(AccountVM account)
-  {
-    // Validate and create the account
-    var newAccount = CreateAccount(account);
+The core project currently targets:
 
-    // Dispatch (send) our configured email
-    var result = await _communicationsClient.DispatchAsync("WelcomeKit", newAccount.EmailAddress, new { firstName = newAccount.FirstName });
+- .NET 10
+- .NET 9
+- .NET 8
+- .NET 6
+- .NET Standard 2.0
+- .NET Framework 4.8 and 4.7.2
 
-    if(result.IsSuccessful)
-      return newAccount;
+## Project status
 
-    throw new Exception("Error sending communication!");
-  }
-}
-```
+**Transmitly 0.4.0 is production-ready and in production use.**
 
-That's another advanced feature handled in a strongly typed and extensible way. In this example, we only added `firstName` to our model. If we wanted to be more future-proof for template changes, we could return the full `Account` object or, preferably, create and use a `Platform Identity Resolver`. Whether you're starting from scratch or adapting an existing communications strategy, there's an approach that will work for you.
+There are additions and refinements planned before `1.0`, and the project still reserves room for API evolution while that work lands.
 
-### Supported Template Engines
-| Project | Package |
-| ------------- | ----------- |
-| [Transmitly.TemplateEngine.Fluid](https://github.com/transmitly/transmitly-template-engine-fluid)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.TemplateEngine.Fluid?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.TemplateEngine.Fluid) |
-| [Transmitly.TemplateEngine.Scriban](https://github.com/transmitly/transmitly-template-engine-scriban)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.TemplateEngine.Scriban?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.TemplateEngine.Scriban) |
+## Samples and documentation
 
+- [Samples](https://github.com/transmitly/transmitly/tree/main/samples)
+- [Kitchen Sink sample](https://github.com/transmitly/transmitly/tree/main/samples/Transmitly.KitchenSink.AspNetCoreWebApi)
+- [Microservices sample](https://github.com/transmitly/transmitly/tree/main/samples/Microservices)
+- [Wiki](https://github.com/transmitly/transmitly/wiki)
 
-### Next Steps
-We've only scratched the surface. Transmitly can do a lot more to deliver value for your team. [Check out the Kitchen Sink](/samples/Transmitly.KitchenSink.AspNetCoreWebApi) sample to learn more about Transmitly concepts while we continue improving the [wiki](https://github.com/transmitly/transmitly/wiki).
+## Feedback wanted
 
-### Supported Dependency Injection Containers
-|Container |  Project | Package | 
-| -------- | -------- | --------- |
-| Microsoft.Extensions.DependencyInjection | [Transmitly.Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)  | [![NuGet Version](https://img.shields.io/nuget/v/Transmitly.Microsoft.Extensions.DependencyInjection?style=flat&color=01aef0)](https://www.nuget.org/packages/Transmitly.Microsoft.Extensions.DependencyInjection) |
+If you try the quick start and something is confusing, overly abstract, missing, or simply not worth the ceremony, please tell us in [GitHub Discussions](https://github.com/transmitly/transmitly/discussions). API criticism, onboarding friction, unsupported workflows, and *"I stopped here because this didn't make sense"* are all useful feedback.
+
+For larger proposed changes, starting with a Discussion is the best way to align before implementation.
+
+## License
+
+Licensed under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html).
 
 ---
-_Copyright (c) Code Impressions, LLC.  This open-source project is sponsored and maintained by Code Impressions
-and is licensed under the [Apache License, Version 2.0](http://apache.org/licenses/LICENSE-2.0.html)._
-
+Copyright (c) Code Impressions, LLC
