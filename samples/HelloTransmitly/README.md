@@ -1,8 +1,11 @@
 # HelloTransmitly
+<img alt="robot waving" src="https://github.com/user-attachments/assets/27f378e6-0aed-4ebf-87d7-8204cef97663" style="width:200px; height:150px;max-width:100%" align="right"/> 
 
 This console application defines a single `WelcomeKit` communication pipeline and dispatches it using Transmitly's built-in simulation provider.
 
-No SMTP server, API keys, or external services are required.
+
+
+    
 
 ## What this sample demonstrates
 
