@@ -1,0 +1,108 @@
+.checkout {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 0 var(--page-pad) 4rem;
+}
+
+.checkout .form {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    max-width: 44rem;
+}
+
+.checkout .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-self: stretch;
+}
+
+.checkout h2 {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    line-height: 1.3;
+    border-bottom: 1px solid var(--color-line);
+    width: 100%;
+    padding-bottom: 0.75rem;
+}
+
+.checkout label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    color: var(--color-ink-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.checkout ::deep input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: inherit;
+    font-size: var(--text-base);
+    line-height: 1.4;
+    transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
+}
+
+.checkout ::deep input:focus {
+    outline: none;
+    border-color: var(--color-ink);
+    box-shadow: var(--ring);
+}
+
+.checkout ::deep .validation-message {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--color-danger);
+    font-size: var(--text-xs);
+    font-weight: 600;
+}
+
+.form-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    align-self: stretch;
+}
+
+.form-group .form-group-item {
+    flex: 1 0 0;
+}
+
+.checkout .form-buttons {
+    display: flex;
+    padding-top: 1.5rem;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    align-self: stretch;
+    border-top: 1px solid var(--color-line);
+    max-width: 44rem;
+}
+
+.checkout .form-buttons .button img {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+@media only screen and (max-width: 640px) {
+    .form-group {
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .checkout .form-buttons {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+}
