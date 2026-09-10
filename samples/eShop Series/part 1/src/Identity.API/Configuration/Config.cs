@@ -19,7 +19,6 @@
         {
             return new List<ApiScope>
             {
-                new ApiScope(IdentityServerConstants.LocalApi.ScopeName, "Identity Server API"),
                 new ApiScope("orders", "Orders Service"),
                 new ApiScope("basket", "Basket Service"),
                 new ApiScope("webhooks", "Webhooks registration Service"),
@@ -42,20 +41,6 @@
         {
             return new List<Client>
             {
-                new Client
-                {
-                    ClientId = "communications",
-                    ClientName = "eShop Communications Service",
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.LocalApi.ScopeName
-                    }
-                },
                 new Client
                 {
                     ClientId = "maui",

@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.5.11605.296
@@ -25,33 +24,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloTransmitly", "HelloTra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "eShop Series", "eShop Series", "{865224F2-22AC-41A9-B7B2-20280B695A1B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "original", "original", "{241B6595-9584-9032-687D-95314F08C5D4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "part 1", "part 1", "{241B6595-9584-9032-687D-95314F08C5D4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{94CB04CC-FBB9-4A46-A17A-60F0227C7D1D}"
-	ProjectSection(SolutionItems) = preProject
-		eShop Series\original\.editorconfig = eShop Series\original\.editorconfig
-		eShop Series\original\Directory.Packages.props = eShop Series\original\Directory.Packages.props
-		eShop Series\original\nuget.config = eShop Series\original\nuget.config
-		eShop Series\original\README.md = eShop Series\original\README.md
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.FunctionalTests", "eShop Series\original\tests\Webhooks.FunctionalTests\Webhooks.FunctionalTests.csproj", "{F8E952B1-126E-4119-99B0-A1C825C7A650}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.FunctionalTests", "eShop Series\original\tests\Ordering.FunctionalTests\Ordering.FunctionalTests.csproj", "{36128933-1139-4225-9954-D1DBA8069C5A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.AppHost", "eShop Series\original\src\eShop.AppHost\eShop.AppHost.csproj", "{FA13A19B-1164-4EDE-88BC-ECD878C38AEE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.FunctionalTests", "eShop Series\original\tests\Basket.FunctionalTests\Basket.FunctionalTests.csproj", "{5F885D0D-6EBB-4E42-B5FA-D90AE2F2BF6A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.FunctionalTests", "eShop Series\original\tests\Catalog.FunctionalTests\Catalog.FunctionalTests.csproj", "{24B6C270-F2CA-44CA-9329-25FABFD179B0}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "part 1", "part 1", "{141BD1BF-232A-1068-972B-7783DAD3071F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6FFA1807-93F1-425B-8549-494355E0B729}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D66915B2-9106-4154-B1EF-A9092ABBA80D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{29A86E9C-E9A1-48F1-8697-7BBA5B240E6E}"
 	ProjectSection(SolutionItems) = preProject
 		eShop Series\part 1\.editorconfig = eShop Series\part 1\.editorconfig
 		eShop Series\part 1\Directory.Packages.props = eShop Series\part 1\Directory.Packages.props
@@ -59,113 +34,137 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		eShop Series\part 1\README.md = eShop Series\part 1\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.FunctionalTests", "eShop Series\part 1\tests\Webhooks.FunctionalTests\Webhooks.FunctionalTests.csproj", "{7E4C58E8-0DF3-4AA1-85FA-61810EA6A9C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.FunctionalTests", "eShop Series\part 1\tests\Webhooks.FunctionalTests\Webhooks.FunctionalTests.csproj", "{F8E952B1-126E-4119-99B0-A1C825C7A650}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.API", "eShop Series\part 1\src\Webhooks.API\Webhooks.API.csproj", "{EA01B55C-6A30-4E6C-A6D6-4F5109DE6AE7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.FunctionalTests", "eShop Series\part 1\tests\Ordering.FunctionalTests\Ordering.FunctionalTests.csproj", "{36128933-1139-4225-9954-D1DBA8069C5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBusRabbitMQ", "eShop Series\part 1\src\EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{1337CE9A-9C50-4D4C-9FAC-8CB8C88F5E90}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.AppHost", "eShop Series\part 1\src\eShop.AppHost\eShop.AppHost.csproj", "{FA13A19B-1164-4EDE-88BC-ECD878C38AEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "eShop Series\part 1\src\EventBus\EventBus.csproj", "{D499082F-FD6D-4F16-B16B-72270874C687}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.FunctionalTests", "eShop Series\part 1\tests\Basket.FunctionalTests\Basket.FunctionalTests.csproj", "{5F885D0D-6EBB-4E42-B5FA-D90AE2F2BF6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationEventLogEF", "eShop Series\part 1\src\IntegrationEventLogEF\IntegrationEventLogEF.csproj", "{33BB7AB8-CEE3-47BA-BFBB-385B538EA3AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.FunctionalTests", "eShop Series\part 1\tests\Catalog.FunctionalTests\Catalog.FunctionalTests.csproj", "{24B6C270-F2CA-44CA-9329-25FABFD179B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.ServiceDefaults", "eShop Series\part 1\src\eShop.ServiceDefaults\eShop.ServiceDefaults.csproj", "{57715E48-38F3-4921-B4DE-BE2E1F1F317A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "part 2", "part 2", "{141BD1BF-232A-1068-972B-7783DAD3071F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.UnitTests", "eShop Series\part 1\tests\Ordering.UnitTests\Ordering.UnitTests.csproj", "{24354B3C-954A-4C91-A133-F818E85EA4F3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{29A86E9C-E9A1-48F1-8697-7BBA5B240E6E}"
+	ProjectSection(SolutionItems) = preProject
+		eShop Series\part 2\.editorconfig = eShop Series\part 2\.editorconfig
+		eShop Series\part 2\Directory.Packages.props = eShop Series\part 2\Directory.Packages.props
+		eShop Series\part 2\nuget.config = eShop Series\part 2\nuget.config
+		eShop Series\part 2\README.md = eShop Series\part 2\README.md
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.API", "eShop Series\part 1\src\Ordering.API\Ordering.API.csproj", "{16F51B25-1908-4F69-A7DA-3E5E56F4C3C2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6FFA1807-93F1-425B-8549-494355E0B729}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Domain", "eShop Series\part 1\src\Ordering.Domain\Ordering.Domain.csproj", "{73466C1E-BCF9-4C14-9BA3-E8A498C645CA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D66915B2-9106-4154-B1EF-A9092ABBA80D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infrastructure", "eShop Series\part 1\src\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{9B706FAD-F889-44ED-8671-58AF34B77DB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.FunctionalTests", "eShop Series\part 2\tests\Webhooks.FunctionalTests\Webhooks.FunctionalTests.csproj", "{7E4C58E8-0DF3-4AA1-85FA-61810EA6A9C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.FunctionalTests", "eShop Series\part 1\tests\Ordering.FunctionalTests\Ordering.FunctionalTests.csproj", "{2715C9F5-B7FA-43B6-998A-41ED6718F4DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.API", "eShop Series\part 2\src\Webhooks.API\Webhooks.API.csproj", "{EA01B55C-6A30-4E6C-A6D6-4F5109DE6AE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.API", "eShop Series\part 1\src\Identity.API\Identity.API.csproj", "{44A097FE-ECDC-4A24-AD77-37C874956926}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBusRabbitMQ", "eShop Series\part 2\src\EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{1337CE9A-9C50-4D4C-9FAC-8CB8C88F5E90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.AppHost.UnitTests", "eShop Series\part 1\tests\eShop.AppHost.UnitTests\eShop.AppHost.UnitTests.csproj", "{E05A6C79-9CE8-4638-9BF2-A71BB02CD951}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "eShop Series\part 2\src\EventBus\EventBus.csproj", "{D499082F-FD6D-4F16-B16B-72270874C687}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.AppHost", "eShop Series\part 1\src\eShop.AppHost\eShop.AppHost.csproj", "{C07B5A0F-CEC7-4A47-8E79-BC7DBA1AC9B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationEventLogEF", "eShop Series\part 2\src\IntegrationEventLogEF\IntegrationEventLogEF.csproj", "{33BB7AB8-CEE3-47BA-BFBB-385B538EA3AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.API", "eShop Series\part 1\src\Basket.API\Basket.API.csproj", "{B722C7F2-8478-463F-97CF-8E0243B189A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.ServiceDefaults", "eShop Series\part 2\src\eShop.ServiceDefaults\eShop.ServiceDefaults.csproj", "{57715E48-38F3-4921-B4DE-BE2E1F1F317A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.API", "eShop Series\part 1\src\Catalog.API\Catalog.API.csproj", "{A7BC4D81-4D69-43C7-BD47-AB73BBA3DE76}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.UnitTests", "eShop Series\part 2\tests\Ordering.UnitTests\Ordering.UnitTests.csproj", "{24354B3C-954A-4C91-A133-F818E85EA4F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communications.API", "eShop Series\part 1\src\Communications.API\Communications.API.csproj", "{B91C468D-7255-48B0-97C4-1C3908A0902D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.API", "eShop Series\part 2\src\Ordering.API\Ordering.API.csproj", "{16F51B25-1908-4F69-A7DA-3E5E56F4C3C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessor", "eShop Series\part 1\src\OrderProcessor\OrderProcessor.csproj", "{B98AC040-3C97-4683-B0D2-D354EC90BDC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Domain", "eShop Series\part 2\src\Ordering.Domain\Ordering.Domain.csproj", "{73466C1E-BCF9-4C14-9BA3-E8A498C645CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor", "eShop Series\part 1\src\PaymentProcessor\PaymentProcessor.csproj", "{1AACE823-0DBE-4EBF-B30D-7E239C5DF49B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infrastructure", "eShop Series\part 2\src\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{9B706FAD-F889-44ED-8671-58AF34B77DB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "eShop Series\part 1\src\WebApp\WebApp.csproj", "{254FDC61-F6FA-4C7B-8EEA-F19290C0949C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.FunctionalTests", "eShop Series\part 2\tests\Ordering.FunctionalTests\Ordering.FunctionalTests.csproj", "{2715C9F5-B7FA-43B6-998A-41ED6718F4DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppComponents", "eShop Series\part 1\src\WebAppComponents\WebAppComponents.csproj", "{972788E9-0ABB-437A-A487-5B6E2839B18C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.API", "eShop Series\part 2\src\Identity.API\Identity.API.csproj", "{44A097FE-ECDC-4A24-AD77-37C874956926}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebhookClient", "eShop Series\part 1\src\WebhookClient\WebhookClient.csproj", "{A895E842-64A1-4179-979D-0D49F80DB1EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.AppHost.UnitTests", "eShop Series\part 2\tests\eShop.AppHost.UnitTests\eShop.AppHost.UnitTests.csproj", "{E05A6C79-9CE8-4638-9BF2-A71BB02CD951}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp.UnitTests", "eShop Series\part 1\tests\ClientApp.UnitTests\ClientApp.UnitTests.csproj", "{1A6545EF-DE56-4403-A886-6DE4E0F93545}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.AppHost", "eShop Series\part 2\src\eShop.AppHost\eShop.AppHost.csproj", "{C07B5A0F-CEC7-4A47-8E79-BC7DBA1AC9B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp", "eShop Series\part 1\src\ClientApp\ClientApp.csproj", "{D4805303-B2F4-4AA3-A63C-CA938B91E8D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.API", "eShop Series\part 2\src\Basket.API\Basket.API.csproj", "{B722C7F2-8478-463F-97CF-8E0243B189A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.FunctionalTests", "eShop Series\part 1\tests\Catalog.FunctionalTests\Catalog.FunctionalTests.csproj", "{1B8831A7-28AD-42BA-8062-47E3CC7B36AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.API", "eShop Series\part 2\src\Catalog.API\Catalog.API.csproj", "{A7BC4D81-4D69-43C7-BD47-AB73BBA3DE76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.UnitTests", "eShop Series\part 1\tests\Basket.UnitTests\Basket.UnitTests.csproj", "{F6ED02C4-9164-4988-8A53-A2BCAB19FEFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communications.API", "eShop Series\part 2\src\Communications.API\Communications.API.csproj", "{B91C468D-7255-48B0-97C4-1C3908A0902D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.FunctionalTests", "eShop Series\part 1\tests\Basket.FunctionalTests\Basket.FunctionalTests.csproj", "{0C33D251-FD5F-45A2-89E7-4C53839CC0DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessor", "eShop Series\part 2\src\OrderProcessor\OrderProcessor.csproj", "{B98AC040-3C97-4683-B0D2-D354EC90BDC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTests", "eShop Series\part 1\tests\Application.UnitTests\Application.UnitTests.csproj", "{9E272BDA-D548-4D52-B994-0E8EAE500051}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor", "eShop Series\part 2\src\PaymentProcessor\PaymentProcessor.csproj", "{1AACE823-0DBE-4EBF-B30D-7E239C5DF49B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HybridApp", "eShop Series\part 1\src\HybridApp\HybridApp.csproj", "{BE7522D8-058D-4EF8-993A-578059C46278}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "eShop Series\part 2\src\WebApp\WebApp.csproj", "{254FDC61-F6FA-4C7B-8EEA-F19290C0949C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppComponents", "eShop Series\part 2\src\WebAppComponents\WebAppComponents.csproj", "{972788E9-0ABB-437A-A487-5B6E2839B18C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebhookClient", "eShop Series\part 2\src\WebhookClient\WebhookClient.csproj", "{A895E842-64A1-4179-979D-0D49F80DB1EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp.UnitTests", "eShop Series\part 2\tests\ClientApp.UnitTests\ClientApp.UnitTests.csproj", "{1A6545EF-DE56-4403-A886-6DE4E0F93545}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp", "eShop Series\part 2\src\ClientApp\ClientApp.csproj", "{D4805303-B2F4-4AA3-A63C-CA938B91E8D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.FunctionalTests", "eShop Series\part 2\tests\Catalog.FunctionalTests\Catalog.FunctionalTests.csproj", "{1B8831A7-28AD-42BA-8062-47E3CC7B36AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.UnitTests", "eShop Series\part 2\tests\Basket.UnitTests\Basket.UnitTests.csproj", "{F6ED02C4-9164-4988-8A53-A2BCAB19FEFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.FunctionalTests", "eShop Series\part 2\tests\Basket.FunctionalTests\Basket.FunctionalTests.csproj", "{0C33D251-FD5F-45A2-89E7-4C53839CC0DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTests", "eShop Series\part 2\tests\Application.UnitTests\Application.UnitTests.csproj", "{9E272BDA-D548-4D52-B994-0E8EAE500051}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HybridApp", "eShop Series\part 2\src\HybridApp\HybridApp.csproj", "{BE7522D8-058D-4EF8-993A-578059C46278}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1E97ABE8-0BD5-4C34-C9BC-703566E3FC8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.API", "eShop Series\original\src\Basket.API\Basket.API.csproj", "{47F382D9-6C4D-446E-86C2-A576B144E70F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.API", "eShop Series\part 1\src\Basket.API\Basket.API.csproj", "{47F382D9-6C4D-446E-86C2-A576B144E70F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.ServiceDefaults", "eShop Series\original\src\eShop.ServiceDefaults\eShop.ServiceDefaults.csproj", "{7BBA9C1A-AEC8-44B0-9108-21031B350A3A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.ServiceDefaults", "eShop Series\part 1\src\eShop.ServiceDefaults\eShop.ServiceDefaults.csproj", "{7BBA9C1A-AEC8-44B0-9108-21031B350A3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBusRabbitMQ", "eShop Series\original\src\EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{63E92F09-2A4E-40D6-A771-2D72A0B02DC4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBusRabbitMQ", "eShop Series\part 1\src\EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{63E92F09-2A4E-40D6-A771-2D72A0B02DC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "eShop Series\original\src\EventBus\EventBus.csproj", "{30797585-7D50-4C68-B8EA-4EDD5B9BDF5F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "eShop Series\part 1\src\EventBus\EventBus.csproj", "{30797585-7D50-4C68-B8EA-4EDD5B9BDF5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.API", "eShop Series\original\src\Catalog.API\Catalog.API.csproj", "{AA7020C1-24E8-450A-802D-4FBF78D7919E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.API", "eShop Series\part 1\src\Catalog.API\Catalog.API.csproj", "{AA7020C1-24E8-450A-802D-4FBF78D7919E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationEventLogEF", "eShop Series\original\src\IntegrationEventLogEF\IntegrationEventLogEF.csproj", "{6BA81A5A-2AE6-44AB-B5F7-92D04C9F4D35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationEventLogEF", "eShop Series\part 1\src\IntegrationEventLogEF\IntegrationEventLogEF.csproj", "{6BA81A5A-2AE6-44AB-B5F7-92D04C9F4D35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp", "eShop Series\original\src\ClientApp\ClientApp.csproj", "{B2D64689-5196-46EC-8BA4-5FC491047824}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp", "eShop Series\part 1\src\ClientApp\ClientApp.csproj", "{B2D64689-5196-46EC-8BA4-5FC491047824}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HybridApp", "eShop Series\original\src\HybridApp\HybridApp.csproj", "{5726712C-0DCA-40E0-9FC2-B3E887AE9955}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HybridApp", "eShop Series\part 1\src\HybridApp\HybridApp.csproj", "{5726712C-0DCA-40E0-9FC2-B3E887AE9955}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppComponents", "eShop Series\original\src\WebAppComponents\WebAppComponents.csproj", "{98E75412-822E-45E5-9D20-6CF3A636BD3E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppComponents", "eShop Series\part 1\src\WebAppComponents\WebAppComponents.csproj", "{98E75412-822E-45E5-9D20-6CF3A636BD3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.API", "eShop Series\original\src\Identity.API\Identity.API.csproj", "{12E26771-0B42-4711-A873-48F7655D3572}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.API", "eShop Series\part 1\src\Identity.API\Identity.API.csproj", "{12E26771-0B42-4711-A873-48F7655D3572}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.API", "eShop Series\original\src\Ordering.API\Ordering.API.csproj", "{9C3B61BA-F91F-4746-B3D9-01AA9D9F14E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.API", "eShop Series\part 1\src\Ordering.API\Ordering.API.csproj", "{9C3B61BA-F91F-4746-B3D9-01AA9D9F14E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Domain", "eShop Series\original\src\Ordering.Domain\Ordering.Domain.csproj", "{B7193781-A8A7-40A6-B714-BB3BCEAA45D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Domain", "eShop Series\part 1\src\Ordering.Domain\Ordering.Domain.csproj", "{B7193781-A8A7-40A6-B714-BB3BCEAA45D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infrastructure", "eShop Series\original\src\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{0057803C-AE9F-426C-AB0D-E0CFFCEA3F90}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infrastructure", "eShop Series\part 1\src\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{0057803C-AE9F-426C-AB0D-E0CFFCEA3F90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessor", "eShop Series\original\src\OrderProcessor\OrderProcessor.csproj", "{CDA8C103-ECCE-4E41-B6BB-6EF061A6A81F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessor", "eShop Series\part 1\src\OrderProcessor\OrderProcessor.csproj", "{CDA8C103-ECCE-4E41-B6BB-6EF061A6A81F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor", "eShop Series\original\src\PaymentProcessor\PaymentProcessor.csproj", "{9787DC5D-0CA6-4F10-B0D6-C01F009FCFF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor", "eShop Series\part 1\src\PaymentProcessor\PaymentProcessor.csproj", "{9787DC5D-0CA6-4F10-B0D6-C01F009FCFF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "eShop Series\original\src\WebApp\WebApp.csproj", "{CEE8888D-0084-4706-89B9-C54F2985AF1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "eShop Series\part 1\src\WebApp\WebApp.csproj", "{CEE8888D-0084-4706-89B9-C54F2985AF1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebhookClient", "eShop Series\original\src\WebhookClient\WebhookClient.csproj", "{EC2177D8-DC3F-4ADE-99CD-407A5314E1A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebhookClient", "eShop Series\part 1\src\WebhookClient\WebhookClient.csproj", "{EC2177D8-DC3F-4ADE-99CD-407A5314E1A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.API", "eShop Series\original\src\Webhooks.API\Webhooks.API.csproj", "{96E142CA-032C-488A-9304-E236E56D68A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhooks.API", "eShop Series\part 1\src\Webhooks.API\Webhooks.API.csproj", "{96E142CA-032C-488A-9304-E236E56D68A1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E9516996-5A4C-0FE8-D407-ADDDFDF8BB8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTests", "eShop Series\original\tests\Application.UnitTests\Application.UnitTests.csproj", "{3802C3FE-4BD5-4BB5-9C29-24EFF9484428}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTests", "eShop Series\part 1\tests\Application.UnitTests\Application.UnitTests.csproj", "{3802C3FE-4BD5-4BB5-9C29-24EFF9484428}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.UnitTests", "eShop Series\original\tests\Basket.UnitTests\Basket.UnitTests.csproj", "{1D4E13B1-EC26-4C4D-91D2-62421079591E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.UnitTests", "eShop Series\part 1\tests\Basket.UnitTests\Basket.UnitTests.csproj", "{1D4E13B1-EC26-4C4D-91D2-62421079591E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp.UnitTests", "eShop Series\original\tests\ClientApp.UnitTests\ClientApp.UnitTests.csproj", "{14BF8CDB-2192-497A-A8B9-0F07222EBF3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp.UnitTests", "eShop Series\part 1\tests\ClientApp.UnitTests\ClientApp.UnitTests.csproj", "{14BF8CDB-2192-497A-A8B9-0F07222EBF3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.AppHost.UnitTests", "eShop Series\original\tests\eShop.AppHost.UnitTests\eShop.AppHost.UnitTests.csproj", "{8A2C5CBE-3638-4652-9841-5775220DAA56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.AppHost.UnitTests", "eShop Series\part 1\tests\eShop.AppHost.UnitTests\eShop.AppHost.UnitTests.csproj", "{8A2C5CBE-3638-4652-9841-5775220DAA56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.UnitTests", "eShop Series\original\tests\Ordering.UnitTests\Ordering.UnitTests.csproj", "{F1F19B84-B1D8-48E7-B623-3336CA859C11}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.UnitTests", "eShop Series\part 1\tests\Ordering.UnitTests\Ordering.UnitTests.csproj", "{F1F19B84-B1D8-48E7-B623-3336CA859C11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -779,6 +778,7 @@ Global
 		{B2D64689-5196-46EC-8BA4-5FC491047824}.Release|x86.Build.0 = Release|Any CPU
 		{5726712C-0DCA-40E0-9FC2-B3E887AE9955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5726712C-0DCA-40E0-9FC2-B3E887AE9955}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5726712C-0DCA-40E0-9FC2-B3E887AE9955}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{5726712C-0DCA-40E0-9FC2-B3E887AE9955}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{5726712C-0DCA-40E0-9FC2-B3E887AE9955}.Debug|x64.Build.0 = Debug|Any CPU
 		{5726712C-0DCA-40E0-9FC2-B3E887AE9955}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -981,16 +981,16 @@ Global
 		{599143FF-61CE-36CC-E7D6-2EEC51AEEAA2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{EB1A3706-1A78-D7E0-A143-742B7BEC4D1C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{241B6595-9584-9032-687D-95314F08C5D4} = {865224F2-22AC-41A9-B7B2-20280B695A1B}
+		{94CB04CC-FBB9-4A46-A17A-60F0227C7D1D} = {241B6595-9584-9032-687D-95314F08C5D4}
 		{F8E952B1-126E-4119-99B0-A1C825C7A650} = {E9516996-5A4C-0FE8-D407-ADDDFDF8BB8A}
 		{36128933-1139-4225-9954-D1DBA8069C5A} = {E9516996-5A4C-0FE8-D407-ADDDFDF8BB8A}
 		{FA13A19B-1164-4EDE-88BC-ECD878C38AEE} = {1E97ABE8-0BD5-4C34-C9BC-703566E3FC8C}
 		{5F885D0D-6EBB-4E42-B5FA-D90AE2F2BF6A} = {E9516996-5A4C-0FE8-D407-ADDDFDF8BB8A}
 		{24B6C270-F2CA-44CA-9329-25FABFD179B0} = {E9516996-5A4C-0FE8-D407-ADDDFDF8BB8A}
-		{94CB04CC-FBB9-4A46-A17A-60F0227C7D1D} = {241B6595-9584-9032-687D-95314F08C5D4}
 		{141BD1BF-232A-1068-972B-7783DAD3071F} = {865224F2-22AC-41A9-B7B2-20280B695A1B}
+		{29A86E9C-E9A1-48F1-8697-7BBA5B240E6E} = {141BD1BF-232A-1068-972B-7783DAD3071F}
 		{6FFA1807-93F1-425B-8549-494355E0B729} = {141BD1BF-232A-1068-972B-7783DAD3071F}
 		{D66915B2-9106-4154-B1EF-A9092ABBA80D} = {141BD1BF-232A-1068-972B-7783DAD3071F}
-		{29A86E9C-E9A1-48F1-8697-7BBA5B240E6E} = {141BD1BF-232A-1068-972B-7783DAD3071F}
 		{7E4C58E8-0DF3-4AA1-85FA-61810EA6A9C9} = {D66915B2-9106-4154-B1EF-A9092ABBA80D}
 		{EA01B55C-6A30-4E6C-A6D6-4F5109DE6AE7} = {6FFA1807-93F1-425B-8549-494355E0B729}
 		{1337CE9A-9C50-4D4C-9FAC-8CB8C88F5E90} = {6FFA1807-93F1-425B-8549-494355E0B729}

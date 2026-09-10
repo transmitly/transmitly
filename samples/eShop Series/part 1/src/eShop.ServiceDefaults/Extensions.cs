@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Transmitly;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -75,7 +74,7 @@ public static partial class Extensions
                 tracing.AddAspNetCoreInstrumentation()
                     .AddGrpcClientInstrumentation()
                     .AddHttpClientInstrumentation()
-                    .AddSource("Experimental.Microsoft.Extensions.AI");
+                    .AddSource("Experimental.Microsoft.Extensions.AI");                    
             });
 
         builder.AddOpenTelemetryExporters();
@@ -96,7 +95,6 @@ public static partial class Extensions
 
         return builder;
     }
-
 
     public static IHostApplicationBuilder AddDefaultHealthChecks(this IHostApplicationBuilder builder)
     {

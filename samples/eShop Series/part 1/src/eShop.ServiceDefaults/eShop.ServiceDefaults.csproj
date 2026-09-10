@@ -24,7 +24,5 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
-    <PackageReference Include="Transmitly" />
-    <PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 </Project>

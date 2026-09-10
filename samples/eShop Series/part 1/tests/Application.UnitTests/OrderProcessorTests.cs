@@ -1,8 +1,6 @@
 using eShop.EventBus.Abstractions;
 using eShop.OrderProcessor;
 using eShop.OrderProcessor.Events;
-using eShop.OrderProcessor.IntegrationEvents.EventHandling;
-using eShop.OrderProcessor.IntegrationEvents.Events;
 using eShop.OrderProcessor.Services;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -39,19 +37,5 @@ public class OrderProcessorTests
             Arg.Is<GracePeriodConfirmedIntegrationEvent>(e => e.OrderId == 12));
         await eventBus.Received(1).PublishAsync(
             Arg.Is<GracePeriodConfirmedIntegrationEvent>(e => e.OrderId == 34));
-    }
-
-    [TestMethod]
-    public async Task PublishesShippingCompletionWhenAnOrderIsPaid()
-    {
-        var eventBus = Substitute.For<IEventBus>();
-        var handler = new OrderStatusChangedToPaidIntegrationEventHandler(
-            eventBus,
-            NullLogger<OrderStatusChangedToPaidIntegrationEventHandler>.Instance);
-
-        await handler.Handle(new OrderStatusChangedToPaidIntegrationEvent(42));
-
-        await eventBus.Received(1).PublishAsync(
-            Arg.Is<OrderShippingCompletedIntegrationEvent>(e => e.OrderId == 42));
     }
 }

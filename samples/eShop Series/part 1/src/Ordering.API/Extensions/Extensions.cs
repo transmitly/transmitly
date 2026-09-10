@@ -57,6 +57,5 @@ internal static class Extensions
         eventBus.AddSubscription<OrderStockRejectedIntegrationEvent, OrderStockRejectedIntegrationEventHandler>();
         eventBus.AddSubscription<OrderPaymentFailedIntegrationEvent, OrderPaymentFailedIntegrationEventHandler>();
         eventBus.AddSubscription<OrderPaymentSucceededIntegrationEvent, OrderPaymentSucceededIntegrationEventHandler>();
-        eventBus.AddSubscription<OrderShippingCompletedIntegrationEvent, OrderShippingCompletedIntegrationEventHandler>();
     }
 }

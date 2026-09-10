@@ -39,19 +39,19 @@
     ]
   },
   {
-    "Name": "eShop Original",
+    "Name": "eShop Part 1",
     "Projects": [
       {
-        "Path": "eShop Series\\original\\src\\eShop.AppHost\\eShop.AppHost.csproj",
+        "Path": "eShop Series\\part 1\\src\\eShop.AppHost\\eShop.AppHost.csproj",
         "Action": "Start"
       }
     ]
   },
   {
-    "Name": "eShop Part 1",
+    "Name": "eShop Part 2",
     "Projects": [
       {
-        "Path": "eShop Series\\part 1\\src\\eShop.AppHost\\eShop.AppHost.csproj",
+        "Path": "eShop Series\\part 2\\src\\eShop.AppHost\\eShop.AppHost.csproj",
         "Action": "Start"
       }
     ]

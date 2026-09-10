@@ -4,7 +4,6 @@
     "projects": [
       "src\\Basket.API\\Basket.API.csproj",
       "src\\Catalog.API\\Catalog.API.csproj",
-      "src\\Communications.API\\Communications.API.csproj",
       "src\\EventBusRabbitMQ\\EventBusRabbitMQ.csproj",
       "src\\EventBus\\EventBus.csproj",
       "src\\Identity.API\\Identity.API.csproj",

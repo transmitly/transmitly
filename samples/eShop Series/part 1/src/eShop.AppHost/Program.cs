@@ -38,14 +38,9 @@ var catalogApi = builder.AddProject<Projects.Catalog_API>("catalog-api")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(catalogDb);
 
-var communicationsApi = builder.AddProject<Projects.Communications_API>("communications-api")
-    .WithReference(identityApi).WaitFor(identityApi)
-    .WithHttpHealthCheck("/health");
-
 var orderingApi = builder.AddProject<Projects.Ordering_API>("ordering-api")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(orderDb).WaitFor(orderDb)
-    .WithReference(communicationsApi).WaitFor(communicationsApi)
     .WithHttpHealthCheck("/health")
     .WithEnvironment("Identity__Url", identityEndpoint);
 

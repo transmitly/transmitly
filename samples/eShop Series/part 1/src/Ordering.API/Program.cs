@@ -2,7 +2,6 @@
 
 builder.AddServiceDefaults();
 builder.AddApplicationServices();
-builder.Services.AddEshopCommunications();
 builder.Services.AddProblemDetails();
 
 var withApiVersioning = builder.Services.AddApiVersioning(options =>

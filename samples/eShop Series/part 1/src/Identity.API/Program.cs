@@ -36,9 +36,6 @@ builder.Services.AddIdentityServer(options =>
 // TODO: Not recommended for production - you need to store your key material somewhere secure
 .AddDeveloperSigningCredential();
 
-// Allows trusted eShop services to call Identity-owned APIs with a service token.
-builder.Services.AddLocalApiAuthentication();
-
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
@@ -55,7 +52,6 @@ app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthorization();
 
-eShop.Identity.API.Apis.IdentityApi.MapIdentityApi(app);
 app.MapDefaultControllerRoute();
 
 app.Run();
