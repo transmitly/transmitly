@@ -46,6 +46,32 @@ public class SmsChannelTests : BaseUnitTest
 	}
 
 	[TestMethod]
+	[DataRow("cell-phone")]
+	[DataRow("phone")]
+	[DataRow("mobile-phone")]
+	public void SupportsIdentityAddressShouldAllowSupportedSmsAddressTypes(string addressType)
+	{
+		var sms = new SmsChannel(new SmsChannelConfiguration());
+		var address = new PlatformIdentityAddress("+14155552671", type: addressType);
+
+		var result = sms.SupportsIdentityAddress(address);
+
+		Assert.IsTrue(result, addressType);
+	}
+
+	[TestMethod]
+	[DataRow("cell-phone", true)]
+	[DataRow("home-phone", false)]
+	[DataRow("email", false)]
+	public void SupportsIdentityAddressShouldRespectExplicitSmsAddressType(string addressType, bool expected)
+	{
+		var sms = new SmsChannel(new SmsChannelConfiguration());
+		var address = new PlatformIdentityAddress("+14155552671", type: addressType);
+
+		Assert.AreEqual(expected, sms.SupportsIdentityAddress(address), addressType);
+	}
+
+	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldGuardAgainstNullContext()
 	{
 		var channel = fixture.Create<SmsChannel>();

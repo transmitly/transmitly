@@ -75,6 +75,19 @@ public class EmailChannelTests : BaseUnitTest
 	}
 
 	[TestMethod]
+	[DataRow("email@example.com", "email", true)]
+	[DataRow("email@example.com", "EMAIL", true)]
+	[DataRow("1234567890@example.com", "mobile", false)]
+	[DataRow("invalid", "email", false)]
+	public void SupportsIdentityAddressShouldValidateTypeAndValue(string value, string addressType, bool expected)
+	{
+		var channel = new EmailChannel(new EmailChannelConfiguration(_ => fixture.Create<IPlatformIdentityAddress>()));
+		var address = new PlatformIdentityAddress(value, type: addressType);
+
+		Assert.AreEqual(expected, channel.SupportsIdentityAddress(address), addressType + ":" + value);
+	}
+
+	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldGuardAgainstNullContext()
 	{
 		var channel = new EmailChannel(new EmailChannelConfiguration(_ => fixture.Create<IPlatformIdentityAddress>()));

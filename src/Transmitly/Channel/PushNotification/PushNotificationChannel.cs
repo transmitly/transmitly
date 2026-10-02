@@ -27,7 +27,6 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 #endif
 {
 	private readonly IPushNotificationChannelConfiguration _configuration = Guard.AgainstNull(configuration);
-	private static readonly string[] _supportedAddressTypes = [PlatformIdentityAddress.Types.DeviceToken(), PlatformIdentityAddress.Types.Topic()];
 	private static readonly HashSet<string> _deviceTokenKeys = new(StringComparer.OrdinalIgnoreCase)
 	{
 		PlatformIdentityAddress.Types.DeviceToken(), "devicetoken", "device_token", "push-token", "pushtoken", "push_token", "token"
@@ -70,9 +69,9 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 			return false;
 		}
 
-		if (identityAddress.Type is string type && _supportedAddressTypes.Contains(type))
+		if (identityAddress.Type is string type && !string.IsNullOrWhiteSpace(type))
 		{
-			return true;
+			return _deviceTokenKeys.Contains(type) || _topicKeys.Contains(type);
 		}
 
 		return IsDeviceToken(identityAddress) || IsTopic(identityAddress);
@@ -106,11 +105,6 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 
 	private static bool MatchesConvention(IPlatformIdentityAddress identityAddress, HashSet<string> keys)
 	{
-		if (identityAddress.Type is string type && keys.Contains(type))
-		{
-			return true;
-		}
-
 		if (identityAddress.Purposes is not null && identityAddress.Purposes.Any(p => p is not null && keys.Contains(p)))
 		{
 			return true;

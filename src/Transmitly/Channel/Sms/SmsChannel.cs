@@ -64,13 +64,8 @@ internal sealed class SmsChannel(ISmsChannelConfiguration configuration) : IChan
 	public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
 	{
 		return identityAddress != null &&
-					(
-						string.IsNullOrWhiteSpace(identityAddress.Type) ||
-						(
-							!string.IsNullOrWhiteSpace(identityAddress.Type) &&
-							!_supportedAddressTypes.Contains(identityAddress.Type)
-						)
-					) &&
+					(string.IsNullOrWhiteSpace(identityAddress.Type) ||
+					 _supportedAddressTypes.Contains(identityAddress.Type)) &&
 					_smsMatchRegex.IsMatch(identityAddress.Value);
 	}
 

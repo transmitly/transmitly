@@ -83,7 +83,8 @@ internal sealed class EmailChannel(IEmailChannelConfiguration configuration) : I
 	{
 		return identityAddress != null &&
 					!string.IsNullOrWhiteSpace(identityAddress.Value) &&
-					(identityAddress.IsType(PlatformIdentityAddress.Types.Email()) || _emailMatchRegex.IsMatch(identityAddress.Value));
+					(string.IsNullOrWhiteSpace(identityAddress.Type) || identityAddress.IsType(PlatformIdentityAddress.Types.Email())) &&
+					_emailMatchRegex.IsMatch(identityAddress.Value);
 	}
 
 	async Task<object> IChannel.GenerateCommunicationAsync(IDispatchCommunicationContext communicationContext)

@@ -101,13 +101,8 @@ internal sealed class VoiceChannel(IVoiceChannelConfiguration configuration) : I
 	public bool SupportsIdentityAddress(IPlatformIdentityAddress identityAddress)
 	{
 		return identityAddress != null &&
-					(
-						string.IsNullOrWhiteSpace(identityAddress.Type) ||
-						(
-							!string.IsNullOrWhiteSpace(identityAddress.Type) &&
-							!_supportedAddressTypes.Contains(identityAddress.Type)
-						)
-					) &&
+					(string.IsNullOrWhiteSpace(identityAddress.Type) ||
+					 _supportedAddressTypes.Contains(identityAddress.Type)) &&
 					_voiceMatchRegex.IsMatch(identityAddress.Value);
 	}
 
