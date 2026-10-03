@@ -390,4 +390,65 @@ The provider-agnostic `DeliveryReport` means the recording, the inbox, and anyth
 
 Adding a provider doesn't change any of it. A new provider's package brings its own request adaptor, and its callbacks start landing in the same tables.
 
-In Part 6 we return to enrichment, the stage that's quietly been doing a lot of the work since Part 3, and see how far it can go.
+## Looking back
+
+This series started with a line most applications have somewhere:
+
+```csharp
+await emailClient.SendAsync(...);
+```
+
+The usual next step is to inject that client into the service that knows something happened. It works, until it doesn't. The service learns how to find the customer's email address, then what to put in the message, then which template to use. When SMS arrives, it learns about phone numbers and a second provider SDK. When someone asks whether the message actually arrived, it learns about webhooks. Each step is reasonable. Together they turn a business service into a communications service that happens to manage orders.
+
+eShop never went down that road. Ordering states one intent when an order is created, names the buyer by identity, and hands over the order facts it already has. Its code last changed in Part 3. Since then the communication behind that call has picked up product details from Catalog, two more channels, a different channel for each buyer, delivery tracking from any provider, and an inbox, and none of it touched Ordering.
+
+That's the first thing Transmitly bought us: a stable seam. Application code talks to `ICommunicationsClient` and an intent name. Whether the pipeline runs in the same process or behind a Communications service is a middleware decision, and so is waiting for a database commit before anything goes out. Ordering didn't have to know about either.
+
+The second is that each concern lives with the data it needs. Recipients are resolved through Identity, which owns them, instead of being copied into every service that sends something. Product details come from Catalog at composition time instead of being dragged through Ordering. A content model built for communicating sits between the business facts and the templates, so email, SMS, and push can each use it differently without anyone reassembling the data.
+
+The third is that delivery decisions became policy rather than code. Which channels a buyer can be reached on falls out of their verified addresses. Whether they get one message or several is the pipeline's delivery strategy. Which company carries each channel is a provider registration, and swapping SMTP for SendGrid or the simulator for Twilio leaves the pipeline, the templates, and every dispatching service alone.
+
+The fourth is visibility after the send. Delivery reports from the simulator and from Twilio arrive in one provider-agnostic shape, so recording them, showing them in an inbox, or alerting on them is written once. When a provider's own details matter, like Twilio's error code, they're still there.
+
+And all of it could be exercised without an account, an API key, or a network connection. The simulator ran the whole pipeline, and the tests composed real messages through real pipeline configuration in milliseconds.
+
+## Shaped around eShop
+
+None of that required eShop to reorganize itself around a library. Look at the pieces we wrote:
+
+```text
+IdentityServerCustomerIdentityResolver   IPlatformIdentityResolver
+PushRegistrationProfileEnricher          IPlatformIdentityProfileEnricher
+CatalogContentModelEnricher              IContentModelEnricher
+EshopCommunicationsMiddleware            ICommunicationClientMiddleware
+TransactionalCommunicationsMiddleware    ICommunicationClientMiddleware
+```
+
+Each one adapts Transmitly to something eShop already had. Buyers stayed in Identity, behind an endpoint Identity owns and a service token Identity issues. Product data stayed behind Catalog's existing batch endpoint. The commit deferral hooks into Ordering's own `TransactionBehavior`. Forwarding uses Aspire's service discovery and eShop's shared service defaults. Transmitly supplied the extension points, and eShop decided what went in them.
+
+That's the right way round. A communications library that dictates where identities live, how transactions work, or how services talk to each other forces its way of working onto every system it touches. Transmitly asks for an implementation of a small interface at the point it needs one.
+
+The built-in pieces work the same way, so when something isn't in the box, it can be added without changing Transmitly:
+
+- **Channel providers** are a dispatcher registered against the channels it supports. A provider Transmitly doesn't ship, an in-house SMS gateway for example, is an `IChannelProviderDispatcher<T>` and a registration.
+- **Provider webhooks** come in through `IChannelProviderDeliveryReportRequestAdaptor`, the same interface Twilio's adaptor implements in this article.
+- **Template engines** implement `ITemplateEngine`, which is how the Fluid and Scriban integrations work.
+- **Delivery strategies** derive from `BasePipelineDeliveryStrategyProvider`, if first match and any match don't describe your policy.
+- **Channels** implement `IChannel`, for a medium beyond email, SMS, push, and voice.
+
+The packaged providers and integrations are small, separate repositories, which makes them good references for writing your own.
+
+## There's a lot more in Transmitly
+
+The series used a fraction of what Transmitly does. A few of the pieces we didn't get to:
+
+- **Template engines.** Our templates were C# methods that built strings. Transmitly has pluggable template engines, with Fluid and Scriban integrations, so content can live in templates instead of code.
+- **More providers and channels.** Beyond SMTP, Twilio, and Firebase there are SendGrid and Mailgun for email, and Infobip for email, SMS, and voice. Voice is a channel in its own right, supported by Twilio and Infobip.
+- **Personas.** Define audience segments as conditions over the recipient profile with `AddPersona`, then let a pipeline apply only to the segments it names with `AddPersonaFilter`. It's a natural next step from this article's verified addresses.
+- **Channel preferences.** A dispatch can name the channels a recipient has chosen, and Transmitly will only deliver on those. Part 2's contract already carries them as `AllowedChannels`.
+- **Dispatch middleware.** We used client middleware to forward dispatches and to wait for a commit. Dispatch middleware runs around each channel dispatch inside the pipeline, which is a good home for concerns like auditing.
+- **Filtered delivery report handlers.** Handlers can subscribe to specific events, channels, providers, or intents, rather than every report like ours did.
+
+The best place to go from here is the repository: [github.com/transmitly/transmitly](https://github.com/transmitly/transmitly). It has the list of channel providers and integrations, the [samples](https://github.com/transmitly/transmitly/tree/main/samples), including this series and smaller starting points like Hello Transmitly and the Microservices sample, and the [wiki](https://github.com/transmitly/transmitly/wiki).
+
+If you try it and something is confusing, missing, or more ceremony than it's worth, the project wants to hear about it in [GitHub Discussions](https://github.com/transmitly/transmitly/discussions).
