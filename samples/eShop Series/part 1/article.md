@@ -1,4 +1,4 @@
-Almost every application sends communications. Most of us call them notifications: order confirmations, password resets, account created, shipping updates, security alerts. They are so ordinary that, while an application is new, nobody treats them as a separate architectural concern.
+Almost every application sends communications. Most of us call them notifications: order confirmations, password resets, account created, shipping updates, security alerts. They're so ordinary that, while an application is new, nobody treats them as a separate architectural concern.
 
 They usually start like this:
 
@@ -22,7 +22,7 @@ This series adds a communications service to eShop. Before writing any code, we'
 
 Take the confirmation we send after an order is created. Ordering looks like the obvious owner. It knows the order exists, and it holds the order number, line items, quantities, and the rest of the ordering data.
 
-However, a good order communication might also include the recipient's name and email address, payment information, shipping details, localization settings, or communication preferences. Each of those has a natural owner, and that owner isn't necessarily Ordering.
+But a good order communication might also include the recipient's name and email address, payment information, shipping details, localization settings, or communication preferences. Each of those has a natural owner, and that owner isn't necessarily Ordering.
 
 eShop demonstrates these boundaries well. Ordering has its own model of a buyer, shaped for ordering. It keeps an identity identifier and whatever else Ordering needs to do its work. That model doesn't need to grow into a full representation of the user's identity just because we eventually want to send a message.
 
@@ -293,15 +293,9 @@ to:
 
 > Thanks, Alice! We've received order #123.
 
-is a communication change.
+is a communication change. So is adding an SMS version, and so is localizing the message. Moving from SMTP to SendGrid is a delivery change.
 
-Adding an SMS version is a communication change.
-
-Localizing the message is a communication change.
-
-Changing from SMTP to SendGrid is a delivery change.
-
-None of these require a change to the Ordering model.
+None of them touch the Ordering model.
 
 That's the practical value of keeping composition inside Communications. Content can evolve with customer-experience requirements while the originating business domains stay focused on their own models.
 
@@ -339,7 +333,7 @@ The business domains stay responsible for the facts and rules they own. Communic
 
 ## Applying the model to eShop
 
-Microsoft's eShop is a good place to try this, because it already has real domain and service boundaries.
+eShop's real service boundaries make it a good place to try this.
 
 When Ordering completes an operation like creating an order, it stays the authority on that business action. As part of completing it, Ordering can express an `OrderCreated` communication intent using the identifiers and facts it owns.
 
@@ -374,7 +368,7 @@ Integration events still matter here. They carry facts between bounded contexts 
 
 The business service can state that decision directly.
 
-That keeps one property of the design intact: business intent stays explicit where the business operation happens, and communication policy stays centralized in the domain responsible for communication.
+Business intent stays explicit where the business operation happens, and communication policy stays in one place, the domain responsible for communication.
 
 ## Where Transmitly enters the picture
 
@@ -397,3 +391,7 @@ Communications
 ```
 
 Ordering stays responsible for knowing that an order was created and that the operation gives it a reason to communicate. After that, the communication belongs to a domain built to compose and deliver it.
+
+---
+
+**Next: [Part 2, Adding Email Without Coupling to Email](../part%202/article.md).** Ordering dispatches its first `OrderCreated` intent, and a new Communications service turns it into an email without Ordering ever choosing email.

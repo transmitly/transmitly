@@ -58,7 +58,7 @@ eShop's two seeded buyers are set up to show the difference. Alice has verified 
              Email                      SMS
 ```
 
-Ordering sent exactly the same intent for both. It never knew an email address or a phone number existed. Communications resolved each buyer, applied its policy, and picked the channel.
+Ordering sent exactly the same intent for both. It never knew an email address or a phone number existed. Communications resolved each buyer and picked the channel.
 
 That's the coupling Part 2 started with, removed. Back then Ordering handed over an email address, so every order confirmation was an email. Now the buyer's identity decides.
 
@@ -340,9 +340,9 @@ Sent                Channel   Message                                    Status
                               Order created
 ```
 
-One order each, one message each, and a different channel for each, because their verified addresses differ. With Twilio configured, bob's SMS moves on from `Dispatched` as Twilio's updates arrive.
+Each of them placed one order and got one message, on different channels, because their verified addresses differ. With Twilio configured, bob's SMS moves on from `Dispatched` as Twilio's updates arrive.
 
-The same records could feed other things too. A support tool could show a customer's full delivery history. An alert could fire when one provider's failure rate climbs. A retry policy could resend an undelivered SMS as an email. None of those need anything new from the providers, or from Ordering.
+The same records could feed other things too. A support tool could show a customer's full delivery history, or an alert could fire when one provider's failure rate climbs. Neither needs anything new from the providers, or from Ordering.
 
 ## Testing without a provider
 
@@ -398,19 +398,19 @@ This series started with a line most applications have somewhere:
 await emailClient.SendAsync(...);
 ```
 
-The usual next step is to inject that client into the service that knows something happened. It works, until it doesn't. The service learns how to find the customer's email address, then what to put in the message, then which template to use. When SMS arrives, it learns about phone numbers and a second provider SDK. When someone asks whether the message actually arrived, it learns about webhooks. Each step is reasonable. Together they turn a business service into a communications service that happens to manage orders.
+The usual next step is to inject that client into the service that knows something happened. That holds up for a while. Then the service learns how to find the customer's email address, then what to put in the message, then which template to use. When SMS arrives, it learns about phone numbers and a second provider SDK. When someone asks whether the message actually arrived, it learns about webhooks. Each step is reasonable. Together they turn a business service into a communications service that happens to manage orders.
 
 eShop never went down that road. Ordering states one intent when an order is created, names the buyer by identity, and hands over the order facts it already has. Its code last changed in Part 3. Since then the communication behind that call has picked up product details from Catalog, two more channels, a different channel for each buyer, delivery tracking from any provider, and an inbox, and none of it touched Ordering.
 
-That's the first thing Transmitly bought us: a stable seam. Application code talks to `ICommunicationsClient` and an intent name. Whether the pipeline runs in the same process or behind a Communications service is a middleware decision, and so is waiting for a database commit before anything goes out. Ordering didn't have to know about either.
+What Transmitly bought us first was a stable seam. Application code talks to `ICommunicationsClient` and an intent name, and that's all. Whether the pipeline runs in the same process or behind a Communications service is a middleware decision, and so is waiting for a database commit before anything goes out. Ordering didn't have to know about either.
 
-The second is that each concern lives with the data it needs. Recipients are resolved through Identity, which owns them, instead of being copied into every service that sends something. Product details come from Catalog at composition time instead of being dragged through Ordering. A content model built for communicating sits between the business facts and the templates, so email, SMS, and push can each use it differently without anyone reassembling the data.
+Behind that seam, each concern could live with the data it needs. Recipients are resolved through Identity, which owns them, instead of being copied into every service that sends something. Product details come from Catalog at composition time rather than being dragged through Ordering. And because a content model built for communicating sits between the business facts and the templates, email, SMS, and push each use it differently without anyone reassembling the data.
 
-The third is that delivery decisions became policy rather than code. Which channels a buyer can be reached on falls out of their verified addresses. Whether they get one message or several is the pipeline's delivery strategy. Which company carries each channel is a provider registration, and swapping SMTP for SendGrid or the simulator for Twilio leaves the pipeline, the templates, and every dispatching service alone.
+Delivery decisions stopped being code. A buyer's verified addresses decide which channels can reach them, the pipeline's delivery strategy decides whether they get one message or several, and a provider registration decides which company carries each channel. Swapping SMTP for SendGrid, or the simulator for Twilio, leaves the pipeline and every dispatching service alone.
 
-The fourth is visibility after the send. Delivery reports from the simulator and from Twilio arrive in one provider-agnostic shape, so recording them, showing them in an inbox, or alerting on them is written once. When a provider's own details matter, like Twilio's error code, they're still there.
+We also got to see what happened after the send. Reports from the simulator and from Twilio arrive in one provider-agnostic shape, so the recording and the inbox were written once. When a provider's own details matter, like Twilio's error code, they're still there.
 
-And all of it could be exercised without an account, an API key, or a network connection. The simulator ran the whole pipeline, and the tests composed real messages through real pipeline configuration in milliseconds.
+None of it needed a provider account or a network connection to build. The simulator ran the whole pipeline, and the tests composed real messages through real pipeline configuration in milliseconds.
 
 ## Shaped around eShop
 

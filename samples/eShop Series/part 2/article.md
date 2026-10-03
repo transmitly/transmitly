@@ -1,6 +1,6 @@
 Part 1 ended with a plan: add Transmitly to Microsoft eShop, create a new boundary around an order communication, and start with simulated delivery.
 
-We'll add an `OrderCreated` communication to Microsoft's .NET eShop reference application. The first version produces an email, but the application code in Ordering only ever deals with the intent.
+This article adds an `OrderCreated` communication. The first version produces an email, but Ordering's code only ever deals with the intent.
 
 The flow is simple:
 
@@ -386,7 +386,7 @@ Model
 
 Communications uses that context to build whatever the configured pipeline needs. Today that's one email.
 
-This is the shortcut mentioned earlier, and it's worth being honest about. By passing an address, Ordering has taken on a small piece of address management. One email claim from a token is easy to live with. But when SMS arrives, the same buyer also needs a phone number:
+This is the shortcut from earlier. By passing an address, Ordering has taken on a small piece of address management. One email claim from a token is easy to live with. But when SMS arrives, the same buyer also needs a phone number:
 
 ```text
 +1 555 ...
@@ -550,9 +550,7 @@ The shared code stays small because it defines how to reach Communications, not 
 
 That keeps the catalog centralized without making every application depend on a catalog library.
 
-> The communications client and the applications don't have to evolve in lockstep. That opens up an advanced but useful workflow: developers and the communications team can each work at their own pace.
-
-> Developers can dispatch intents before those intents are configured in Communications. The communications team can then wire up templates, channels, and delivery strategy on their own schedule.
+> The communications client and the applications don't have to evolve in lockstep. Developers can dispatch intents before Communications has configured them, and the communications team can wire up templates, channels, and delivery strategy on its own schedule.
 
 ## Where we ended up
 
@@ -594,4 +592,8 @@ await communicationsClient.DispatchAsync(
 
 We have an email in the system now. The bigger result is the communications boundary around it.
 
-Next, we'll take the email address out of Ordering's hands. Ordering will dispatch the buyer's identity, and Communications will resolve the customer profile, use it and the order data in templates, and enrich the model across service boundaries. After that, `OrderCreated` fans out to more channels.
+The one piece of that call that won't last is `buyerEmail`.
+
+---
+
+**Next: [Part 3, Model Intent, Not Delivery](../part%203/article.md).** Ordering stops passing an email address, and Communications resolves the buyer through Identity and enriches the order with product details from Catalog.

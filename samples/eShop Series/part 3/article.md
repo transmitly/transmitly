@@ -14,7 +14,7 @@ It was enough to prove the boundary. It isn't enough to be useful to a customer.
 
 A good order confirmation might include the customer's name, the items in the order, the amount paid, and product details. Some of that is already in hand when Ordering dispatches. The rest belongs to other services.
 
-Part 1 gave that assembly job to Communications: Ordering supplies the identifiers and facts it owns, and Communications assembles the communication model. This article builds that step. Of the work Part 2 listed as next, we cover resolving the recipient and enriching the model here. Fanning out to more channels, and the policy for choosing among them, comes in Part 4.
+Part 1 gave that assembly job to Communications: Ordering supplies the identifiers and facts it owns, and Communications assembles the communication model. This article builds that step, starting with the recipient. More channels, and the policy for choosing among them, come in Part 4.
 
 Transmitly treats the model supplied at dispatch as input to composition. Before content reaches a template, the pipeline can resolve platform identities, enrich those identity profiles, and enrich the content model itself.
 
@@ -189,11 +189,7 @@ IPlatformIdentityProfile
     +-- Other identities
 ```
 
-For today's pipeline, the profile might only provide the customer's name and email address. The abstraction matters more once other channels show up.
-
-Either way, the originating application keeps identifying the buyer with the same platform identity while the communication strategy changes around it.
-
-Identity resolution expresses the recipient in the vocabulary Communications needs.
+Today's email only needs the name and the email address. The rest matters once other channels show up, and Ordering keeps sending the same identity reference while that happens.
 
 ## Enriching the identity profile
 
@@ -669,7 +665,7 @@ View your order:
 https://eshop.example/user/orders
 ```
 
-That's the email the eShop sample renders today. The other channels come in Part 4, but it's worth seeing how differently they would use the same context.
+That's the email the eShop sample renders today. The other channels come in Part 4, but here's how differently they'd use the same context.
 
 SMS has different constraints. Repeating the full email would waste the channel, so the same `OrderCreated` pipeline could define a much shorter SMS:
 
@@ -831,4 +827,6 @@ Once that context exists, each channel can use it differently. Today, email give
 
 The business intent stays the same. The communication strategy is what changes.
 
-In Part 4 we get to the fun part: taking `OrderCreated` across multiple channels and using the recipient profile and communication policy to decide how each recipient is reached.
+---
+
+**Next: [Part 4, One Event, Multiple Channels, Multiple Providers](../part%204/article.md).** The same intent goes out as an email, an SMS, and a push notification, with the simulator standing in for SMTP, Twilio, and Firebase.

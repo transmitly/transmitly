@@ -198,7 +198,7 @@ Data
     orderId: 123
 ```
 
-Three channels, three very different messages, one content model. None of the templates had to fetch anything.
+That's three quite different messages from one content model, and none of the templates had to fetch anything.
 
 ## Deciding which channels to use
 
@@ -394,8 +394,10 @@ Delivery
     providers, one per channel
 ```
 
-Each of those can change on its own schedule. A new channel is a pipeline change. A new policy is a strategy change. A new provider is a registration change. The intent stays `OrderCreated` through all of it.
+Each of those can change on its own schedule: a new channel is a pipeline change, a new policy a strategy change, a new provider a registration change. The intent stays `OrderCreated` through all of it.
 
-There's one word in those log lines worth a second look: `Dispatched`. With the simulator, handing a message to the provider and the message arriving are the same moment. Real providers rarely work that way. Twilio or SendGrid accept the message, queue it, and report back later as it's sent, delivered, bounced, or opened.
+There's one word in those log lines worth a second look: `Dispatched`. With the simulator, handing a message to the provider and the message arriving are the same moment. Real providers rarely work that way. Twilio or SendGrid accept the message, queue it, and report back later as it's sent, delivered, bounced, or opened. Those later reports are worth keeping.
 
-In Part 5 we'll handle those delivery events: take the progress updates providers send us, tie each one back to the communication that caused it, and store them, so they can feed logging, support tools, or an inbox where customers can see what we've sent them.
+---
+
+**Next: [Part 5, Handling Delivery Events](../part%205/article.md).** Delivery updates from any provider land in one place, with Twilio as the example, and buyers get an inbox of everything we've sent them.
