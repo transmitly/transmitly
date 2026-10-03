@@ -32,7 +32,7 @@ OrderCreated
     +-- Push   registered device?       deliver
 ```
 
-Which channel that is depends on the buyer, and that's where identity resolution earns its keep. Communications now only uses addresses the buyer has verified. The resolver drops the rest before any channel sees them:
+Which channel that is depends on the buyer, and that's where identity resolution earns its keep. Communications now only uses addresses the buyer has verified. [The resolver](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/IdentityServerCustomerIdentityResolver.cs) drops the rest before any channel sees them:
 
 ```csharp
 var addresses = profile.Addresses
@@ -40,7 +40,7 @@ var addresses = profile.Addresses
     .Select(address => ...);
 ```
 
-eShop's two seeded buyers are set up to show the difference. Alice has verified her email address but not her phone number. Bob has verified his phone number but not his email address.
+eShop's two [seeded buyers](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Identity.API/UsersSeed.cs) are set up to show the difference. Alice has verified her email address but not her phone number. Bob has verified his phone number but not his email address.
 
 ```text
                          Ordering
@@ -109,7 +109,7 @@ Provider accepts the message ------> Dispatched report
 Provider calls our webhook --------> StatusChanged report
 ```
 
-Both kinds reach the same place. Communications registers one delivery report handler:
+Both kinds reach the same place. Communications [registers one delivery report handler](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/Program.cs):
 
 ```csharp
 .AddDeliveryReportHandler(report =>
@@ -125,7 +125,7 @@ It doesn't check which provider sent the report, or whether the report came from
 
 The handler only queues because of where reports are raised: in the middle of a dispatch, or in the middle of a webhook request from a provider. Neither is a good place to wait on a database.
 
-A background service reads the queue and records one report at a time:
+A [background service](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/DeliveryReports/DeliveryReportProcessing.cs) reads the queue and records one report at a time:
 
 ```csharp
 await foreach (var report in queue.ReadAllAsync(stoppingToken))
@@ -140,13 +140,13 @@ Processing reports in order also means a quick status update can't race the disp
 
 ## Communications gets a database
 
-Delivery history is communications data, so it goes in a database Communications owns. The AppHost adds `communicationsdb` to eShop's existing Postgres server, next to Catalog's and Ordering's:
+Delivery history is communications data, so it goes in a database Communications owns. The [AppHost](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/eShop.AppHost/Program.cs) adds `communicationsdb` to eShop's existing Postgres server, next to Catalog's and Ordering's:
 
 ```csharp
 var communicationsDb = postgres.AddDatabase("communicationsdb");
 ```
 
-The model has two tables. A communication is one message to one recipient on one channel, with its latest status. A delivery event is one report about it.
+The model has [two tables](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/DeliveryReports/CommunicationRecord.cs). A communication is one message to one recipient on one channel, with its latest status. A delivery event is one report about it.
 
 ```text
 Communications
@@ -168,7 +168,7 @@ DeliveryEvents
     ReceivedAt
 ```
 
-The recorder ties reports together through the provider's message id. The first report for a message creates its communication. Later reports with the same channel and message id add events to it:
+The [recorder](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/DeliveryReports/DeliveryReportRecorder.cs) ties reports together through the provider's message id. The first report for a message creates its communication. Later reports with the same channel and message id add events to it:
 
 ```csharp
 var record = await FindAsync(report, cancellationToken);
@@ -193,7 +193,7 @@ The latest report wins. Providers don't always report in order, and a production
 
 ## Receiving provider webhooks
 
-Now the provider side. Transmitly's ASP.NET Core package, `Transmitly.Microsoft.AspnetCore.Mvc`, supplies a controller for delivery report webhooks. Communications exposes it at one address for every provider:
+Now the provider side. Transmitly's ASP.NET Core package, `Transmitly.Microsoft.AspnetCore.Mvc`, supplies a controller for delivery report webhooks. Communications [exposes it](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/DeliveryReports/DeliveryReportsController.cs) at one address for every provider:
 
 ```csharp
 [AllowAnonymous]
@@ -202,7 +202,7 @@ public sealed class DeliveryReportsController(ICommunicationsClient communicatio
     : ChannelProviderDeliveryReportController(communicationsClient);
 ```
 
-and registers the model binders that do the actual work:
+and [registers the model binders](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/Program.cs) that do the actual work:
 
 ```csharp
 builder.Services.AddControllers(options => options.AddTransmitlyDeliveryReportModelBinders());
@@ -231,7 +231,7 @@ The webhook is anonymous because providers can't sign in. A production deploymen
 
 ## Using Twilio as the example
 
-The sample uses Twilio for this part, because it's a provider that really does report delivery status after dispatch. It's wired up, but only switched on when credentials are configured:
+The sample uses Twilio for this part, because it's a provider that really does report delivery status after dispatch. It's [wired up](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/EshopChannelProviders.cs), but only switched on when credentials are configured:
 
 ```csharp
 if (_twilio is null)
@@ -250,7 +250,7 @@ else
 
 Without Twilio settings, SMS stays on the simulator and everything in this article still works. The simulator raises its `Dispatched` reports, the recorder stores them, and the Messages page shows them.
 
-With Twilio configured, Twilio also needs to know where to send status updates. The SMS channel tells it, using Twilio's own channel settings:
+With Twilio configured, Twilio also needs to know where to send status updates. [The SMS channel](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/OrderCreated/OrderCreatedPipeline.cs) tells it, using Twilio's own channel settings:
 
 ```csharp
 sms.Twilio().StatusCallbackUrl = providers.DeliveryReportUrl;
@@ -288,7 +288,7 @@ Here's the second half of the point. A provider-agnostic status is right for alm
 
 When Twilio reports an undelivered SMS, the shared status says the message failed. Twilio's error code says why: `30003` means the handset was unreachable, `30005` means the number doesn't exist, and `30007` means a carrier filtered the message. Those lead to very different actions.
 
-Transmitly keeps the provider's details on the report, and each provider package exposes them through its own extension. The recorder stores Twilio's alongside the shared status:
+Transmitly keeps the provider's details on the report, and each provider package exposes them through its own extension. The recorder [stores Twilio's](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/DeliveryReports/DeliveryReportDetails.cs) alongside the shared status:
 
 ```csharp
 if (report.ChannelProviderId?.StartsWith(Id.ChannelProvider.Twilio(), StringComparison.OrdinalIgnoreCase) == true
@@ -310,7 +310,7 @@ That's the only provider-specific code in the recording path, and it's optional.
 
 ## The buyer's inbox
 
-With communications stored, the buyer can see them. Communications exposes an inbox for the signed-in user:
+With communications stored, the buyer can see them. Communications exposes an [inbox](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/Apis/InboxApi.cs) for the signed-in user:
 
 ```csharp
 endpoints.MapGet("/api/communications/inbox", GetInboxAsync)
@@ -319,14 +319,14 @@ endpoints.MapGet("/api/communications/inbox", GetInboxAsync)
 
 It returns the user's most recent communications, newest first, from the records the delivery reports built. The user is identified by the same identity id Ordering dispatched in Part 3, so no new mapping is needed.
 
-Authentication follows eShop's existing pattern. Identity gets a `communications` scope, the web app requests it when the user signs in, and the web app's HTTP client for Communications attaches the user's token:
+Authentication follows eShop's existing pattern. Identity gets a [`communications` scope](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Identity.API/Configuration/Config.cs), the web app requests it when the user signs in, and the [web app's HTTP client](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/WebApp/Extensions/Extensions.cs) for Communications attaches the user's token:
 
 ```csharp
 builder.Services.AddHttpClient<InboxService>(o => o.BaseAddress = new("https+http://communications-api"))
     .AddAuthToken();
 ```
 
-The web app adds a Messages page to the account menu, next to My orders. Here's what alice and bob each see after placing an order:
+The web app adds a [Messages page](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/WebApp/Components/Pages/User/Messages.razor) to the [account menu](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/WebApp/Components/Layout/UserMenu.razor), next to My orders. Here's what alice and bob each see after placing an order:
 
 ```text
 alice
@@ -346,7 +346,7 @@ The same records could feed other things too. A support tool could show a custom
 
 ## Testing without a provider
 
-None of this needs a real Twilio account to test. The sample's tests post a Twilio-shaped status callback to the real `DeliveryReportsController`, running in an in-memory test server, at the URL Twilio would be given:
+None of this needs a real Twilio account to test. [The sample's tests](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/tests/Application.UnitTests/DeliveryReportWebhookTests.cs) post a Twilio-shaped status callback to the real `DeliveryReportsController`, running in an in-memory test server, at the URL Twilio would be given:
 
 ```csharp
 var callbackUrl = new Uri("http://localhost/api/communications/delivery-reports")
@@ -361,7 +361,7 @@ await client.PostAsync(callbackUrl, new FormUrlEncodedContent(new Dictionary<str
 }));
 ```
 
-The callback comes out the other side as a `StatusChanged` report for `SM123`, with a `Delivered` status. Another test records a dispatch followed by an undelivered callback, and checks that both land on the same communication with Twilio's error code kept.
+The callback comes out the other side as a `StatusChanged` report for `SM123`, with a `Delivered` status. [Another test](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/tests/Application.UnitTests/DeliveryReportRecordingTests.cs) records a dispatch followed by an undelivered callback, and checks that both land on the same communication with Twilio's error code kept.
 
 ## Where we ended up
 
@@ -424,7 +424,7 @@ EshopCommunicationsMiddleware            ICommunicationClientMiddleware
 TransactionalCommunicationsMiddleware    ICommunicationClientMiddleware
 ```
 
-Each one adapts Transmitly to something eShop already had. Buyers stayed in Identity, behind an endpoint Identity owns and a service token Identity issues. Product data stayed behind Catalog's existing batch endpoint. The commit deferral hooks into Ordering's own `TransactionBehavior`. Forwarding uses Aspire's service discovery and eShop's shared service defaults. Transmitly supplied the extension points, and eShop decided what went in them.
+Each one adapts Transmitly to something eShop already had. [Buyers stayed in Identity](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/IdentityServerCustomerIdentityResolver.cs), behind an endpoint Identity owns and a service token Identity issues. [Product data](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/OrderCreated/CatalogContentModelEnricher.cs) stayed behind Catalog's existing batch endpoint. [The commit deferral](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Ordering.API/Infrastructure/Communications/TransactionalCommunicationsMiddleware.cs) hooks into Ordering's own [`TransactionBehavior`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Ordering.API/Application/Behaviors/TransactionBehavior.cs). [Forwarding](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/eShop.ServiceDefaults/Communications/EshopCommunicationsMiddleware.cs) uses Aspire's service discovery and eShop's shared service defaults. Transmitly supplied the extension points, and eShop decided what went in them.
 
 That's the right way round. A communications library that dictates where identities live, how transactions work, or how services talk to each other forces its way of working onto every system it touches. Transmitly asks for an implementation of a small interface at the point it needs one.
 

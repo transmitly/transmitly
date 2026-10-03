@@ -1,22 +1,22 @@
 Part 1 ended with a plan: add Transmitly to Microsoft eShop, create a new boundary around an order communication, and start with simulated delivery.
 
-This article adds an `OrderCreated` communication. The first version produces an email, but Ordering's code only ever deals with the intent.
+This article adds an `OrderCreated` communication. The first version produces an email, but as we work through each step, we'll see how dealing with intents helps us expand functionality.
 
 The flow is simple:
 
 ```text
-Ordering
+Ordering [Transmitly]
     |
     | OrderCreated
     v
-Communications
+Communications [Transmitly]
     |
     | communication policy
     v
 Email
 ```
 
-Transmitly provides the abstraction on both sides of this boundary. That matters. eShop is distributed today, but the same application code could just as easily run a Transmitly pipeline locally. Moving communication processing into another service becomes a configuration and middleware concern, not a new programming model.
+Transmitly provides the abstraction on both sides of this boundary. eShop is distributed today, but the same application code could just as easily run a Transmitly pipeline locally. Moving communication processing into another service becomes a configuration and middleware concern, not a new programming model.
 
 ## Expressing the communication from Ordering
 
@@ -36,9 +36,9 @@ What matters here is the vocabulary.
 
 Ordering expresses an intent to communicate with `OrderCreated`, not a delivery mechanism. The configured pipeline decides what that means operationally.
 
-Ordering makes this call itself, inside `SendOrderCreatedCommunicationWhenOrderStartedDomainEventHandler`. It handles `OrderStartedDomainEvent`, the domain event eShop raises when a new order is created. Another handler for the same event, `ValidateOrAddBuyerAggregateWhenOrderStartedDomainEventHandler`, publishes `OrderStatusChangedToSubmittedIntegrationEvent`. Communications could subscribe to that integration event and guess that a message is warranted, but as Part 1 argued, that's the wrong way around. The integration event tells other services a fact. The dispatch tells Communications that Ordering has decided there's an intent to communicate, and it's up to Communications to decide how and when to communicate, if at all.
+Ordering makes this call itself, inside [`SendOrderCreatedCommunicationWhenOrderStartedDomainEventHandler`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/Ordering.API/Application/DomainEventHandlers/SendOrderCreatedCommunicationWhenOrderStartedDomainEventHandler.cs). It handles `OrderStartedDomainEvent`, the domain event eShop raises when a new order is created. Another handler for the same event, [`ValidateOrAddBuyerAggregateWhenOrderStartedDomainEventHandler`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/Ordering.API/Application/DomainEventHandlers/ValidateOrAddBuyerAggregateWhenOrderStartedDomainEventHandler.cs), publishes `OrderStatusChangedToSubmittedIntegrationEvent`. Communications could subscribe to that integration event and guess that a message is warranted, but as Part 1 argued, that's the wrong way around. The integration event tells other services a fact. The dispatch tells Communications that Ordering has decided there's an intent to communicate, and it's up to Communications to decide how and when to communicate, if at all.
 
-`buyerEmail` comes from the `email` claim on the access token that arrives with the create-order request. Ordering reads it for this one call and doesn't store it. That keeps the first slice small, but it's a shortcut, and we'll come back to it.
+`buyerEmail` comes from [the `email` claim](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/Ordering.API/Infrastructure/Services/IdentityService.cs) on the access token that arrives with the create-order request. Ordering reads it for this one call and doesn't store it. That keeps the first slice small, but it's a shortcut, and we'll come back to it.
 
 In a smaller application, the whole pipeline could be registered in the same host _(Program.cs)_:
 
@@ -117,7 +117,7 @@ In an application project, configuration can be as small as:
 builder.Services.AddEshopCommunications();
 ```
 
-That extension configures Transmitly and registers the middleware that forwards communications to the central service.
+[That extension](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/eShop.ServiceDefaults/Communications/EshopCommunicationsExtensions.cs) configures Transmitly and registers [the middleware](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/eShop.ServiceDefaults/Communications/EshopCommunicationsMiddleware.cs) that forwards communications to the central service.
 
 Conceptually:
 
@@ -148,24 +148,24 @@ await communicationsClient.DispatchAsync(
     new { orderId = domainEvent.Order.Id });
 ```
 
-Shared code holds the stable intent names used across the transport boundary, not their pipeline definitions. `CommunicationIntents` publishes the intents available to everyone. Composition, channels, templates, and delivery policy stay with Communications.
+Shared code holds the stable intent names used across the transport boundary, not their pipeline definitions. [`CommunicationIntents`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/eShop.ServiceDefaults/Communications/CommunicationIntents.cs) publishes the intents available to everyone. Composition, channels, templates, and delivery policy stay with Communications.
 
 This pays off if the deployment architecture changes later. A service could process pipelines locally in one environment and forward them remotely in another.
 
 ## Waiting for the order to commit
 
-There's a timing problem hiding in that handler. eShop runs domain event handlers before it saves anything: `OrderingContext.SaveEntitiesAsync` dispatches domain events, then calls `SaveChanges`, and `TransactionBehavior` commits the transaction after the command handler returns. Integration events cope with this through eShop's outbox. They're saved inside the transaction and published only after the commit.
+There's a timing problem hiding in that handler. eShop runs domain event handlers before it saves anything: [`OrderingContext.SaveEntitiesAsync`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/Ordering.Infrastructure/OrderingContext.cs) dispatches domain events, then calls `SaveChanges`, and [`TransactionBehavior`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/Ordering.API/Application/Behaviors/TransactionBehavior.cs) commits the transaction after the command handler returns. Integration events cope with this through eShop's outbox. They're saved inside the transaction and published only after the commit.
 
 A dispatch sent straight from the handler doesn't get that protection. It goes out while the transaction is still open. If the commit then fails, the buyer gets a confirmation for an order that doesn't exist.
 
-The fix uses the same seam as forwarding: client middleware. Ordering registers one more middleware next to the shared setup:
+The fix uses the same seam as forwarding: client middleware. Ordering [registers one more middleware](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/Ordering.API/Program.cs) next to the shared setup:
 
 ```csharp
 builder.Services.AddEshopCommunications();
 builder.Services.AddSingleton<ICommunicationClientMiddleware, TransactionalCommunicationsMiddleware>();
 ```
 
-`AddEshopCommunications()` adds any registered middleware after the forwarding middleware, so it sees each dispatch first. `TransactionBehavior` opens a scope around each transaction and flushes it once the commit and the integration events are done:
+`AddEshopCommunications()` adds any registered middleware after the forwarding middleware, so it sees each dispatch first. `TransactionBehavior` opens a [scope](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/Ordering.API/Infrastructure/Communications/PendingCommunications.cs) around each transaction and flushes it once the commit and the integration events are done:
 
 ```csharp
 using var pendingCommunications = PendingCommunications.Begin();
@@ -176,13 +176,13 @@ await _orderingIntegrationEventService.PublishEventsThroughEventBusAsync(transac
 await pendingCommunications.FlushAsync(_logger, CancellationToken.None);
 ```
 
-While the scope is open, the middleware holds each dispatch instead of forwarding it. If the transaction fails, the scope is disposed without a flush and the dispatch is dropped. The handler still calls `communicationsClient.DispatchAsync()` exactly as before. It doesn't know the dispatch was deferred.
+While the scope is open, [the middleware](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/Ordering.API/Infrastructure/Communications/TransactionalCommunicationsMiddleware.cs) holds each dispatch instead of forwarding it. If the transaction fails, the scope is disposed without a flush and the dispatch is dropped. The handler still calls `communicationsClient.DispatchAsync()` exactly as before. It doesn't know the dispatch was deferred.
 
 Held dispatches live in memory. If the process stops between the commit and the flush, the communication is lost. A durable outbox for communication intents is possible, but it's outside the scope of this series.
 
 ## A general dispatch boundary
 
-The Communications service's HTTP surface can follow the same principle.
+The Communications service's [HTTP surface](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/Communications.API/Apis/CommunicationsApi.cs) can follow the same principle.
 
 Every application performs the same operation: dispatch a communication intent along with the context needed to process it.
 
@@ -190,7 +190,7 @@ Every application performs the same operation: dispatch a communication intent a
 POST /api/communications/dispatch
 ```
 
-The dispatch context carries the intent, the recipients, the transactional model, any dispatch options, and metadata about the dispatch itself. In the shared contract that's `CommunicationDispatchRequest`:
+The dispatch context carries the intent, the recipients, the transactional model, any dispatch options, and metadata about the dispatch itself. In the [shared contract](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/eShop.ServiceDefaults/Communications/CommunicationDispatchContract.cs) that's `CommunicationDispatchRequest`:
 
 ```text
 CommunicationDispatchRequest
@@ -214,7 +214,7 @@ CommunicationDispatchRequest
         Properties      baggage from the current activity
 ```
 
-The forwarding middleware fills in the metadata, so application code doesn't pass any of it. The correlation id reuses the current trace id, which lets one dispatch be followed through both services' logs. Properties come from the activity's baggage, so a service can attach ambient context, such as a tenant, without changing the `DispatchAsync()` call.
+The forwarding middleware [fills in the metadata](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/eShop.ServiceDefaults/Communications/EshopCommunicationsMiddleware.cs), so application code doesn't pass any of it. The correlation id reuses the current trace id, which lets one dispatch be followed through both services' logs. Properties come from the activity's baggage, so a service can attach ambient context, such as a tenant, without changing the `DispatchAsync()` call.
 
 When it arrives, the Communications service hands that context back to Transmitly, which resolves the intent against the configured pipeline catalog.
 
@@ -235,7 +235,7 @@ That gives the service a clean shape. The HTTP layer transports communication co
 
 ## Defining the pipeline catalog
 
-For the first implementation, we define the pipeline directly in code:
+For the first implementation, we define the pipeline directly in code, in the [Communications service's `Program.cs`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%202/src/Communications.API/Program.cs):
 
 ```csharp
 builder.Services.AddTransmitly(tly => tly

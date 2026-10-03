@@ -6,7 +6,7 @@ The code stays on Transmitly's simulator the whole time. Nothing in this article
 
 ## Ordering doesn't change
 
-Start with what stays the same. Ordering still dispatches exactly what it dispatched in Part 3:
+Start with what stays the same. Ordering still [dispatches exactly what it dispatched in Part 3](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Ordering.API/Application/DomainEventHandlers/SendOrderCreatedCommunicationWhenOrderStartedDomainEventHandler.cs):
 
 ```csharp
 await _communicationsClient.DispatchAsync(
@@ -38,7 +38,7 @@ Phone
     1234567890
 ```
 
-Identity already owns the email address and the phone number, and the resolver from Part 3 returns both. SMS has what it needs.
+Identity already owns the email address and the phone number, and [the resolver](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/IdentityServerCustomerIdentityResolver.cs) from Part 3 returns both. SMS has what it needs.
 
 Push doesn't. There's no device token anywhere in eShop, and no service in the application that would own one.
 
@@ -60,7 +60,7 @@ Identity-profile enrichment     <-- push tokens go here
 Content enrichment
 ```
 
-Profile enrichers run after resolution and before content is built. They can add to the recipient's profile, which is where channels look for addresses. So Communications gets a small store of push registrations, and a profile enricher that reads from it:
+Profile enrichers run after resolution and before content is built. They can add to the recipient's profile, which is where channels look for addresses. So Communications gets a small [store of push registrations](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/PushRegistrations/IPushRegistrationStore.cs), and a [profile enricher](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/PushRegistrations/PushRegistrationProfileEnricher.cs) that reads from it:
 
 ```csharp
 public sealed class PushRegistrationProfileEnricher(IPushRegistrationStore registrations)
@@ -83,14 +83,14 @@ public sealed class PushRegistrationProfileEnricher(IPushRegistrationStore regis
 }
 ```
 
-The enricher is registered for the same identity type as the resolver:
+The enricher is [registered](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/Program.cs) for the same identity type as the resolver:
 
 ```csharp
 .AddPlatformIdentityResolver<IdentityServerCustomerIdentityResolver>(CommunicationIdentityTypes.Buyer)
 .AddPlatformIdentityProfileEnricher<PushRegistrationProfileEnricher>(CommunicationIdentityTypes.Buyer)
 ```
 
-One gap remains. eShop's apps don't register for push notifications, so there's nothing to put in the store. The sample registers a `SimulatedPushRegistrationStore` that gives every buyer one simulated device:
+One gap remains. eShop's apps don't register for push notifications, so there's nothing to put in the store. The sample registers a [`SimulatedPushRegistrationStore`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/PushRegistrations/SimulatedPushRegistrationStore.cs) that gives every buyer one simulated device:
 
 ```csharp
 public Task<IReadOnlyCollection<string>> GetDeviceTokensAsync(string identityId, CancellationToken cancellationToken = default) =>
@@ -116,7 +116,7 @@ Device token
 
 ## One context, three renderings
 
-With addresses in place, the pipeline adds two channels next to the email:
+With addresses in place, [the pipeline](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedPipeline.cs) adds two channels next to the email:
 
 ```csharp
 .AddPipeline(CommunicationIntents.OrderCreated, pipeline =>
@@ -159,9 +159,9 @@ With addresses in place, the pipeline adds two channels next to the email:
 
 We'll come back to the first line and the provider filters. For now, look at what each channel renders.
 
-All three read the same `OrderCreatedContentModel` that Part 3's Catalog enricher built. That enricher is registered per recipient, not per channel, so it runs once and every channel shares its result. Adding SMS and push didn't add any calls to Catalog.
+All three read the same [`OrderCreatedContentModel`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedContentModel.cs) that Part 3's [Catalog enricher](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/CatalogContentModelEnricher.cs) built. That enricher is registered per recipient, not per channel, so it runs once and every channel shares its result. Adding SMS and push didn't add any calls to Catalog.
 
-The email is unchanged from Part 3. The SMS keeps only what fits in a text message:
+The [email](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedEmail.cs) is unchanged from Part 3. The [SMS](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedSms.cs) keeps only what fits in a text message:
 
 ```csharp
 public static string Message(IDispatchCommunicationContext context, Uri? webAppUrl)
@@ -184,7 +184,7 @@ We've received your eShop order #123.
 View your order: https://eshop.example/user/orders
 ```
 
-Push is shorter still. The visible part is a title and a sentence. The useful part is the data: an action and an order id the app can use to open the right screen.
+[Push](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedPush.cs) is shorter still. The visible part is a title and a sentence. The useful part is the data: an action and an order id the app can use to open the right screen.
 
 ```text
 Title
@@ -259,7 +259,7 @@ A **channel provider** is who actually delivers it: an SMTP server, SendGrid, Tw
 
 The pipeline is written entirely in terms of channels. Providers are registered separately, once, and the two meet only at dispatch time.
 
-In this sample, all three providers are simulators:
+In this sample, [all three providers](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/EshopChannelProviders.cs) are simulators:
 
 ```csharp
 public static class EshopChannelProviders
@@ -340,7 +340,7 @@ It's tempting to wire up a real provider as soon as possible. There's a good cas
 
 The simulator runs the whole pipeline. Identity resolution, both enrichers, every template, and the channel and provider selection all happen exactly as they would in production. Only the last step, handing the message to an external service, is simulated.
 
-It also reports what it would have sent. Every simulated delivery raises a delivery report with the channel, the provider, and the full rendered communication. The Communications service logs those reports, so placing an order in the web app produces three entries in the `communications-api` logs in the Aspire dashboard:
+It also reports what it would have sent. Every simulated delivery raises a delivery report with the channel, the provider, and the full rendered communication. The Communications service [logs those reports](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/Program.cs), so placing an order in the web app produces three entries in the `communications-api` logs in the Aspire dashboard:
 
 ```text
 [Email:Simulation.Email:Dispatched] ...
@@ -350,7 +350,7 @@ It also reports what it would have sent. Every simulated delivery raises a deliv
 
 each followed by the rendered message.
 
-And it makes the composition testable. The sample's tests build the real `OrderCreated` pipeline with fake Identity and Catalog services, dispatch an order, and check all three rendered messages, including which provider each one went through. They run in milliseconds and never touch the network.
+And it makes the composition testable. [The sample's tests](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/tests/Application.UnitTests/OrderCreatedCompositionTests.cs) build the real `OrderCreated` pipeline with fake Identity and Catalog services, dispatch an order, and check all three rendered messages, including which provider each one went through. They run in milliseconds and never touch the network.
 
 ## Where we ended up
 

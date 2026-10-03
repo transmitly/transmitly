@@ -10,13 +10,15 @@ Maybe the application uses an SMTP server. Maybe it starts with a provider such 
 
 For a small application this is often the right call. If the system sends a handful of emails and everything needed to build them is already in the same process, a separate communications architecture is a large infrastructure investment without immediate payoff.
 
-Microsoft's .NET eShop reference application isn't small, and that makes it a good place to study the problem. It's already split along business contexts. Ordering owns orders. Identity owns users and authentication. Payment processing runs as its own service and reports outcomes back through integration events. The services talk through deliberate contracts instead of sharing one convenient object graph.
+Microsoft's [.NET eShop reference application](https://github.com/dotnet/eShop) isn't small, and that makes it a good place to study the problem. It's already split along business contexts. Ordering owns orders. Identity owns users and authentication. Payment processing runs as its own service and reports outcomes back through integration events. The services talk through deliberate contracts instead of sharing one convenient object graph.
 
 eShop doesn't send customer communications today. If we added an order confirmation the way most applications start, we'd inject an `IEmailClient` into Ordering and call it a day.
 
 That's where something that looks trivial starts working against the boundaries eShop was built around.
 
 This series adds a communications service to eShop. Before writing any code, we'll work out where the service's boundary belongs and why.
+
+The full source for every part of the series is in the [eShop sample in the Transmitly repository](https://github.com/transmitly/transmitly/tree/main/samples/eShop%20Series). Each part has its own folder, and each one builds on the code from the part before.
 
 ## An order communication crosses domain boundaries
 
@@ -394,4 +396,4 @@ Ordering stays responsible for knowing that an order was created and that the op
 
 ---
 
-**Next: [Part 2, Adding Email Without Coupling to Email](../part%202/article.md).** Ordering dispatches its first `OrderCreated` intent, and a new Communications service turns it into an email without Ordering ever choosing email.
+In Part 2, we'll start coding and get Ordering dispatching its `OrderCreated` intent, and add a new Communications service turns so we can email without Ordering explicitly choosing email.

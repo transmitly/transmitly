@@ -46,6 +46,22 @@ Demonstrates how you can completely extend the default Transmitly behavior by sh
   * SMS - Twilio, Infobip
   * Logger - All
 * Delivery Reports
- 
-## [Transmitly.ChannelProvider.Logger](https://github.com/transmitly/transmitly/tree/main/samples/Transmitly.ChannelProvider.Logger)
-A simple channel provider that handles all channels. It's only purpose is to log communications dispatched with Transmitly.
+
+## [eShop Series](https://github.com/transmitly/transmitly/tree/main/samples/eShop%20Series)
+Applies Transmitly to Microsoft's [.NET eShop](https://github.com/dotnet/eShop) reference application over a five-part article series. Ordering dispatches a single `OrderCreated` intent, and a Communications service grows it from one simulated email into email, SMS, and push, with delivery tracking and an inbox for buyers. Each part is a complete, runnable copy of eShop that builds on the part before it.
+
+### Features
+* Communications Client extensibility
+  * Forwarding dispatches to a central Communications service
+  * Holding dispatches until a database transaction commits
+* Communication Composition
+  * Resolving Platform Identities from an identity service
+  * Platform identity profile enrichers
+  * Content model enrichers
+* Channels - Email, SMS, Push
+* Channel Provider Restrictions
+* Delivery Strategies - first match and any match
+* Delivery Reports
+  * Recording delivery history
+  * Provider webhooks with Transmitly.Microsoft.AspnetCore.Mvc (Twilio)
+* Simulation provider and composition tests

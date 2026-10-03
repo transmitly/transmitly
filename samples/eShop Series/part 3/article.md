@@ -44,11 +44,11 @@ The result is a composition pipeline sitting between the business operation and 
 
 ## Starting with the transactional model
 
-When an order is created, Ordering has just built the `Order` aggregate. eShop's aggregate holds its order items, and each `OrderItem` keeps the catalog product identifier, product name, unit price, discount, picture URL, and quantity. The order can calculate its total from those stored values.
+When an order is created, Ordering has just built the [`Order`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Ordering.Domain/AggregatesModel/OrderAggregate/Order.cs) aggregate. eShop's aggregate holds its order items, and each [`OrderItem`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Ordering.Domain/AggregatesModel/OrderAggregate/OrderItem.cs) keeps the catalog product identifier, product name, unit price, discount, picture URL, and quantity. The order can calculate its total from those stored values.
 
 So the order itself is a natural source for the initial transactional model.
 
-We might project the communication-relevant data into something like this:
+We project the communication-relevant data into [`OrderCreatedModel`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/eShop.ServiceDefaults/Communications/OrderCreatedModel.cs):
 
 ```csharp
 public sealed record OrderCreatedModel(
@@ -64,7 +64,7 @@ public sealed record OrderCreatedItem(
     decimal UnitPrice);
 ```
 
-Then Ordering dispatches with the model it already has:
+Then [Ordering dispatches](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Ordering.API/Application/DomainEventHandlers/SendOrderCreatedCommunicationWhenOrderStartedDomainEventHandler.cs) with the model it already has:
 
 ```csharp
 await communicationsClient.DispatchAsync(
@@ -157,7 +157,7 @@ var buyer = new IdentityReference(CommunicationIdentityTypes.Buyer, domainEvent.
 
 Ordering no longer reads the email claim at all.
 
-When Communications processes the dispatch, Transmitly resolves that reference into one or more `IPlatformIdentityProfile` instances. Resolvers are registered by identity type:
+When Communications processes the dispatch, Transmitly resolves that reference into one or more `IPlatformIdentityProfile` instances. Resolvers are [registered by identity type](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/Program.cs):
 
 ```csharp
 builder.Services.AddTransmitly(tly => tly
@@ -167,7 +167,7 @@ builder.Services.AddTransmitly(tly => tly
 );
 ```
 
-Transmitly only runs a resolver whose type matches the reference, which is why `Buyer` is a shared constant rather than a string typed in two services. eShop's resolver asks the service that owns the data. It gets a client-credentials token from Identity and calls a new `POST /api/identities/resolve` endpoint, which returns the buyer's name and every email address and phone number on the account.
+Transmitly only runs a resolver whose type matches the reference, which is why `Buyer` is a [shared constant](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/eShop.ServiceDefaults/Communications/CommunicationIdentityTypes.cs) rather than a string typed in two services. [eShop's resolver](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/IdentityServerCustomerIdentityResolver.cs) asks the service that owns the data. It gets a client-credentials token from Identity and calls a new [`POST /api/identities/resolve`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Identity.API/Apis/IdentityApi.cs) endpoint, which returns the buyer's name and every email address and phone number on the account.
 
 Conceptually:
 
@@ -251,9 +251,9 @@ Items
 
 The `ProductId` values give us a natural link to eShop's Catalog service.
 
-Catalog exposes a batch endpoint that returns several items by identifier. That's handy, since an order can contain many products.
+Catalog exposes a [batch endpoint](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Catalog.API/Apis/CatalogApi.cs) that returns several items by identifier. That's handy, since an order can contain many products.
 
-A content-model enricher can collect those identifiers:
+A [content-model enricher](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/OrderCreated/CatalogContentModelEnricher.cs) can collect those identifiers:
 
 ```csharp
 var productIds = order.Items
@@ -386,7 +386,7 @@ The application supplied an intent, a recipient reference, and some transactiona
 
 ## A purpose-built content model
 
-By the time rendering starts, the content context holds information from several sources:
+By the time rendering starts, the [content context](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/OrderCreated/OrderCreatedContentModel.cs) holds information from several sources:
 
 ```csharp
 public sealed record OrderCreatedContentModel(
@@ -665,7 +665,7 @@ View your order:
 https://eshop.example/user/orders
 ```
 
-That's the email the eShop sample renders today. The other channels come in Part 4, but here's how differently they'd use the same context.
+That's the email [the eShop sample renders today](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/OrderCreated/OrderCreatedEmail.cs). The other channels come in Part 4, but here's how differently they'd use the same context.
 
 SMS has different constraints. Repeating the full email would waste the channel, so the same `OrderCreated` pipeline could define a much shorter SMS:
 
