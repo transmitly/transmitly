@@ -39,7 +39,6 @@ var catalogApi = builder.AddProject<Projects.Catalog_API>("catalog-api")
     .WithReference(catalogDb);
 
 var communicationsApi = builder.AddProject<Projects.Communications_API>("communications-api")
-    .WithReference(identityApi).WaitFor(identityApi)
     .WithHttpHealthCheck("/health");
 
 var orderingApi = builder.AddProject<Projects.Ordering_API>("ordering-api")

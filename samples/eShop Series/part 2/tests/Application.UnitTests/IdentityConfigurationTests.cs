@@ -1,6 +1,5 @@
 using eShop.Identity.API.Configuration;
 using eShop.Identity.API.Services;
-using Duende.IdentityServer;
 using Microsoft.Extensions.Configuration;
 
 namespace eShop.Application.UnitTests;
@@ -13,14 +12,9 @@ public class IdentityConfigurationTests
     {
         var resources = Config.GetApis().Select(resource => resource.Name).Order().ToArray();
         var scopes = Config.GetApiScopes().Select(scope => scope.Name).Order().ToArray();
-        var resourceScopes = scopes
-            .Where(scope => scope != IdentityServerConstants.LocalApi.ScopeName)
-            .ToArray();
 
-        CollectionAssert.AreEqual(resources, resourceScopes);
-        CollectionAssert.AreEquivalent(
-            new[] { "basket", IdentityServerConstants.LocalApi.ScopeName, "orders", "webhooks" },
-            scopes);
+        CollectionAssert.AreEqual(resources, scopes);
+        CollectionAssert.AreEquivalent(new[] { "basket", "orders", "webhooks" }, scopes);
     }
 
     [TestMethod]

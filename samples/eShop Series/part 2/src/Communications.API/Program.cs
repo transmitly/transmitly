@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using eShop.Communications.API;
 using eShop.Communications.API.Apis;
 using eShop.ServiceDefaults;
@@ -10,8 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.Logging.AddFilter("Transmitly", Microsoft.Extensions.Logging.LogLevel.Debug);
 builder.Services.AddProblemDetails();
-builder.Services.AddHttpClient<IdentityServerCustomerIdentityResolver>(client =>
-    client.BaseAddress = new Uri("https+http://identity-api"));
 
 var transmitlyLoggerFactory = new MicrosoftTransmitlyLoggerFactory();
 ILogger? logger = null;
@@ -28,16 +26,15 @@ builder.Services.AddTransmitly(tly => tly
         return Task.CompletedTask;
     })
     .AddSimulationSupport()
-    .AddPlatformIdentityResolver<IdentityServerCustomerIdentityResolver>("Customer")
-    .AddPipeline(CommunicationIntents.OrderShipped, pipeline =>
+    .AddPipeline(CommunicationIntents.OrderCreated, pipeline =>
     {
         pipeline.AddEmail(
             "orders@eshop.local".AsIdentityAddress("eShop"),
             email =>
             {
-                email.Subject.AddStringTemplate("Your order has shipped!");
+                email.Subject.AddStringTemplate("Thanks for your order!");
                 email.TextBody.AddStringTemplate(
-                    "Good news! Your order is on the way.");
+                    "We've received your order and we'll let you know when it ships.");
             });
     }));
 
