@@ -326,19 +326,21 @@ builder.Services.AddHttpClient<InboxService>(o => o.BaseAddress = new("https+htt
     .AddAuthToken();
 ```
 
-The web app adds a Messages page to the account menu, next to My orders. After placing an order, it looks like this:
+The web app adds a Messages page to the account menu, next to My orders. Here's what alice and bob each see after placing an order:
 
 ```text
+alice
 Sent                Channel   Message                                    Status
-10/2/2026 4:04 PM   Email     Thanks for your order #123                 Dispatched
+10/2/2026 8:17 PM   Email     Thanks for your order #11                  Dispatched
                               Order created
-10/2/2026 4:04 PM   SMS       We've received your eShop order #123. ...  Dispatched
-                              Order created
-10/2/2026 4:04 PM   Push      Thanks for your order                      Dispatched
+
+bob
+Sent                Channel   Message                                    Status
+10/2/2026 8:18 PM   SMS       We've received your eShop order #12. ...   Dispatched
                               Order created
 ```
 
-With Twilio configured, the SMS row moves on from `Dispatched` as Twilio's updates arrive.
+One order each, one message each, and a different channel for each, because their verified addresses differ. With Twilio configured, bob's SMS moves on from `Dispatched` as Twilio's updates arrive.
 
 The same records could feed other things too. A support tool could show a customer's full delivery history. An alert could fire when one provider's failure rate climbs. A retry policy could resend an undelivered SMS as an email. None of those need anything new from the providers, or from Ordering.
 

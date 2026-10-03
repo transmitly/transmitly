@@ -39,6 +39,13 @@ Ordering is unchanged from Part 4.
   - `DeliveryReportsController` is the provider webhook at
     `POST /api/communications/delivery-reports`, built on
     `Transmitly.Microsoft.AspnetCore.Mvc`.
+- `src/Communications.API/OrderCreated/OrderCreatedPipeline.cs` goes back to
+  Transmitly's default first-match strategy: each buyer gets one message, on the
+  first of email, SMS, or push that can reach them.
+- `src/Communications.API/IdentityServerCustomerIdentityResolver.cs` only keeps
+  addresses the buyer has verified, so verification decides the channel.
+- `src/Identity.API/UsersSeed.cs` seeds bob with a verified phone number and an
+  unverified email address. Alice keeps her verified email address.
 - `src/Communications.API/EshopChannelProviders.cs` uses Twilio for SMS when
   Twilio credentials are configured, and the simulator otherwise.
 - `src/Communications.API/Apis/InboxApi.cs` exposes
@@ -68,5 +75,21 @@ Communications API (user secrets or environment variables):
 `DeliveryReportUrl` must be reachable by Twilio, for example through a tunnel
 while developing locally.
 
-Place an order in the web app, then open **Messages** from the account menu to
-see the email, SMS, and push notification and their delivery status.
+## Trying it
+
+Sign in as `alice`, place an order, and open **Messages** from the account menu:
+the order confirmation arrived as an email. Sign out, do the same as `bob`, and
+it arrived as an SMS. Ordering dispatched the same `OrderCreated` intent both
+times.
+
+The seed only creates users that don't exist yet. If your `identitydb` was
+seeded by an earlier part, reset it or mark bob's phone as verified and his
+email as unverified:
+
+```sql
+UPDATE "AspNetUsers"
+SET "EmailConfirmed" = false, "PhoneNumberConfirmed" = true
+WHERE "UserName" = 'bob';
+```
+
+Part 5 uses Transmitly 0.4.2.
