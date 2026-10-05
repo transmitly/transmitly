@@ -24,10 +24,10 @@ public class OrderCreatedCompositionTests
         123,
         new DateTime(2026, 10, 1, 16, 4, 12, DateTimeKind.Utc),
         [
-            new OrderCreatedItem(1, ".NET Bot Black Hoodie", 2, 42.00m),
-            new OrderCreatedItem(2, ".NET Mug", 1, 14.99m)
+            new OrderCreatedItem(1, "Wanderer Black Hiking Boots", 2, 109.99m),
+            new OrderCreatedItem(2, "Summit Pro Harness", 1, 89.99m)
         ],
-        98.99m);
+        309.97m);
 
     [TestMethod]
     public async Task OrderCreatedIsSentOnEveryChannelThroughItsOwnProvider()
@@ -50,12 +50,12 @@ public class OrderCreatedCompositionTests
 
         Assert.AreEqual("Thanks for your order #123", email.Subject);
         StringAssert.Contains(email.TextBody, "Hi Alice,");
-        StringAssert.Contains(email.TextBody, "2 × .NET Bot Black Hoodie");
-        StringAssert.Contains(email.TextBody, "AdventureWorks Apparel");
+        StringAssert.Contains(email.TextBody, "2 × Wanderer Black Hiking Boots");
+        StringAssert.Contains(email.TextBody, "Daybird");
         // The purchased price comes from the order, not Catalog's current price.
-        StringAssert.Contains(email.TextBody, "$42.00 each");
-        StringAssert.Contains(email.TextBody, "1 × .NET Mug");
-        StringAssert.Contains(email.TextBody, "Order total: $98.99");
+        StringAssert.Contains(email.TextBody, "$109.99 each");
+        StringAssert.Contains(email.TextBody, "1 × Summit Pro Harness");
+        StringAssert.Contains(email.TextBody, "Order total: $309.97");
         StringAssert.Contains(email.TextBody, "https://eshop.test/user/orders");
     }
 
@@ -92,8 +92,8 @@ public class OrderCreatedCompositionTests
         var email = dispatch.Communication<IEmail>();
 
         Assert.AreEqual("Thanks for your order #123", email.Subject);
-        StringAssert.Contains(email.TextBody, "2 × .NET Bot Black Hoodie");
-        Assert.IsFalse(email.TextBody!.Contains("AdventureWorks"));
+        StringAssert.Contains(email.TextBody, "2 × Wanderer Black Hiking Boots");
+        Assert.IsFalse(email.TextBody!.Contains("Daybird"));
     }
 
     private async Task<Dispatch> DispatchOrderCreatedAsync(EshopServicesHandler handler)
@@ -187,13 +187,13 @@ public class OrderCreatedCompositionTests
                     Json(new[]
                     {
                         // Catalog's current price differs from what the customer paid.
-                        new { id = 1, name = ".NET Bot Black Hoodie", description = "Hoodie", price = 50.00m, catalogTypeId = 2, catalogBrandId = 2 },
-                        new { id = 2, name = ".NET Mug", description = "Mug", price = 14.99m, catalogTypeId = 1, catalogBrandId = 1 }
+                        new { id = 1, name = "Wanderer Black Hiking Boots", description = "Waterproof leather hiking boots", price = 119.99m, catalogTypeId = 1, catalogBrandId = 1 },
+                        new { id = 2, name = "Summit Pro Harness", description = "Lightweight climbing harness", price = 89.99m, catalogTypeId = 2, catalogBrandId = 2 }
                     }),
                 "catalog-api" when uri.AbsolutePath == "/api/catalog/catalogbrands" =>
-                    Json(new[] { new { id = 1, brand = "AdventureWorks" }, new { id = 2, brand = "AdventureWorks Apparel" } }),
+                    Json(new[] { new { id = 1, brand = "Daybird" }, new { id = 2, brand = "Gravitator" } }),
                 "catalog-api" when uri.AbsolutePath == "/api/catalog/catalogtypes" =>
-                    Json(new[] { new { id = 1, type = "Mug" }, new { id = 2, type = "T-Shirt" } }),
+                    Json(new[] { new { id = 1, type = "Footwear" }, new { id = 2, type = "Climbing" } }),
                 _ => new HttpResponseMessage(HttpStatusCode.NotFound)
             });
         }

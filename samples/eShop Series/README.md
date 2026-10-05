@@ -19,7 +19,7 @@ Each part folder is a complete, runnable copy of eShop and builds on the part be
 | [Part 4](part%204) | [One Event, Multiple Channels, Multiple Providers](part%204/article.md) | SMS and push from the same intent, push tokens added by a profile enricher, and a simulated provider per channel. |
 | [Part 5](part%205) | [Handling Delivery Events](part%205/article.md) | Delivery reports recorded in Postgres, a Twilio webhook, and a Messages inbox in the web app. Each buyer gets one message on the first channel that reaches them. |
 
-Every part has its own `README.md` describing what changed. eShop's original README is kept beside it as `eshop.README.md`.
+Parts 2 to 5 each have their own `README.md` describing what changed, with eShop's original README kept beside it as `eshop.README.md`. Part 1 is unmodified eShop, so its `README.md` is eShop's own.
 
 ### Features
 * Communications Client extensibility

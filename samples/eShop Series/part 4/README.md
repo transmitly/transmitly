@@ -34,8 +34,10 @@ Ordering is unchanged from Part 3.
   communications data. `PushRegistrationProfileEnricher` adds them to the buyer's
   profile. eShop's apps don't register for push, so
   `SimulatedPushRegistrationStore` gives every buyer one simulated device.
-- `Directory.Packages.props` uses Transmitly 0.4.1, whose SMS channel accepts
-  the `phone` addresses Identity returns.
+  `CustomerIdentityProfile` becomes a class with `AddAddress` so the enricher
+  can add those tokens.
+- `OrderCreatedEmail` and `OrderCreatedSms` share the "view your order" link
+  through `OrderLinks`.
 
 Place an order in the web app. The `communications-api` logs in the Aspire
 dashboard show three simulated deliveries, one per channel, each tagged with

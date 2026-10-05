@@ -10,7 +10,7 @@ Body:
 We've received your order and we'll let you know when it ships.
 ```
 
-It was enough to prove the boundary. It isn't enough to be useful to a customer.
+It was enough to prove the boundary, but a customer wouldn't get much out of it.
 
 A good order confirmation might include the customer's name, the items in the order, the amount paid, and product details. Some of that is already in hand when Ordering dispatches. The rest belongs to other services.
 
@@ -39,8 +39,6 @@ DispatchAsync(...)
   |
   +-- Dispatch channels/providers
 ```
-
-The result is a composition pipeline sitting between the business operation and the final communication.
 
 ## Starting with the transactional model
 
@@ -85,7 +83,7 @@ await communicationsClient.DispatchAsync(
 
 That gives Communications a solid starting point without making the originating service build the final communication.
 
-The distinction matters. The transactional model is context supplied at dispatch. The content model used for rendering keeps developing as that context moves through Communications.
+There are two models in play from here on. The transactional model is the context supplied at dispatch. The content model used for rendering keeps developing as that context moves through Communications.
 
 ```text
 Ordering
@@ -149,13 +147,13 @@ Ordering identifies the buyer because the order belongs to someone. How to reach
 
 In Part 2, Ordering handed Communications an email address taken from the buyer's access token. That worked, but it meant Ordering was supplying an address. Once SMS and push arrive, the same approach would have Ordering supplying phone numbers and device tokens too, and address management would leak into the ordering domain.
 
-We don't have to accept that. Communications can resolve the identity itself, so Ordering never has to know how a buyer is reached. The value passed to `DispatchAsync()` becomes an identity reference built from the identifier Ordering already owns:
+Communications can resolve the identity itself, so Ordering never has to know how a buyer is reached. The value passed to `DispatchAsync()` becomes an identity reference built from the identifier Ordering already owns:
 
 ```csharp
 var buyer = new IdentityReference(CommunicationIdentityTypes.Buyer, domainEvent.UserId);
 ```
 
-Ordering no longer reads the email claim at all.
+Ordering no longer reads the email claim at all, and `GetUserEmail()` is gone from its identity service.
 
 When Communications processes the dispatch, Transmitly resolves that reference into one or more `IPlatformIdentityProfile` instances. Resolvers are [registered by identity type](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/Program.cs):
 
@@ -167,7 +165,7 @@ builder.Services.AddTransmitly(tly => tly
 );
 ```
 
-Transmitly only runs a resolver whose type matches the reference, which is why `Buyer` is a [shared constant](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/eShop.ServiceDefaults/Communications/CommunicationIdentityTypes.cs) rather than a string typed in two services. [eShop's resolver](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/IdentityServerCustomerIdentityResolver.cs) asks the service that owns the data. It gets a client-credentials token from Identity and calls a new [`POST /api/identities/resolve`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Identity.API/Apis/IdentityApi.cs) endpoint, which returns the buyer's name and every email address and phone number on the account.
+Transmitly only runs a resolver whose type matches the reference, which is why `Buyer` is a [shared constant](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/eShop.ServiceDefaults/Communications/CommunicationIdentityTypes.cs) rather than a string typed in two services. [eShop's resolver](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/IdentityServerCustomerIdentityResolver.cs) asks the service that owns the data. It gets a client-credentials token from Identity and calls a new [`POST /api/identities/resolve`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Identity.API/Apis/IdentityApi.cs) endpoint, which returns the buyer's name along with the email address and phone number on the account, each marked as verified or not. On the Identity side, [`Config.cs`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Identity.API/Configuration/Config.cs) adds a `communications` client that may request the `IdentityServerApi` scope, and the endpoint only accepts tokens carrying that scope.
 
 Conceptually:
 
@@ -226,7 +224,7 @@ Sources will differ between applications. Some systems get almost all of this du
 
 These enrichers work on the recipient. They establish who the recipient is in communications terms, how to reach them, and which recipient-specific details should feed later decisions. This is the locale and preferences row from Part 1's composition model.
 
-eShop is the first kind of system. Identity resolution already returns the buyer's name and every address on the account, which is everything today's email needs, and eShop has no locale or preference store to draw from. So our pipeline doesn't register a profile enricher yet. The stage is there for when the recipient needs more than Identity knows.
+eShop is the first kind of system. Identity resolution already returns the buyer's name and the addresses Identity holds for the account, which is everything today's email needs, and eShop has no locale or preference store to draw from. So our pipeline doesn't register a profile enricher yet. Part 4 uses this stage for push device tokens, which Identity doesn't have.
 
 Once profiles are resolved and enriched, Transmitly builds the content context for the pipeline.
 
@@ -251,7 +249,7 @@ Items
 
 The `ProductId` values give us a natural link to eShop's Catalog service.
 
-Catalog exposes a [batch endpoint](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Catalog.API/Apis/CatalogApi.cs) that returns several items by identifier. That's handy, since an order can contain many products.
+Catalog exposes a [batch endpoint](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Catalog.API/Apis/CatalogApi.cs) that returns several items by identifier, which is handy, since an order can contain many products.
 
 A [content-model enricher](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/OrderCreated/CatalogContentModelEnricher.cs) can collect those identifiers:
 
@@ -271,11 +269,11 @@ GET /api/catalog/items/by
     &ids=3
 ```
 
-Catalog then contributes presentation data such as description, picture data, and catalog classification. The batch endpoint returns brand and type as identifiers, so the enricher also reads Catalog's brand and type lists to get their names.
+Catalog contributes each product's description, a route to its picture, and its brand and type. The batch endpoint returns brand and type as identifiers, so the enricher also reads Catalog's brand and type lists to get their names.
 
 If Catalog can't be reached, the enricher logs a warning and the email goes out without product details. The order facts still come from Ordering.
 
-Our enricher might extend each item from:
+The enricher extends each item from:
 
 ```text
 ProductId
@@ -301,9 +299,7 @@ The model gets richer without Ordering taking responsibility for Catalog's repre
 
 ## Transactional facts and enrichment data
 
-Bringing in Catalog data raises a semantic question.
-
-The price stored on the order and the current Catalog price can both exist. They mean different things.
+Bringing in Catalog data raises a semantic question. The price stored on the order and the current Catalog price can both exist, and they mean different things.
 
 Say the customer bought an item for:
 
@@ -317,19 +313,13 @@ and Catalog now lists it for:
 $34.99
 ```
 
-The order confirmation should show what the customer actually paid. eShop's `OrderItem` keeps the unit price from when the item was added to the order, alongside its product identifier and other transactional values.
+The order confirmation should show what the customer actually paid. eShop's `OrderItem` keeps the unit price from when the item was added to the order, alongside its product identifier and other transactional values. The enricher copies that price into `PurchasedUnitPrice` and never reads Catalog's.
 
-Catalog adds context. It doesn't redefine the transaction.
-
-That suggests a rule for enrichment:
+Catalog adds context without redefining the transaction. That suggests a rule for enrichment:
 
 > An enricher should understand the semantics of the model it is enriching. Current data can supplement transactional data, refresh it when the communication requires current state, or participate in a new derived representation.
 
-Which behavior fits depends on the communication.
-
-For `OrderCreated`, the purchased quantity and price describe the transaction. Current Catalog data layers richer product presentation on top.
-
-Another pipeline might need something quite different.
+Which behavior fits depends on the communication. For `OrderCreated`, the purchased quantity and price describe the transaction, and current Catalog data layers richer product presentation on top. Another pipeline might need something quite different.
 
 ## From dispatch to composed content
 
@@ -432,13 +422,11 @@ Catalog
     product presentation data
 ```
 
-Neither the template nor the channel provider has to reconstruct that composition. Data spread across the application has already been turned into one coherent communication context.
+Neither the template nor the channel provider has to reconstruct that composition. Data spread across the application has already been turned into one communication context.
 
 ## Why make enrichment part of the pipeline?
 
-We could do all of this before calling Transmitly.
-
-Ordering could resolve the customer, call Catalog, build a large content model, pick an address, and submit a finished message.
+We could do all of this before calling Transmitly. Ordering could resolve the customer, call Catalog, build a large content model, pick an address, and submit a finished message.
 
 That's the leak Part 1 described. Ordering slowly turns into an orchestrator for data that exists mostly to produce communications, just because it happened to create the intent.
 
@@ -472,17 +460,11 @@ await communicationsClient.DispatchAsync(
     TransactionModel.Create(model));
 ```
 
-A new requirement for product metadata goes in a content enricher. More recipient information comes from an identity-profile enricher. Every channel in the pipeline then reuses the resulting context.
-
-Composition becomes part of the communications strategy, not one more responsibility scattered across every service that creates a communication.
+A new requirement for product metadata goes in a content enricher. More recipient information comes from an identity-profile enricher. Every channel in the pipeline then reuses the resulting context, and none of that work spreads into the services that create communications.
 
 ## Enrichers also give us control over timing
 
-So far, the example uses Ordering's transactional model and adds Catalog data.
-
-That's the simplest useful implementation. But supplying a model to `DispatchAsync()` doesn't commit us to rendering those exact values.
-
-Composition might happen later.
+So far, the example uses Ordering's transactional model and adds Catalog data. That's the simplest useful implementation, but supplying a model to `DispatchAsync()` doesn't commit us to rendering those exact values. Composition might happen later.
 
 Imagine an ordering system that lets customers modify an order for a while after placing it. Over a few minutes a customer might:
 
@@ -514,7 +496,7 @@ PaymentUpdated ----/
                   ready to compose
 ```
 
-When the accumulated communication is ready, Communications might decide the most useful thing to show is the current order, not the sequence of models originally supplied.
+When the accumulated communication is ready, Communications might decide the most useful thing to show is the current order rather than the sequence of models originally supplied.
 
 An order content enricher can take the `OrderId`, fetch the latest authoritative state, and update the content model before rendering:
 
@@ -534,13 +516,11 @@ One composed communication
 
 The original dispatch models still mattered. They described the operations that triggered the communication and carried the data available at each point. The communication policy decides what's finally presented.
 
-Which leads to the core distinction:
+The general rule:
 
-> **Dispatch captures the context that caused a communication. Composition determines the information ultimately presented to the recipient.**
+> Dispatch captures the context that caused a communication. Composition determines the information ultimately presented to the recipient.
 
 Sometimes those two models are nearly identical. Sometimes composition adds a few properties. A delayed or accumulated workflow may refresh much more before rendering.
-
-The pipeline handles each case.
 
 ## Resolving at composition time is another valid starting point
 
@@ -567,9 +547,7 @@ and let an order enricher resolve the full state later.
 
 That can make sense when the source domain exposes a stable historical representation, when communications are routinely delayed, or when current state matters more than saving a lookup.
 
-Our eShop implementation doesn't need that. The order is already in hand when it's created, so passing a useful transactional model keeps the example direct.
-
-The architecture leaves the choice open for intents that need different semantics.
+Our eShop implementation doesn't need that. The order is already in hand when it's created, so passing a useful transactional model keeps the example direct. The architecture leaves the choice open for intents that need different semantics.
 
 ## Direct calls versus local projections
 
@@ -604,13 +582,11 @@ From the pipeline's point of view, the enrichment stage doesn't change. Only the
 
 Recipient profiles can evolve the same way. A platform identity resolver might call an identity service directly at first, then later resolve from communications-owned data synchronized from that service.
 
-So the architecture grows in response to real latency, availability, and throughput needs instead of demanding those mechanisms in the first implementation.
+The architecture can grow when latency, availability, or throughput actually call for it. The first implementation doesn't need any of those mechanisms.
 
 ## Rendering comes last
 
-Once identity resolution and enrichment finish, the Communications service has one shared context that each channel can use to express the intent.
-
-This is where the split between **communication intent** and **channel content** pays off.
+Once identity resolution and enrichment finish, the Communications service has one shared context that each channel can use to express the intent. This is where keeping the communication intent separate from the channel content pays off.
 
 Our intent is still:
 
@@ -618,19 +594,17 @@ Our intent is still:
 OrderCreated
 ```
 
-The enriched model might contain:
+The enriched content model contains:
 
 ```text
 OrderCreatedContentModel
 
 Recipient
     FirstName
-    Email
-    MobileNumber
-    PushIdentity
 
 Order
     OrderId
+    OrderDate
     Total
 
 Items
@@ -638,43 +612,47 @@ Items
     Quantity
     PurchasedUnitPrice
     Brand
+    ProductType
     Description
+    ProductImage
 ```
 
-Email has room to show most of that directly. A code-defined email template might render a summary of the order:
+The recipient's addresses aren't in it. They stay on the resolved identity profile, which is where each channel looks for an address it can use.
+
+Email has room to show most of the content model directly. [The code-defined email template](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/OrderCreated/OrderCreatedEmail.cs) renders a summary of the order. If alice, one of eShop's seeded buyers, orders two pairs of hiking boots and a climbing harness, she gets:
 
 ```text
 Subject:
 Thanks for your order #123
 
-Hi Ava,
+Hi Alice,
 
 We've received your order. We'll let you know when it ships.
 
-2 × .NET Bot Black Hoodie
-    AdventureWorks Apparel
-    $42.00 each
+2 × Wanderer Black Hiking Boots
+    Daybird
+    $109.99 each
 
-1 × .NET Mug
-    AdventureWorks
-    $14.99
+1 × Summit Pro Harness
+    Gravitator
+    $89.99
 
-Order total: $98.99
+Order total: $309.97
 
 View your order:
 https://eshop.example/user/orders
 ```
 
-That's the email [the eShop sample renders today](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%203/src/Communications.API/OrderCreated/OrderCreatedEmail.cs). The other channels come in Part 4, but here's how differently they'd use the same context.
+eShop has no page for a single order, so the link goes to the buyer's order list. The other channels come in Part 4, but here's how differently they'll use the same context.
 
-SMS has different constraints. Repeating the full email would waste the channel, so the same `OrderCreated` pipeline could define a much shorter SMS:
+SMS has different constraints. Repeating the full email would waste the channel, so the same `OrderCreated` pipeline can define a much shorter SMS:
 
 ```text
 We've received your eShop order #123.
-View your order: https://eshop.example/o/123
+View your order: https://eshop.example/user/orders
 ```
 
-Push can be shorter still, because the notification itself can open the app:
+Push can be shorter still, because the notification itself can open the app. The visible part is a title and a sentence, and the data tells the app which order to show:
 
 ```text
 Title:
@@ -683,8 +661,9 @@ Thanks for your order
 Body:
 Order #123 has been received.
 
-Action:
-Open order 123 in the eShop app
+Data:
+action:  open-order
+orderId: 123
 ```
 
 All three express the same communication:
@@ -705,9 +684,7 @@ All three express the same communication:
 
 Ordering didn't have to make any of those choices.
 
-Communications knows things Ordering doesn't need to reason about: which addresses the recipient profile has, which channels the recipient has enabled, how much content suits each medium, whether a channel can link into the app, and which providers are configured to deliver it.
-
-Those factors shape the communication strategy independently of the intent.
+Communications knows things Ordering doesn't need to reason about: which addresses the recipient profile has, which channels the recipient has enabled, how much content suits each medium, whether a channel can link into the app, and which providers are configured to deliver it. Those factors shape the communication strategy independently of the intent.
 
 For one customer, `OrderCreated` might mean email only:
 
@@ -735,9 +712,9 @@ OrderCreated
     +-- Email
 ```
 
-The content differs because the channels serve different purposes. The enriched context stays shared.
+The content differs by channel, and the enriched context underneath is shared.
 
-That's what moving composition and channel policy into Communications buys us. Ordering doesn't dispatch `OrderCreatedEmail`, `OrderCreatedSms`, or `OrderCreatedPush`, the kind of channel-bound name Part 1 warned against.
+So Ordering doesn't dispatch `OrderCreatedEmail`, `OrderCreatedSms`, or `OrderCreatedPush`, the kind of channel-bound name Part 1 warned against. (Those names do show up in Part 4, as template classes inside Communications, which is where channel-specific names belong.)
 
 It dispatches:
 
@@ -748,7 +725,7 @@ await communicationsClient.DispatchAsync(
     TransactionModel.Create(model));
 ```
 
-Communications decides how `OrderCreated` is expressed for that recipient under the current policy. For an imperative like the hypothetical `PasswordReset` from Part 2, the pipeline fixes those choices instead of leaving them to policy. Resolution, enrichment, and rendering work the same way either way.
+Communications decides how `OrderCreated` is expressed for that recipient under the current policy. For an imperative like the hypothetical `PasswordReset` from Part 2, the pipeline fixes those choices instead of leaving them to policy. Resolution, enrichment, and rendering work the same way in both cases.
 
 ## The Communications domain is taking shape
 
@@ -819,14 +796,12 @@ Enriched content context
 
 Other communications can start differently. One might arrive with little more than identifiers and resolve most of its state during composition. A delayed one might refresh before rendering, and a high-volume system might feed its enrichers from local projections. An accumulated one might combine several operations and compose a single message from the latest state.
 
-They all fit the same pipeline, because the transactional model is an input to composition, not a declaration that composition is finished.
+They all fit the same pipeline, because the transactional model is only an input to composition.
 
-For eShop, Identity and Catalog are enough to show the mechanics without inventing services the application doesn't have. Together they cover the two main kinds of enrichment: **who we're communicating with** and **what we're communicating about**.
+For eShop, Identity and Catalog are enough to show the mechanics without inventing services the application doesn't have. Between them they cover the two main kinds of enrichment: who we're communicating with, and what we're communicating about.
 
-Once that context exists, each channel can use it differently. Today, email gives the detailed order summary. When SMS and push join the pipeline, SMS will link back to the order and push will take the customer straight to the right screen in the app.
-
-The business intent stays the same. The communication strategy is what changes.
+Once that context exists, each channel can use it differently. Today, email gives the detailed order summary. When SMS and push join the pipeline, SMS will link to the buyer's orders and push will carry the data an app needs to open the order.
 
 ---
 
-**Next: [Part 4, One Event, Multiple Channels, Multiple Providers](../part%204/article.md).** The same intent goes out as an email, an SMS, and a push notification, with the simulator standing in for SMTP, Twilio, and Firebase.
+**Next, we'll demonstrate how the same intent goes out as an email, an SMS, and a push notification, with the simulator standing in for SMTP, Twilio, and Firebase.

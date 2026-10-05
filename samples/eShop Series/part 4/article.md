@@ -6,7 +6,7 @@ The code stays on Transmitly's simulator the whole time. Nothing in this article
 
 ## Ordering doesn't change
 
-Start with what stays the same. Ordering still [dispatches exactly what it dispatched in Part 3](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Ordering.API/Application/DomainEventHandlers/SendOrderCreatedCommunicationWhenOrderStartedDomainEventHandler.cs):
+Ordering still [dispatches exactly what it dispatched in Part 3](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Ordering.API/Application/DomainEventHandlers/SendOrderCreatedCommunicationWhenOrderStartedDomainEventHandler.cs):
 
 ```csharp
 await _communicationsClient.DispatchAsync(
@@ -18,13 +18,13 @@ await _communicationsClient.DispatchAsync(
 
 There's no `channels` argument, no SMS flag, no push token. Comparing `Ordering.API` between the Part 3 and Part 4 code turns up no differences at all.
 
-That's the payoff Part 1 promised. Ordering said an order was created. Whether that becomes one message or three is a communication decision, and every change in this article happens inside Communications.
+Ordering said an order was created. Whether that becomes one message or three is a communication decision, so every change in this article happens inside Communications.
 
 ## Every channel needs an address
 
-A channel can only deliver if the recipient has an address it understands. Email needs an email address. SMS needs a phone number. Push needs a device token.
+A channel can only deliver if the recipient has an address it understands. Email needs an email address, SMS needs a phone number, and push needs a device token.
 
-Transmitly handles the matching. When it plans a dispatch, it asks each channel in the pipeline which of the recipient's addresses it can use. The email channel accepts addresses typed as email or shaped like one. The SMS channel accepts phone numbers. The push channel accepts device tokens and topics. A channel with no usable address is skipped for that recipient.
+Transmitly handles the matching. When it plans a dispatch, it asks each channel in the pipeline which of the recipient's addresses it can use. The email channel accepts addresses typed as email or shaped like one. The SMS channel accepts addresses typed as a phone, cell, or mobile number, or untyped values that look like one. The push channel accepts device tokens and topics. A channel with no usable address is skipped for that recipient.
 
 So adding channels starts with the recipient profile. Here's what eShop's buyer looks like after identity resolution:
 
@@ -44,9 +44,7 @@ Push doesn't. There's no device token anywhere in eShop, and no service in the a
 
 ## Push tokens are communications data
 
-A device token isn't really identity data. It doesn't say who the buyer is. It says where a notification can be delivered, it changes whenever the app is reinstalled, and nothing outside communications has any use for it.
-
-That makes it communications data, and Communications should own it.
+A device token doesn't say who the buyer is. It says where a notification can be delivered, it changes whenever the app is reinstalled, and nothing outside communications has any use for it. That makes it communications data, and Communications should own it.
 
 In Part 3 we noted that the pipeline has a stage for exactly this kind of thing, and that eShop didn't need it yet:
 
@@ -82,6 +80,8 @@ public sealed class PushRegistrationProfileEnricher(IPushRegistrationStore regis
     }
 }
 ```
+
+In Part 3, `CustomerIdentityProfile` was an immutable record. It's now a class with an `AddAddress` method, so enrichers like this one can add addresses that Identity doesn't own.
 
 The enricher is [registered](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/Program.cs) for the same identity type as the resolver:
 
@@ -161,7 +161,7 @@ We'll come back to the first line and the provider filters. For now, look at wha
 
 All three read the same [`OrderCreatedContentModel`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedContentModel.cs) that Part 3's [Catalog enricher](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/CatalogContentModelEnricher.cs) built. That enricher is registered per recipient, not per channel, so it runs once and every channel shares its result. Adding SMS and push didn't add any calls to Catalog.
 
-The [email](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedEmail.cs) is unchanged from Part 3. The [SMS](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedSms.cs) keeps only what fits in a text message:
+The [email](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedEmail.cs) renders exactly as it did in Part 3. Its "view your order" link now comes from a small [`OrderLinks`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderLinks.cs) helper that the SMS shares. The [SMS](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedSms.cs) keeps only what fits in a text message:
 
 ```csharp
 public static string Message(IDispatchCommunicationContext context, Uri? webAppUrl)
@@ -224,7 +224,7 @@ OrderCreated
     +-- Push   last resort
 ```
 
-One message per order, with a fallback built in. For an order confirmation, that's usually the behavior you want. Reordering the channels changes the ladder: put push first and app users get a notification, while everyone else falls through to email.
+That gives one message per order with a fallback built in, which is usually what you want for an order confirmation. Reordering the channels changes the ladder: put push first and app users get a notification, while everyone else falls through to email.
 
 Transmitly calls this rule a delivery strategy, and a pipeline can pick a different one. This sample opts into any match, which sends on every channel the recipient can be reached on, so we can watch all three channels go out:
 
@@ -244,9 +244,9 @@ Either way, the choice is one line in Communications, and Ordering doesn't know 
 
 So far "SMS" has meant two things at once: the kind of message, and whoever delivers it. Transmitly keeps those apart.
 
-A **channel** is the medium: email, SMS, push. Channels own content. They know a subject line from a message body, and what an address has to look like.
+A channel is the medium: email, SMS, push. Channels own content. They know a subject line from a message body, and what an address has to look like.
 
-A **channel provider** is who actually delivers it: an SMTP server, SendGrid, Twilio, Firebase. Providers own transport. They know about API keys, endpoints, and rate limits.
+A channel provider is whoever actually delivers it: an SMTP server, SendGrid, Twilio, Firebase. Providers own transport. They know about API keys, endpoints, and rate limits.
 
 ```text
           Channels                    Providers
@@ -278,11 +278,11 @@ public static class EshopChannelProviders
 
 Each simulator stands in for the real provider that would sit behind its channel. That's what the `AddChannelProviderFilter` calls in the pipeline are for: each channel names the one provider it should use.
 
-Real providers declare the channels they support, so a Twilio registration would never be offered an email. A simulator will happily accept any channel, so naming each channel's provider keeps the routing explicit and keeps the simulated setup shaped like the real one.
+Real providers declare the channels they support, so a Twilio registration would never be offered an email. A simulator accepts any channel. Without the filters, any match would send each message through all three simulators, and the buyer would get three emails, three texts, and three pushes. Naming each channel's provider keeps the routing explicit and keeps the simulated setup shaped like the real one.
 
 ## Connecting real providers
 
-Here's what changes to send real messages. The pipeline doesn't, and neither do the templates, the enrichers, or anything outside Communications.
+To send real messages, you change the provider registrations. The pipeline stays as it is, and so do the templates, the enrichers, and everything outside Communications.
 
 Each provider is a package:
 
@@ -350,7 +350,7 @@ It also reports what it would have sent. Every simulated delivery raises a deliv
 
 each followed by the rendered message.
 
-And it makes the composition testable. [The sample's tests](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/tests/Application.UnitTests/OrderCreatedCompositionTests.cs) build the real `OrderCreated` pipeline with fake Identity and Catalog services, dispatch an order, and check all three rendered messages, including which provider each one went through. They run in milliseconds and never touch the network.
+And it makes the composition testable. [The sample's tests](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/tests/Application.UnitTests/OrderCreatedCompositionTests.cs) build the real `OrderCreated` pipeline with fake Identity and Catalog services, dispatch an order, and check all three rendered messages, including which provider each one went through. They never touch the network.
 
 ## Where we ended up
 
@@ -396,8 +396,8 @@ Delivery
 
 Each of those can change on its own schedule: a new channel is a pipeline change, a new policy a strategy change, a new provider a registration change. The intent stays `OrderCreated` through all of it.
 
-There's one word in those log lines worth a second look: `Dispatched`. With the simulator, handing a message to the provider and the message arriving are the same moment. Real providers rarely work that way. Twilio or SendGrid accept the message, queue it, and report back later as it's sent, delivered, bounced, or opened. Those later reports are worth keeping.
+One word in those log lines deserves a second look: `Dispatched`. With the simulator, handing a message to the provider and the message arriving are the same moment. Real providers rarely work that way. Twilio or SendGrid accept the message, queue it, and report back later as it's sent, delivered, bounced, or opened, and those later reports are worth keeping.
 
 ---
 
-**Next: [Part 5, Handling Delivery Events](../part%205/article.md).** Delivery updates from any provider land in one place, with Twilio as the example, and buyers get an inbox of everything we've sent them.
+In the next article, we'll explore how Delivery updates from any provider land in one place, with Twilio as the example, and buyers get an inbox of everything we've sent them.
