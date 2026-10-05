@@ -13,6 +13,16 @@
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
+	<PropertyGroup>
+		<TestSdkVersion>18.10.1</TestSdkVersion>
+		<MSTestVersion>4.4.1</MSTestVersion>
+		<CoverletVersion>10.1.0</CoverletVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+		<TestSdkVersion>17.13.0</TestSdkVersion>
+		<MSTestVersion>3.8.3</MSTestVersion>
+		<CoverletVersion>6.0.4</CoverletVersion>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<None Remove="EmbeddedResources\has-content.txt" />
@@ -22,11 +32,11 @@
 	<ItemGroup>
 		<PackageReference Include="AutoFixture" Version="4.18.1" />
 		<PackageReference Include="AutoFixture.AutoMoq" Version="4.18.1" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-		<PackageReference Include="Moq" Version="4.20.72" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.8.3" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.8.3" />
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
+		<PackageReference Include="Moq" Version="4.21.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="$(MSTestVersion)" />
+		<PackageReference Include="MSTest.TestFramework" Version="$(MSTestVersion)" />
+		<PackageReference Include="coverlet.collector" Version="$(CoverletVersion)">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -39,6 +49,8 @@
 		<Using Include="Transmitly.Logging" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+		<Reference Include="System" />
+		<Reference Include="System.Core" />
 		<Reference Include="Microsoft.CSharp" />
 	</ItemGroup>
 	<ItemGroup>

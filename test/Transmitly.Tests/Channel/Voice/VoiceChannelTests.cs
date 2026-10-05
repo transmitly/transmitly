@@ -45,6 +45,20 @@ public class VoiceChannelTests : BaseUnitTest
 	}
 
 	[TestMethod]
+	[DataRow("cell-phone", true)]
+	[DataRow("home-phone", true)]
+	[DataRow("phone", true)]
+	[DataRow("mobile-phone", true)]
+	[DataRow("email", false)]
+	public void SupportsIdentityAddressShouldRespectExplicitVoiceAddressType(string addressType, bool expected)
+	{
+		var voice = new VoiceChannel(new VoiceChannelConfiguration(null));
+		var address = new PlatformIdentityAddress("+14155552671", type: addressType);
+
+		Assert.AreEqual(expected, voice.SupportsIdentityAddress(address), addressType);
+	}
+
+	[TestMethod]
 	public async Task GenerateCommunicationAsyncShouldGuardAgainstNullContext()
 	{
 		var channel = fixture.Create<VoiceChannel>();

@@ -25,12 +25,21 @@ public static class DeliveryUtil
 	public const string EventIdKey = "tlye";
 	public const string PipelineIdKey = "tlypid";
 
-	public static Uri AddPipelineContext(this Uri url, string resourceId, string pipelineIntent, string? pipelineId, string? channel, string? channelProvider)
+	/// <summary>
+	/// Adds the pipeline context a channel provider's delivery report adaptor needs to recognize a callback.
+	/// </summary>
+	/// <param name="url">The delivery report callback URL.</param>
+	/// <param name="resourceId">The provider's id for the communication. Often unknown at dispatch, when the provider assigns it; omitted when empty.</param>
+	/// <param name="pipelineIntent">Intent of the pipeline.</param>
+	/// <param name="pipelineId">Id of the pipeline.</param>
+	/// <param name="channel">Id of the channel.</param>
+	/// <param name="channelProvider">Id of the channel provider.</param>
+	/// <returns>The callback URL with the pipeline context added.</returns>
+	public static Uri AddPipelineContext(this Uri url, string? resourceId, string pipelineIntent, string? pipelineId, string? channel, string? channelProvider)
 	{
 		Guard.AgainstNullOrWhiteSpace(channel);
 		Guard.AgainstNullOrWhiteSpace(channelProvider);
 		Guard.AgainstNullOrWhiteSpace(pipelineIntent);
-		Guard.AgainstNullOrWhiteSpace(resourceId);
 
 		return Guard.AgainstNull(url)
 			.AddParameter(ResourceIdKey, resourceId)
@@ -42,8 +51,11 @@ public static class DeliveryUtil
 	}
 
 	//Source=https://stackoverflow.com/a/19679135
-	public static Uri AddParameter(this Uri url, string paramName, string paramValue)
+	public static Uri AddParameter(this Uri url, string paramName, string? paramValue)
 	{
+		if (string.IsNullOrEmpty(paramValue))
+			return url;
+
 		var uriBuilder = new UriBuilder(url);
 		var query = HttpUtility.ParseQueryString(uriBuilder.Query);
 		query[paramName] = paramValue;

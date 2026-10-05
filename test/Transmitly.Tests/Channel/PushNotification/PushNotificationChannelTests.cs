@@ -34,8 +34,12 @@ public class PushNotificationChannelTests : BaseUnitTest
 		var tests = new List<(IPlatformIdentityAddress, bool)> {
 			(new PlatformIdentityAddress("test", type: PlatformIdentityAddress.Types.DeviceToken()), true),
 			(new PlatformIdentityAddress("test", type: PlatformIdentityAddress.Types.Topic()), true),
+			(new PlatformIdentityAddress("test", type: "device-token"), true),
+			(new PlatformIdentityAddress("test", type: "topic"), true),
 			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", type:PlatformIdentityAddress.Types.DeviceToken()), true),
 			(new PlatformIdentityAddress("test", type: "other"), false),
+			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", type: "other"), false),
+			(new PlatformIdentityAddress("/topics/news", type: "other"), false),
 			(new PlatformIdentityAddress("test"), false),
 			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664"), true)
 		};
