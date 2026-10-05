@@ -22,7 +22,8 @@ Ordering -> Transmitly forwarding middleware -> Communications API
   longer reads the email claim.
 - `src/eShop.ServiceDefaults/Communications/OrderCreatedModel.cs` is the
   transactional model Ordering supplies: order id, date, items, and total.
-- `src/Communications.API/OrderCreated` holds the pipeline.
+- `src/Communications.API/Program.cs` registers the `OrderCreated` pipeline,
+  and `src/Communications.API/OrderCreated` holds the pieces it uses.
   `CatalogContentModelEnricher` batch-loads the ordered products from Catalog
   and builds `OrderCreatedContentModel`. `OrderCreatedEmail` renders the order
   summary from it. If Catalog is unavailable, the email is sent without product

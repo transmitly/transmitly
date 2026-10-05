@@ -21,8 +21,8 @@ Ordering is unchanged from Part 3.
 
 ## What changed from Part 3
 
-- `src/Communications.API/OrderCreated/OrderCreatedPipeline.cs` adds SMS and
-  push channels and uses the any-match delivery strategy, so the buyer is
+- `src/Communications.API/Program.cs` adds SMS and push channels to the
+  `OrderCreated` pipeline and uses the any-match delivery strategy, so the buyer is
   reached on every channel they have an address for. Each channel is pinned to
   one provider.
 - `src/Communications.API/OrderCreated/OrderCreatedSms.cs` and

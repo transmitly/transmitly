@@ -12,13 +12,15 @@ internal static class OrderCreatedPush
     public const string OpenOrderAction = "open-order";
     public const string OrderIdKey = "orderId";
 
-    public static string Title(IDispatchCommunicationContext context) => "Thanks for your order";
+    public static Task<string?> Title(IDispatchCommunicationContext context) =>
+        Task.FromResult<string?>("Thanks for your order");
 
-    public static string Body(IDispatchCommunicationContext context) =>
-        OrderCreatedContentModel.From(context.ContentModel) is { } order
-            ? $"Order #{order.OrderId} has been received."
-            : "Your order has been received.";
+    public static Task<string?> Body(IDispatchCommunicationContext context) =>
+        Task.FromResult<string?>(
+            OrderCreatedContentModel.From(context.ContentModel) is { } order
+                ? $"Order #{order.OrderId} has been received."
+                : "Your order has been received.");
 
-    public static string? OrderId(IDispatchCommunicationContext context) =>
-        OrderCreatedContentModel.From(context.ContentModel)?.OrderId.ToString();
+    public static Task<string?> OrderId(IDispatchCommunicationContext context) =>
+        Task.FromResult(OrderCreatedContentModel.From(context.ContentModel)?.OrderId.ToString());
 }

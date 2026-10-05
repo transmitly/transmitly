@@ -250,7 +250,7 @@ else
 
 Without Twilio settings, SMS stays on the simulator and everything in this article still works. The simulator raises its `OnDispatched` reports, the recorder stores them, and the Messages page shows them.
 
-With Twilio configured, Twilio also needs to know where to send status updates. [The SMS channel](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/OrderCreated/OrderCreatedPipeline.cs) tells it, using Twilio's own channel settings:
+With Twilio configured, Twilio also needs to know where to send status updates. [The SMS channel](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/Program.cs) tells it, using Twilio's own channel settings:
 
 ```csharp
 sms.Twilio().StatusCallbackUrl = providers.DeliveryReportUrl;
@@ -411,7 +411,7 @@ Delivery decisions moved out of business code. A buyer's verified addresses deci
 
 We also got to see what happened after the send. Reports from the simulator and from Twilio arrive in one provider-agnostic shape, so the recording and the inbox were written once, and provider details like Twilio's error code are still available when they matter.
 
-None of it needed a provider account to build. The simulator ran the whole pipeline, and the tests composed real messages through real pipeline configuration without touching the network.
+None of it needed a provider account to build. The simulator ran the whole pipeline, and the tests composed real messages through the real templates and enrichers without touching the network.
 
 ## Shaped around eShop
 

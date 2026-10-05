@@ -39,8 +39,8 @@ Ordering is unchanged from Part 4.
   - `DeliveryReportsController` is the provider webhook at
     `POST /api/communications/delivery-reports`, built on
     `Transmitly.Microsoft.AspnetCore.Mvc`.
-- `src/Communications.API/OrderCreated/OrderCreatedPipeline.cs` goes back to
-  Transmitly's default first-match strategy: each buyer gets one message, on the
+- The `OrderCreated` pipeline in `src/Communications.API/Program.cs` goes back
+  to Transmitly's default first-match strategy: each buyer gets one message, on the
   first of email, SMS, or push that can reach them.
 - `src/Communications.API/IdentityServerCustomerIdentityResolver.cs` only keeps
   addresses the buyer has verified, so verification decides the channel.

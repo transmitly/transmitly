@@ -5,6 +5,7 @@ using eShop.Communications.API.OrderCreated;
 using eShop.ServiceDefaults;
 using eShop.ServiceDefaults.Communications;
 using Transmitly;
+using Transmitly.Model.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +36,22 @@ builder.Services.AddTransmitly(tly => tly
     })
     .AddSimulationSupport()
     .AddPlatformIdentityResolver<IdentityServerCustomerIdentityResolver>(CommunicationIdentityTypes.Buyer)
-    .AddOrderCreatedPipeline(webAppUrl));
+    .AddContentModelEnricher<CatalogContentModelEnricher>(options =>
+    {
+        // Enrich once per recipient so every channel shares the same content.
+        options.Scope = ContentModelEnricherScope.PerRecipient;
+        options.Predicate = context => context.PipelineIntent == CommunicationIntents.OrderCreated;
+    })
+    .AddPipeline(CommunicationIntents.OrderCreated, pipeline =>
+    {
+        pipeline.AddEmail(
+            "orders@eshop.local".AsIdentityAddress("eShop"),
+            email =>
+            {
+                email.Subject.AddTemplateResolver(context => OrderCreatedEmail.Subject(context));
+                email.TextBody.AddTemplateResolver(context => OrderCreatedEmail.TextBody(context, webAppUrl));
+            });
+    }));
 
 var app = builder.Build();
 logger = app.Services.GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>().CreateLogger("Transmitly");

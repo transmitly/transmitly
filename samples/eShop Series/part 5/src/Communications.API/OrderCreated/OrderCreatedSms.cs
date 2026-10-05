@@ -7,15 +7,15 @@ namespace eShop.Communications.API.OrderCreated;
 /// </summary>
 internal static class OrderCreatedSms
 {
-    public static string Message(IDispatchCommunicationContext context, Uri? webAppUrl)
+    public static Task<string?> Message(IDispatchCommunicationContext context, Uri? webAppUrl)
     {
         var order = OrderCreatedContentModel.From(context.ContentModel);
         var message = order is null
             ? "We've received your eShop order."
             : $"We've received your eShop order #{order.OrderId}.";
 
-        return OrderLinks.Orders(webAppUrl) is { } ordersLink
+        return Task.FromResult<string?>(OrderLinks.Orders(webAppUrl) is { } ordersLink
             ? $"{message}\nView your order: {ordersLink}"
-            : message;
+            : message);
     }
 }

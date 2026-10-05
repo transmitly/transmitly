@@ -116,7 +116,7 @@ Device token
 
 ## One context, three renderings
 
-With addresses in place, [the pipeline](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedPipeline.cs) adds two channels next to the email:
+With addresses in place, the pipeline in the Communications service's [`Program.cs`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/Program.cs) adds two channels next to the email:
 
 ```csharp
 .AddPipeline(CommunicationIntents.OrderCreated, pipeline =>
@@ -128,10 +128,8 @@ With addresses in place, [the pipeline](https://github.com/transmitly/transmitly
         email =>
         {
             email.AddChannelProviderFilter(EshopChannelProviders.Email);
-            email.Subject.AddTemplateResolver(context =>
-                Task.FromResult<string?>(OrderCreatedEmail.Subject(context)));
-            email.TextBody.AddTemplateResolver(context =>
-                Task.FromResult<string?>(OrderCreatedEmail.TextBody(context, webAppUrl)));
+            email.Subject.AddTemplateResolver(context => OrderCreatedEmail.Subject(context));
+            email.TextBody.AddTemplateResolver(context => OrderCreatedEmail.TextBody(context, webAppUrl));
         });
 
     pipeline.AddSms(
@@ -139,20 +137,16 @@ With addresses in place, [the pipeline](https://github.com/transmitly/transmitly
         sms =>
         {
             sms.AddChannelProviderFilter(EshopChannelProviders.Sms);
-            sms.Message.AddTemplateResolver(context =>
-                Task.FromResult<string?>(OrderCreatedSms.Message(context, webAppUrl)));
+            sms.Message.AddTemplateResolver(context => OrderCreatedSms.Message(context, webAppUrl));
         });
 
     pipeline.AddPushNotification(push =>
     {
         push.AddChannelProviderFilter(EshopChannelProviders.Push);
-        push.Title.AddTemplateResolver(context =>
-            Task.FromResult<string?>(OrderCreatedPush.Title(context)));
-        push.Body.AddTemplateResolver(context =>
-            Task.FromResult<string?>(OrderCreatedPush.Body(context)));
+        push.Title.AddTemplateResolver(context => OrderCreatedPush.Title(context));
+        push.Body.AddTemplateResolver(context => OrderCreatedPush.Body(context));
         push.AddData(OrderCreatedPush.ActionKey, OrderCreatedPush.OpenOrderAction);
-        push.AddDataIfNotNull(OrderCreatedPush.OrderIdKey, context =>
-            Task.FromResult(OrderCreatedPush.OrderId(context)));
+        push.AddDataIfNotNull(OrderCreatedPush.OrderIdKey, context => OrderCreatedPush.OrderId(context));
     });
 });
 ```
@@ -164,18 +158,20 @@ All three read the same [`OrderCreatedContentModel`](https://github.com/transmit
 The [email](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedEmail.cs) renders exactly as it did in Part 3. Its "view your order" link now comes from a small [`OrderLinks`](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderLinks.cs) helper that the SMS shares. The [SMS](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedSms.cs) keeps only what fits in a text message:
 
 ```csharp
-public static string Message(IDispatchCommunicationContext context, Uri? webAppUrl)
+public static Task<string?> Message(IDispatchCommunicationContext context, Uri? webAppUrl)
 {
     var order = OrderCreatedContentModel.From(context.ContentModel);
     var message = order is null
         ? "We've received your eShop order."
         : $"We've received your eShop order #{order.OrderId}.";
 
-    return OrderLinks.Orders(webAppUrl) is { } ordersLink
+    return Task.FromResult<string?>(OrderLinks.Orders(webAppUrl) is { } ordersLink
         ? $"{message}\nView your order: {ordersLink}"
-        : message;
+        : message);
 }
 ```
+
+Every template method returns `Task<string?>`, which is what `AddTemplateResolver` takes, so each registration is a single line. A template that later needs to await something can do it without changing how it's registered.
 
 which renders as:
 
@@ -350,7 +346,7 @@ It also reports what it would have sent. Every simulated delivery raises a deliv
 
 each followed by the rendered message.
 
-And it makes the composition testable. [The sample's tests](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/tests/Application.UnitTests/OrderCreatedCompositionTests.cs) build the real `OrderCreated` pipeline with fake Identity and Catalog services, dispatch an order, and check all three rendered messages, including which provider each one went through. They never touch the network.
+And it makes the composition testable. [The sample's tests](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/tests/Application.UnitTests/OrderCreatedCompositionTests.cs) register the same `OrderCreated` pipeline as `Program.cs`, with the real resolver, enrichers, and templates and fake Identity and Catalog services behind them. They dispatch an order and check all three rendered messages, including which provider each one went through, without touching the network.
 
 ## Where we ended up
 

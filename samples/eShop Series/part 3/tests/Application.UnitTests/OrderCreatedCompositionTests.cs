@@ -9,6 +9,7 @@ using eShop.ServiceDefaults.Communications;
 using eShop.ServiceDefaults.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Transmitly;
+using Transmitly.Model.Configuration;
 
 namespace eShop.Application.UnitTests;
 
@@ -66,6 +67,9 @@ public class OrderCreatedCompositionTests
 
         // The simulation provider raises delivery reports without awaiting them.
         var sent = new TaskCompletionSource<IEmail>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var webAppUrl = new Uri("https://eshop.test/");
+
+        // The same OrderCreated registration as the Communications service's Program.cs.
         services.AddTransmitly(tly => tly
             .AddSimulationSupport()
             .AddDeliveryReportHandler(report =>
@@ -78,7 +82,21 @@ public class OrderCreatedCompositionTests
                 return Task.CompletedTask;
             })
             .AddPlatformIdentityResolver<IdentityServerCustomerIdentityResolver>(CommunicationIdentityTypes.Buyer)
-            .AddOrderCreatedPipeline(new Uri("https://eshop.test/")));
+            .AddContentModelEnricher<CatalogContentModelEnricher>(options =>
+            {
+                options.Scope = ContentModelEnricherScope.PerRecipient;
+                options.Predicate = context => context.PipelineIntent == CommunicationIntents.OrderCreated;
+            })
+            .AddPipeline(CommunicationIntents.OrderCreated, pipeline =>
+            {
+                pipeline.AddEmail(
+                    "orders@eshop.local".AsIdentityAddress("eShop"),
+                    email =>
+                    {
+                        email.Subject.AddTemplateResolver(context => OrderCreatedEmail.Subject(context));
+                        email.TextBody.AddTemplateResolver(context => OrderCreatedEmail.TextBody(context, webAppUrl));
+                    });
+            }));
 
         await using var serviceProvider = services.BuildServiceProvider();
         var communicationsClient = serviceProvider.GetRequiredService<ICommunicationsClient>();

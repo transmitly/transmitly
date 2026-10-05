@@ -12,17 +12,18 @@ internal static class OrderCreatedEmail
     // eShop prices are in US dollars.
     private static readonly CultureInfo PriceCulture = CultureInfo.GetCultureInfo("en-US");
 
-    public static string Subject(IDispatchCommunicationContext context) =>
-        OrderCreatedContentModel.From(context.ContentModel) is { } order
-            ? $"Thanks for your order #{order.OrderId}"
-            : "Thanks for your order!";
+    public static Task<string?> Subject(IDispatchCommunicationContext context) =>
+        Task.FromResult<string?>(
+            OrderCreatedContentModel.From(context.ContentModel) is { } order
+                ? $"Thanks for your order #{order.OrderId}"
+                : "Thanks for your order!");
 
-    public static string TextBody(IDispatchCommunicationContext context, Uri? webAppUrl)
+    public static Task<string?> TextBody(IDispatchCommunicationContext context, Uri? webAppUrl)
     {
         if (OrderCreatedContentModel.From(context.ContentModel) is not { } order)
         {
             // Without the enriched model, fall back to the bare Part 2 message.
-            return "We've received your order and we'll let you know when it ships.";
+            return Task.FromResult<string?>("We've received your order and we'll let you know when it ships.");
         }
 
         var text = new StringBuilder();
@@ -54,6 +55,6 @@ internal static class OrderCreatedEmail
             text.AppendLine(ordersLink);
         }
 
-        return text.ToString();
+        return Task.FromResult<string?>(text.ToString());
     }
 }

@@ -32,7 +32,7 @@ Parts 2 to 5 each have their own `README.md` describing what changed, with eShop
 * Templating
   * Code-defined templates per channel
 * Channels - Email, SMS, Push
-* [Channel Provider Restrictions](part%205/src/Communications.API/OrderCreated/OrderCreatedPipeline.cs) - pin each channel to one provider
+* [Channel Provider Restrictions](part%205/src/Communications.API/Program.cs) - pin each channel to one provider
 * Delivery Strategies - first match and any match
 * Delivery Reports
   * Recording delivery history in a Communications database

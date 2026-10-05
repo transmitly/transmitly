@@ -12,6 +12,7 @@ using eShop.ServiceDefaults.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Transmitly;
 using Transmitly.Delivery;
+using Transmitly.Model.Configuration;
 
 namespace eShop.Application.UnitTests;
 
@@ -111,6 +112,9 @@ public class OrderCreatedCompositionTests
         // The simulation providers raise delivery reports without awaiting them.
         var reports = new ConcurrentQueue<DeliveryReport>();
         var allChannelsReported = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var webAppUrl = new Uri("https://eshop.test/");
+
+        // The same OrderCreated registration as the Communications service's Program.cs.
         services.AddTransmitly(tly => tly
             .AddEshopChannelProviders()
             .AddDeliveryReportHandler(report =>
@@ -125,7 +129,41 @@ public class OrderCreatedCompositionTests
             })
             .AddPlatformIdentityResolver<IdentityServerCustomerIdentityResolver>(CommunicationIdentityTypes.Buyer)
             .AddPlatformIdentityProfileEnricher<PushRegistrationProfileEnricher>(CommunicationIdentityTypes.Buyer)
-            .AddOrderCreatedPipeline(new Uri("https://eshop.test/")));
+            .AddContentModelEnricher<CatalogContentModelEnricher>(options =>
+            {
+                options.Scope = ContentModelEnricherScope.PerRecipient;
+                options.Predicate = context => context.PipelineIntent == CommunicationIntents.OrderCreated;
+            })
+            .AddPipeline(CommunicationIntents.OrderCreated, pipeline =>
+            {
+                pipeline.UseAnyMatchPipelineDeliveryStrategy();
+
+                pipeline.AddEmail(
+                    "orders@eshop.local".AsIdentityAddress("eShop"),
+                    email =>
+                    {
+                        email.AddChannelProviderFilter(EshopChannelProviders.Email);
+                        email.Subject.AddTemplateResolver(context => OrderCreatedEmail.Subject(context));
+                        email.TextBody.AddTemplateResolver(context => OrderCreatedEmail.TextBody(context, webAppUrl));
+                    });
+
+                pipeline.AddSms(
+                    "+15555550100".AsIdentityAddress("eShop"),
+                    sms =>
+                    {
+                        sms.AddChannelProviderFilter(EshopChannelProviders.Sms);
+                        sms.Message.AddTemplateResolver(context => OrderCreatedSms.Message(context, webAppUrl));
+                    });
+
+                pipeline.AddPushNotification(push =>
+                {
+                    push.AddChannelProviderFilter(EshopChannelProviders.Push);
+                    push.Title.AddTemplateResolver(context => OrderCreatedPush.Title(context));
+                    push.Body.AddTemplateResolver(context => OrderCreatedPush.Body(context));
+                    push.AddData(OrderCreatedPush.ActionKey, OrderCreatedPush.OpenOrderAction);
+                    push.AddDataIfNotNull(OrderCreatedPush.OrderIdKey, context => OrderCreatedPush.OrderId(context));
+                });
+            }));
 
         await using var serviceProvider = services.BuildServiceProvider();
         var communicationsClient = serviceProvider.GetRequiredService<ICommunicationsClient>();
