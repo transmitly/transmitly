@@ -3,7 +3,7 @@
 
 Applies Transmitly to Microsoft's [.NET eShop](https://github.com/dotnet/eShop) reference application, one article at a time.
 
-eShop doesn't send customer communications. Over five parts, the series adds an order confirmation and grows it into email, SMS, and push, with delivery tracking and an inbox for buyers. Ordering's call stays the same throughout: it dispatches one `OrderCreated` intent, and a Communications service decides everything else.
+eShop doesn't send customer communications. Over five parts, the series adds an order confirmation and grows it into email, SMS, and push, with delivery tracking and an inbox for buyers. Ordering dispatches one `OrderCreated` intent, and a Communications service decides everything else. From Part 3 on, Ordering's call doesn't change at all.
 
 Each part folder is a complete, runnable copy of eShop and builds on the part before it, so comparing two neighboring folders shows exactly what an article changed.
 <br/>
@@ -13,11 +13,11 @@ Each part folder is a complete, runnable copy of eShop and builds on the part be
 
 | Part | Article | What the code adds |
 | --- | --- | --- |
-| [Part 1](part%201) | [Where Should Notifications Live?](part%201/article.md) | Unmodified eShop, the starting point for the series. |
-| [Part 2](part%202) | [Adding Email Without Coupling to Email](part%202/article.md) | A Communications service. Ordering dispatches `OrderCreated` through `ICommunicationsClient`, middleware forwards it, and the dispatch waits for the order to commit. |
-| [Part 3](part%203) | [Model Intent, Not Delivery](part%203/article.md) | The buyer is resolved through Identity, Catalog enriches the order with product details, and the email renders from a purpose-built content model. |
-| [Part 4](part%204) | [One Event, Multiple Channels, Multiple Providers](part%204/article.md) | SMS and push from the same intent, push tokens added by a profile enricher, and a simulated provider per channel. |
-| [Part 5](part%205) | [Handling Delivery Events](part%205/article.md) | Delivery reports recorded in Postgres, a Twilio webhook, and a Messages inbox in the web app. Each buyer gets one message on the first channel that reaches them. |
+| [Part 1](part%201) | [Where should communications live?](part%201/article.md) | Unmodified eShop, the starting point for the series. |
+| [Part 2](part%202) | [Sending Email Without Choosing Email](part%202/article.md) | A Communications service. Ordering dispatches `OrderCreated` through `ICommunicationsClient`, middleware forwards it, and the dispatch waits for the order to commit. |
+| [Part 3](part%203) | [Composing the Message Where the Data Lives](part%203/article.md) | Ordering dispatches the buyer's identity instead of an email address. Communications resolves the buyer through Identity, Catalog enriches the order with product details, and the email renders from a purpose-built content model. |
+| [Part 4](part%204) | [One Intent, Many Channels and Providers](part%204/article.md) | SMS and push from the same intent, push tokens added by a profile enricher, and a simulated provider per channel. |
+| [Part 5](part%205) | [After the Dispatch - Handling Delivery Events](part%205/article.md) | Delivery reports recorded in Postgres, a Twilio webhook, and a Messages inbox in the web app. Each buyer gets one message on the first channel that reaches them. |
 
 Parts 2 to 5 each have their own `README.md` describing what changed, with eShop's original README kept beside it as `eshop.README.md`. Part 1 is unmodified eShop, so its `README.md` is eShop's own.
 

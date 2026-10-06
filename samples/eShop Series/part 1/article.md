@@ -370,4 +370,4 @@ Ordering stays responsible for knowing that an order was created and that the op
 
 ---
 
-**Next: [Part 2, Adding Email Without Coupling to Email](../part%202/article.md).** Ordering starts dispatching its `OrderCreated` intent, and a new Communications service turns it into an email without Ordering ever choosing email.
+Next, we'll start writing code. Ordering will dispatch its `OrderCreated` intent, and a new Communications service will turn it into an email.

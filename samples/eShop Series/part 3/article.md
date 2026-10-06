@@ -804,4 +804,4 @@ Once that context exists, each channel can use it differently. Today, email give
 
 ---
 
-**Next, we'll demonstrate how the same intent goes out as an email, an SMS, and a push notification, with the simulator standing in for SMTP, Twilio, and Firebase.
+Next, we'll demonstrate how the same intent goes out as an email, an SMS, and a push notification, with the simulator standing in for SMTP, Twilio, and Firebase.
