@@ -1,5 +1,6 @@
 using System.Text.Json;
 using eShop.ServiceDefaults.Communications;
+using Polly;
 using Transmitly;
 using Transmitly.Model.Configuration;
 
@@ -103,9 +104,10 @@ public sealed class CatalogContentModelEnricher(
                 (await brandsTask ?? []).ToDictionary(brand => brand.Id, brand => brand.Brand),
                 (await typesTask ?? []).ToDictionary(type => type.Id, type => type.Type));
         }
-        catch (Exception ex) when (ex is HttpRequestException or JsonException)
+        catch (Exception ex) when (ex is HttpRequestException or JsonException or ExecutionRejectedException)
         {
             // Catalog adds context; it doesn't define the order. Render without it rather than fail.
+            // The resilience handler from service defaults reports an open circuit or a timeout as ExecutionRejectedException.
             logger.LogWarning(ex, "Catalog data was unavailable; the order communication is rendered without product details.");
             return CatalogData.Empty;
         }

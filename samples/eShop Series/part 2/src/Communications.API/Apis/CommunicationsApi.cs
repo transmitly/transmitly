@@ -61,7 +61,7 @@ public static class CommunicationsApi
         else if (request.Recipients.All(recipient =>
             recipient.Addresses.Count == 0 && !string.IsNullOrWhiteSpace(recipient.Id)))
         {
-            // Identity references are resolved by the platform identity resolvers configured in Program.cs.
+            // Identity references need a platform identity resolver registered in Program.cs. None is registered yet.
             IReadOnlyCollection<IPlatformIdentityReference> references =
                 [.. request.Recipients.Select(recipient =>
                     (IPlatformIdentityReference)new IdentityReference(recipient.Type ?? "User", recipient.Id!))];

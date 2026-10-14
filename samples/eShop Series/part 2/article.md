@@ -596,4 +596,4 @@ The one piece of that call that won't last is `buyerEmail`.
 
 ---
 
-Next up, well change ordering Ordering from passing an email address, and have Communications resolve the buyer through Identity and enriches the order with product details from Catalog.
+Next up, we'll stop Ordering from passing an email address, and have Communications resolve the buyer through Identity and enrich the order with product details from Catalog.

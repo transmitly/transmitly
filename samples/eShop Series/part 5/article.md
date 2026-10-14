@@ -40,7 +40,7 @@ var addresses = profile.Addresses
     .Select(address => ...);
 ```
 
-eShop's two [seeded buyers](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Identity.API/UsersSeed.cs) are set up to show the difference. Alice has verified her email address but not her phone number. Bob has verified his phone number but not his email address. (The seed only creates users that don't exist yet. If your `identitydb` was seeded by an earlier part, the [Part 5 README](README.md) has the SQL to update bob.)
+eShop's two [seeded buyers](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Identity.API/UsersSeed.cs) are set up to show the difference. Alice has verified her email address but not her phone number. Bob has verified his phone number but not his email address. (The seed only creates users that don't exist yet. If your `identitydb` was seeded by an earlier part, the [Part 5 README](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/README.md) has the SQL to update bob.)
 
 ```text
                          Ordering

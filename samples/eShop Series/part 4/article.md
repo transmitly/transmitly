@@ -24,7 +24,7 @@ Ordering said an order was created. Whether that becomes one message or three is
 
 A channel can only deliver if the recipient has an address it understands. Email needs an email address, SMS needs a phone number, and push needs a device token.
 
-Transmitly handles the matching. When it plans a dispatch, it asks each channel in the pipeline which of the recipient's addresses it can use. The email channel accepts addresses typed as email or shaped like one. The SMS channel accepts addresses typed as a phone, cell, or mobile number, or untyped values that look like one. The push channel accepts device tokens and topics. A channel with no usable address is skipped for that recipient.
+Transmitly handles the matching. When it plans a dispatch, it asks each channel in the pipeline which of the recipient's addresses it can use. The email channel accepts email addresses. The SMS channel accepts phone numbers, and an address type can say which kind of phone it is, so a mobile number gets the text and a home phone doesn't. The push channel accepts device tokens and topics. A channel with no usable address is skipped for that recipient.
 
 So adding channels starts with the recipient profile. Here's what eShop's buyer looks like after identity resolution:
 
@@ -171,14 +171,14 @@ public static Task<string?> Message(IDispatchCommunicationContext context, Uri? 
 }
 ```
 
-Every template method returns `Task<string?>`, which is what `AddTemplateResolver` takes, so each registration is a single line. A template that later needs to await something can do it without changing how it's registered.
-
 which renders as:
 
 ```text
 We've received your eShop order #123.
 View your order: https://eshop.example/user/orders
 ```
+
+Every template method returns `Task<string?>`, which is what `AddTemplateResolver` takes, so each registration is a single line. A template that later needs to await something can do it without changing how it's registered.
 
 [Push](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/OrderCreated/OrderCreatedPush.cs) is shorter still. The visible part is a title and a sentence. The useful part is the data: an action and an order id the app can use to open the right screen.
 
@@ -396,4 +396,4 @@ One word in those log lines deserves a second look: `Dispatched`. With the simul
 
 ---
 
-In the next article, we'll explore how Delivery updates from any provider land in one place, with Twilio as the example, and buyers get an inbox of everything we've sent them.
+In the next article, we'll explore how delivery updates from any provider land in one place, with Twilio as the example, and buyers get an inbox of everything we've sent them.
