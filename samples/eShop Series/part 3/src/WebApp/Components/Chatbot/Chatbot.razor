@@ -1,0 +1,138 @@
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.AI
+@using eShop.WebApp.Chatbot
+@inject IJSRuntime JS
+@inject CatalogService CatalogService
+@inject IProductImageUrlProvider ProductImages
+@inject BasketState BasketState
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILoggerFactory LoggerFactory
+@inject IServiceProvider ServiceProvider
+
+<div class="floating-pane" id="chatbot-pane" role="dialog" aria-label="Shopping assistant">
+    <header class="chatbot-header" data-chat-drag-handle>
+        <span class="chatbot-title">
+            Shopping assistant
+        </span>
+        <div class="chatbot-header-actions">
+            <button type="button" class="chatbot-size" data-chat-size aria-pressed="false" title="Toggle wide view" aria-label="Toggle wide view">
+                <svg class="chatbot-size-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M8 8 4 12l4 4" />
+                    <path d="m16 8 4 4-4 4" />
+                    <path d="M4 12h16" />
+                </svg>
+                <svg class="chatbot-size-condense" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m4 8 4 4-4 4" />
+                    <path d="m20 8-4 4 4 4" />
+                    <path d="M9 12h6" />
+                </svg>
+            </button>
+            <button type="button" class="chatbot-close" data-chat-close title="Close" aria-label="Close assistant">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="chatbot-chat @(chatState is null && missingConfiguration ? "is-centered" : "")" @ref="chat">
+        @if (chatState is not null)
+        {
+            foreach (var message in chatState.Messages.Where(m => m.Role == ChatRole.Assistant || m.Role == ChatRole.User))
+            {
+                if (!string.IsNullOrEmpty(message.Text))
+                {
+                    <p @key="@message" class="message message-@message.Role">@MessageProcessor.AllowImages(message.Text)</p>
+                }
+            }
+        }
+        else if (missingConfiguration)
+        {
+            <div class="chatbot-notice">
+                <span class="chatbot-notice-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 16v-4" />
+                        <path d="M12 8h.01" />
+                    </svg>
+                </span>
+                <p class="chatbot-notice-title">Assistant isn't switched on</p>
+                <p>Turn on Microsoft Foundry (<code>UseFoundry=true</code> in the AppHost) or enable Ollama for local AI, then reopen this panel.</p>
+            </div>
+        }
+
+        @if (thinking)
+        {
+            <p class="thinking">Thinking...</p>
+        }
+    </div>
+
+    <form class="chatbot-input" @onsubmit="SendMessageAsync">
+        <textarea placeholder="Ask about products, orders or recommendations..." aria-label="Message to the shopping assistant" @ref="@textbox" @bind="messageToSend"></textarea>
+        <button type="submit" class="chatbot-send" title="Send" aria-label="Send message" disabled="@(chatState is null)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+        </button>
+    </form>
+
+    <span class="chatbot-grip chatbot-grip-n" data-chat-resize="n" aria-hidden="true"></span>
+    <span class="chatbot-grip chatbot-grip-s" data-chat-resize="s" aria-hidden="true"></span>
+    <span class="chatbot-grip chatbot-grip-e" data-chat-resize="e" aria-hidden="true"></span>
+    <span class="chatbot-grip chatbot-grip-w" data-chat-resize="w" aria-hidden="true"></span>
+    <span class="chatbot-grip chatbot-grip-nw" data-chat-resize="nw" aria-hidden="true"></span>
+    <span class="chatbot-grip chatbot-grip-ne" data-chat-resize="ne" aria-hidden="true"></span>
+    <span class="chatbot-grip chatbot-grip-sw" data-chat-resize="sw" aria-hidden="true"></span>
+    <span class="chatbot-grip chatbot-grip-se" data-chat-resize="se" aria-hidden="true">
+        <span class="chatbot-grip-mark" aria-hidden="true"></span>
+    </span>
+</div>
+
+@code {
+    bool missingConfiguration;
+    ChatState? chatState;
+    ElementReference textbox;
+    ElementReference chat;
+    string? messageToSend;
+    bool thinking;
+    IJSObjectReference? jsModule;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = ServiceProvider.GetService<IChatClient>();
+        if (client is not null)
+        {
+            AuthenticationState auth = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            chatState = new ChatState(CatalogService, BasketState, auth.User, ProductImages, LoggerFactory, client);
+        }
+        else
+        {
+            missingConfiguration = true;
+        }
+    }
+
+    private async Task SendMessageAsync()
+    {
+        var messageCopy = messageToSend?.Trim();
+        messageToSend = null;
+
+        if (chatState is not null && !string.IsNullOrEmpty(messageCopy))
+        {
+            thinking = true;
+            await chatState.AddUserMessageAsync(messageCopy, onMessageAdded: StateHasChanged);
+            thinking = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        jsModule ??= await JS.InvokeAsync<IJSObjectReference>("import", "./Components/Chatbot/Chatbot.razor.js");
+        await jsModule.InvokeVoidAsync("scrollToEnd", chat);
+
+        if (firstRender)
+        {
+            await jsModule.InvokeVoidAsync("submitOnEnter", textbox);
+        }
+    }
+}

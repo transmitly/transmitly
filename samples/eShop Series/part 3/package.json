@@ -1,0 +1,21 @@
+{
+  "name": "eshop",
+  "version": "1.0.0",
+  "description": "A reference .NET application implementing an eCommerce web site using a services-based architecture.",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.1.2",
+    "dotenv": "^17.4.2"
+  }
+}

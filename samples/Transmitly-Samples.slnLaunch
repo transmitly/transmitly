@@ -37,5 +37,50 @@
         "Action": "Start"
       }
     ]
+  },
+  {
+    "Name": "eShop Part 1",
+    "Projects": [
+      {
+        "Path": "eShop Series\\part 1\\src\\eShop.AppHost\\eShop.AppHost.csproj",
+        "Action": "Start"
+      }
+    ]
+  },
+  {
+    "Name": "eShop Part 2",
+    "Projects": [
+      {
+        "Path": "eShop Series\\part 2\\src\\eShop.AppHost\\eShop.AppHost.csproj",
+        "Action": "Start"
+      }
+    ]
+  },
+  {
+    "Name": "eShop Part 3",
+    "Projects": [
+      {
+        "Path": "eShop Series\\part 3\\src\\eShop.AppHost\\eShop.AppHost.csproj",
+        "Action": "Start"
+      }
+    ]
+  },
+  {
+    "Name": "eShop Part 4",
+    "Projects": [
+      {
+        "Path": "eShop Series\\part 4\\src\\eShop.AppHost\\eShop.AppHost.csproj",
+        "Action": "Start"
+      }
+    ]
+  },
+  {
+    "Name": "eShop Part 5",
+    "Projects": [
+      {
+        "Path": "eShop Series\\part 5\\src\\eShop.AppHost\\eShop.AppHost.csproj",
+        "Action": "Start"
+      }
+    ]
   }
 ]

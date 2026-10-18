@@ -1,0 +1,79 @@
+@page "/user/messages"
+@attribute [Authorize]
+@attribute [StreamRendering]
+@inject InboxService InboxService
+
+<PageTitle>Messages | AdventureWorks</PageTitle>
+<SectionContent SectionName="page-header-title">Messages</SectionContent>
+
+<div class="messages">
+@if (messages is null)
+{
+    <p class="messages-loading" role="status">Loading your messages...</p>
+}
+else if (messages.Length == 0)
+{
+    <div class="messages-empty">
+        <span class="messages-empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="8" y="12" width="32" height="24" rx="3" />
+                <path d="M8 15l16 11 16-11" />
+            </svg>
+        </span>
+        <h2>No messages yet</h2>
+        <p>Emails, texts, and notifications we send you show up here with their delivery status.</p>
+        <a class="button button-primary" href="/">Start shopping</a>
+    </div>
+}
+else
+{
+    <ul class="messages-list">
+        <li class="messages-header messages-item">
+            <div>Sent</div>
+            <div>Channel</div>
+            <div class="message-summary-header">Message</div>
+            <div>Status</div>
+        </li>
+        @foreach (var message in messages)
+        {
+            <li class="messages-item">
+                <div class="message-sent">
+                    @message.SentAt.ToLocalTime().ToString("g")
+                </div>
+                <div class="message-channel">
+                    @ChannelName(message.Channel)
+                </div>
+                <div class="message-summary">
+                    <span class="message-text">@(message.Summary ?? "(no preview)")</span>
+                    <span class="message-intent">@IntentName(message.Intent)</span>
+                </div>
+                <div class="message-status">
+                    <span class="status @(message.IsFailure ? "failed" : "sent")">
+                        @message.Status
+                    </span>
+                </div>
+            </li>
+        }
+    </ul>
+}
+</div>
+
+@code {
+    private InboxMessage[]? messages;
+
+    protected override async Task OnInitializedAsync()
+    {
+        messages = await InboxService.GetMessages();
+    }
+
+    private static string ChannelName(string? channel) => channel switch
+    {
+        "Sms" => "SMS",
+        null => "Unknown",
+        _ => channel
+    };
+
+    // "OrderCreated" -> "Order created"
+    private static string IntentName(string intent) =>
+        string.Concat(intent.Select((c, i) => i > 0 && char.IsUpper(c) ? $" {char.ToLowerInvariant(c)}" : c.ToString()));
+}

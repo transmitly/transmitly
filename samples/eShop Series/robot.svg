@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="title">
+  <title id="title">A robot waving, carrying a shopping bag, surrounded by an email, a text message, and a push notification</title>
+
+  <!-- ground shadow -->
+  <ellipse cx="100" cy="190" rx="42" ry="5" fill="#01aef0" opacity="0.2"/>
+
+  <!-- text message bubble -->
+  <g transform="rotate(-8 33 50)">
+    <rect x="16" y="38" width="34" height="22" rx="7" fill="#ffb703"/>
+    <path d="M24 59 L21 68 L33 59 Z" fill="#ffb703"/>
+    <circle cx="26" cy="49" r="2.5" fill="#ffffff"/>
+    <circle cx="33" cy="49" r="2.5" fill="#ffffff"/>
+    <circle cx="40" cy="49" r="2.5" fill="#ffffff"/>
+  </g>
+
+  <!-- push notification bell -->
+  <g transform="rotate(12 168 50)">
+    <path d="M156 60 Q156 38 168 36 Q180 38 180 60 Z" fill="#ffb703"/>
+    <rect x="152" y="58" width="32" height="5" rx="2.5" fill="#ffb703"/>
+    <circle cx="168" cy="66" r="3.5" fill="#ffb703"/>
+    <circle cx="178" cy="38" r="6" fill="#ff6b6b"/>
+  </g>
+  <path d="M187 30 q5 6 0 12" fill="none" stroke="#ffb703" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- antenna and signal -->
+  <line x1="100" y1="48" x2="100" y2="32" stroke="#0189bf" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="100" cy="27" r="6" fill="#ff6b6b"/>
+  <path d="M88 20 q-6 7 0 14" fill="none" stroke="#01aef0" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M112 20 q6 7 0 14" fill="none" stroke="#01aef0" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M81 15 q-10 12 0 24" fill="none" stroke="#01aef0" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+  <path d="M119 15 q10 12 0 24" fill="none" stroke="#01aef0" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- waving arm -->
+  <path d="M70 124 L46 102" stroke="#0189bf" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="43" cy="98" r="8" fill="#ffb703"/>
+  <path d="M30 88 q-4 6 -2 12" fill="none" stroke="#01aef0" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M36 82 q-5 4 -6 10" fill="none" stroke="#01aef0" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- legs and feet -->
+  <rect x="78" y="160" width="14" height="22" rx="4" fill="#0189bf"/>
+  <rect x="108" y="160" width="14" height="22" rx="4" fill="#0189bf"/>
+  <rect x="72" y="178" width="24" height="9" rx="4.5" fill="#016f9b"/>
+  <rect x="104" y="178" width="24" height="9" rx="4.5" fill="#016f9b"/>
+
+  <!-- body -->
+  <rect x="92" y="102" width="16" height="12" rx="3" fill="#0189bf"/>
+  <rect x="64" y="110" width="72" height="54" rx="15" fill="#01aef0"/>
+  <rect x="80" y="121" width="40" height="27" rx="7" fill="#e8f7fd"/>
+  <rect x="88" y="127" width="24" height="16" rx="2.5" fill="#ffffff" stroke="#01aef0" stroke-width="2.5"/>
+  <path d="M89 129 L100 137 L111 129" fill="none" stroke="#01aef0" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="74" cy="154" r="3" fill="#ffb703"/>
+  <circle cx="126" cy="154" r="3" fill="#ff6b6b"/>
+
+  <!-- shopping bag arm -->
+  <path d="M132 124 L152 140" stroke="#0189bf" stroke-width="9" stroke-linecap="round"/>
+  <rect x="140" y="150" width="30" height="30" rx="5" fill="#ff6b6b"/>
+  <path d="M147 152 Q155 136 163 152" fill="none" stroke="#c94f4f" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M148 162 h14" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+  <circle cx="155" cy="143" r="7.5" fill="#ffb703"/>
+
+  <!-- head -->
+  <rect x="54" y="64" width="11" height="22" rx="4" fill="#0189bf"/>
+  <rect x="135" y="64" width="11" height="22" rx="4" fill="#0189bf"/>
+  <rect x="61" y="46" width="78" height="58" rx="17" fill="#01aef0"/>
+  <rect x="71" y="56" width="58" height="38" rx="11" fill="#e8f7fd"/>
+  <circle cx="88" cy="72" r="6.5" fill="#1f2a37"/>
+  <circle cx="112" cy="72" r="6.5" fill="#1f2a37"/>
+  <circle cx="90.5" cy="69.5" r="2" fill="#ffffff"/>
+  <circle cx="114.5" cy="69.5" r="2" fill="#ffffff"/>
+  <path d="M89 82 Q100 91 111 82" fill="none" stroke="#1f2a37" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="79" cy="83" r="3.5" fill="#ff6b6b" opacity="0.5"/>
+  <circle cx="121" cy="83" r="3.5" fill="#ff6b6b" opacity="0.5"/>
+</svg>

@@ -1,0 +1,60 @@
+﻿@using System.Net
+@attribute [StreamRendering]
+@inject BasketState Basket
+@inject LogOutService LogOutService
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+@if (TotalQuantity is int qty && qty > 0)
+{
+    <a class="cart-button" aria-label="@AriaLabel" href="cart">
+        <img class="cart-button-icon" role="presentation" src="icons/cart.svg" />
+        <span class="cart-button-count" @key="qty">@(qty > 99 ? "99+" : qty.ToString())</span>
+    </a>
+}
+else
+{
+    <a class="icon-button" aria-label="Shopping bag" href="cart">
+        <img role="presentation" src="icons/cart.svg" />
+    </a>
+}
+
+@code {
+    IDisposable? basketStateSubscription;
+    private IReadOnlyCollection<BasketItem>? basketItems;
+
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+
+    private int? TotalQuantity => basketItems?.Sum(i => i.Quantity);
+
+    private string AriaLabel => $"Shopping bag, {TotalQuantity} item{(TotalQuantity == 1 ? "" : "s")}";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // The basket contents may change during the lifetime of this component (e.g., when an item is
+        // added during the current request). If this EventCallback is invoked, it will cause this
+        // component to re-render with the updated data.
+        basketStateSubscription = Basket.NotifyOnChange(
+            EventCallback.Factory.Create(this, UpdateBasketItemsAsync));
+
+        try
+        {
+            await UpdateBasketItemsAsync();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            await LogOutService.LogOutAsync(HttpContext!);
+        }
+    }
+
+    public void Dispose()
+    {
+        basketStateSubscription?.Dispose();
+    }
+
+    private async Task UpdateBasketItemsAsync()
+    {
+        basketItems = await Basket.GetBasketItemsAsync();
+    }
+}
