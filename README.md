@@ -186,9 +186,10 @@ There are additions and refinements planned before `1.0`, and the project still 
 ## Samples and documentation
 
 - [Samples](https://github.com/transmitly/transmitly/tree/main/samples)
-- [Hello Transmitly sample](https://github.com/transmitly/transmitly/tree/main/samples/HelloTransmitly)
-- [Kitchen Sink sample](https://github.com/transmitly/transmitly/tree/main/samples/Transmitly.KitchenSink.AspNetCoreWebApi)
-- [Microservices sample](https://github.com/transmitly/transmitly/tree/main/samples/Microservices)
+  - [Hello Transmitly sample](https://github.com/transmitly/transmitly/tree/main/samples/HelloTransmitly)
+  - [Kitchen Sink sample](https://github.com/transmitly/transmitly/tree/main/samples/Transmitly.KitchenSink.AspNetCoreWebApi)
+  - [Microservices sample](https://github.com/transmitly/transmitly/tree/main/samples/Microservices)
+  - [eshop Series](https://github.com/transmitly/transmitly/tree/main/samples/eShop%20Series)
 - [Wiki](https://github.com/transmitly/transmitly/wiki)
 
 ## Feedback wanted
