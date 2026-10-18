@@ -241,6 +241,32 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 	}
 
 	[TestMethod]
+	public async Task ShouldCreateDispatcherPerDispatchSoDispatchersOwnTheirSharedState()
+	{
+		var client = new CommunicationsClientBuilder()
+			.ChannelProvider.Add<InstanceCountingDispatcher, object>("counting-provider", "unit-test-channel")
+			.AddPipeline("test-pipeline", options => options.AddChannel(new UnitTestChannel("c0-from")))
+			.BuildClient();
+
+		var before = InstanceCountingDispatcher.InstanceCount;
+		await client.DispatchAsync("test-pipeline", "unit-test-address-0", new { });
+		await client.DispatchAsync("test-pipeline", "unit-test-address-1", new { });
+
+		Assert.AreEqual(2, InstanceCountingDispatcher.InstanceCount - before);
+	}
+
+	private sealed class InstanceCountingDispatcher : Transmitly.ChannelProvider.IChannelProviderDispatcher<object>
+	{
+		private static int _instanceCount;
+		public static int InstanceCount => _instanceCount;
+
+		public InstanceCountingDispatcher() => Interlocked.Increment(ref _instanceCount);
+
+		public Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken) =>
+			Task.FromResult<IReadOnlyCollection<IDispatchResult?>>([new DispatchResult(CommunicationsStatus.Success("Dispatched"))]);
+	}
+
+	[TestMethod]
 	public async Task ShouldReturnPipelineNotFoundResultCode()
 	{
 		const string PipelineIntent = "test-pipeline";

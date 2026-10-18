@@ -23,6 +23,14 @@ namespace Transmitly.ChannelProvider;
 public abstract class ChannelProviderRestDispatcher<TCommunication> : ChannelProviderDispatcher<TCommunication>, IDisposable
 	where TCommunication : class
 {
+
+#if NET
+	// Recycle pooled connections so DNS changes are picked up by the long-lived handler.
+	private static readonly HttpMessageHandler SharedHandler = new SocketsHttpHandler { PooledConnectionLifetime = TimeSpan.FromMinutes(2), UseCookies = false };
+#else
+	private static readonly HttpMessageHandler SharedHandler = new HttpClientHandler { UseCookies = false };
+#endif
+
 	private readonly Lazy<HttpClient> _lazyHttpClient;
 	private bool _disposedValue;
 	protected HttpClient HttpClient => _lazyHttpClient.Value;
@@ -31,7 +39,8 @@ public abstract class ChannelProviderRestDispatcher<TCommunication> : ChannelPro
 	{
 		_lazyHttpClient = new Lazy<HttpClient>(() =>
 		{
-			var client = httpClient ?? new HttpClient();
+			// disposing a dispatcher must not close the connections other dispatchers
+			var client = httpClient ?? new HttpClient(SharedHandler, disposeHandler: false);
 			ConfigureHttpClient(client);
 			return client;
 		});
