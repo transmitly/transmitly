@@ -179,7 +179,7 @@ The core project currently targets:
 
 ## Project status
 
-**Transmitly 0.4.0 is production-ready and in production use.**
+**Transmitly is production-ready and in production use.**
 
 There are additions and refinements planned before `1.0`, and the project still reserves room for API evolution while that work lands.
 
