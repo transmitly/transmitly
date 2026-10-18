@@ -550,7 +550,7 @@ The shared code stays small because it defines how to reach Communications, not 
 
 That keeps the catalog centralized without making every application depend on a catalog library.
 
-> The communications client and the applications don't have to evolve in lockstep. Developers can dispatch intents before Communications has configured them, and the communications team can wire up templates, channels, and delivery strategy on its own schedule.
+> The communications client and the applications don't have to evolve in lockstep. Developers can dispatch intents before Communications has configured them, and the communications team can wire up templates, channels, and delivery strategy on its own schedule. Until an intent has a pipeline, Transmitly reports the dispatch as Pipeline Not Found and nothing is sent, but nothing breaks either.
 
 ## Where we ended up
 

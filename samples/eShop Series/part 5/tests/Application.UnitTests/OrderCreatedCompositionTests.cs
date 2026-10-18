@@ -43,7 +43,7 @@ public class OrderCreatedCompositionTests
         "Alice Smith",
         [
             new ResolvedIdentityAddress("alice@example.com", "Alice Smith", "email", true),
-            new ResolvedIdentityAddress("1234567890", "Alice Smith", "phone", false)
+            new ResolvedIdentityAddress("+11234567890", "Alice Smith", "phone", false)
         ]);
 
     // Bob has verified his phone number. His email address isn't verified.
@@ -55,7 +55,7 @@ public class OrderCreatedCompositionTests
         "Bob Smith",
         [
             new ResolvedIdentityAddress("bob@example.com", "Bob Smith", "email", false),
-            new ResolvedIdentityAddress("1234567890", "Bob Smith", "phone", true)
+            new ResolvedIdentityAddress("+11234567890", "Bob Smith", "phone", true)
         ]);
 
     // Carol hasn't verified anything, but has a registered push device.
@@ -103,7 +103,7 @@ public class OrderCreatedCompositionTests
         var sms = (await DispatchOrderCreatedAsync(Bob)).Communication<ISms>();
         TestContext.WriteLine(sms.Message);
 
-        Assert.AreEqual("1234567890", sms.To!.Single().Value);
+        Assert.AreEqual("+11234567890", sms.To!.Single().Value);
         Assert.AreEqual(
             "We've received your eShop order #123.\nView your order: https://eshop.test/user/orders",
             sms.Message);

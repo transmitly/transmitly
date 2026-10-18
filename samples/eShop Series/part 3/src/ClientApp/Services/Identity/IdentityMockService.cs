@@ -41,7 +41,7 @@ public class IdentityMockService : IIdentityService
             ZipCode = "12345",
             Email = "sample.user@example.com",
             EmailVerified = true,
-            PhoneNumber = "1234567890",
+            PhoneNumber = "+11234567890",
             PhoneNumberVerified = true
         });
     }

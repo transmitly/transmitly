@@ -60,7 +60,7 @@ eShop's two [seeded buyers](https://github.com/transmitly/transmitly/blob/main/s
 
 Ordering sent exactly the same intent for both. It never knew an email address or a phone number existed. Communications resolved each buyer and picked the channel.
 
-In Part 2, Ordering handed over an email address, so every order confirmation was an email. That coupling is gone now, and the buyer's verified addresses decide.
+In Part 2, Ordering handed over an email address, so every order confirmation was an email. That coupling went away in Part 3, and now the buyer's verified addresses decide.
 
 ## What a delivery report is
 
@@ -248,6 +248,8 @@ else
 }
 ```
 
+Because the SMS provider now depends on configuration, `EshopChannelProviders` is no longer Part 4's static class. `Program.cs` builds it at startup with `EshopChannelProviders.FromConfiguration(builder.Configuration)`, and the pipeline reads each channel's provider id from that instance, as `providers.Sms`.
+
 Without Twilio settings, SMS stays on the simulator and everything in this article still works. The simulator raises its `OnDispatched` reports, the recorder stores them, and the Messages page shows them.
 
 With Twilio configured, Twilio also needs to know where to send status updates. [The SMS channel](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%205/src/Communications.API/Program.cs) tells it, using Twilio's own channel settings:
@@ -281,6 +283,8 @@ The configuration goes in the Communications API's user secrets or environment v
   }
 }
 ```
+
+Bob's seeded phone number, `+11234567890`, is in E.164 format, but it isn't a real number. To send him a real text, change it to a number you can receive texts on, also in E.164 format. On a Twilio trial account, it also has to be a number you've verified with Twilio. Otherwise Twilio rejects the message, and first match falls through to push.
 
 ## Provider details when you need them
 

@@ -75,6 +75,11 @@ Communications API (user secrets or environment variables):
 `DeliveryReportUrl` must be reachable by Twilio, for example through a tunnel
 while developing locally.
 
+Bob's seeded phone number, `+11234567890`, is in E.164 format but isn't real.
+Set his `PhoneNumber` to one you can receive texts on, also in E.164 format (on
+a Twilio trial account, a number you've verified with Twilio). Otherwise Twilio
+rejects the message and first match falls through to push.
+
 ## Trying it
 
 Sign in as `alice`, place an order, and open **Messages** from the account menu:

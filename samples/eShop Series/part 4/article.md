@@ -35,7 +35,7 @@ Email
     AliceSmith@email.com
 
 Phone
-    1234567890
+    +11234567890
 ```
 
 Identity already owns the email address and the phone number, and [the resolver](https://github.com/transmitly/transmitly/blob/main/samples/eShop%20Series/part%204/src/Communications.API/IdentityServerCustomerIdentityResolver.cs) from Part 3 returns both. SMS has what it needs.
@@ -108,7 +108,7 @@ Email
     AliceSmith@email.com
 
 Phone
-    1234567890
+    +11234567890
 
 Device token
     simulated-device-…

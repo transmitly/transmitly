@@ -714,7 +714,7 @@ OrderCreated
 
 The content differs by channel, and the enriched context underneath is shared.
 
-So Ordering doesn't dispatch `OrderCreatedEmail`, `OrderCreatedSms`, or `OrderCreatedPush`, the kind of channel-bound name Part 1 warned against. (Those names do show up in Part 4, as template classes inside Communications, which is where channel-specific names belong.)
+So Ordering doesn't dispatch `OrderCreatedEmail`, `OrderCreatedSms`, or `OrderCreatedPush`, the kind of channel-bound name Part 1 warned against. (Those names do show up as template classes inside Communications, starting with this part's `OrderCreatedEmail`, which is where channel-specific names belong.)
 
 It dispatches:
 

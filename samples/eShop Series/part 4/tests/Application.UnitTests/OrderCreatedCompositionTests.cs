@@ -67,7 +67,7 @@ public class OrderCreatedCompositionTests
         var sms = dispatch.Communication<ISms>();
         TestContext.WriteLine(sms.Message);
 
-        Assert.AreEqual("1234567890", sms.To!.Single().Value);
+        Assert.AreEqual("+11234567890", sms.To!.Single().Value);
         Assert.AreEqual(
             "We've received your eShop order #123.\nView your order: https://eshop.test/user/orders",
             sms.Message);
@@ -216,7 +216,7 @@ public class OrderCreatedCompositionTests
                             "Alice Smith",
                             [
                                 new ResolvedIdentityAddress("alice@example.com", "Alice Smith", "email", true),
-                                new ResolvedIdentityAddress("1234567890", "Alice Smith", "phone", false)
+                                new ResolvedIdentityAddress("+11234567890", "Alice Smith", "phone", false)
                             ])
                     ]),
                 "catalog-api" when !catalogAvailable =>
