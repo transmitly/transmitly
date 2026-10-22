@@ -28,5 +28,5 @@ internal sealed class PersonaRegistration<TPersona>(string name, string platform
 
 	public bool IsMatch(TPersona persona) => _compiledExpression(persona);
 
-	public bool IsMatch(object persona) => IsMatch((TPersona)persona);
+	public bool IsMatch(object persona) => persona is TPersona typedPersona && IsMatch(typedPersona);
 }

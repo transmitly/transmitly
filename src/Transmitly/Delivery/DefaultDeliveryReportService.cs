@@ -14,6 +14,15 @@
 
 namespace Transmitly.Delivery;
 
-public sealed class DefaultDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers) : BaseDeliveryReportService(observers)
+public sealed class DefaultDeliveryReportService : BaseDeliveryReportService
 {
+	public DefaultDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers)
+		: base(observers)
+	{
+	}
+
+	public DefaultDeliveryReportService(IReadOnlyCollection<IObserver<DeliveryReport>> observers, ILoggerFactory loggerFactory)
+		: base(observers, Guard.AgainstNull(loggerFactory))
+	{
+	}
 }

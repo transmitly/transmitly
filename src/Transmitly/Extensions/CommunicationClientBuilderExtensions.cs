@@ -87,9 +87,6 @@ public static class CommunicationClientBuilderExtensions
 	/// <param name="filterPipelineIntents">List of pipeline intents to listen to.</param>
 	/// <returns>The configuration builder.</returns>
 	public static CommunicationsClientBuilder AddDeliveryReportHandler(this CommunicationsClientBuilder builder, DeliveryReportAsyncHandler reportHandler, IReadOnlyCollection<string>? filterEventNames = null, IReadOnlyCollection<string>? filterChannelIds = null, IReadOnlyCollection<string>? filterChannelProviderIds = null, IReadOnlyCollection<string>? filterPipelineIntents = null)
-	{
-		var observer = new DeliveryReportAsyncHandlerObserver(reportHandler);
-		return builder.AddDeliveryReportHandler(observer, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineIntents);
-	}
+		=> Guard.AgainstNull(builder).DeliveryReport.AddDeliveryReportHandler(reportHandler, filterEventNames, filterChannelIds, filterChannelProviderIds, filterPipelineIntents);
 
 }

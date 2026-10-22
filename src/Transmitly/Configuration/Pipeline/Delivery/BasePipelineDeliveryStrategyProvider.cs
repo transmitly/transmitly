@@ -191,25 +191,24 @@ public abstract class BasePipelineDeliveryStrategyProvider
 						["channelId"] = state.ChannelId,
 						["channelProviderId"] = state.ChannelProviderId
 					});
-			if (results != null)
-			{
-				var reports = results.Select(r =>
-						new DeliveryReport(
-								DeliveryReport.Event.Error(),
-								channel.Id,
-								provider.Id,
-								context.PipelineIntent,
-								context.PipelineId,
-								r!.ResourceId,
-								r.Status,
-								communication,
-								contentModel,
-								r.Exception
-						)
-				).ToList();
-				await context.DeliveryReportManager.DispatchAsync(reports);
-			}
-			return [new DispatchResult(CommunicationsStatus.ClientError("Channel Provider Exception"), provider.Id, channel.Id) { Exception = ex }];
+			var errorResult = new DispatchResult(PredefinedCommunicationStatuses.ChannelProviderException, provider.Id, channel.Id) { Exception = ex };
+			// results is null when the dispatcher itself threw; report the exception for Error handlers
+			var reports = (results ?? [errorResult]).Select(r =>
+					new DeliveryReport(
+							DeliveryReport.Event.Error(),
+							channel.Id,
+							provider.Id,
+							context.PipelineIntent,
+							context.PipelineId,
+							r!.ResourceId,
+							r.Status,
+							communication,
+							contentModel,
+							r.Exception
+					)
+			).ToList();
+			await context.DeliveryReportManager.DispatchAsync(reports).ConfigureAwait(false);
+			return [errorResult];
 		}
 	}
 

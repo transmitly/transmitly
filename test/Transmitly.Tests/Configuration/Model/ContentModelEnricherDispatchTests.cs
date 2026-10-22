@@ -70,10 +70,11 @@ public sealed class ContentModelEnricherDispatchTests
 			.AddContentModelEnricher<PerRecipientEnricher>(options => options.Scope = ContentModelEnricherScope.PerRecipient)
 			.AddContentModelEnricher<PerChannelEnricher>(options => options.Scope = ContentModelEnricherScope.PerChannel)
 			.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("provider-1", "channel-a")
-			.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("provider-2", "channel-a")
+			.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("provider-2", "channel-b")
 			.AddPipeline("intent", options =>
 			{
 				options.AddChannel(new ModelSubjectChannel("channel-a"));
+				options.AddChannel(new ModelSubjectChannel("channel-b"));
 				options.UseAnyMatchPipelineDeliveryStrategy();
 			});
 
@@ -84,12 +85,15 @@ public sealed class ContentModelEnricherDispatchTests
 			"type",
 			new[] { "unit-test-address".AsIdentityAddress() });
 
-		await client.DispatchAsync(
+		var result = await client.DispatchAsync(
 			"intent",
 			new[] { recipient },
 			TransactionModel.Create(new { }),
 			Array.Empty<string>());
 
+		CollectionAssert.AreEquivalent(
+			new[] { "provider-1", "provider-2" },
+			result.Results.Select(r => r?.ChannelProviderId).ToArray());
 		Assert.AreEqual(1, ContentModelEnricherRecorder.PerRecipientCount);
 		Assert.AreEqual(2, ContentModelEnricherRecorder.PerChannelCount);
 	}

@@ -102,6 +102,54 @@ namespace Transmitly.Tests.Delivery
 		}
 
 		[TestMethod]
+		public void DispatchAsyncShouldNotWaitForHandlers()
+		{
+			var release = new TaskCompletionSource<bool>();
+			var monitor = new DeliveryReportMonitor(_ => release.Task);
+			var service = new MockDeliveryReportService([monitor]);
+
+			var dispatch = service.DispatchAsync(CreateReport());
+
+			Assert.IsTrue(dispatch.IsCompleted);
+			release.SetResult(true);
+		}
+
+		[TestMethod]
+		public async Task FailingHandlerShouldBeLoggedWithoutStoppingOtherHandlers()
+		{
+			var failure = new InvalidOperationException("handler failed");
+			var logged = new TaskCompletionSource<LogEntry>();
+			var otherHandlerRan = new TaskCompletionSource<bool>();
+			var logger = new Mock<ILogger>();
+			logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>())).Returns(true);
+			logger.SetupGet(l => l.CategoryName).Returns("test");
+			logger.Setup(l => l.Log(It.IsAny<LogEntry>())).Callback<LogEntry>(e => logged.TrySetResult(e));
+			var loggerFactory = new Mock<ILoggerFactory>();
+			loggerFactory.Setup(f => f.CreateLogger(It.IsAny<string>())).Returns(logger.Object);
+			var service = new DefaultDeliveryReportService(
+			[
+				new DeliveryReportMonitor(async _ =>
+				{
+					await Task.Yield();
+					throw failure;
+				}),
+				new DeliveryReportMonitor(_ =>
+				{
+					otherHandlerRan.TrySetResult(true);
+					return Task.CompletedTask;
+				})
+			], loggerFactory.Object);
+
+			await service.DispatchAsync(CreateReport());
+
+			var timeout = Task.Delay(TimeSpan.FromSeconds(5));
+			Assert.AreSame(logged.Task, await Task.WhenAny(logged.Task, timeout), "The handler failure was never logged");
+			Assert.AreSame(failure, logged.Task.Result.Exception);
+			Assert.AreEqual(LogLevel.Error, logged.Task.Result.Level);
+			Assert.AreSame(otherHandlerRan.Task, await Task.WhenAny(otherHandlerRan.Task, timeout), "A failing handler stopped the remaining handlers.");
+		}
+
+		[TestMethod]
 		public void DispatchAsyncMultipleReportsAllObserversReceiveAll()
 		{
 			var observer = new Mock<IObserver<DeliveryReport>>();

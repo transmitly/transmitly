@@ -18,6 +18,7 @@ using Transmitly.Delivery;
 using Transmitly.Pipeline.Configuration;
 using Transmitly.PlatformIdentity.Configuration;
 using Transmitly.Tests.Integration;
+using Transmitly.Tests.Mocks;
 namespace Transmitly.Tests;
 
 [TestClass]
@@ -253,6 +254,78 @@ public class DefaultCommunicationClientTests : BaseUnitTest
 		await client.DispatchAsync("test-pipeline", "unit-test-address-1", new { });
 
 		Assert.AreEqual(2, InstanceCountingDispatcher.InstanceCount - before);
+	}
+
+	[TestMethod]
+	public async Task AnyMatchShouldSendThroughOnlyTheFirstSuccessfulProviderPerChannel()
+	{
+		var client = new CommunicationsClientBuilder()
+			.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("provider-1", "unit-test-channel")
+			.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("provider-2", "unit-test-channel")
+			.AddPipeline("test-pipeline", options =>
+			{
+				options.AddChannel(new UnitTestChannel("c0-from"));
+				options.UseAnyMatchPipelineDeliveryStrategy();
+			})
+			.BuildClient();
+
+		var result = await client.DispatchAsync("test-pipeline", "unit-test-address-0", new { });
+
+		Assert.IsTrue(result.IsSuccessful);
+		Assert.AreEqual(1, result.Results.Count);
+		Assert.AreEqual("provider-1", result.Results.First()?.ChannelProviderId);
+	}
+
+	[TestMethod]
+	public async Task AnyMatchShouldFallThroughToTheNextProviderWhenOneFails()
+	{
+		var client = new CommunicationsClientBuilder()
+			.ChannelProvider.Add<FailChannelProviderDispatcher, object>("provider-1", "unit-test-channel")
+			.ChannelProvider.Add<SuccessChannelProviderDispatcher, object>("provider-2", "unit-test-channel")
+			.AddPipeline("test-pipeline", options =>
+			{
+				options.AddChannel(new UnitTestChannel("c0-from"));
+				options.UseAnyMatchPipelineDeliveryStrategy();
+			})
+			.BuildClient();
+
+		var result = await client.DispatchAsync("test-pipeline", "unit-test-address-0", new { });
+
+		Assert.IsTrue(result.IsSuccessful);
+		CollectionAssert.AreEqual(new[] { "provider-1", "provider-2" }, result.Results.Select(r => r?.ChannelProviderId).ToArray());
+	}
+
+	[TestMethod]
+	public async Task ProviderExceptionShouldRaiseErrorDeliveryReport()
+	{
+		var reported = new TaskCompletionSource<DeliveryReport>();
+		var client = new CommunicationsClientBuilder()
+			.AddDeliveryReportHandler(report =>
+			{
+				reported.TrySetResult(report);
+				return Task.CompletedTask;
+			}, [DeliveryReport.Event.Error()])
+			.ChannelProvider.Add<ThrowingDispatcher, object>("throwing-provider", "unit-test-channel")
+			.AddPipeline("test-pipeline", options => options.AddChannel(new UnitTestChannel("c0-from")))
+			.BuildClient();
+
+		var result = await client.DispatchAsync("test-pipeline", "unit-test-address-0", new { });
+
+		Assert.IsFalse(result.IsSuccessful);
+		Assert.AreSame(reported.Task, await Task.WhenAny(reported.Task, Task.Delay(TimeSpan.FromSeconds(5))));
+		Assert.AreEqual("throwing-provider", reported.Task.Result.ChannelProviderId);
+		Assert.AreSame(ThrowingDispatcher.Failure, reported.Task.Result.Exception);
+	}
+
+	private sealed class ThrowingDispatcher : Transmitly.ChannelProvider.IChannelProviderDispatcher<object>
+	{
+		public static readonly InvalidOperationException Failure = new("provider down");
+
+		public async Task<IReadOnlyCollection<IDispatchResult?>> DispatchAsync(object communication, IDispatchCommunicationContext communicationContext, CancellationToken cancellationToken)
+		{
+			await Task.Yield();
+			throw Failure;
+		}
 	}
 
 	private sealed class InstanceCountingDispatcher : Transmitly.ChannelProvider.IChannelProviderDispatcher<object>

@@ -22,6 +22,7 @@ internal class DeliveryReportMonitor : IObserver<DeliveryReport>
 	private readonly IReadOnlyCollection<string> _restrictedToPipelineIntents;
 
 	private readonly IObserver<DeliveryReport>? _observer;
+	private readonly DeliveryReportAsyncHandler? _reportHandler;
 	private IDisposable? _cancellation;
 	public DeliveryReportMonitor(
 		IObserver<DeliveryReport> reportObservable,
@@ -42,8 +43,7 @@ internal class DeliveryReportMonitor : IObserver<DeliveryReport>
 		IReadOnlyCollection<string>? restrictedToPipelineIntents = null)
 			: this(restrictedToEventNames, restrictedToChannelIds, restrictedToChannelProviderIds, restrictedToPipelineIntents)
 	{
-
-		_observer = new DeliveryReportAsyncHandlerObserver(Guard.AgainstNull(reportHandler));
+		_reportHandler = Guard.AgainstNull(reportHandler);
 	}
 
 	private DeliveryReportMonitor(
@@ -76,13 +76,18 @@ internal class DeliveryReportMonitor : IObserver<DeliveryReport>
 		_observer?.OnError(error);
 	}
 
-	public virtual void OnNext(DeliveryReport value)
+	public virtual void OnNext(DeliveryReport value) => _ = Task.Run(() => OnNextAsync(value));
+
+	internal Task OnNextAsync(DeliveryReport value)
 	{
 		if (!ShouldFireEvent(value))
-			return;
+			return Task.CompletedTask;
 
-		if (_observer != null)
-			_ = Task.Run(() => _observer.OnNext(value));
+		if (_reportHandler != null)
+			return _reportHandler(value);
+
+		_observer?.OnNext(value);
+		return Task.CompletedTask;
 	}
 
 	private bool ShouldFireEvent(DeliveryReport value)

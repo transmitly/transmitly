@@ -56,6 +56,20 @@ public class BasePersonaFactoryTests : BaseUnitTest
 		await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => sut.AnyMatch<UnitTestPersona>(fixture.Create<string>(), null!));
 	}
 
+	[TestMethod]
+	public async Task AnyMatchShouldSkipIdentitiesOfOtherPersonaTypes()
+	{
+		var sut = new DefaultPersonaFactory([new PersonaRegistration<VipCustomer>("vip", "customer", c => c.IsVip)]);
+
+		Assert.IsFalse(await sut.AnyMatch<object>("vip", [new UnitTestPersona()]), "An identity of another type threw instead of not matching.");
+		Assert.IsTrue(await sut.AnyMatch<object>("vip", [new UnitTestPersona(), new VipCustomer { IsVip = true }]));
+	}
+
+	sealed class VipCustomer
+	{
+		public bool IsVip { get; set; }
+	}
+
 #pragma warning disable S2094 // Classes should not be empty
 	class UnitTestPersona
 

@@ -30,7 +30,7 @@ public abstract class BaseCommunicationClientMiddleware : ICommunicationClientMi
 			return previous;
 
 		var loggerFactory = context.LoggerFactory;
-		var deliveryReportService = new DefaultDeliveryReportService(context.DeliveryReportObservers);
+		var deliveryReportService = new DefaultDeliveryReportService(context.DeliveryReportObservers, loggerFactory);
 		return new DefaultCommunicationsClient(
 			new DefaultPipelineService(new DefaultPipelineFactory(context.Pipelines), loggerFactory.CreateLogger<DefaultPipelineService>()),
 			new DefaultDispatchCoordinatorService(

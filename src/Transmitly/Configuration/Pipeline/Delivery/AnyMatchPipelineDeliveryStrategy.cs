@@ -20,7 +20,8 @@ namespace Transmitly.Delivery;
 internal sealed class AnyMatchPipelineDeliveryStrategy : BasePipelineDeliveryStrategyProvider
 {
 	/// <summary>
-	/// Sends the communication to all the channels using the allowed channel providers.
+	/// Sends the communication to all the channels. Each channel uses the first allowed channel provider that does not fail,
+	/// falling through to the next provider only on failure.
 	/// </summary>
 	/// <param name="sendingGroups">The collection of channels to send the communication to.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
@@ -44,9 +45,9 @@ internal sealed class AnyMatchPipelineDeliveryStrategy : BasePipelineDeliveryStr
 
 					results.AddRange(result);
 
-					if (result.Any(r => r != null && r.Status.IsFailure()))
+					if (!result.All(r => r != null && r.Status.IsFailure()))
 					{
-						return new DispatchCommunicationResult(results);
+						break;
 					}
 				}
 			}

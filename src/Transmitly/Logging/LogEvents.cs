@@ -1,4 +1,4 @@
-// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
+﻿// ﻿﻿Copyright (c) Code Impressions, LLC. All Rights Reserved.
 //  
 //  Licensed under the Apache License, Version 2.0 (the "License")
 //  you may not use this file except in compliance with the License.
@@ -135,6 +135,11 @@ internal static class LogEvents
 	/// Event emitted when delivery reports are dispatched.
 	/// </summary>
 	internal const string DeliveryReportDispatch = "deliveryreport.dispatch";
+
+	/// <summary>
+	/// Event emitted when a delivery report handler throws.
+	/// </summary>
+	internal const string DeliveryReportHandlerFailed = "deliveryreport.handler.failed";
 
 	/// <summary>
 	/// Event emitted when dispatch middleware is invoked.

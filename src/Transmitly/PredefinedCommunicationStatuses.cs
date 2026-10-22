@@ -22,5 +22,6 @@ public static class PredefinedCommunicationStatuses
 	internal static readonly CommunicationsStatus DispatchChannelFilterMismatch = CommunicationsStatus.ClientError("Dispatch request channel filter mismatch", 6);
 	internal static CommunicationsStatus PlatformIdentityProfileEnrichmentFailed(Exception? ex = null) =>
 		CommunicationsStatus.ClientError("Platform identity profile enrichment failed", 7, ex?.ToString());
+	internal static readonly CommunicationsStatus ChannelProviderException = CommunicationsStatus.ClientError("Channel Provider Exception", 8);
 	internal static readonly CommunicationsStatus Unknown = CommunicationsStatus.ClientError("Unknown", 999);
 }
