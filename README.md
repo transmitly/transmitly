@@ -155,6 +155,7 @@ Most applications need the Transmitly core package, one or more provider integra
 - [Microsoft.Extensions.DependencyInjection](https://github.com/transmitly/transmitly-microsoft-extensions-dependencyinjection)
 - [ASP.NET Core MVC](https://github.com/transmitly/transmitly-microsoft-aspnetcore-mvc) and [AspNet.Mvc](https://github.com/transmitly/transmitly-microsoft-aspnet-mvc) for provider webhook/delivery-report integration
 - [Fluid](https://github.com/transmitly/transmitly-template-engine-fluid) and [Scriban](https://github.com/transmitly/transmitly-template-engine-scriban) for dynamic template rendering
+- [Contentful](https://github.com/transmitly/transmitly-content-template-contentful) as a template source extension. Enables loading message content and templates from [Contentful](https://www.contentful.com) entries at dispatch time
 
 Literal/string message content can be configured directly in core. Dynamic template rendering is deliberately pluggable so you can choose the engine that fits your application.
 
