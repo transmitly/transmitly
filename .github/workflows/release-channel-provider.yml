@@ -9,10 +9,17 @@ on:
         required: false
         default: Release
         type: string
+      solutionFile:
+        description: Solution file to build. Defaults to <channelProviderName>.sln.
+        required: false
+        default: ''
+        type: string
 
 jobs:
   windows-build:
     runs-on: windows-latest
+    env:
+      solutionFile: ${{ inputs.solutionFile || format('{0}.sln', inputs.channelProviderName) }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -37,8 +44,8 @@ jobs:
             8.0.x
             6.0.x
       - name: Build netcore solution
-        run: dotnet build ${{inputs.channelProviderName}}.sln --configuration ${{inputs.buildConfiguration}} -p:AssemblyVersion=${{ env.majorMinorPatch }} -p:FileVersion=${{ env.majorMinorPatch }} -p:InformationalVersion=${{ env.informationalVersion }}
+        run: dotnet build ${{ env.solutionFile }} --configuration ${{inputs.buildConfiguration}} -p:AssemblyVersion=${{ env.majorMinorPatch }} -p:FileVersion=${{ env.majorMinorPatch }} -p:InformationalVersion=${{ env.informationalVersion }}
       - name: Package
-        run: dotnet pack --no-build --include-source /p:Version=${{ env.majorMinorPatch }} --configuration ${{inputs.buildConfiguration}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+        run: dotnet pack ${{ env.solutionFile }} --no-build --include-source /p:Version=${{ env.majorMinorPatch }} --configuration ${{inputs.buildConfiguration}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
       - name: Publish Nuget
         run: dotnet nuget push src\${{inputs.channelProviderName}}\bin\${{inputs.buildConfiguration}}\${{inputs.channelProviderName}}*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
