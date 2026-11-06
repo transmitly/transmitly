@@ -16,5 +16,13 @@ namespace Transmitly.ChannelProvider.Configuration;
 
 public interface IDeliveryReportRequestAdaptorRegistration
 {
+	/// <summary>
+	/// Adaptor's concrete type.
+	/// </summary>
 	Type Type { get; }
+
+	/// <summary>
+	/// Configuration/Options of the channel provider that registered the adaptor.
+	/// </summary>
+	object? Configuration { get; }
 }

@@ -39,7 +39,7 @@ public sealed class DefaultChannelProviderFactory(IEnumerable<IChannelProviderRe
 	public override Task<IChannelProviderDeliveryReportRequestAdaptor> ResolveDeliveryReportRequestAdaptorAsync(IDeliveryReportRequestAdaptorRegistration channelProviderDeliveryReportRequestAdaptor)
 	{
 		Guard.AgainstNull(channelProviderDeliveryReportRequestAdaptor);
-		var adaptor = DefaultActivator.CreateInstance<IChannelProviderDeliveryReportRequestAdaptor>(channelProviderDeliveryReportRequestAdaptor.Type, _loggerFactory);
+		var adaptor = DefaultActivator.CreateInstance<IChannelProviderDeliveryReportRequestAdaptor>(channelProviderDeliveryReportRequestAdaptor.Type, _loggerFactory, channelProviderDeliveryReportRequestAdaptor.Configuration);
 		return Task.FromResult(Guard.AgainstNull(adaptor));
 	}
 }

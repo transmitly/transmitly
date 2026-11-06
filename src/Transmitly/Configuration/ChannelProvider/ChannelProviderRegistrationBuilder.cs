@@ -44,7 +44,7 @@ public sealed class ChannelProviderRegistrationBuilder
 	public ChannelProviderRegistrationBuilder AddDeliveryReportRequestAdaptor<TAdaptor>()
 		where TAdaptor : IChannelProviderDeliveryReportRequestAdaptor
 	{
-		_channelProviderDeliveryReportRequestAdaptorRegistrations.Add(new DeliveryReportRequestAdaptorRegistration(typeof(TAdaptor)));
+		_channelProviderDeliveryReportRequestAdaptorRegistrations.Add(new DeliveryReportRequestAdaptorRegistration(typeof(TAdaptor), Configuration));
 		return this;
 	}
 
