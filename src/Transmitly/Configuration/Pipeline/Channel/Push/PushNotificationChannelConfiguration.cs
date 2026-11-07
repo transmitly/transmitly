@@ -20,6 +20,7 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 {
 	private Dictionary<string, IContentTemplateConfiguration>? _data;
 	private Dictionary<string, IContentTemplateConfiguration>? _headers;
+	private List<Func<IDispatchCommunicationContext, Task<IReadOnlyDictionary<string, string>?>>>? _dataResolvers;
 
 	public IContentTemplateConfiguration Title { get; } = new ContentTemplateConfiguration();
 
@@ -28,6 +29,8 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 	public IContentTemplateConfiguration ImageUrl { get; } = new ContentTemplateConfiguration();
 
 	public IReadOnlyDictionary<string, IContentTemplateConfiguration>? Data => _data;
+
+	public IReadOnlyCollection<Func<IDispatchCommunicationContext, Task<IReadOnlyDictionary<string, string>?>>>? DataResolvers => _dataResolvers;
 
 	public IReadOnlyDictionary<string, IContentTemplateConfiguration>? Headers => _headers;
 
@@ -99,6 +102,13 @@ internal sealed class PushNotificationChannelConfiguration() : IPushNotification
 	{
 		_data ??= [];
 		PushNotificationTemplateConfigurationHelpers.AddTemplate(_data, key, contentResolver);
+		return this;
+	}
+
+	public IPushNotificationChannelConfiguration AddData(Func<IDispatchCommunicationContext, Task<IReadOnlyDictionary<string, string>?>> dataResolver)
+	{
+		_dataResolvers ??= [];
+		_dataResolvers.Add(Guard.AgainstNull(dataResolver));
 		return this;
 	}
 

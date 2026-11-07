@@ -41,7 +41,10 @@ public class PushNotificationChannelTests : BaseUnitTest
 			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664", type: "other"), false),
 			(new PlatformIdentityAddress("/topics/news", type: "other"), false),
 			(new PlatformIdentityAddress("test"), false),
-			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664"), true)
+			(new PlatformIdentityAddress("fe595523a0c2965f9eabff921555df48-80df133c-5aab-4db4-bd03-b04331181664"), true),
+			// FCM registration tokens are "<instance id>:<token>"
+			(new PlatformIdentityAddress("bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1"), true),
+			(new PlatformIdentityAddress("urn:uuid:123e4567-e89b-12d3-a456-426614174000"), false)
 		};
 
 		foreach (var test in tests)
@@ -417,6 +420,31 @@ public class PushNotificationChannelTests : BaseUnitTest
 		Assert.AreEqual("android-static-header-value", result.Android.Headers["android-static-header"]);
 		Assert.AreEqual("android-condition-header-value", result.Android.Headers["android-condition-header"]);
 		Assert.IsFalse(result.Android.Headers.ContainsKey("android-condition-header-false"));
+	}
+
+	[TestMethod]
+	public async Task GenerateCommunicationAsyncShouldMergeDataResolversOverKeyedData()
+	{
+		var mockContext = CreateDispatchCommunicationContextMock();
+		mockContext.Setup(x => x.ContentModel!.Resources).Returns([]);
+		mockContext.SetupGet(x => x.TemplateEngine).Returns(new UnitTestTemplateEngine());
+		var context = mockContext.Object;
+
+		var config = new PushNotificationChannelConfiguration();
+		config
+			.AddData("keyed", "keyed-value")
+			.AddData("overridden", "keyed-value")
+			.AddData(_ => Task.FromResult<IReadOnlyDictionary<string, string>?>(new Dictionary<string, string> { ["overridden"] = "first", ["order-id"] = "A-1001", ["blank"] = " " }))
+			.AddData(_ => Task.FromResult<IReadOnlyDictionary<string, string>?>(null))
+			.AddData(_ => Task.FromResult<IReadOnlyDictionary<string, string>?>(new Dictionary<string, string> { ["overridden"] = "second" }));
+
+		var result = await new PushNotificationChannel(config).GenerateCommunicationAsync(context);
+
+		Assert.IsNotNull(result.Data);
+		Assert.AreEqual("keyed-value", result.Data["keyed"]);
+		Assert.AreEqual("A-1001", result.Data["order-id"]);
+		Assert.AreEqual("second", result.Data["overridden"]);
+		Assert.IsFalse(result.Data.ContainsKey("blank"));
 	}
 
 	[TestMethod]

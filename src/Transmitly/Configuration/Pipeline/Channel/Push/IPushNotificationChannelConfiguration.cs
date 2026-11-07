@@ -50,6 +50,10 @@ public interface IPushNotificationChannelConfiguration : IChannelConfiguration
 	/// </summary>
 	IReadOnlyDictionary<string, IContentTemplateConfiguration>? Data { get; }
 	/// <summary>
+	/// Resolvers that supply custom data per dispatch, in the order they were added.
+	/// </summary>
+	IReadOnlyCollection<Func<IDispatchCommunicationContext, Task<IReadOnlyDictionary<string, string>?>>>? DataResolvers { get; }
+	/// <summary>
 	/// Default push header templates.
 	/// </summary>
 	IReadOnlyDictionary<string, IContentTemplateConfiguration>? Headers { get; }
@@ -75,6 +79,14 @@ public interface IPushNotificationChannelConfiguration : IChannelConfiguration
 	/// <param name="contentResolver">Resolver for custom data content.</param>
 	/// <returns></returns>
 	IPushNotificationChannelConfiguration AddData(string key, Func<IDispatchCommunicationContext, Task<string?>> contentResolver);
+	/// <summary>
+	/// Adds a resolver that supplies custom data per dispatch, for when the keys aren't known up front,
+	/// such as data taken from the transactional model. Resolved values override keyed data with the same key,
+	/// and later resolvers override earlier ones. Null or whitespace values are left out.
+	/// </summary>
+	/// <param name="dataResolver">Returns the data for a dispatch, or <see langword="null"/> for none.</param>
+	/// <returns></returns>
+	IPushNotificationChannelConfiguration AddData(Func<IDispatchCommunicationContext, Task<IReadOnlyDictionary<string, string>?>> dataResolver);
 	/// <summary>
 	/// Adds a default custom data template when the provided condition returns true.
 	/// </summary>

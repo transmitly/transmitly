@@ -44,6 +44,16 @@ public class TransactionModel : ITransactionModel
 		return new TransactionModel(model, null, null);
 	}
 
+	/// <summary>
+	/// Creates a transaction model with attachments and linked (inline) resources.
+	/// </summary>
+	/// <param name="model">The model the content templates render against.</param>
+	/// <param name="resources">
+	/// Attachments and linked resources together. Each <see cref="LinkedResource"/> goes to
+	/// <see cref="ITransactionModel.LinkedResources"/>; everything else is an attachment. For example:
+	/// <c>TransactionModel.Create(model, new Resource("invoice.pdf", "application/pdf", pdf), new LinkedResource("cid:logo", png) { ContentType = "image/png" })</c>.
+	/// </param>
+	/// <returns>The transaction model.</returns>
 	public static ITransactionModel Create(object model, params Resource[] resources)
 	{
 		var linkedResources = resources.OfType<LinkedResource>().ToArray();

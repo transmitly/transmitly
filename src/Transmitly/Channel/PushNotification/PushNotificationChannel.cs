@@ -52,7 +52,7 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 		var title = await _configuration.Title.RenderAsync(communicationContext);
 		var body = await _configuration.Body.RenderAsync(communicationContext);
 		var imageUrl = await _configuration.ImageUrl.RenderAsync(communicationContext);
-		var data = await RenderTemplateDictionaryAsync(_configuration.Data, communicationContext);
+		var data = await RenderDataAsync(communicationContext);
 		var headers = await RenderTemplateDictionaryAsync(_configuration.Headers, communicationContext);
 		var android = await RenderAndroidContentAsync(_configuration.Android, communicationContext);
 		var apple = await RenderAppleContentAsync(_configuration.Apple, communicationContext);
@@ -116,6 +116,39 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 		}
 
 		return identityAddress.Attributes.Keys.Any(keys.Contains);
+	}
+
+	// Keyed data first, then each data resolver in order; later values win.
+	private async Task<IReadOnlyDictionary<string, string>?> RenderDataAsync(IDispatchCommunicationContext communicationContext)
+	{
+		var data = await RenderTemplateDictionaryAsync(_configuration.Data, communicationContext);
+		if (_configuration.DataResolvers is not { Count: > 0 } resolvers)
+		{
+			return data;
+		}
+
+		var merged = data is null
+			? new Dictionary<string, string>(StringComparer.Ordinal)
+			: data.ToDictionary(item => item.Key, item => item.Value, StringComparer.Ordinal);
+
+		foreach (var resolver in resolvers)
+		{
+			var resolved = await resolver(communicationContext);
+			if (resolved is null)
+			{
+				continue;
+			}
+
+			foreach (var item in resolved)
+			{
+				if (!string.IsNullOrWhiteSpace(item.Value))
+				{
+					merged[item.Key] = item.Value;
+				}
+			}
+		}
+
+		return merged.Count == 0 ? null : merged;
 	}
 
 	private static async Task<IReadOnlyDictionary<string, string>?> RenderTemplateDictionaryAsync(
@@ -381,7 +414,8 @@ sealed class PushNotificationChannel(IPushNotificationChannelConfiguration confi
 		};
 	}
 
-	private const string DeviceTokenPattern = @"^(?:[A-Fa-f0-9]{64}|[A-Za-z0-9_-]{20,})$";
+	// A 64-character hex APNs token, or a token of 20+ URL-safe characters with an optional "<instance id>:" prefix, as FCM registration tokens have.
+	private const string DeviceTokenPattern = @"^(?:[A-Fa-f0-9]{64}|(?:[A-Za-z0-9_-]+:)?[A-Za-z0-9_-]{20,})$";
 	private const RegexOptions DeviceTokenRegexOptions = RegexOptions.Compiled;
 
 #if FEATURE_SOURCE_GEN

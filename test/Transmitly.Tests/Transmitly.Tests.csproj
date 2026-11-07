@@ -14,13 +14,13 @@
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 	<PropertyGroup>
-		<TestSdkVersion>18.10.1</TestSdkVersion>
-		<MSTestVersion>4.4.1</MSTestVersion>
+		<TestSdkVersion>18.11.0</TestSdkVersion>
+		<MSTestVersion>4.5.2</MSTestVersion>
 		<CoverletVersion>10.1.0</CoverletVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
 		<TestSdkVersion>17.13.0</TestSdkVersion>
-		<MSTestVersion>3.8.3</MSTestVersion>
+		<MSTestVersion>3.11.1</MSTestVersion>
 		<CoverletVersion>6.0.4</CoverletVersion>
 	</PropertyGroup>
 
