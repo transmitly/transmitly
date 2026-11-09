@@ -55,10 +55,18 @@ Press any key to dispatch the communication...
 
 Press a key and the simulated communication will be dispatched.
 
-You should then see:
+You should then see something similar to:
 
 ```text
+  Channel           : Email
+  Channel Provider  : Simulation
+  Status            : 2000 Dispatched
+  Resource Id       : 3bba4817-01b7-4e49-b051-62b58225d324
+--------------------------------------------------
 Communication dispatched successfully.
+
+Tip: add a delivery report handler to see the composed email (subject, body, ...):
+  https://github.com/transmitly/transmitly/wiki/Delivery-Reports
 ```
 
 Because this sample uses:
@@ -87,6 +95,8 @@ await communicationsClient.DispatchAsync(
 while the delivery configuration evolves separately.
 
 ## Next steps
+
+Want to see what Transmitly actually composed? The simulation provider raises a `Dispatched` delivery report that carries the composed email. See [Delivery Reports](https://github.com/transmitly/transmitly/wiki/Delivery-Reports) to add a handler for it.
 
 Once this example makes sense, explore the other [Transmitly samples](https://github.com/transmitly/transmitly/tree/main/samples) for provider integrations, multiple channels, dependency injection, templates, delivery reports, and more.
 

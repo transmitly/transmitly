@@ -29,20 +29,50 @@ var communicationsClient = new CommunicationsClientBuilder()
 	})
 	.BuildClient();
 
+const string intent = "WelcomeKit";
+const string recipient = "developer@example.com";
+
+Console.WriteLine("Hello Transmitly!");
+Console.WriteLine(new string('-', 50));
+Row("Pipeline Intent", intent);
+Row("Recipient", recipient);
+Console.WriteLine();
 Console.WriteLine("Press any key to dispatch the communication...");
-Console.ReadKey();
+Console.ReadKey(intercept: true);
 
 // Your application expresses the intent for dispatching.
 var result = await communicationsClient.DispatchAsync(
-	"WelcomeKit",
-	"developer@example.com",
+	intent,
+	recipient,
 	new { });
 
+foreach (var dispatch in result.Results)
+{
+	if (dispatch is null)
+		continue;
+
+	Console.WriteLine();
+	Row("Channel", dispatch.ChannelId);
+	Row("Channel Provider", dispatch.ChannelProviderId);
+	Row("Status", $"{dispatch.Status.Code} {dispatch.Status.Type}");
+	Row("Resource Id", dispatch.ResourceId);
+	if (dispatch.Exception is not null)
+		Row("Error", dispatch.Exception.Message);
+}
+
+Console.WriteLine(new string('-', 50));
 Console.WriteLine(
 	result.IsSuccessful
 		? "Communication dispatched successfully."
 		: "Communication failed.");
 
+Console.WriteLine();
+Console.WriteLine("Tip: add a delivery report handler to see the composed email (subject, body, ...):");
+Console.WriteLine("  https://github.com/transmitly/transmitly/wiki/Delivery-Reports");
 
+Console.WriteLine();
 Console.WriteLine("Press any key to exit.");
-Console.ReadKey();
+Console.ReadKey(intercept: true);
+
+static void Row(string label, string? value) =>
+	Console.WriteLine($"  {label,-18}: {value ?? "-"}");

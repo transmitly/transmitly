@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
+		<TransmitlyVersion>0.5.0</TransmitlyVersion>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -11,15 +12,15 @@
 	<ItemGroup>
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="10.0.1" />
-		<PackageReference Include="Transmitly" Version="0.4.0" />
-		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="0.4.0" />
-		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="0.4.0" />
-		<PackageReference Include="Transmitly.Microsoft.AspnetCore.Mvc" Version="0.4.0" />
-		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.4.0" />
-		<PackageReference Include="Transmitly.TemplateEngine.Fluid" Version="0.4.0" />
-		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="0.4.0" />
-		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="0.4.0" />
-		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="0.4.0" />
+		<PackageReference Include="Transmitly" Version="$(TransmitlyVersion)" />
+		<PackageReference Include="Transmitly.ChannelProvider.Firebase" Version="$(TransmitlyVersion)" />
+		<PackageReference Include="Transmitly.ChannelProvider.Infobip" Version="$(TransmitlyVersion)" />
+		<PackageReference Include="Transmitly.Microsoft.AspnetCore.Mvc" Version="$(TransmitlyVersion)" />
+		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="$(TransmitlyVersion)" />
+		<PackageReference Include="Transmitly.TemplateEngine.Fluid" Version="$(TransmitlyVersion)" />
+		<PackageReference Include="Transmitly.ChannelProvider.Smtp" Version="$(TransmitlyVersion)" />
+		<PackageReference Include="Transmitly.ChannelProvider.Twilio" Version="$(TransmitlyVersion)" />
+		<PackageReference Include="Transmitly.ChannelProvider.SendGrid" Version="$(TransmitlyVersion)" />
 		<PackageReference Include="Twilio.AspNet.Core" Version="8.1.2" />
 	</ItemGroup>
 

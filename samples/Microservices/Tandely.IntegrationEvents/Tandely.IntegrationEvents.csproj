@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <TransmitlyVersion>0.4.*-*</TransmitlyVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Transmitly" Version="0.4.0" />
+		<PackageReference Include="Transmitly" Version="$(TransmitlyVersion)" />
 	</ItemGroup>
 
 </Project>

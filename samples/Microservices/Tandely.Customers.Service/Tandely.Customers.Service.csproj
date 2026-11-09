@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
+		<TransmitlyVersion>0.5.0</TransmitlyVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -12,7 +13,7 @@
 		<PackageReference Include="Bogus" Version="35.6.5" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="10.1.7" />
-		<PackageReference Include="Transmitly" Version="0.4.0" />
+		<PackageReference Include="Transmitly" Version="$(TransmitlyVersion)" />
 	</ItemGroup>
 
 	<ItemGroup>

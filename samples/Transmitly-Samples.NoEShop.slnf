@@ -1,0 +1,16 @@
+{
+  "solution": {
+    "path": "Transmitly-Samples.sln",
+    "projects": [
+      "HelloTransmitly\\HelloTransmitly.csproj",
+      "Microservices\\Tandely.Customers.Service\\Tandely.Customers.Service.csproj",
+      "Microservices\\Tandely.IntegrationEvents\\Tandely.IntegrationEvents.csproj",
+      "Microservices\\Tandely.Notifications.Client\\Tandely.Notifications.Client.csproj",
+      "Microservices\\Tandely.Notifications.Service\\Tandely.Notifications.Service.csproj",
+      "Microservices\\Tandely.Orders.Service\\Tandely.Orders.Service.csproj",
+      "Microservices\\Tandely.Shipping.Service\\Tandely.Shipping.Service.csproj",
+      "Transmitly.KitchenSink.AspNetCoreWebApi\\Transmitly.KitchenSink.AspNetCoreWebApi.csproj",
+      "Transmitly.Samples.Shared\\Transmitly.Samples.Shared.csproj"
+    ]
+  }
+}

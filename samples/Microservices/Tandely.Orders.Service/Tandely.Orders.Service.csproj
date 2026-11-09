@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
+		<TransmitlyVersion>0.4.*-*</TransmitlyVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
@@ -10,8 +11,8 @@
 		<PackageReference Include="Bogus" Version="35.6.5" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="10.0.1" />
-		<PackageReference Include="Transmitly" Version="0.4.0" />
-		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="0.4.0" />
+		<PackageReference Include="Transmitly" Version="$(TransmitlyVersion)" />
+		<PackageReference Include="Transmitly.Microsoft.Extensions.DependencyInjection" Version="$(TransmitlyVersion)" />
 	</ItemGroup>
 
 	<ItemGroup>

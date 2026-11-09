@@ -60,6 +60,7 @@ namespace Transmitly.KitchenSink.AspNetCoreWebApi
 				c.SchemaFilter<SkipExceptionSchemaFilter>();
 			});
 			builder.Services.AddSwaggerExamplesFromAssemblyOf(typeof(Program));
+			builder.Services.AddSingleton(tlyConfig);
 			builder.Services.AddTransient<HydrateCustomerProfileFromReadModelsEnricher>();
 			builder.Services.AddTransient<HydrateOrderAndFulfillmentContentModelEnricher>();
 			builder.Services.AddTransient<PushChannelShortCircuitContentModelEnricher>();

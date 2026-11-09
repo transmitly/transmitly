@@ -44,5 +44,8 @@ Take a look at the [appsettings.json](https://github.com/transmitly/transmitly/b
 * dispatch/order-shipment-update - an order update scenario.
   * Uses `customerId` + `orderId` and demonstrates enrichers building a full profile/content model from multiple domain read models.
 * channel/provider/update - When exposed publicly can be used with channel providers like Twilio and SendGrid to receive delivery reports.
+  * Returns the delivery reports it built from the webhook, so you can see what your handlers receive.
+* channel/provider/update/simulate/twilio-sms - Sends a signed Twilio SMS status webhook to `channel/provider/update` and shows the webhook plus the resulting delivery report. Pick a `status` and hit Execute.
+  * Requires Twilio to be enabled with an `AuthToken` in appsettings.json (`Transmitly:ChannelProviders:Twilio`). Otherwise it returns an error telling you to turn it on.
 * twilio/messageNeeded - When exposed publicly can be used with Twilio to provide message content for Voice messages.
   *	Requires [uncommenting code](https://github.com/transmitly/transmitly/blob/694ce5bc2a8ce261a3a52be2518d06835179d2eb/samples/Transmitly.KitchenSink.AspNetCoreWebApi/Program.cs#L182-L187) and the Twilio channel provider to be configured correctly.
